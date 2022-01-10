@@ -7,6 +7,7 @@ import com.coworkerteam.coworker.data.model.api.*
 import io.reactivex.Single
 import retrofit2.Response
 
+//레퍼지토리 interface 파일. 이곳에 형식을 선언 후 UserRepositoryImpl에 구체적으로 생성한다.
 interface UserRepository {
 
     fun getAccessToken(): String?
