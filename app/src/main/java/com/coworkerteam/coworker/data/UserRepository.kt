@@ -10,6 +10,7 @@ import retrofit2.Response
 //레퍼지토리 interface 파일. 이곳에 형식을 선언 후 UserRepositoryImpl에 구체적으로 생성한다.
 interface UserRepository {
 
+    //local 저장 관련 함수
     fun getAccessToken(): String?
 
     fun setAccessToken(accessToken: String)
@@ -34,6 +35,19 @@ interface UserRepository {
 
     fun setCurrentUserProfilePicUrl(profilePicUrl: String)
 
+    fun setPreferencesData(
+        accessToken: String,
+        refreshToken: String,
+        nickname: String,
+        email: String,
+        loginType: String,
+        imageUri: String
+    )
+
+    fun deletePreferencesData()
+    
+    //api 관련 함수
+
     fun getTokenResetData(
         refreshToken: String,
         accessToken: String,
@@ -45,17 +59,6 @@ interface UserRepository {
         loginType: String,
         imgUrl: String
     ): Single<Response<LoginResponse>>
-
-    fun setPreferencesData(
-        accessToken: String,
-        refreshToken: String,
-        nickname: String,
-        email: String,
-        loginType: String,
-        imageUri: String
-    )
-
-    fun deletePreferencesData()
 
     fun getAutoLoginData(
         refreshToken: String,
