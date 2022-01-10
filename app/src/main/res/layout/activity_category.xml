@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="activitiy"
+            type="com.coworkerteam.coworker.ui.category.CategoryActivity" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.category.CategoryActivity">
+
+        <TextView
+            android:id="@+id/btn_category_Turnover"
+            android:layout_width="88dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/category"
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:paddingTop="10dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="10dp"
+            android:text="이직"
+            android:textColor="@color/category_text"
+            android:textSize="14sp"
+            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_category_self_development"
+            app:layout_constraintEnd_toEndOf="@+id/btn_category_language_study"
+            app:layout_constraintStart_toStartOf="@+id/btn_category_language_study"
+            app:layout_constraintTop_toTopOf="@+id/btn_category_self_development" />
+
+        <TextView
+            android:id="@+id/btn_category_self_development"
+            android:layout_width="88dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/category"
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:paddingTop="10dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="10dp"
+            android:text="자기계발"
+            android:textColor="@color/category_text"
+            android:textSize="14sp"
+            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
+            app:layout_constraintEnd_toEndOf="@+id/btn_category_certificate"
+            app:layout_constraintStart_toStartOf="@+id/btn_category_certificate"
+            app:layout_constraintTop_toBottomOf="@+id/btn_category_certificate" />
+
+        <TextView
+            android:id="@+id/btn_category_other"
+            android:layout_width="88dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/category"
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:paddingTop="10dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="10dp"
+            android:text="기타"
+            android:textColor="@color/category_text"
+            android:textSize="14sp"
+            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_category_self_development"
+            app:layout_constraintEnd_toEndOf="@+id/btn_category_official"
+            app:layout_constraintStart_toStartOf="@+id/btn_category_official"
+            app:layout_constraintTop_toTopOf="@+id/btn_category_self_development" />
+
+        <TextView
+            android:id="@+id/btn_category_certificate"
+            android:layout_width="88dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/category"
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:paddingTop="10dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="10dp"
+            android:text="자격증"
+            android:textColor="@color/category_text"
+            android:textSize="14sp"
+            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
+            app:layout_constraintEnd_toEndOf="@+id/btn_category_sat"
+            app:layout_constraintStart_toStartOf="@+id/btn_category_sat"
+            app:layout_constraintTop_toBottomOf="@+id/btn_category_sat" />
+
+        <TextView
+            android:id="@+id/btn_category_official"
+            android:layout_width="88dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/category"
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:paddingTop="10dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="10dp"
+            android:text="고시/공시"
+            android:textColor="@color/category_text"
+            android:textSize="14sp"
+            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_category_certificate"
+            app:layout_constraintEnd_toEndOf="@+id/btn_category_employment"
+            app:layout_constraintStart_toStartOf="@+id/btn_category_employment"
+            app:layout_constraintTop_toTopOf="@+id/btn_category_certificate" />
+
+        <TextView
+            android:id="@+id/btn_category_language_study"
+            android:layout_width="88dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/category"
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:paddingTop="10dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="10dp"
+            android:text="어학"
+            android:textColor="@color/category_text"
+            android:textSize="14sp"
+            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_category_certificate"
+            app:layout_constraintEnd_toEndOf="@+id/btn_category_test_study"
+            app:layout_constraintStart_toStartOf="@+id/btn_category_test_study"
+            app:layout_constraintTop_toTopOf="@+id/btn_category_certificate" />
+
+        <TextView
+            android:id="@+id/textView28"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="공부하는\n목적이 무엇인가요?"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline19"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/btn_category_test_study"
+            android:layout_width="88dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/category"
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:paddingTop="10dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="10dp"
+            android:text="시험공부"
+            android:textColor="@color/category_text"
+            android:textSize="14sp"
+            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_category_sat"
+            app:layout_constraintEnd_toStartOf="@+id/btn_category_sat"
+            app:layout_constraintTop_toTopOf="@+id/btn_category_sat" />
+
+        <TextView
+            android:id="@+id/btn_category_sat"
+            android:layout_width="88dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/category"
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:paddingTop="10dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="10dp"
+            android:text="수능"
+            android:textColor="@color/category_text"
+            android:textSize="14sp"
+            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
+            app:layout_constraintEnd_toStartOf="@+id/guideline20"
+            app:layout_constraintStart_toStartOf="@+id/guideline20"
+            app:layout_constraintTop_toBottomOf="@+id/textView28" />
+
+        <TextView
+            android:id="@+id/btn_category_employment"
+            android:layout_width="88dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/category"
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:paddingTop="10dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="10dp"
+            android:text="취업"
+            android:textColor="@color/category_text"
+            android:textSize="14sp"
+            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_category_sat"
+            app:layout_constraintStart_toEndOf="@+id/btn_category_sat"
+            app:layout_constraintTop_toTopOf="@+id/btn_category_sat" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline19"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.34336525" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <Button
+            android:id="@+id/btn_category_next"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp"
+            android:background="@drawable/button_next"
+            android:text="다음"
+            android:textColor="@color/white"
+            android:onClick="@{()->activitiy.clickNextButton()}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/btn_category_employment"
+            app:layout_constraintStart_toStartOf="@+id/btn_category_test_study" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

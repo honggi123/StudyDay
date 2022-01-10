@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menuitem1"
+        android:icon="@drawable/ic_baseline_home_24"
+        android:title="홈" />
+    <item
+        android:id="@+id/menuitem2"
+        android:icon="@drawable/ic_baseline_menu_book_24"
+        android:title="내 스터디" />
+    <item
+        android:id="@+id/menuitem3"
+        android:icon="@drawable/ic_baseline_search_navi"
+        android:title="스터디 찾기" />
+    <item
+        android:id="@+id/menuitem4"
+        android:icon="@drawable/ic_baseline_bar_chart_24"
+        android:title="통계" />
+    <item
+        android:id="@+id/menuitem5"
+        android:icon="@drawable/ic_baseline_checklist_24"
+        android:title="투두리스트" />
+</menu>

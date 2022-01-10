@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_sheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/camstudy_bottom_menu_background"
+    android:orientation="vertical"
+    android:padding="5dp"
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="15dp"
+    app:layout_behavior="@string/bottom_sheet_behavior">
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="30dp"
+        android:layout_height="3dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="8dp"
+        app:srcCompat="@drawable/camstudy_bottom_menu_background_round" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="15dp"
+        android:foregroundGravity="center"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp">
+
+        <ImageButton
+            android:id="@+id/camstudy_btn_mic"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:background="@drawable/endter_camstudy_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_mic_24" />
+
+        <ImageButton
+            android:id="@+id/camstudy_btn_camera"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:background="@drawable/endter_camstudy_button"
+            app:layout_constraintBottom_toBottomOf="@+id/camstudy_btn_mic"
+            app:layout_constraintEnd_toStartOf="@+id/camstudy_btn_play"
+            app:layout_constraintStart_toEndOf="@+id/camstudy_btn_mic"
+            app:layout_constraintTop_toTopOf="@+id/camstudy_btn_mic"
+            app:srcCompat="@drawable/ic_baseline_videocam_24" />
+
+        <ImageButton
+            android:id="@+id/camstudy_btn_play"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:background="@drawable/camstudy_round_button"
+            app:layout_constraintBottom_toBottomOf="@+id/camstudy_btn_camera"
+            app:layout_constraintEnd_toStartOf="@+id/camstudy_btn_more"
+            app:layout_constraintStart_toEndOf="@+id/camstudy_btn_mic"
+            app:layout_constraintTop_toTopOf="@+id/camstudy_btn_camera"
+            app:srcCompat="@drawable/ic_baseline_play_arrow_24" />
+
+        <ImageButton
+            android:id="@+id/camstudy_btn_chat"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:background="@drawable/endter_camstudy_button"
+            app:layout_constraintBottom_toBottomOf="@+id/camstudy_btn_play"
+            app:layout_constraintEnd_toStartOf="@+id/camstudy_btn_more"
+            app:layout_constraintStart_toEndOf="@+id/camstudy_btn_play"
+            app:layout_constraintTop_toTopOf="@+id/camstudy_btn_play"
+            app:srcCompat="@drawable/ic_baseline_chat_24" />
+
+        <ImageButton
+            android:id="@+id/camstudy_btn_more"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:background="@drawable/endter_camstudy_button"
+            app:layout_constraintBottom_toBottomOf="@+id/camstudy_btn_chat"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/camstudy_btn_chat"
+            app:srcCompat="@drawable/ic_baseline_more_vert_32" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

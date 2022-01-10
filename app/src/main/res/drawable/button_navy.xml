@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="100dp" /> <!-- 모서리 기울기 -->
+    <solid android:color="@color/sub_color" /><!-- 배경색 -->
+    <padding
+        android:left="4dp"
+        android:right="4dp" />
+</shape>

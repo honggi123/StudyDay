@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".ui.todolist.TodoListActivity">
+
+            <include
+                android:id="@+id/main_toolber"
+                layout="@layout/main_toolbar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView78"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="달성률"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="@+id/guideline362"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout5" />
+
+            <ProgressBar
+                android:id="@+id/todo_list_progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="0dp"
+                android:layout_height="25dp"
+                android:layout_marginTop="10dp"
+                android:max="100"
+                android:progress="20"
+                android:progressDrawable="@drawable/progressbar"
+                app:layout_constraintEnd_toStartOf="@+id/guideline360"
+                app:layout_constraintStart_toStartOf="@+id/guideline362"
+                app:layout_constraintTop_toBottomOf="@+id/textView78" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline362"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.05" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline360"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.95" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_todolist"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="20dp"
+                app:layoutManager="LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideline360"
+                app:layout_constraintStart_toStartOf="@+id/guideline362"
+                app:layout_constraintTop_toBottomOf="@+id/todo_list_progress"
+                tools:itemCount="5"
+                tools:listitem="@layout/item_todolist" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/todo_list_floatingbtn_add_todolist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:clickable="true"
+                app:backgroundTint="@color/main_color"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/ic_baseline_add_24" />
+
+            <TextView
+                android:id="@+id/todo_list_txt_no_todolist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="오늘의 할일이 없습니다."
+                app:layout_constraintEnd_toStartOf="@+id/guideline360"
+                app:layout_constraintStart_toStartOf="@+id/guideline362"
+                app:layout_constraintTop_toBottomOf="@+id/rv_todolist" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/under_line_gray"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/main_toolber"
+                tools:layout_editor_absoluteX="165dp">
+
+                <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+                    android:id="@+id/calendarView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="10dp"
+                    app:mcv_selectionColor="#00F"
+                    app:mcv_showOtherDates="all"
+                    app:mcv_tileHeight="30dp" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!--자식 레이아웃. Navigation Drawer-->
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navigationView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            app:headerLayout="@layout/drawer_header"
+            app:menu="@menu/drawerlayout">
+
+            <include
+                layout="@layout/drawer_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom" />
+
+        </com.google.android.material.navigation.NavigationView>
+    </androidx.drawerlayout.widget.DrawerLayout>
+</layout>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_forcedexit"
+        android:title="스터디 강제퇴장"/>
+
+    <item
+        android:id="@+id/menu_forced_audio"
+        android:title="마이크 끄기"/>
+
+    <item
+        android:id="@+id/menu_forced_video"
+        android:title="카메라 끄기"/>
+
+</menu>

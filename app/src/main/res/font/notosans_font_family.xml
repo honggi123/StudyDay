@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <font
+        android:font="@font/notosans_light_hestia"
+        android:fontStyle="normal"
+        android:fontWeight="200"
+        app:font="@font/notosans_light_hestia"
+        app:fontStyle="normal"
+        app:fontWeight="200" />
+    <font
+        android:font="@font/notosans_demilight_hestia"
+        android:fontStyle="normal"
+        android:fontWeight="300"
+        app:font="@font/notosans_demilight_hestia"
+        app:fontStyle="normal"
+        app:fontWeight="300" />
+    <font
+        android:font="@font/notosans_regular_hestia"
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        app:font="@font/notosans_regular_hestia"
+        app:fontStyle="normal"
+        app:fontWeight="400" />
+    <font
+        android:font="@font/notosans_medium_hestia"
+        android:fontStyle="normal"
+        android:fontWeight="500"
+        app:font="@font/notosans_medium_hestia"
+        app:fontStyle="normal"
+        app:fontWeight="500" />
+    <font
+        android:font="@font/notosans_bold_hestia"
+        android:fontStyle="normal"
+        android:fontWeight="700"
+        app:font="@font/notosans_bold_hestia"
+        app:fontStyle="normal"
+        app:fontWeight="700" />
+</font-family>

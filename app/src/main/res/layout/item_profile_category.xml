@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/my_profile_edit_txt_test"
+        android:layout_width="83dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="4.5dp"
+        android:background="@drawable/category"
+        android:gravity="center"
+        android:paddingLeft="15dp"
+        android:paddingTop="10dp"
+        android:paddingRight="15dp"
+        android:paddingBottom="10dp"
+        android:text="시험공부"
+        android:textColor="@color/category_text"
+        android:textSize="13sp" />
+
+</LinearLayout>

@@ -1,0 +1,162 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+apply plugin: 'com.google.gms.google-services'
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.2"
+
+    defaultConfig {
+        applicationId "com.coworkerteam.coworker"
+        minSdkVersion 22
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "BASE_URL", "\"https://3.36.63.120\"")
+        }
+        debug {
+            buildConfigField("String", "BASE_URL", "\"https://3.36.63.120\"")
+        }
+    }
+    dataBinding {
+        enabled = true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    //코루틴
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2'
+
+    //google play 서비스
+    implementation 'com.google.android.gms:play-services-auth:19.2.0'
+
+    //네이버 로그인
+    implementation 'com.naver.nid:naveridlogin-android-sdk:4.2.6'// import from jcenter
+
+    //카카오 로그인
+    implementation "com.kakao.sdk:v2-user:2.8.1"
+
+    // naveridlogin dependencies
+    def android_x_version = "1.0.0"
+    implementation "androidx.appcompat:appcompat:$android_x_version"
+    implementation "androidx.legacy:legacy-support-core-utils:$android_x_version"
+    implementation "androidx.browser:browser:$android_x_version"
+    implementation "androidx.legacy:legacy-support-v4:$android_x_version"
+
+    //kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    //androidx
+    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'com.google.android.material:material:1.0.0-rc01'    //하단 바텀 메뉴를 위한것
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+
+    //jetpack
+    def lifecycle_version = "2.2.0"
+
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    // rxjava
+    implementation "io.reactivex.rxjava2:rxjava:2.2.0"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
+
+    // koin
+
+    // Current version
+    def koin_version = "3.1.2"
+    // Koin main features for Android (Scope,ViewModel ...)
+    implementation "io.insert-koin:koin-android:$koin_version"
+    // Koin Java Compatibility
+    implementation "io.insert-koin:koin-android-compat:$koin_version"
+    // Koin for Jetpack WorkManager
+    implementation "io.insert-koin:koin-androidx-workmanager:$koin_version"
+    // Koin for Jetpack Compose
+    implementation "io.insert-koin:koin-androidx-compose:$koin_version"
+
+    //원형의 Imageview 라이브러리
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    //페이징 라이브러리
+    implementation "androidx.paging:paging-runtime-ktx:3.0.1"
+
+    // Retrofit 라이브러리
+    implementation 'com.squareup.retrofit2:retrofit:2.6.4'
+    implementation "com.squareup.retrofit2:adapter-rxjava2:2.5.0"
+    // Gson 변환기 라이브러리
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.4'
+
+    // Scalars 변환기 라이브러리
+    implementation 'com.squareup.retrofit2:converter-scalars:2.6.4'
+
+    //그래프 그리는 라이브러리
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+    //프로그래스바 라이브러리
+    implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
+
+    //위클리 캘린더
+    implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'
+
+    //Glide (이미지 url 로딩) - 라이선스 다시한번 확인할 것
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+
+    //AWS S3
+    implementation 'com.amazonaws:aws-android-sdk-mobile-client:2.13.5'
+    implementation 'com.amazonaws:aws-android-sdk-cognito:2.13.5'
+    implementation 'com.amazonaws:aws-android-sdk-s3:2.13.5'
+
+    //appbar 캘린더
+    implementation 'com.github.sundeepk:compact-calendar-view:3.0.0'
+
+    //슬라이드 뷰
+    implementation 'com.sothree.slidinguppanel:library:3.4.0'
+
+    //Firebase 플랫폼
+    implementation platform('com.google.firebase:firebase-bom:29.0.3')
+
+    // Firebase Analytics
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+
+    // Web RTC
+//    implementation 'org.webrtc:google-webrtc:1.0.32006'
+
+    //socket io
+    implementation('io.socket:socket.io-client:1.0.0') {
+        exclude group: 'org.json', module: 'json'
+    }
+
+    //권한 라이브러리
+    implementation 'pub.devrel:easypermissions:1.1.3'
+
+    implementation files('libs/autobanh.jar')
+    implementation files('libs/base_java.jar')
+    implementation files('libs/libjingle_peerconnection.jar')
+}

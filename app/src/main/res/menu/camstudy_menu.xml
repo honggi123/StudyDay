@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/camera_chang"
+        android:icon="@drawable/ic_baseline_flip_camera_ios_24"
+        android:title="카메라 전환"
+        app:showAsAction="always" />
+</menu>

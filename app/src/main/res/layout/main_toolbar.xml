@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/camstudy_layout_toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/main_color"
+    app:titleTextColor="@color/white">
+
+    <ImageView
+        android:id="@+id/main_toolbar_makeStudy"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_gravity="right"
+        android:layout_marginRight="20dp"
+        app:srcCompat="@drawable/add" />
+</androidx.appcompat.widget.Toolbar>
