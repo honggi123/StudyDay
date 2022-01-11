@@ -1,4 +1,5 @@
 package com.coworkerteam.coworker.ui.camstudy.cam
+
 import android.widget.Toast
 
 import android.content.*
@@ -35,8 +36,6 @@ import android.content.ClipData
 import android.R.attr.name
 
 
-
-
 class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel>() {
     val TAG = "CamStudyActivity"
 
@@ -55,6 +54,10 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     var timer: Int? = null
     var studyInfo: EnterCamstudyResponse? = null
+    var receiver: String? = null
+
+    var chatDialogView: View? = null
+    var member = ArrayList<String>()
 
 
     override fun initStartView() {
@@ -201,15 +204,16 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
         btn_chat.setOnClickListener(View.OnClickListener {
             Log.d(TAG, "btn_chat 클릭")
-            val dialogView: View = layoutInflater.inflate(R.layout.camstudy_chat, null)
+            chatDialogView = layoutInflater.inflate(R.layout.camstudy_chat, null)
             val dialog = BottomSheetDialog(this, R.style.NewDialog)
-            dialog.setContentView(dialogView)
+            dialog.setContentView(chatDialogView!!)
             dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-            chat_rv = dialogView.findViewById<RecyclerView>(R.id.camstudy_chat_recycler)
-            val spinner_sender = dialogView.findViewById<Spinner>(R.id.camstudy_chat_spinner_sender)
-            val edt_chat = dialogView.findViewById<EditText>(R.id.camstudy_chat_edt_message)
-            val btn_chat = dialogView.findViewById<ImageView>(R.id.camstudy_chat_btn_send)
+            chat_rv = chatDialogView!!.findViewById<RecyclerView>(R.id.camstudy_chat_recycler)
+            val spinner_sender =
+                chatDialogView!!.findViewById<Spinner>(R.id.camstudy_chat_spinner_sender)
+            val edt_chat = chatDialogView!!.findViewById<EditText>(R.id.camstudy_chat_edt_message)
+            val btn_chat = chatDialogView!!.findViewById<ImageView>(R.id.camstudy_chat_btn_send)
 
             chat_recyclerview_init(CamStudyService.chatDate)
 
@@ -219,21 +223,35 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 var dataformat = SimpleDateFormat("a HH:mm", Locale.KOREA)
                 var time = dataformat.format(System.currentTimeMillis())
 
-                val bundle = Bundle()
-                bundle.putString("msg", chat)
+                if (receiver.equals("모두에게")) {
+                    val bundle = Bundle()
+                    bundle.putString("msg", chat)
 
-                val msg: Message = Message.obtain(null, CamStudyService.MSG_TOTAL_MESSAGE)
-                msg.obj = bundle
-                sendHandlerMessage(msg)
-                CamStudyService.chatDate.add(Chat("total", "나", chat, time))
+                    val msg: Message = Message.obtain(null, CamStudyService.MSG_TOTAL_MESSAGE)
+                    msg.obj = bundle
+                    sendHandlerMessage(msg)
+                    CamStudyService.chatDate.add(Chat("total", "나", null, chat, time))
 
-                chat_recyclerview_init(CamStudyService.chatDate)
+                    chat_recyclerview_init(CamStudyService.chatDate)
+                } else {
+                    val bundle = Bundle()
+                    bundle.putString("msg", chat)
+                    bundle.putString("receiver", receiver)
+
+                    val msg: Message = Message.obtain(null, CamStudyService.MSG_WHISPER_MESSAGE)
+                    msg.obj = bundle
+                    sendHandlerMessage(msg)
+                    CamStudyService.chatDate.add(Chat("total", "나", receiver, chat, time))
+
+                    chat_recyclerview_init(CamStudyService.chatDate)
+                }
             })
 
-            spinnerInit(dialogView)
+            spinnerInit(chatDialogView, member.toTypedArray())
 
             dialog.setOnDismissListener(DialogInterface.OnDismissListener {
                 chat_rv = null
+                chatDialogView = null
             })
 
             dialog.show()
@@ -289,38 +307,35 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         })
     }
 
-    fun spinnerInit(view: View) {
-        //스피너
-        val data = arrayOf("모두에게", "이현주", "암ㄴ옮ㄴ아롬니올먼올머ㅏ농러ㅏ")
+    fun spinnerInit(view: View?, member: Array<String>) {
+        if (view != null) {
+            //스피너
+            member.set(0, "모두에게")
+            val data = member
 
-        val adapter = ArrayAdapter(this, R.layout.spinner_item_selected_gray, data)
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+            val adapter = ArrayAdapter(this, R.layout.spinner_item_selected_gray, data)
+            adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
 
-        val spinner_new = view.findViewById<Spinner>(R.id.camstudy_chat_spinner_sender)
-        spinner_new.adapter = adapter
-        spinner_new.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>,
-                view: View,
-                position: Int,
-                id: Long
-            ) {
-//                if (parent.getItemAtPosition(position).toString() == "오픈스터디") {
-//                    NewStudyShowOpen = true
-//                    if(setData) {
-//                        NewStudy_init()
-//                    }
-//                } else {
-//                    NewStudyShowOpen = false
-//                    if(setData) {
-//                        NewStudy_init()
-//                    }
-//                }
+            val spinner_new = view.findViewById<Spinner>(R.id.camstudy_chat_spinner_sender)
+            spinner_new.adapter = adapter
+            spinner_new.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View,
+                    position: Int,
+                    id: Long
+                ) {
+                    if (parent.getItemAtPosition(position).toString() == "모두에게") {
+                        receiver = "모두에게"
+                    } else {
+                        receiver = parent.getItemAtPosition(position).toString()
+                    }
 
-            }
+                }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {
+                override fun onNothingSelected(parent: AdapterView<*>) {
 
+                }
             }
         }
     }
@@ -379,8 +394,9 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 CamStudyService.MSG_CAMSTUDY_ITEM -> {
                     //캠스터디 아이템
                     val bundle = msg.obj as Bundle
-                    val member = bundle.getStringArrayList("member")!!.toMutableList()
-                    recyclerview_init(member, CamStudyService.peerConnection)
+                    member = bundle.getStringArrayList("member")!!
+                    recyclerview_init(member.toMutableList(), CamStudyService.peerConnection)
+                    spinnerInit(chatDialogView, member.toTypedArray())
                 }
                 CamStudyService.MSG_RECEIVED_MESSAGE -> {
                     //채팅 아이템

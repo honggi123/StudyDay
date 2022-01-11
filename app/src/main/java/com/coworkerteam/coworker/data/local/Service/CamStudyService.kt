@@ -350,11 +350,13 @@ class CamStudyService : Service() {
                                 "receivedMessage" -> {
                                     //채팅 받는 이벤트
                                     Log.d(TAG, "receivedMessage")
+                                    val receiver = if(message.getString("type").equals("total")) null else "나"
 
                                     chatDate.add(
                                         Chat(
                                             message.getString("type"),
                                             message.getString("sender"),
+                                            receiver,
                                             message.getString("msg"),
                                             message.getString("time")
                                         )
@@ -785,12 +787,12 @@ class CamStudyService : Service() {
                 MSG_WHISPER_MESSAGE -> {
                     //귓속말 보내기
                     val message = JSONObject()
-                    val chatting = msg.obj as Chat
+                    val chatting = msg.obj as Bundle
                     message.put("id", "whisperMessage")
                     message.put("room", room)
                     message.put("sender", hostname)
-                    message.put("msg", chatting.msg)
-                    message.put("receiver", adaperDate.get(0))
+                    message.put("msg", chatting.getString("msg"))
+                    message.put("receiver", chatting.getString("receiver"))
                     sendMessage(message)
                 }
                 MSG_HOST_AUDIO_ON_OFF -> {
