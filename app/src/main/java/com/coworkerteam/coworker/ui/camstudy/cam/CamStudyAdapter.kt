@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.coworkerteam.coworker.data.local.Service.CamStudyService
+import com.coworkerteam.coworker.data.local.service.CamStudyService
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.other.Participant
 import de.hdodenhof.circleimageview.CircleImageView

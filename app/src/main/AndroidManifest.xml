@@ -49,7 +49,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <!-- Redirect URI: "kakao{NATIVE_APP_KEY}://oauth" -->
                 <data
                     android:host="oauth"
                     android:scheme="kakao8017cd7866917e1c96fbb041dba3a4ab" />
@@ -68,7 +67,7 @@
         <activity android:name=".ui.main.MainActivity" />
 
         <service
-            android:name=".data.local.Service.CamStudyService"
+            android:name=".data.local.service.CamStudyService"
             android:enabled="true"
             android:exported="true" />
         <service

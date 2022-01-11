@@ -1,11 +1,8 @@
 package com.coworkerteam.coworker.ui.camstudy.cam
 
-import android.widget.Toast
-
 import android.content.*
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.media.Image
 import android.os.*
 import android.util.Log
 import android.view.Menu
@@ -13,11 +10,9 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
-import com.coworkerteam.coworker.data.local.Service.CamStudyService
+import com.coworkerteam.coworker.data.local.service.CamStudyService
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
-import com.coworkerteam.coworker.data.model.other.CamStudyHandler
-import com.coworkerteam.coworker.data.model.other.CamStudyServiceData
 import com.coworkerteam.coworker.data.model.other.Chat
 import com.coworkerteam.coworker.data.model.other.Participant
 import com.coworkerteam.coworker.databinding.ActivityCamStudyBinding
@@ -32,8 +27,6 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import android.content.ClipData
-
-import android.R.attr.name
 
 
 class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel>() {

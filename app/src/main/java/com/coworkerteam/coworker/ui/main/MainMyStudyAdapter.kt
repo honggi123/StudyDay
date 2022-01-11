@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.coworkerteam.coworker.data.local.Service.CamStudyService
+import com.coworkerteam.coworker.data.local.service.CamStudyService
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.MainResponse
 import com.coworkerteam.coworker.utils.ScreenSizeUtils

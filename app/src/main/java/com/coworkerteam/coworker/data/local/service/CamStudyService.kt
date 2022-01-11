@@ -1,10 +1,9 @@
-package com.coworkerteam.coworker.data.local.Service
+package com.coworkerteam.coworker.data.local.service
 
 import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
 import android.os.*
-import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
@@ -14,11 +13,9 @@ import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
 import com.coworkerteam.coworker.data.local.prefs.PreferencesHelper
 import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
 import com.coworkerteam.coworker.data.model.api.ParticipantsResponse
-import com.coworkerteam.coworker.data.model.other.CamStudyHandler
 import com.coworkerteam.coworker.data.model.other.CamStudyServiceData
 import com.coworkerteam.coworker.data.model.other.Chat
 import com.coworkerteam.coworker.data.model.other.Participant
-import com.coworkerteam.coworker.ui.camstudy.cam.CamStudyActivity
 import com.google.gson.Gson
 import io.socket.client.IO
 import io.socket.client.Socket
@@ -27,7 +24,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import okhttp3.OkHttpClient
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import org.webrtc.*

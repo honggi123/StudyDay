@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
-import com.coworkerteam.coworker.data.local.Service.CamStudyService
+import com.coworkerteam.coworker.data.local.service.CamStudyService
 
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse

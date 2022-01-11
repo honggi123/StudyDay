@@ -9,13 +9,10 @@ import android.os.*
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
-import android.widget.ImageButton
 import android.widget.TextView
-import com.coworkerteam.coworker.data.local.Service.CamStudyService
+import com.coworkerteam.coworker.data.local.service.CamStudyService
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.ParticipantsResponse
-import com.coworkerteam.coworker.data.model.other.CamStudyHandler
-import com.coworkerteam.coworker.data.model.other.Chat
 import com.coworkerteam.coworker.databinding.ActivityParticipantsBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel

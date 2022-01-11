@@ -13,10 +13,9 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.coworkerteam.coworker.data.local.Service.CamStudyService
+import com.coworkerteam.coworker.data.local.service.CamStudyService
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.ParticipantsResponse
-import com.coworkerteam.coworker.data.model.other.CamStudyHandler
 
 class ParticipantsAdapter(private val context: Context,private val mServiceCallback: Messenger?) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
