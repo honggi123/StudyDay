@@ -1,8 +1,10 @@
 package com.coworkerteam.coworker.ui.camstudy.cam
+import android.widget.Toast
 
 import android.content.*
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.media.Image
 import android.os.*
 import android.util.Log
 import android.view.Menu
@@ -28,6 +30,12 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import android.content.ClipData
+
+import android.R.attr.name
+
+
+
 
 class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel>() {
     val TAG = "CamStudyActivity"
@@ -99,7 +107,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     }
 
     fun recyclerview_init(data: MutableList<String>, hash: HashMap<String, Participant>) {
-        Log.d(TAG,"도착한 메세지로 recyclerview_init를 실행"+data.size)
+        Log.d(TAG, "도착한 메세지로 recyclerview_init를 실행" + data.size)
         var recyclerNewStudy: RecyclerView =
             findViewById(R.id.cam_study_rv)
         var newAdapter = CamStudyAdapter(this)
@@ -212,7 +220,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 var time = dataformat.format(System.currentTimeMillis())
 
                 val bundle = Bundle()
-                bundle.putString("msg",chat)
+                bundle.putString("msg", chat)
 
                 val msg: Message = Message.obtain(null, CamStudyService.MSG_TOTAL_MESSAGE)
                 msg.obj = bundle
@@ -248,8 +256,16 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 dialogView.findViewById<TextView>(R.id.camstudy_bottom_menu_mystudy_info)
             val txt_studyUrl =
                 dialogView.findViewById<TextView>(R.id.camstudy_bottom_menu_link)
+            val btn_studyUrl_copy =
+                dialogView.findViewById<ImageView>(R.id.camstudy_bottom_menu_link_copy)
 
             txt_studyUrl.text = studyInfo!!.result.studyInfo.link
+
+            btn_studyUrl_copy.setOnClickListener(View.OnClickListener {
+                val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("label", studyInfo!!.result.studyInfo.link)
+                clipboard.setPrimaryClip(clip)
+            })
 
             btn_participants.setOnClickListener(View.OnClickListener {
                 val intent = Intent(this, ParticipantsActivity::class.java)
@@ -358,7 +374,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     inner class CallbackHandler(looper: Looper) : Handler(looper) {
         override fun handleMessage(msg: Message) {
-            Log.d(TAG,"Activity에 메세지 도착"+msg.toString())
+            Log.d(TAG, "Activity에 메세지 도착" + msg.toString())
             when (msg.what) {
                 CamStudyService.MSG_CAMSTUDY_ITEM -> {
                     //캠스터디 아이템
@@ -374,7 +390,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     //종료시 타이머 가져오기
                     stopCamstudy(msg.arg1, msg.arg2)
                 }
-                CamStudyService.MSG_LEADER_FORCED_EXIT ->{
+                CamStudyService.MSG_LEADER_FORCED_EXIT -> {
                     //리더에게 추방
                     val msg: Message = Message.obtain(null, CamStudyService.MSG_COMSTUDY_LEFT)
                     sendHandlerMessage(msg)
