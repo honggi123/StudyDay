@@ -12,11 +12,9 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.StatisticsResponse
 import com.coworkerteam.coworker.data.model.other.CustBarChart
-import com.coworkerteam.coworker.data.model.other.CustBarChartRenderer
+import com.coworkerteam.coworker.data.model.other.StatisticsMarkerView
 import com.coworkerteam.coworker.databinding.ActivityStatisticsBinding
-import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.base.NavigationAcitivity
-import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
@@ -72,6 +70,7 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
 
     val pieEntries = ArrayList<PieEntry>()
     val barEntries = ArrayList<BarEntry>()
+    val markerStrings = ArrayList<String>()
 
     override fun initStartView() {
         super.initStartView()
@@ -101,7 +100,7 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
                 selectDate = apiDateFormat.format(dateClicked)
                 Log.d(TAG, selectDate)
                 viewModel.getStatisticsData("old", selectDate, period)
-                setWeeklyTime(selectDate)
+                setRangeTime(selectDate)
             }
 
             override fun onMonthScroll(firstDayOfNewMonth: Date?) {
@@ -127,10 +126,10 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
         }
 
         init()
-        setWeeklyTime(getToday())
+        setRangeTime(getToday())
         viewModel.getStatisticsData("start", getToday(), period)
 
-        Log.d("일주일 테스트", dateComputer(getToday()))
+        Log.d("일주일 테스트", dateRangeComputer(getToday()))
     }
 
     override fun initDataBinding() {
@@ -163,6 +162,8 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
                 pieChart()
 
                 barEntries.clear()
+                markerStrings.clear()
+
                 if (statisticsResponse.weekTimeAcheive != null) {
                     viewDataBinding.timeAVG = it.body()!!.weekTimeAVG.hour+"시간 "+it.body()!!.weekTimeAVG.min+"분"
                     viewDataBinding.todoAVG = it.body()!!.weekTodoAVG+"%"
@@ -171,8 +172,16 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
                     var x = 0
                     statisticsResponse.weekTimeAcheive.forEach { i ->
                         var hour = if (i.hour != null) i.hour else 0
-                        x++
+
                         barEntries.add(BarEntry(x.toFloat(), hour.toFloat()))
+
+                        val timeAcheive = i.timeRate?:"없음"
+                        val todoAcheive = statisticsResponse.weekTodoAcheive.get(x).acheiveRate?:"없음"
+                        val text = "공부시간 달성률 : "+timeAcheive+" \n"+"계획 달성률 : "+todoAcheive
+                        markerStrings.add(text)
+
+                        x++
+
                         Log.d(TAG, x.toString())
                     }
                     barChart()
@@ -184,8 +193,16 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
                     Log.d(TAG, statisticsResponse.monthTimeAcheive.size.toString())
                     statisticsResponse.monthTimeAcheive.forEach { i ->
                         var hour = if (i.hour != null) i.hour else 0
-                        x++
+
                         barEntries.add(BarEntry(x.toFloat(), hour.toFloat()))
+
+                        val timeAcheive = i.timeRate?:"없음"
+                        val todoAcheive = statisticsResponse.monthTodoAcheive.get(x).acheiveRate?:"없음"
+                        val text = "공부시간 달성률 : "+timeAcheive+" \n"+"계획 달성률 : "+todoAcheive
+                        markerStrings.add(text)
+
+                        x++
+
                         Log.d(TAG, x.toString())
                     }
                     barChart()
@@ -198,16 +215,13 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
     }
 
     fun init() {
-
         val sortWeekly = findViewById<TextView>(R.id.statistics_txt_weekly)
-
         sortWeekly.setSelected(true)
-
     }
 
-    fun setWeeklyTime(today: String) {
-        val weekly_range = findViewById<TextView>(R.id.statistics_txt_weekly_times)
-        weekly_range.text = dateComputer(today)
+    fun setRangeTime(today: String) {
+        val dateRange = findViewById<TextView>(R.id.statistics_txt_weekly_times)
+        dateRange.text = dateRangeComputer(today)
     }
 
     fun getToday(): String {
@@ -318,17 +332,22 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
         dataSet.add(set)
         val data = BarData(dataSet)
         data.barWidth = 0.7f //막대 너비 설정
+        val barMarker = StatisticsMarkerView(this,R.layout.custom_marker_view,markerStrings)
         barchart.run {
             this.data = data //차트의 데이터를 data로 설정해줌.
             setFitBars(true)
             invalidate()
+            setTouchEnabled(true)
+            setScaleEnabled(false)
         }
+        barMarker.chartView = barchart
+        barchart.marker = barMarker
     }
 
     inner class MyXAxisFormatter : ValueFormatter() {
         private val days = arrayOf("월", "화", "수", "목", "금", "토", "일")
         override fun getAxisLabel(value: Float, axis: AxisBase?): String {
-            return days.getOrNull(value.toInt() - 1) ?: value.toString()
+            return days.getOrNull(value.toInt()) ?: value.toString()
         }
     }
 
@@ -342,16 +361,18 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
             view.isSelected = true
             viewDataBinding.statisticsMenthly.isSelected = false
             viewModel.getStatisticsData("old", selectDate, period)
+            setRangeTime(selectDate)
         } else if (name.equals("월간")) {
             period = "month"
             view.isSelected = true
             viewDataBinding.statisticsTxtWeekly.isSelected = false
             viewModel.getStatisticsData("old", selectDate, period)
+            setRangeTime(selectDate)
         }
 
     }
 
-    fun dateComputer(today: String): String {
+    fun dateRangeComputer(today: String): String {
         var todays = today.split("-")
         var cal = Calendar.getInstance()
         val simpleDateFormat = SimpleDateFormat("yyyy.MM.dd", Locale.KOREAN)
@@ -367,13 +388,20 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
         var dayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - cal.firstDayOfWeek
 
 
-        cal.add(Calendar.DAY_OF_MONTH, -dayOfWeek)
-        val firstDay = simpleDateFormat.format(cal.time)
-        cal.add(Calendar.DAY_OF_MONTH, 6);
+        if(period.equals("month")) {
+            cal.set(Calendar.DAY_OF_MONTH,1)
+            val firstDay = simpleDateFormat.format(cal.time)
+            cal.set(Calendar.DAY_OF_MONTH,cal.getActualMaximum(Calendar.DAY_OF_MONTH))
+            val lastDay = simpleDateFormat.format(cal.time)
+            return firstDay + " ~ " + lastDay
+        }else{
+            cal.add(Calendar.DAY_OF_MONTH, -dayOfWeek)
+            val firstDay = simpleDateFormat.format(cal.time)
+            cal.add(Calendar.DAY_OF_MONTH, 6);
 
-        val lastDay = simpleDateFormat.format(cal.time)
-
-        return firstDay + " ~ " + lastDay
+            val lastDay = simpleDateFormat.format(cal.time)
+            return firstDay + " ~ " + lastDay
+        }
     }
 
 

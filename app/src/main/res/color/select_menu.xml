@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- View가 눌렸을 때 @color/colorAccent 색상으로 출력한다.-->
+    <item android:color="@color/white" android:state_selected="true"/>
+
+    <!-- View가 눌리지 않았을 때 @color/colorPrimaryDark 색상으로 출력한다.-->
+    <item android:color="@color/black" android:state_selected="false"/>
+</selector>

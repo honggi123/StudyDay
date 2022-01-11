@@ -214,18 +214,18 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginRight="8dp"
                                 android:background="@drawable/statistics"
+                                android:onClick="@{(view)->activitiy.changDay(view)}"
                                 android:text="주간"
-                                android:textColor="@color/category_text"
-                                android:onClick="@{(view)->activitiy.changDay(view)}"/>
+                                android:textColor="@color/select_menu" />
 
                             <TextView
                                 android:id="@+id/statistics_menthly"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/statistics"
+                                android:onClick="@{(view)->activitiy.changDay(view)}"
                                 android:text="월간"
-                                android:textColor="@color/category_text"
-                                android:onClick="@{(view)->activitiy.changDay(view)}"/>
+                                android:textColor="@color/select_menu" />
 
                         </LinearLayout>
 
@@ -233,7 +233,7 @@
                             android:id="@+id/statistics_barChart"
                             android:layout_width="match_parent"
                             android:layout_height="200dp"
-                            android:layout_marginBottom="30dp"
+                            android:layout_marginBottom="15dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintRight_toRightOf="parent"
