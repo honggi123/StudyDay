@@ -1,6 +1,5 @@
 package com.coworkerteam.coworker.di.module
 
-import com.coworkerteam.coworker.CamStudyService
 import com.coworkerteam.coworker.data.UserRepository
 import com.coworkerteam.coworker.data.UserRepositoryImpl
 import com.coworkerteam.coworker.ui.base.BaseViewModel

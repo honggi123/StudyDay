@@ -1,4 +1,4 @@
-package com.coworkerteam.coworker;
+package com.coworkerteam.coworker.data.local.Service;
 
 import org.webrtc.SdpObserver;
 import org.webrtc.SessionDescription;

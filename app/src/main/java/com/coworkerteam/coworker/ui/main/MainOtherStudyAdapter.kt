@@ -1,10 +1,8 @@
 package com.coworkerteam.coworker.ui.main
 import android.app.Activity
 import android.util.Log
-import android.widget.Toast
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
@@ -17,10 +15,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.coworkerteam.coworker.CamStudyService
+import com.coworkerteam.coworker.data.local.Service.CamStudyService
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.MainResponse
-import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.utils.ScreenSizeUtils
 import com.google.android.material.textfield.TextInputEditText
 

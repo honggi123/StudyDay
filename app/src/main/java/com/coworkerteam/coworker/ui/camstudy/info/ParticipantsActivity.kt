@@ -1,13 +1,21 @@
 package com.coworkerteam.coworker.ui.camstudy.info
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.graphics.Color
-import android.os.Bundle
+import android.os.*
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
+import android.widget.ImageButton
 import android.widget.TextView
-import com.coworkerteam.coworker.CamStudyService
+import com.coworkerteam.coworker.data.local.Service.CamStudyService
 import com.coworkerteam.coworker.R
+import com.coworkerteam.coworker.data.model.api.ParticipantsResponse
+import com.coworkerteam.coworker.data.model.other.CamStudyHandler
+import com.coworkerteam.coworker.data.model.other.Chat
 import com.coworkerteam.coworker.databinding.ActivityParticipantsBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -20,6 +28,9 @@ class ParticipantsActivity : BaseActivity<ActivityParticipantsBinding, Participa
         get() = R.layout.activity_participants
     override val viewModel: ParticipantsViewModel by viewModel()
 
+    private var mServiceCallback: Messenger? = null
+    private var mClientCallback = Messenger(CallbackHandler(Looper.getMainLooper()))
+
     override fun initStartView() {
         var main_toolbar: androidx.appcompat.widget.Toolbar =
             findViewById(R.id.camstudy_layout_toolbar)
@@ -30,12 +41,19 @@ class ParticipantsActivity : BaseActivity<ActivityParticipantsBinding, Participa
         supportActionBar?.setDisplayShowTitleEnabled(false) // 툴바에 타이틀 안보이게
 
         init()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            //오레오 버전 이상일 경우
+            var intent = Intent(this, CamStudyService::class.java)
+            bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
+        } else {
+            //오레오 버전 이하일 경우
+        }
     }
 
     override fun initDataBinding() {
         CamStudyService.participantLiveData.observe(this, androidx.lifecycle.Observer {
-            var newAdapter: ParticipantsAdapter = ParticipantsAdapter(this)
-                newAdapter.datas = it.participants.toMutableList()
+            var newAdapter: ParticipantsAdapter = ParticipantsAdapter(this, mServiceCallback!!)
+            newAdapter.datas = it.participants.toMutableList()
             viewDataBinding.participantsRv.adapter = newAdapter
 
             val txt_peple = findViewById<TextView>(R.id.camstudy_info_toolbar_peple)
@@ -45,6 +63,11 @@ class ParticipantsActivity : BaseActivity<ActivityParticipantsBinding, Participa
     }
 
     override fun initAfterBinding() {
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(mConnection)
     }
 
     fun init() {
@@ -66,5 +89,34 @@ class ParticipantsActivity : BaseActivity<ActivityParticipantsBinding, Participa
         return builder
     }
 
+    private var mConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            mServiceCallback = Messenger(service)
 
+            //서비스랑 연결
+            val connectMsg = Message.obtain(null, CamStudyService.MSG_CLIENT_CONNECT)
+            connectMsg.replyTo = mClientCallback
+
+            try {
+                mServiceCallback!!.send(connectMsg)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            mServiceCallback = null
+        }
+    }
+
+    inner class CallbackHandler(looper: Looper) : Handler(looper) {
+        override fun handleMessage(msg: Message) {
+            when (msg.what) {
+                CamStudyService.MSG_PARTICIPANTS_ITEM -> {
+                    //캠스터디 아이템
+                    var obj = msg.obj as ParticipantsResponse
+                }
+            }
+        }
+    }
 }

@@ -1,22 +1,20 @@
 package com.coworkerteam.coworker.ui.camstudy.cam
 
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.*
 import android.util.Log
-
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
-import com.coworkerteam.coworker.CamStudyService
+import com.coworkerteam.coworker.data.local.Service.CamStudyService
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
 import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
 import com.coworkerteam.coworker.data.model.other.CamStudyHandler
+import com.coworkerteam.coworker.data.model.other.CamStudyServiceData
 import com.coworkerteam.coworker.data.model.other.Chat
 import com.coworkerteam.coworker.data.model.other.Participant
 import com.coworkerteam.coworker.databinding.ActivityCamStudyBinding
@@ -32,18 +30,14 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel>() {
-
-
     val TAG = "CamStudyActivity"
 
     override val layoutResourceID: Int
         get() = R.layout.activity_cam_study
     override val viewModel: CamStudyViewModel by viewModel()
 
-    companion object {
-        var handler: Handler? = null
-
-    }
+    private var mServiceCallback: Messenger? = null
+    private var mClientCallback = Messenger(CallbackHandler(Looper.getMainLooper()))
 
     var chat_rv: RecyclerView? = null
 
@@ -51,8 +45,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     var isVideo = true
     var isPlay = false
 
-    var timer : Int? = null
-    var studyInfo : EnterCamstudyResponse? = null
+    var timer: Int? = null
+    var studyInfo: EnterCamstudyResponse? = null
 
 
     override fun initStartView() {
@@ -65,16 +59,18 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         supportActionBar?.setDisplayShowTitleEnabled(false) // 툴바에 타이틀 안보이게
 
         init()
-        handler_init()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            //오레오 버전 이상일 경우
             var intent = Intent(this, CamStudyService::class.java)
             intent.putExtra("audio", isMic)
             intent.putExtra("video", isVideo)
-            intent.putExtra("cameraSwith","front")
-            intent.putExtra("studyInfo",studyInfo)
-            intent.putExtra("timer",timer)
-            startService(intent)
+            intent.putExtra("cameraSwith", "front")
+            intent.putExtra("studyInfo", studyInfo)
+            intent.putExtra("timer", timer)
+            bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
+        } else {
+            //오레오 버전 이하일 경우
         }
     }
 
@@ -90,57 +86,20 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         isMic = intent.getBooleanExtra("audio", false)
         isVideo = intent.getBooleanExtra("video", false)
         studyInfo = intent.getSerializableExtra("studyInfo") as EnterCamstudyResponse?
-        timer = intent.getIntExtra("timer",0)
+        timer = intent.getIntExtra("timer", 0)
     }
 
-    fun handler_init() {
-        handler = Handler(Looper.getMainLooper()) {
-            when (it.what) {
-                0 -> {
-                    //캠스터디 아이템
-                    var obj = it.obj as CamStudyHandler
-                    recyclerview_init(obj.data, obj.hash)
-                }
-                1 -> {
-                    //채팅 아이템
-                    var obj = it.obj as ArrayList<Chat>
-                    chat_recyclerview_init(obj)
-                }
-                2 -> {
-                    //종료시 타이머 가져오기
-                    stopCamstudy(it.arg1,it.arg2)
-                    Log.d("핸들러","핸들러 메시지 테스트 Service")
-                }
-                3 ->{
-                    //리더에게 마이크 off
-                    val btn_mic = findViewById<ImageButton>(R.id.camstudy_btn_mic)
-
-                    isMic = false
-                    btn_mic.isSelected = true
-                }
-                4 ->{
-                    //리더에게 카메라 off
-                    val btn_camera = findViewById<ImageButton>(R.id.camstudy_btn_camera)
-
-                    isVideo = false
-                    btn_camera.isSelected = true
-                }
-            }
-            true
-        }
-
-    }
-
-    fun stopCamstudy(studyTime:Int, restTime:Int){
+    fun stopCamstudy(studyTime: Int, restTime: Int) {
         var studyIdx = studyInfo!!.result.studyInfo.idx
-        var studyTimeValue = if ( studyTime < 0) 0 else studyTime
+        var studyTimeValue = if (studyTime < 0) 0 else studyTime
 
-        viewModel.getCamstduyLeaveData(studyIdx!!,studyTimeValue,restTime)
-        stopService(Intent(this, CamStudyService::class.java))
+        viewModel.getCamstduyLeaveData(studyIdx!!, studyTimeValue, restTime)
+        unbindService(mConnection)
         finish()
     }
 
     fun recyclerview_init(data: MutableList<String>, hash: HashMap<String, Participant>) {
+        Log.d(TAG,"도착한 메세지로 recyclerview_init를 실행"+data.size)
         var recyclerNewStudy: RecyclerView =
             findViewById(R.id.cam_study_rv)
         var newAdapter = CamStudyAdapter(this)
@@ -156,7 +115,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             newAdapter.datas = data.toMutableList()
 
             chat_rv!!.adapter = newAdapter
-            chat_rv!!.scrollToPosition(newAdapter.itemCount-1)
+            chat_rv!!.scrollToPosition(newAdapter.itemCount - 1)
         }
     }
 
@@ -174,14 +133,14 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
         btn_end.setOnClickListener(View.OnClickListener {
             //종료하기 캠스터디
-            CamStudyService.handler!!.sendEmptyMessage(7)
+            val msg: Message = Message.obtain(null, CamStudyService.MSG_COMSTUDY_LEFT)
+            sendHandlerMessage(msg)
         })
 
         btn_mic.setOnClickListener(View.OnClickListener {
             Log.d(TAG, "btn_mic 클릭")
 
-            var msg = Message()
-            msg.what = 2
+            val msg: Message = Message.obtain(null, CamStudyService.MSG_HOST_AUDIO_ON_OFF)
 
             if (isMic) {
                 isMic = false
@@ -193,13 +152,13 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 it.isSelected = false
             }
 
-            CamStudyService.handler!!.sendMessage(msg)
+            sendHandlerMessage(msg)
         })
 
         btn_camera.setOnClickListener(View.OnClickListener {
             Log.d(TAG, "btn_camera 클릭")
-            var msg = Message()
-            msg.what = 3
+            val msg: Message = Message.obtain(null, CamStudyService.MSG_HOST_VIDEO_ON_OFF)
+
             if (isVideo) {
                 isVideo = false
                 msg.obj = "off"
@@ -209,7 +168,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 msg.obj = "on"
                 it.isSelected = false
             }
-            CamStudyService.handler!!.sendMessage(msg)
+
+            sendHandlerMessage(msg)
         })
 
         btn_play.setOnClickListener(View.OnClickListener {
@@ -219,14 +179,18 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 isPlay = false
                 it.isSelected = false
 
-                CamStudyService.handler!!.sendEmptyMessage(6)
+                val msg: Message = Message.obtain(null, CamStudyService.MSG_HOST_TIMER_PAUSE)
+                sendHandlerMessage(msg)
             } else {
                 //타이머 재생
                 isPlay = true
                 it.isSelected = true
-                CamStudyService.handler!!.sendEmptyMessage(5)
+
+                val msg: Message = Message.obtain(null, CamStudyService.MSG_HOST_TIMER_RUN)
+                sendHandlerMessage(msg)
             }
         })
+
         btn_chat.setOnClickListener(View.OnClickListener {
             Log.d(TAG, "btn_chat 클릭")
             val dialogView: View = layoutInflater.inflate(R.layout.camstudy_chat, null)
@@ -242,17 +206,17 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             chat_recyclerview_init(CamStudyService.chatDate)
 
             btn_chat.setOnClickListener(View.OnClickListener {
-                var message = Message()
                 var chat = edt_chat.text.toString()
-                edt_chat.setText("")
-
-                message.what = 0
-                message.obj = chat
 
                 var dataformat = SimpleDateFormat("a HH:mm", Locale.KOREA)
                 var time = dataformat.format(System.currentTimeMillis())
 
-                CamStudyService.handler?.sendMessage(message)
+                val bundle = Bundle()
+                bundle.putString("msg",chat)
+
+                val msg: Message = Message.obtain(null, CamStudyService.MSG_TOTAL_MESSAGE)
+                msg.obj = bundle
+                sendHandlerMessage(msg)
                 CamStudyService.chatDate.add(Chat("total", "나", chat, time))
 
                 chat_recyclerview_init(CamStudyService.chatDate)
@@ -294,7 +258,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             })
             btn_study_info.setOnClickListener(View.OnClickListener {
                 val intent = Intent(this, StudyInfoActivity::class.java)
-                intent.putExtra("studyIdx",studyInfo!!.result.studyInfo.idx)
+                intent.putExtra("studyIdx", studyInfo!!.result.studyInfo.idx)
                 startActivity(intent)
                 dialog.dismiss()
             })
@@ -354,10 +318,83 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         when (item.itemId) {
             R.id.camera_chang -> {
                 Log.d(TAG, "카메라 체인지")
-                CamStudyService.handler!!.sendEmptyMessage(4)
+                val msg: Message = Message.obtain(null, CamStudyService.MSG_SWITCH_CAMERA)
+                sendHandlerMessage(msg)
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private var mConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            mServiceCallback = Messenger(service)
+
+            //서비스랑 연결
+            val connectMsg = Message.obtain(null, CamStudyService.MSG_CLIENT_CONNECT)
+            connectMsg.replyTo = mClientCallback
+
+            try {
+                mServiceCallback!!.send(connectMsg)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            mServiceCallback = null
+        }
+    }
+
+    private fun sendHandlerMessage(msg: Message) {
+        if (mServiceCallback != null) {
+            try {
+                mServiceCallback!!.send(msg)
+            } catch (e: RemoteException) {
+                e.printStackTrace()
+            }
+            Log.d(TAG, "Send message to Service")
+        }
+    }
+
+    inner class CallbackHandler(looper: Looper) : Handler(looper) {
+        override fun handleMessage(msg: Message) {
+            Log.d(TAG,"Activity에 메세지 도착"+msg.toString())
+            when (msg.what) {
+                CamStudyService.MSG_CAMSTUDY_ITEM -> {
+                    //캠스터디 아이템
+                    val bundle = msg.obj as Bundle
+                    val member = bundle.getStringArrayList("member")!!.toMutableList()
+                    recyclerview_init(member, CamStudyService.peerConnection)
+                }
+                CamStudyService.MSG_RECEIVED_MESSAGE -> {
+                    //채팅 아이템
+                    chat_recyclerview_init(CamStudyService.chatDate)
+                }
+                CamStudyService.MSG_COMSTUDY_LEFT -> {
+                    //종료시 타이머 가져오기
+                    stopCamstudy(msg.arg1, msg.arg2)
+                }
+                CamStudyService.MSG_LEADER_FORCED_EXIT ->{
+                    //리더에게 추방
+                    val msg: Message = Message.obtain(null, CamStudyService.MSG_COMSTUDY_LEFT)
+                    sendHandlerMessage(msg)
+                }
+                CamStudyService.MSG_LEADER_FORCED_AUDIO_OFF -> {
+                    //리더에게 마이크 off
+                    val btn_mic = findViewById<ImageButton>(R.id.camstudy_btn_mic)
+
+                    isMic = false
+                    btn_mic.isSelected = true
+                }
+                CamStudyService.MSG_LEADER_FORCED_VIDEO_OFF -> {
+                    //리더에게 카메라 off
+                    val btn_camera = findViewById<ImageButton>(R.id.camstudy_btn_camera)
+
+                    isVideo = false
+                    btn_camera.isSelected = true
+                }
+            }
+        }
     }
 
 }

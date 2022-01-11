@@ -3,22 +3,22 @@ import android.util.Log
 
 import android.app.Activity
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Message
+import android.os.Messenger
+import android.os.RemoteException
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.coworkerteam.coworker.CamStudyService
+import com.coworkerteam.coworker.data.local.Service.CamStudyService
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.ParticipantsResponse
+import com.coworkerteam.coworker.data.model.other.CamStudyHandler
 
-class ParticipantsAdapter(private val context: Context) :
+class ParticipantsAdapter(private val context: Context,private val mServiceCallback: Messenger?) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val TAG = "ParticipantsAdapter"
@@ -107,26 +107,29 @@ class ParticipantsAdapter(private val context: Context) :
                             when (item?.itemId) {
                                 R.id.menu_forcedexit -> {
                                     Log.d(TAG ,"menu_forcedexit")
-                                    var msg = Message()
-                                    msg.what = 8
-                                    msg.obj = par.nickname
-                                    CamStudyService.handler?.sendMessage(msg)
+                                    val handlerMessage = Message.obtain(null,
+                                        CamStudyService.MSG_LEADER_FORCED_EXIT
+                                    )
+                                    handlerMessage.obj = par.nickname
+                                    sendHandlerMessage(handlerMessage)
                                 }
 
                                 R.id.menu_forced_audio ->{
                                     Log.d(TAG ,"menu_forced_audio")
-                                    var msg = Message()
-                                    msg.what = 9
-                                    msg.obj = par.nickname
-                                    CamStudyService.handler?.sendMessage(msg)
+                                    val handlerMessage = Message.obtain(null,
+                                        CamStudyService.MSG_LEADER_FORCED_AUDIO_OFF
+                                    )
+                                    handlerMessage.obj = par.nickname
+                                    sendHandlerMessage(handlerMessage)
                                 }
 
                                 R.id.menu_forced_video ->{
                                     Log.d(TAG ,"menu_forced_video")
-                                    var msg = Message()
-                                    msg.what = 10
-                                    msg.obj = par.nickname
-                                    CamStudyService.handler?.sendMessage(msg)
+                                    val handlerMessage = Message.obtain(null,
+                                        CamStudyService.MSG_LEADER_FORCED_VIDEO_OFF
+                                    )
+                                    handlerMessage.obj = par.nickname
+                                    sendHandlerMessage(handlerMessage)
                                 }
                             }
 
@@ -138,6 +141,17 @@ class ParticipantsAdapter(private val context: Context) :
             }else{
                 more.visibility = View.GONE
             }
+        }
+    }
+
+    private fun sendHandlerMessage(msg: Message) {
+        if (mServiceCallback != null) {
+            try {
+                mServiceCallback!!.send(msg)
+            } catch (e: RemoteException) {
+                e.printStackTrace()
+            }
+            Log.d(TAG, "Send message to Service")
         }
     }
 
