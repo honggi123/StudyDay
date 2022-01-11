@@ -110,8 +110,6 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
         compactCalendarView.hideCalendar()
 
         // Set current date to today
-
-        // Set current date to today
         setCurrentDate(Date())
 
         val arrow: ImageView = findViewById(R.id.date_picker_arrow)
@@ -128,8 +126,6 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
         init()
         setRangeTime(getToday())
         viewModel.getStatisticsData("start", getToday(), period)
-
-        Log.d("일주일 테스트", dateRangeComputer(getToday()))
     }
 
     override fun initDataBinding() {

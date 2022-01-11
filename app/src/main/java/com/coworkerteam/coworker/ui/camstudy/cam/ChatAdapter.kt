@@ -35,7 +35,11 @@ class ChatAdapter(private val context: Context) :
 
         fun bind(item: Chat) {
 
-            name.text = item.sender
+            if (item.receiver != null) {
+                name.text = item.sender + " → " + item.receiver + "(귓속말)"
+            } else {
+                name.text = item.sender
+            }
             time.text = item.time
             context.text = item.msg
 
