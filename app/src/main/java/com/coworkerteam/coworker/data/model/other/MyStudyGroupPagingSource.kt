@@ -34,12 +34,14 @@ class MyStudyGroupPagingSource(
                 ).execute()
             }
 
-            val next = if (position == response.body()!!.result.totalPage) null else position + 1
+            val next = if (position >= response.body()!!.result.totalPage) null else position + 1
             Log.d("디버그태그",next.toString())
+            Log.d("디버그태그 포지션", position.toString())
+            Log.d("디버그태그 토탈페이지",response.body()!!.result.totalPage.toString())
 
             LoadResult.Page(
                 data = response.body()!!.result.group,
-                prevKey = if (position == 1) null else position - 1,
+                prevKey = if (position <= 1) null else position - 1,
                 nextKey = next
             )
 

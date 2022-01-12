@@ -16,6 +16,7 @@ import com.coworkerteam.coworker.data.model.dto.SearchStudy
 import com.coworkerteam.coworker.data.remote.StudydayService
 import com.coworkerteam.coworker.databinding.FragmentGroupStudySerarchBinding
 import com.coworkerteam.coworker.ui.base.BaseFragment
+import com.coworkerteam.coworker.ui.study.management.ManagementPagingAdapter
 import com.coworkerteam.coworker.utils.RecyclerViewUtils
 import com.google.android.gms.common.api.ApiException
 import okhttp3.OkHttpClient
@@ -54,7 +55,12 @@ class GroupStudySerarchFragment :
         get() = R.layout.fragment_group_study_serarch
     override val viewModel: StudySearchViewModel by viewModel()
 
+    lateinit var pagingStudySearchAdapter: StudySearchPagingAdapter
+
     override fun initStartView() {
+        pagingStudySearchAdapter = StudySearchPagingAdapter()
+        val rv_Search = view?.findViewById<RecyclerView>(R.id.fragment_group_study_rv)
+        rv_Search?.adapter = pagingStudySearchAdapter
     }
 
     override fun initDataBinding() {

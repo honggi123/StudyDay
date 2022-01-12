@@ -39,11 +39,11 @@ class StudySearchPagingSource(
                 ).execute()
             }
 
-            val next = if (position == response.body()!!.result.totalPage) null else position + 1
+            val next = if (position >= response.body()!!.result.totalPage) null else position + 1
 
             LoadResult.Page(
                 data = response.body()!!.result.study,
-                prevKey = if (position == 1) null else position - 1,
+                prevKey = if (position <= 1) null else position - 1,
                 nextKey = next
             )
 

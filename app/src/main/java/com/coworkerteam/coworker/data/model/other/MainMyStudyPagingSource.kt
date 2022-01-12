@@ -29,12 +29,14 @@ class MainMyStudyPagingSource(
                 ).execute()
             }
 
-            val next = if (position == response.body()!!.result.totalPage) null else position + 1
+            Log.d("액세스토큰 : ",pref.getAccessToken().toString())
+
+            val next = if (position >= response.body()!!.result.totalPage) null else position + 1
             Log.d("디버그태그",next.toString())
 
             LoadResult.Page(
                 data = response.body()!!.result.myStudy,
-                prevKey = if (position == 1) null else position - 1,
+                prevKey = if (position <= 1) null else position - 1,
                 nextKey = next
             )
 
