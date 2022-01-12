@@ -37,6 +37,12 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
     val MyStudyPagingData: LiveData<PagingData<MainMyStudyPagingResponse.Result.MyStudy>>
         get() = _MyStudyPagingData
 
+    //투두리스트 체크
+    private val _CheckTodoListResponseLiveData = MutableLiveData<Response<CheckTodolistRequest>>()
+    val CheckTodoListResponseLiveData: LiveData<Response<CheckTodolistRequest>>
+        get() = _CheckTodoListResponseLiveData
+
+
     fun getMainData() {
         val accessToken = model.getAccessToken()
         val nickname = model.getCurrentUserName()
@@ -109,6 +115,28 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
             )
         } else {
             Log.d(TAG, "setGoalCamstduyData:: accessToken 또는 nickname 값이 없습니다.")
+        }
+    }
+
+    fun setCheckTodoListData(todoIdx: Int, selectDate: String) {
+        val accessToken = model.getAccessToken()
+
+        if (!accessToken.isNullOrEmpty()) {
+            addDisposable(
+                model.setCheckTodolist(accessToken, todoIdx, selectDate)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        it.run {
+                            _CheckTodoListResponseLiveData.postValue(this)
+                            Log.d(TAG, "meta : " + it.toString())
+                        }
+                    }, {
+                        Log.d(TAG, "response error, message : ${it.message}")
+                    })
+            )
+        } else {
+            Log.d(TAG, "setCheckTodoListData:: accessToken 값이 없습니다.")
         }
     }
 

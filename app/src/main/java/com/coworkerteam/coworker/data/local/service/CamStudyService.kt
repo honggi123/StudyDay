@@ -291,6 +291,7 @@ class CamStudyService : Service() {
                                     val par = getParticipant(message.getString("name"))
 
                                     val message_send = JSONObject()
+
                                     message_send.put("id", "sendStopwatchTime")
                                     message_send.put("stopwatchTime", par.timerPresentTime)
                                     message_send.put("stopwatchStatus", par.getTimerStatus())
@@ -621,7 +622,6 @@ class CamStudyService : Service() {
                 val candidate = JSONObject()
                 try {
                     candidate.put("candidate", iceCandidate.sdp)
-                    //                    candidate.put("sdpMid", iceCandidate.sdpMid);
                     candidate.put("sdpMid", iceCandidate.sdpMid)
                     candidate.put("sdpMLineIndex", iceCandidate.sdpMLineIndex)
                     message.put("id", "onIceCandidate")
@@ -842,7 +842,7 @@ class CamStudyService : Service() {
                 MSG_COMSTUDY_LEFT -> {
                     //퇴장처리
                     val handlerMessage: Message =
-                        Message.obtain(null, CamStudyService.MSG_COMSTUDY_LEFT)
+                        Message.obtain(null, MSG_COMSTUDY_LEFT)
 
                     var timerResult =
                         peerConnection.get(hostname)!!.timerPresentTime - peerConnection.get(

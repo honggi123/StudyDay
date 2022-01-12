@@ -31,7 +31,7 @@ data class MainResponse(
         @SerializedName("profile")
         val profile: Profile,
         @SerializedName("todo")
-        val todo: List<Any>,
+        val todo: List<Todo>,
         @SerializedName("todoNum")
         val todoNum: Int,
         @SerializedName("userNum")
@@ -77,6 +77,17 @@ data class MainResponse(
             val type: String,
             @SerializedName("user_num")
             val userNum: Int
+        )
+
+        data class Todo(
+            @SerializedName("idx")
+            val idx: Int,
+            @SerializedName("todo")
+            val todo: String,
+            @SerializedName("is_complete")
+            val isComplete: Boolean,
+            @SerializedName("todo_date")
+            val todoDate: String
         )
 
         data class Dream(

@@ -234,20 +234,17 @@
                         android:layout_marginTop="5dp"
                         android:background="@drawable/main_todolist_background"
                         android:elevation="3dp"
-                        android:minHeight="100dp"
                         android:orientation="vertical"
                         android:padding="10dp"
                         app:layout_constraintEnd_toStartOf="@+id/guideline8"
                         app:layout_constraintStart_toStartOf="@+id/guideline7"
                         app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
-                        <TextView
-                            android:id="@+id/textView6"
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/main_todolist_recylerView"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center|center_horizontal|center_vertical"
-                            android:text="할 일을 추가 해주세요."
-                            android:textSize="14sp" />
+                            app:layoutManager="LinearLayoutManager" />
                     </LinearLayout>
 
                     <LinearLayout

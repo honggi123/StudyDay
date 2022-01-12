@@ -93,12 +93,12 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
                 setNavigaionNickname(it.body()!!.result[0].profile.nickname)
 
                 //내스터디
-//                var recyclerMyStudy: RecyclerView =
-//                    findViewById(R.id.main_mystudy_recylerView)
-//                var myStudyAdepter: MainMyStudyAdapter =
-//                    MainMyStudyAdapter(this, viewModel)
-//                myStudyAdepter.datas = it.body()!!.result[0].myStudy.toMutableList()
-//                recyclerMyStudy.adapter = myStudyAdepter
+                var recyclerMyStudy: RecyclerView =
+                    findViewById(R.id.main_todolist_recylerView)
+                var myStudyAdepter: MainTodolistAdapter =
+                    MainTodolistAdapter(this, viewModel)
+                myStudyAdepter.datas = it.body()!!.result[0].todo.toMutableList()
+                recyclerMyStudy.adapter = myStudyAdepter
 
                 var goal = findViewById<TextView>(R.id.textView2)
 
