@@ -12,29 +12,27 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.model.api.MyStudyGroupPagingResponse
+import com.coworkerteam.coworker.data.model.api.MyStudyDailyPagingResponse
 import com.coworkerteam.coworker.ui.main.StudyCategoryAdapter
 import com.coworkerteam.coworker.utils.ScreenSizeUtils
 
-class MyStudyGroupPagingAdapter :
-    PagingDataAdapter<MyStudyGroupPagingResponse.Result.Group, MyStudyGroupPagingAdapter.ViewHolder>(
-        differ
-    ) {
+class MyStudyDailyPagingAdapter :
+    PagingDataAdapter<MyStudyDailyPagingResponse.Result.Open, MyStudyDailyPagingAdapter.ViewHolder>(differ) {
     lateinit var context: Context
 
     companion object {
         private val differ =
-            object : DiffUtil.ItemCallback<MyStudyGroupPagingResponse.Result.Group>() {
+            object : DiffUtil.ItemCallback<MyStudyDailyPagingResponse.Result.Open>() {
                 override fun areItemsTheSame(
-                    oldItem: MyStudyGroupPagingResponse.Result.Group,
-                    newItem: MyStudyGroupPagingResponse.Result.Group
+                    oldItem: MyStudyDailyPagingResponse.Result.Open,
+                    newItem: MyStudyDailyPagingResponse.Result.Open
                 ): Boolean {
                     return false
                 }
 
                 override fun areContentsTheSame(
-                    oldItem: MyStudyGroupPagingResponse.Result.Group,
-                    newItem: MyStudyGroupPagingResponse.Result.Group
+                    oldItem: MyStudyDailyPagingResponse.Result.Open,
+                    newItem: MyStudyDailyPagingResponse.Result.Open
                 ): Boolean {
                     return false
                 }
@@ -66,7 +64,7 @@ class MyStudyGroupPagingAdapter :
         private val studyNum: TextView = itemView.findViewById(R.id.item_my_study_txt_num)
         private val rvCategory: RecyclerView = itemView.findViewById(R.id.item_my_study_rv_category)
 
-        fun bind(item: MyStudyGroupPagingResponse.Result.Group?) {
+        fun bind(item: MyStudyDailyPagingResponse.Result.Open?) {
             Glide.with(context).load(item!!.img).into(img)
 
             if (!item.isLeader) {
@@ -74,8 +72,8 @@ class MyStudyGroupPagingAdapter :
             }
 
             studyName.text = item.name
-//            studyNum.text = "참여인원 " + item.userNum.toString() + "/" + item.maxNum.toString()
-//
+            studyNum.text = "참여인원 " + item.userNum.toString() + "/" + item.maxNum.toString()
+
             var studyCategoryAdapter: StudyCategoryAdapter = StudyCategoryAdapter(context)
             studyCategoryAdapter.datas = item.category.split("|").toMutableList()
             rvCategory.adapter = studyCategoryAdapter

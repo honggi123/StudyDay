@@ -1,5 +1,6 @@
 package com.coworkerteam.coworker.ui.study.management
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -11,25 +12,47 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.model.dto.MyStudy
+import com.coworkerteam.coworker.data.model.api.MyStudyManagePagingResponse
 import com.coworkerteam.coworker.ui.main.StudyCategoryAdapter
 import com.coworkerteam.coworker.ui.study.edit.EditStudyActivity
 import com.coworkerteam.coworker.ui.study.leader.transfer.LeaderTransferActivity
+import com.coworkerteam.coworker.utils.ScreenSizeUtils
 
-class ManagementAdapter(private val context: Context, private val viewModel: ManagementViewModel) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-    val TAG = "ManagementAdapter"
+class ManagementPagingAdapter(private val viewModel: ManagementViewModel) :
+    PagingDataAdapter<MyStudyManagePagingResponse.Result.Group, RecyclerView.ViewHolder>(
+        differ
+    ) {
+    lateinit var context: Context
 
     val viewLeader = 0
     val viewNotLeader = 1
 
-    var datas = mutableListOf<MyStudy>()
+    companion object {
+        private val differ =
+            object : DiffUtil.ItemCallback<MyStudyManagePagingResponse.Result.Group>() {
+                override fun areItemsTheSame(
+                    oldItem: MyStudyManagePagingResponse.Result.Group,
+                    newItem: MyStudyManagePagingResponse.Result.Group
+                ): Boolean {
+                    return false
+                }
+
+                override fun areContentsTheSame(
+                    oldItem: MyStudyManagePagingResponse.Result.Group,
+                    newItem: MyStudyManagePagingResponse.Result.Group
+                ): Boolean {
+                    return false
+                }
+            }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        context = parent.context
         val view: View?
         return when (viewType) {
             viewLeader -> {
@@ -51,12 +74,9 @@ class ManagementAdapter(private val context: Context, private val viewModel: Man
         }
     }
 
-    override fun getItemCount(): Int {
-        return datas.size
-    }
-
     override fun getItemViewType(position: Int): Int {
-        if (datas[position].isLeader) {
+        val item = getItem(position)
+        if (item!!.isLeader) {
             return viewLeader
         } else {
             return viewNotLeader
@@ -64,14 +84,15 @@ class ManagementAdapter(private val context: Context, private val viewModel: Man
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (datas[position].isLeader) {
-            (holder as ViewHolderLeader).bind(datas[position])
-//            holder.setIsRecyclable(false)
+        val item = getItem(position)
+
+        if (item!!.isLeader) {
+            (holder as ManagementPagingAdapter.ViewHolderLeader).bind(item)
         } else {
-            (holder as ViewHolderNotLeader).bind(datas[position])
-//            holder.setIsRecyclable(false)
+            (holder as ManagementPagingAdapter.ViewHolderNotLeader).bind(item)
         }
     }
+
 
     inner class ViewHolderLeader(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -85,7 +106,7 @@ class ManagementAdapter(private val context: Context, private val viewModel: Man
         private val rvCategory: RecyclerView =
             itemView.findViewById(R.id.item_study_menage_rv_category)
 
-        fun bind(item: MyStudy) {
+        fun bind(item: MyStudyManagePagingResponse.Result.Group) {
             Glide.with(context).load(item.img).into(img)
 
             studyName.text = item.name
@@ -104,14 +125,17 @@ class ManagementAdapter(private val context: Context, private val viewModel: Man
             })
 
             btn_withdraw.setOnClickListener(View.OnClickListener {
-                val mDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_group_delete, null)
+                val mDialogView =
+                    LayoutInflater.from(context).inflate(R.layout.dialog_group_delete, null)
                 val mBuilder = AlertDialog.Builder(context).setView(mDialogView)
                 val builder = mBuilder.show()
 
                 builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-                val btn_cancle = mDialogView.findViewById<Button>(R.id.dialog_group_delete_btn_cancle)
-                val btn_logout = mDialogView.findViewById<Button>(R.id.dialog_group_delete_btn_delete)
+                val btn_cancle =
+                    mDialogView.findViewById<Button>(R.id.dialog_group_delete_btn_cancle)
+                val btn_logout =
+                    mDialogView.findViewById<Button>(R.id.dialog_group_delete_btn_delete)
 
                 btn_cancle.setOnClickListener(View.OnClickListener {
                     builder.dismiss()
@@ -119,7 +143,7 @@ class ManagementAdapter(private val context: Context, private val viewModel: Man
 
                 btn_logout.setOnClickListener(View.OnClickListener {
                     viewModel.setDeleteStudyData(item.idx)
-                    datas.remove(item)
+//                    datas.remove(item)
                     builder.dismiss()
                 })
 
@@ -142,21 +166,24 @@ class ManagementAdapter(private val context: Context, private val viewModel: Man
         private val rvCategory: RecyclerView =
             itemView.findViewById(R.id.item_study_menage_rv_category)
 
-        fun bind(item: MyStudy) {
+        fun bind(item: MyStudyManagePagingResponse.Result.Group) {
             Glide.with(context).load(item.img).into(img)
 
             studyName.text = item.name
             txt_context.text = item.introduce
 
             btn_studyWithdraw.setOnClickListener(View.OnClickListener {
-                val mDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_group_withdrawal, null)
+                val mDialogView =
+                    LayoutInflater.from(context).inflate(R.layout.dialog_group_withdrawal, null)
                 val mBuilder = AlertDialog.Builder(context).setView(mDialogView)
                 val builder = mBuilder.show()
 
                 builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-                val btn_cancle = mDialogView.findViewById<Button>(R.id.dialog_group_withdrawal_btn_cancle)
-                val btn_logout = mDialogView.findViewById<Button>(R.id.dialog_group_withdrawal_btn_withdrawal)
+                val btn_cancle =
+                    mDialogView.findViewById<Button>(R.id.dialog_group_withdrawal_btn_cancle)
+                val btn_logout =
+                    mDialogView.findViewById<Button>(R.id.dialog_group_withdrawal_btn_withdrawal)
 
                 btn_cancle.setOnClickListener(View.OnClickListener {
                     builder.dismiss()
@@ -164,7 +191,7 @@ class ManagementAdapter(private val context: Context, private val viewModel: Man
 
                 btn_logout.setOnClickListener(View.OnClickListener {
                     viewModel.setWithdrawStudyData(item.idx)
-                    datas.remove(item)
+//                    datas.remove(item)
                     builder.dismiss()
                 })
             })

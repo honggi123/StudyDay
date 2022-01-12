@@ -3,10 +3,11 @@ package com.coworkerteam.coworker.ui.main
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.coworkerteam.coworker.data.UserRepository
-import com.coworkerteam.coworker.data.model.api.EditGoalResponse
-import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
-import com.coworkerteam.coworker.data.model.api.MainResponse
+import com.coworkerteam.coworker.data.model.api.*
 import com.coworkerteam.coworker.ui.base.BaseViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -29,6 +30,12 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
     private val _EditGoalResponseLiveData = MutableLiveData<Response<EditGoalResponse>>()
     val EditGoalResponseLiveData: LiveData<Response<EditGoalResponse>>
         get() = _EditGoalResponseLiveData
+
+    //내스터디 페이징
+    private val _MyStudyPagingData = model.getMainMyStudyPagingData()
+        .cachedIn(viewModelScope) as MutableLiveData<PagingData<MainMyStudyPagingResponse.Result.MyStudy>>
+    val MyStudyPagingData: LiveData<PagingData<MainMyStudyPagingResponse.Result.MyStudy>>
+        get() = _MyStudyPagingData
 
     fun getMainData() {
         val accessToken = model.getAccessToken()

@@ -18,6 +18,7 @@ import com.coworkerteam.coworker.databinding.ActivityMainBinding
 import com.coworkerteam.coworker.ui.base.NavigationAcitivity
 import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.ui.study.make.MakeStudyActivity
+import com.coworkerteam.coworker.ui.study.management.ManagementPagingAdapter
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textfield.TextInputEditText
@@ -43,6 +44,8 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
     var RecommendStudyShowOpen: Boolean = true
     var setData: Boolean = false
 
+    lateinit var pagingMainMyStudyAdapter: MainMyStudyPagingAdapter
+
     override fun initStartView() {
         super.initStartView()
         viewDataBinding.activitiy = this
@@ -61,6 +64,11 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
                 startActivity(intent)
             }
         )
+
+        pagingMainMyStudyAdapter = MainMyStudyPagingAdapter(viewModel)
+        val rv_MyStudy = findViewById<RecyclerView>(R.id.main_mystudy_recylerView)
+        rv_MyStudy.adapter = pagingMainMyStudyAdapter
+
         init()
     }
 
@@ -85,12 +93,12 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
                 setNavigaionNickname(it.body()!!.result[0].profile.nickname)
 
                 //내스터디
-                var recyclerMyStudy: RecyclerView =
-                    findViewById(R.id.main_mystudy_recylerView)
-                var myStudyAdepter: MainMyStudyAdapter =
-                    MainMyStudyAdapter(this, viewModel)
-                myStudyAdepter.datas = it.body()!!.result[0].myStudy.toMutableList()
-                recyclerMyStudy.adapter = myStudyAdepter
+//                var recyclerMyStudy: RecyclerView =
+//                    findViewById(R.id.main_mystudy_recylerView)
+//                var myStudyAdepter: MainMyStudyAdapter =
+//                    MainMyStudyAdapter(this, viewModel)
+//                myStudyAdepter.datas = it.body()!!.result[0].myStudy.toMutableList()
+//                recyclerMyStudy.adapter = myStudyAdepter
 
                 var goal = findViewById<TextView>(R.id.textView2)
 
@@ -101,6 +109,10 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
                 NewStudy_init()
                 Recommend_init()
             }
+        })
+
+        viewModel.MyStudyPagingData.observe(this,androidx.lifecycle.Observer {
+            pagingMainMyStudyAdapter.submitData(lifecycle,it)
         })
     }
 

@@ -7,10 +7,11 @@ import androidx.paging.PagingData
 import androidx.paging.liveData
 import com.coworkerteam.coworker.data.local.prefs.PreferencesHelper
 import com.coworkerteam.coworker.data.model.api.*
-import com.coworkerteam.coworker.data.model.other.MyStudyPagingSource
+import com.coworkerteam.coworker.data.model.other.*
 import com.coworkerteam.coworker.data.remote.NaverService
 import com.coworkerteam.coworker.data.remote.StudydayService
 import io.reactivex.Single
+import retrofit2.Call
 import retrofit2.Response
 
 class UserRepositoryImpl(
@@ -168,6 +169,15 @@ class UserRepositoryImpl(
         return service.main(accessToken, nickname)
     }
 
+    override fun getMainMyStudyPagingData(): LiveData<PagingData<MainMyStudyPagingResponse.Result.MyStudy>> {
+        return Pager(
+            config = PagingConfig(pageSize = 3, enablePlaceholders = false),
+            pagingSourceFactory = {
+                MainMyStudyPagingSource(service, pref)
+            }
+        ).liveData
+    }
+
     override fun getMyStudyData(
         accessToken: String,
         nickname: String
@@ -175,11 +185,20 @@ class UserRepositoryImpl(
         return service.myStudy(accessToken, nickname)
     }
 
-    override fun getMyStudyPagingData(): LiveData<PagingData<MyStudyGroupPagingResponse.Result.Group>> {
+    override fun getMyStudyGroupPagingData(): LiveData<PagingData<MyStudyGroupPagingResponse.Result.Group>> {
         return Pager(
-            config = PagingConfig(pageSize = 10, enablePlaceholders = false),
-            pagingSourceFactory ={
-                MyStudyPagingSource(service,pref)
+            config = PagingConfig(pageSize = 4, enablePlaceholders = false),
+            pagingSourceFactory = {
+                MyStudyGroupPagingSource(service, pref)
+            }
+        ).liveData
+    }
+
+    override fun getMyStudyDailyPagingData(): LiveData<PagingData<MyStudyDailyPagingResponse.Result.Open>> {
+        return Pager(
+            config = PagingConfig(pageSize = 4, enablePlaceholders = false),
+            pagingSourceFactory = {
+                MyStudyDailyPagingSource(service, pref)
             }
         ).liveData
     }
@@ -189,6 +208,15 @@ class UserRepositoryImpl(
         nickname: String
     ): Single<Response<MyStudyManageResponse>> {
         return service.myStudyManage(accessToken, nickname)
+    }
+
+    override fun getMyStudyManagePagingData(): LiveData<PagingData<MyStudyManagePagingResponse.Result.Group>> {
+        return Pager(
+            config = PagingConfig(pageSize = 4, enablePlaceholders = false),
+            pagingSourceFactory = {
+                MyStudyManagePagingSource(service, pref)
+            }
+        ).liveData
     }
 
     override fun setDeleteStudyData(
@@ -240,25 +268,28 @@ class UserRepositoryImpl(
     }
 
     override fun getStudySerchData(
-        accessToken: String,
         reqType: String,
         category: String?,
         studyType: String,
         isJoin: Boolean,
         viewType: String,
         keword: String?,
-        page: Int
-    ): Single<Response<StudySearchResponse>> {
-        return service.studySerch(
-            accessToken,
-            reqType,
-            category,
-            studyType,
-            isJoin,
-            viewType,
-            keword,
-            page
-        )
+    ): LiveData<PagingData<StudySearchResponse.Result.Study>> {
+        return Pager(
+            config = PagingConfig(pageSize = 4, enablePlaceholders = false),
+            pagingSourceFactory = {
+                StudySearchPagingSource(
+                    service,
+                    pref,
+                    reqType,
+                    category,
+                    studyType,
+                    isJoin,
+                    viewType,
+                    keword
+                )
+            }
+        ).liveData
     }
 
     override fun getEditStudyData(

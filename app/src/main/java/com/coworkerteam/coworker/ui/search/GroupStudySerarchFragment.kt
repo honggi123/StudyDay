@@ -65,7 +65,7 @@ class GroupStudySerarchFragment :
                 rv_init()
             }
         })
-        StudySearchActivity.StudySearchLiveData.observe(this, androidx.lifecycle.Observer {
+        viewModel.StudySearchLiveData.observe(this, androidx.lifecycle.Observer {
             //검색결과를 성공적으로 반환
             searchEvent(it)
         })
@@ -118,8 +118,7 @@ class GroupStudySerarchFragment :
             "group",
             studyInfo.isJoin,
             studyInfo.viewType,
-            studyInfo.keyword,
-            studyInfo.page
+            studyInfo.keyword
         )
     }
 

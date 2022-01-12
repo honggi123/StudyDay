@@ -37,17 +37,23 @@ class MyStudyActivity : NavigationAcitivity<ActivityMyStudyBinding, MyStudyViewM
     lateinit var myStudy: MyStudyResponse
     lateinit var main_drawer_layout: DrawerLayout
     lateinit var headerView: View
-    lateinit var pagingAdapter: MyStudyGroupPagingAdapter
+    lateinit var pagingGroupAdapter: MyStudyGroupPagingAdapter
+    lateinit var pagingDailyAdapter: MyStudyDailyPagingAdapter
 
     override fun initStartView() {
         super.initStartView()
 
         init()
 
-        pagingAdapter = MyStudyGroupPagingAdapter()
+        pagingGroupAdapter = MyStudyGroupPagingAdapter()
         val rv_group = findViewById<RecyclerView>(R.id.my_study_rv_group_study)
-        rv_group.adapter = pagingAdapter
+        rv_group.adapter = pagingGroupAdapter
         RecyclerViewUtils().setHorizonSpaceDecration(rv_group,10)
+
+        pagingDailyAdapter = MyStudyDailyPagingAdapter()
+        val rv_daily = findViewById<RecyclerView>(R.id.my_study_rv_open_study)
+        rv_daily.adapter = pagingDailyAdapter
+        RecyclerViewUtils().setHorizonSpaceDecration(rv_daily,10)
 
         var main_toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.my_study_toolbar)
 
@@ -68,8 +74,11 @@ class MyStudyActivity : NavigationAcitivity<ActivityMyStudyBinding, MyStudyViewM
         })
 
         viewModel.MyStudyGroupPagingData.observe(this, androidx.lifecycle.Observer {
-            Log.d("디버그태그",it.toString())
-            pagingAdapter.submitData(lifecycle,it)
+            pagingGroupAdapter.submitData(lifecycle,it)
+        })
+
+        viewModel.MyStudyDailyPagingData.observe(this,androidx.lifecycle.Observer {
+            pagingDailyAdapter.submitData(lifecycle,it)
         })
     }
 

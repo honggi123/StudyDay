@@ -5,6 +5,7 @@ import androidx.paging.PagingData
 import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
 import com.coworkerteam.coworker.data.model.api.*
 import io.reactivex.Single
+import retrofit2.Call
 import retrofit2.Response
 
 //레퍼지토리 interface 파일. 이곳에 형식을 선언 후 UserRepositoryImpl에 구체적으로 생성한다.
@@ -45,7 +46,7 @@ interface UserRepository {
     )
 
     fun deletePreferencesData()
-    
+
     //api 관련 함수
 
     fun getTokenResetData(
@@ -96,14 +97,20 @@ interface UserRepository {
 
     fun getMainData(accessToken: String, nickname: String): Single<Response<MainResponse>>
 
+    fun getMainMyStudyPagingData(): LiveData<PagingData<MainMyStudyPagingResponse.Result.MyStudy>>
+
     fun getMyStudyData(accessToken: String, nickname: String): Single<Response<MyStudyResponse>>
 
-    fun getMyStudyPagingData(): LiveData<PagingData<MyStudyGroupPagingResponse.Result.Group>>
+    fun getMyStudyGroupPagingData(): LiveData<PagingData<MyStudyGroupPagingResponse.Result.Group>>
+
+    fun getMyStudyDailyPagingData(): LiveData<PagingData<MyStudyDailyPagingResponse.Result.Open>>
 
     fun getMyStudyManageData(
         accessToken: String,
         nickname: String
     ): Single<Response<MyStudyManageResponse>>
+
+    fun getMyStudyManagePagingData(): LiveData<PagingData<MyStudyManagePagingResponse.Result.Group>>
 
     fun setDeleteStudyData(accessToken: String, studyIdx: Int): Single<Response<ApiRequest>>
 
@@ -136,15 +143,13 @@ interface UserRepository {
     ): Single<Response<NicknameCheckResponse>>
 
     fun getStudySerchData(
-        accessToken: String,
         reqType: String,
         category: String?,
         studyType: String,
         isJoin: Boolean,
         viewType: String,
         keword: String?,
-        page: Int
-    ): Single<Response<StudySearchResponse>>
+    ): LiveData<PagingData<StudySearchResponse.Result.Study>>
 
     fun getEditStudyData(accessToken: String, studyIdx: Int): Single<Response<EditStudyResponse>>
 

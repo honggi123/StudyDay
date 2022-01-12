@@ -5,6 +5,5 @@ data class SearchStudy(
     var category: String?,
     var isJoin: Boolean,
     var viewType: String,
-    var keyword: String,
-    var page: Int
+    var keyword: String?,
 )

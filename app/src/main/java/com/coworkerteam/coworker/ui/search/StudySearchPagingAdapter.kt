@@ -1,4 +1,4 @@
-package com.coworkerteam.coworker.ui.mystudy
+package com.coworkerteam.coworker.ui.search
 
 import android.app.Activity
 import android.content.Context
@@ -12,29 +12,29 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.model.api.MyStudyGroupPagingResponse
+import com.coworkerteam.coworker.data.model.api.StudySearchResponse
 import com.coworkerteam.coworker.ui.main.StudyCategoryAdapter
 import com.coworkerteam.coworker.utils.ScreenSizeUtils
 
-class MyStudyGroupPagingAdapter :
-    PagingDataAdapter<MyStudyGroupPagingResponse.Result.Group, MyStudyGroupPagingAdapter.ViewHolder>(
+class StudySearchPagingAdapter :
+    PagingDataAdapter<StudySearchResponse.Result.Study, StudySearchPagingAdapter.ViewHolder>(
         differ
     ) {
     lateinit var context: Context
 
     companion object {
         private val differ =
-            object : DiffUtil.ItemCallback<MyStudyGroupPagingResponse.Result.Group>() {
+            object : DiffUtil.ItemCallback<StudySearchResponse.Result.Study>() {
                 override fun areItemsTheSame(
-                    oldItem: MyStudyGroupPagingResponse.Result.Group,
-                    newItem: MyStudyGroupPagingResponse.Result.Group
+                    oldItem: StudySearchResponse.Result.Study,
+                    newItem: StudySearchResponse.Result.Study
                 ): Boolean {
                     return false
                 }
 
                 override fun areContentsTheSame(
-                    oldItem: MyStudyGroupPagingResponse.Result.Group,
-                    newItem: MyStudyGroupPagingResponse.Result.Group
+                    oldItem: StudySearchResponse.Result.Study,
+                    newItem: StudySearchResponse.Result.Study
                 ): Boolean {
                     return false
                 }
@@ -54,7 +54,7 @@ class MyStudyGroupPagingAdapter :
 
         // 간격 설정
         val layoutParams = holder.itemView.layoutParams
-        layoutParams.width = (ScreenSizeUtils().getScreenWidthSize(context as Activity)/2.5).toInt()
+        layoutParams.width = (ScreenSizeUtils().getScreenWidthSize(context as Activity)/2.3).toInt()
         holder.itemView.requestLayout()
     }
 
@@ -66,7 +66,7 @@ class MyStudyGroupPagingAdapter :
         private val studyNum: TextView = itemView.findViewById(R.id.item_my_study_txt_num)
         private val rvCategory: RecyclerView = itemView.findViewById(R.id.item_my_study_rv_category)
 
-        fun bind(item: MyStudyGroupPagingResponse.Result.Group?) {
+        fun bind(item: StudySearchResponse.Result.Study?) {
             Glide.with(context).load(item!!.img).into(img)
 
             if (!item.isLeader) {
@@ -74,8 +74,8 @@ class MyStudyGroupPagingAdapter :
             }
 
             studyName.text = item.name
-//            studyNum.text = "참여인원 " + item.userNum.toString() + "/" + item.maxNum.toString()
-//
+            studyNum.text = "참여인원 " + item.userNum.toString() + "/" + item.maxNum.toString()
+
             var studyCategoryAdapter: StudyCategoryAdapter = StudyCategoryAdapter(context)
             studyCategoryAdapter.datas = item.category.split("|").toMutableList()
             rvCategory.adapter = studyCategoryAdapter

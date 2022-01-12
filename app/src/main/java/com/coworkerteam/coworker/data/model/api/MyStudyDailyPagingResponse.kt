@@ -3,7 +3,7 @@ package com.coworkerteam.coworker.data.model.api
 
 import com.google.gson.annotations.SerializedName
 
-data class MyStudyGroupPagingResponse(
+data class MyStudyDailyPagingResponse(
     @SerializedName("message")
     val message: String,
     @SerializedName("result")
@@ -12,12 +12,12 @@ data class MyStudyGroupPagingResponse(
     data class Result(
         @SerializedName("currentPage")
         val currentPage: Int,
-        @SerializedName("group")
-        val group: List<Group>,
+        @SerializedName("open")
+        val open: List<Open>,
         @SerializedName("totalPage")
         val totalPage: Int
     ){
-        data class Group(
+        data class Open(
             @SerializedName("category")
             val category: String,
             @SerializedName("idx")
@@ -28,10 +28,14 @@ data class MyStudyGroupPagingResponse(
             val isLeader: Boolean,
             @SerializedName("is_pw")
             val isPw: String,
+            @SerializedName("max_num")
+            val maxNum: Int,
             @SerializedName("name")
             val name: String,
             @SerializedName("pw")
-            val pw: String
+            val pw: String,
+            @SerializedName("user_num")
+            val userNum: Int
         )
     }
 }

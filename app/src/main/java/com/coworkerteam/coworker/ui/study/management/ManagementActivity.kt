@@ -13,6 +13,9 @@ import com.coworkerteam.coworker.databinding.ActivityCategoryBinding
 import com.coworkerteam.coworker.databinding.ActivityManagementBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.category.CategoryViewModel
+import com.coworkerteam.coworker.ui.mystudy.MyStudyDailyPagingAdapter
+import com.coworkerteam.coworker.ui.mystudy.MyStudyGroupPagingAdapter
+import com.coworkerteam.coworker.utils.RecyclerViewUtils
 import com.google.android.gms.common.api.ApiException
 import okhttp3.OkHttpClient
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -37,20 +40,28 @@ class ManagementActivity : BaseActivity<ActivityManagementBinding, ManagementVie
     lateinit var myStudy: MyStudyManageResponse
     var newAdapter: ManagementAdapter? = null
 
+    lateinit var pagingManagementAdapter: ManagementPagingAdapter
+
     override fun initStartView() {
+        pagingManagementAdapter = ManagementPagingAdapter(viewModel)
+        val rv_management = findViewById<RecyclerView>(R.id.management_rv)
+        rv_management.adapter = pagingManagementAdapter
     }
 
     override fun initDataBinding() {
-        viewModel.ManagementResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            if (it.isSuccessful) {
-                myStudy = it.body()!!
-                init_rv()
-            }
-        })
+//        viewModel.ManagementResponseLiveData.observe(this, androidx.lifecycle.Observer {
+//            if (it.isSuccessful) {
+//                myStudy = it.body()!!
+//                init_rv()
+//            }
+//        })
         viewModel.ApiResponseLiveData.observe(this, androidx.lifecycle.Observer {
             if (it.isSuccessful) {
                 newAdapter!!.notifyDataSetChanged()
             }
+        })
+        viewModel.MyStudyManagementPagingData.observe(this,androidx.lifecycle.Observer {
+            pagingManagementAdapter.submitData(lifecycle,it)
         })
     }
 
@@ -73,7 +84,7 @@ class ManagementActivity : BaseActivity<ActivityManagementBinding, ManagementVie
 
     override fun onPostResume() {
         super.onPostResume()
-        viewModel.getManagementData()
+//        viewModel.getManagementData()
     }
 
 

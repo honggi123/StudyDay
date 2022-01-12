@@ -36,11 +36,6 @@ import javax.net.ssl.X509TrustManager
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [OpenStudySerarchFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class OpenStudySerarchFragment :
     BaseFragment<FragmentOpenStudySerarchBinding, StudySearchViewModel>() {
     var TAG = "OpenStudySerarchFragment"
@@ -66,7 +61,7 @@ class OpenStudySerarchFragment :
             }
         })
 
-        StudySearchActivity.StudySearchLiveData.observe(this, androidx.lifecycle.Observer {
+        viewModel.StudySearchLiveData.observe(this, androidx.lifecycle.Observer {
             //검색결과를 성공적으로 반환
             searchEvent(it)
         })
@@ -115,8 +110,7 @@ class OpenStudySerarchFragment :
             "open",
             studyInfo.isJoin,
             studyInfo.viewType,
-            studyInfo.keyword,
-            studyInfo.page
+            studyInfo.keyword
         )
     }
 

@@ -18,20 +18,18 @@ class ToDeveloperViewModel(private val model: UserRepository) : BaseViewModel() 
     val ToDeveloperResponseLiveData: LiveData<Response<ProfileManageResponse>>
         get() = _ToDeveloperResponseLiveData
 
-    fun getMyProfileData() {
+    fun setToDeveloperData() {
         val accessToken = model.getAccessToken()
         val nickname = model.getCurrentUserName()
 
         if (!accessToken.isNullOrEmpty() && !nickname.isNullOrEmpty()) {
             addDisposable(
+                //나중 API 완성되면 메소드 바꾸어줘야함.
                 model.getProfileManageData(accessToken, nickname)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         it.run {
-                            if(isSuccessful){
-                                model.deletePreferencesData()
-                            }
                             _ToDeveloperResponseLiveData.postValue(this)
                             Log.d(TAG, "meta : " + it.toString())
                         }
@@ -40,7 +38,7 @@ class ToDeveloperViewModel(private val model: UserRepository) : BaseViewModel() 
                     })
             )
         }else{
-            Log.d(TAG, "getMyProfileData:: accessToken 또는 nickname 값이 없습니다.")
+            Log.d(TAG, "setToDeveloperData:: accessToken 또는 nickname 값이 없습니다.")
         }
     }
 }

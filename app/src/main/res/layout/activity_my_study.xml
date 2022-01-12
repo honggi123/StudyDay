@@ -75,7 +75,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/my_study_rv_open_study"
                     android:layout_width="0dp"
-                    android:layout_height="208dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal"
                     app:layoutManager="LinearLayoutManager"
@@ -95,17 +95,6 @@
                     app:layout_constraintTop_toBottomOf="@+id/textView39"
                     app:spanCount="2"
                     tools:listitem="@layout/item_my_study" />
-
-                <TextView
-                    android:id="@+id/textView18"
-                    android:layout_width="wrap_content"
-                    android:layout_height="208dp"
-                    android:gravity="center_vertical"
-                    android:text="참여했던 오픈 스터디가 없습니다."
-                    app:layout_constraintBottom_toBottomOf="@+id/my_study_rv_open_study"
-                    app:layout_constraintEnd_toStartOf="@+id/guideline22"
-                    app:layout_constraintStart_toStartOf="@+id/guideline21"
-                    app:layout_constraintTop_toTopOf="@+id/my_study_rv_open_study" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>

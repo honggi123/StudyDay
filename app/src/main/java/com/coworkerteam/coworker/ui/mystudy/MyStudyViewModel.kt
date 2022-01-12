@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.coworkerteam.coworker.data.UserRepository
+import com.coworkerteam.coworker.data.model.api.MyStudyDailyPagingResponse
 import com.coworkerteam.coworker.data.model.api.MyStudyGroupPagingResponse
 import com.coworkerteam.coworker.data.model.api.MyStudyInfoResponse
 import com.coworkerteam.coworker.data.model.api.MyStudyResponse
@@ -23,10 +24,17 @@ class MyStudyViewModel(private val model: UserRepository) : BaseViewModel() {
     val MyStudyResponseLiveData: LiveData<Response<MyStudyResponse>>
         get() = _MyStudyResponseLiveData
 
-    private val _MyStudyGroupPagingData = model.getMyStudyPagingData()
+    //그룹스터디
+    private val _MyStudyGroupPagingData = model.getMyStudyGroupPagingData()
         .cachedIn(viewModelScope) as MutableLiveData<PagingData<MyStudyGroupPagingResponse.Result.Group>>
     val MyStudyGroupPagingData: LiveData<PagingData<MyStudyGroupPagingResponse.Result.Group>>
         get() = _MyStudyGroupPagingData
+    
+    //일일스터디
+    private val _MyStudyDailyPagingData = model.getMyStudyDailyPagingData()
+        .cachedIn(viewModelScope) as MutableLiveData<PagingData<MyStudyDailyPagingResponse.Result.Open>>
+    val MyStudyDailyPagingData: LiveData<PagingData<MyStudyDailyPagingResponse.Result.Open>>
+        get() = _MyStudyDailyPagingData
 
     fun getMyStudyData() {
         val accessToken = model.getAccessToken()

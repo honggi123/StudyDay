@@ -70,6 +70,13 @@ interface StudydayService {
         @Path("nickname") nickname: String
     ): Single<Response<MainResponse>>
 
+    @GET("home/my-study/{nickname}")
+    fun mainMyStudyPaging(
+        @Header("Authorization") accessToken: String,
+        @Path("nickname") nickname: String,
+        @Query("page") page: Int
+    ): Call<MainMyStudyPagingResponse>
+
     @FormUrlEncoded
     @POST("token/{nickname}")
     fun token(
@@ -92,11 +99,25 @@ interface StudydayService {
         @Query("page") page: Int
     ): Call<MyStudyGroupPagingResponse>
 
+    @GET("my-study/open/{nickname}")
+    fun myStudyDailyPaging(
+        @Header("Authorization") accessToken: String,
+        @Path("nickname") nickname: String,
+        @Query("page") page: Int
+    ): Call<MyStudyDailyPagingResponse>
+
     @GET("my-study/manage/{nickname}")
     fun myStudyManage(
         @Header("Authorization") accessToken: String,
         @Path("nickname") nickname: String
     ): Single<Response<MyStudyManageResponse>>
+
+    @GET("my-study/manage/{nickname}")
+    fun myStudyManagePaging(
+        @Header("Authorization") accessToken: String,
+        @Path("nickname") nickname: String,
+        @Query("page") page: Int
+    ): Call<MyStudyManagePagingResponse>
 
     @DELETE("my-study/manage/study/{index}")
     fun delteStudy(
@@ -152,7 +173,7 @@ interface StudydayService {
         @Query("viewType") viewType: String,
         @Query("keyword") keyword: String?,
         @Query("page") page: Int
-    ): Single<Response<StudySearchResponse>>
+    ): Call<StudySearchResponse>
 
     @GET("study/{idx}")
     fun editStudyInfo(

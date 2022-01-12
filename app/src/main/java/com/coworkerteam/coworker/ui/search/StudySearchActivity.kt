@@ -31,20 +31,11 @@ class StudySearchActivity : NavigationAcitivity<ActivityStudySearchBinding, Stud
         get() = findViewById(R.id.navigationView)
 
     lateinit var studySearchResponse: StudySearchResponse
-    var keword: String = ""
-
-    companion object {
-        private val _StudySearchLiveData = MutableLiveData<SearchStudy>()
-        val StudySearchLiveData: LiveData<SearchStudy>
-            get() = _StudySearchLiveData
-    }
+    var keword: String? = null
 
     var isJoin = false //바로 참여 가능 여부
     var viewType = "latest" // 정렬 방식. latest : 최신순, studyTime : 공부 시간순
-    var openPage = 1 // 페이지
-    var groupPage = 1 // 페이지
     var category = ArrayList<String>()
-    var tab_index = 0
 
     override fun initStartView() {
         super.initStartView()
@@ -73,7 +64,6 @@ class StudySearchActivity : NavigationAcitivity<ActivityStudySearchBinding, Stud
     }
 
     fun init() {
-
         val searchView = findViewById<SearchView>(R.id.study_search_searchview)
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -133,11 +123,11 @@ class StudySearchActivity : NavigationAcitivity<ActivityStudySearchBinding, Stud
 
     fun searchEvent() {
         var categorys: String? = category.joinToString("|")
-        if (categorys == "") {
+        if (categorys.isNullOrBlank()) {
             categorys = null
         }
-        var searchStudy = SearchStudy(categorys, isJoin, viewType, keword, 1)
-        _StudySearchLiveData.postValue(searchStudy)
+        var searchStudy = SearchStudy(categorys, isJoin, viewType, keword)
+        viewModel._StudySearchLiveData.postValue(searchStudy)
     }
 
     fun sortEvent(view: View, otherView: View, sort: String) {
