@@ -19,7 +19,8 @@ import com.google.android.material.tabs.TabLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import retrofit2.Response
 
-class StudySearchActivity : NavigationAcitivity<ActivityStudySearchBinding, StudySearchViewModel>() {
+class StudySearchActivity :
+    NavigationAcitivity<ActivityStudySearchBinding, StudySearchViewModel>() {
     val TAG = "StudySearchActivity"
     override val layoutResourceID: Int
         get() = R.layout.activity_study_search
@@ -30,15 +31,33 @@ class StudySearchActivity : NavigationAcitivity<ActivityStudySearchBinding, Stud
     override val navigatinView: NavigationView
         get() = findViewById(R.id.navigationView)
 
-    lateinit var studySearchResponse: StudySearchResponse
-    var keword: String? = null
+    companion object {
+        //검색 데이터
+        val _StudySearchLiveData = MutableLiveData<SearchStudy>()
+        val StudySearchLiveData: LiveData<SearchStudy>
+            get() = _StudySearchLiveData
 
-    var isJoin = false //바로 참여 가능 여부
-    var viewType = "latest" // 정렬 방식. latest : 최신순, studyTime : 공부 시간순
-    var category = ArrayList<String>()
+        var keword: String? = null
+
+        var isJoin = false //바로 참여 가능 여부
+        var viewType = "latest" // 정렬 방식. latest : 최신순, studyTime : 공부 시간순
+        var category = ArrayList<String>()
+
+        fun getCategory(): String? {
+            var categorys: String? = category.joinToString("|")
+            if (categorys.isNullOrBlank()) {
+                categorys = null
+            }
+            return categorys
+        }
+    }
+
+    lateinit var studySearchResponse: StudySearchResponse
 
     override fun initStartView() {
         super.initStartView()
+        initSearchOption()
+
         var main_toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.search_toolber)
 
         setSupportActionBar(main_toolbar) // 툴바를 액티비티의 앱바로 지정
@@ -104,6 +123,14 @@ class StudySearchActivity : NavigationAcitivity<ActivityStudySearchBinding, Stud
         })
     }
 
+    fun initSearchOption() {
+        keword = null
+
+        isJoin = false //바로 참여 가능 여부
+        viewType = "latest" // 정렬 방식. latest : 최신순, studyTime : 공부 시간순
+        category.clear()
+    }
+
     fun fragment_init() {
         val pagerAdapter = FragmentAdapter(supportFragmentManager)
         val pager = findViewById<ViewPager>(R.id.study_serarch_viewPager)
@@ -113,10 +140,10 @@ class StudySearchActivity : NavigationAcitivity<ActivityStudySearchBinding, Stud
         tab.setupWithViewPager(pager)
     }
 
-    fun showFilter(){
-        if(viewDataBinding.studySerarchFilter.visibility == View.VISIBLE){
+    fun showFilter() {
+        if (viewDataBinding.studySerarchFilter.visibility == View.VISIBLE) {
             viewDataBinding.studySerarchFilter.visibility = View.GONE
-        }else{
+        } else {
             viewDataBinding.studySerarchFilter.visibility = View.VISIBLE
         }
     }
@@ -127,7 +154,7 @@ class StudySearchActivity : NavigationAcitivity<ActivityStudySearchBinding, Stud
             categorys = null
         }
         var searchStudy = SearchStudy(categorys, isJoin, viewType, keword)
-        viewModel._StudySearchLiveData.postValue(searchStudy)
+        _StudySearchLiveData.postValue(searchStudy)
     }
 
     fun sortEvent(view: View, otherView: View, sort: String) {

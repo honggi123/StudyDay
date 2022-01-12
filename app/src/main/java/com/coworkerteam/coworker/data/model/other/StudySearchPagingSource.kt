@@ -5,6 +5,7 @@ import androidx.paging.PagingState
 import com.coworkerteam.coworker.data.local.prefs.PreferencesHelper
 import com.coworkerteam.coworker.data.model.api.StudySearchResponse
 import com.coworkerteam.coworker.data.remote.StudydayService
+import com.coworkerteam.coworker.ui.search.StudySearchActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -13,12 +14,7 @@ import java.io.IOException
 class StudySearchPagingSource(
     private val service: StudydayService,
     private val pref: PreferencesHelper,
-    private val reqType: String,
-    private val category: String?,
     private val studyType: String,
-    private val isJoin: Boolean,
-    private val viewType: String,
-    private val keword: String?
 ) :
     PagingSource<Int, StudySearchResponse.Result.Study>() {
     val TAG = "StudySearchPagingSource"
@@ -29,12 +25,12 @@ class StudySearchPagingSource(
             var response = withContext(Dispatchers.IO) {
                 service.studySerch(
                     pref.getAccessToken()!!,
-                    reqType,
-                    category,
+                    "search",
+                    StudySearchActivity.getCategory(),
                     studyType,
-                    isJoin,
-                    viewType,
-                    keword,
+                    StudySearchActivity.isJoin,
+                    StudySearchActivity.viewType,
+                    StudySearchActivity.keword,
                     position
                 ).execute()
             }

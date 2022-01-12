@@ -143,12 +143,7 @@ interface UserRepository {
     ): Single<Response<NicknameCheckResponse>>
 
     fun getStudySerchData(
-        reqType: String,
-        category: String?,
         studyType: String,
-        isJoin: Boolean,
-        viewType: String,
-        keword: String?,
     ): LiveData<PagingData<StudySearchResponse.Result.Study>>
 
     fun getEditStudyData(accessToken: String, studyIdx: Int): Single<Response<EditStudyResponse>>

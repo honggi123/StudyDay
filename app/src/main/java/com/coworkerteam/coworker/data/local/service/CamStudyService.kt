@@ -282,10 +282,30 @@ class CamStudyService : Service() {
                                     //새로운 참가자가 들어왔을때
                                     Log.d(TAG, "newParticipantArrived")
                                     val name = message.getString("name")
-                                    adaperDate.add(name)
                                     foreach(name)
+                                    adaperDate.add(name)
 
+                                    var participantsResponse =
+                                        Gson().fromJson(
+                                            message.getString("entry"),
+                                            ParticipantsResponse::class.java
+                                        )
+                                    _participantLiveData.postValue(participantsResponse)
+
+                                    for (par in participantsResponse.participants) {
+                                        if(par.nickname.equals(name)) {
+                                            getParticipant(message.getString("name"))
+                                                .setImgUrl(par.img, this)
+                                            return@Listener
+                                        }
+                                    }
+
+                                    Log.d(TAG,"newParticipantArrived adpater size"+ adaperDate.size)
+                                    val bundle = Bundle()
+                                    bundle.putStringArrayList("member", adaperDate)
+                                    bundle.putSerializable("peer",peerConnection)
                                     val handlerMessage = Message.obtain(null, MSG_CAMSTUDY_ITEM)
+                                    handlerMessage.obj = bundle
                                     sendHandlerMessage(handlerMessage)
 
                                     val par = getParticipant(message.getString("name"))

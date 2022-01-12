@@ -268,12 +268,7 @@ class UserRepositoryImpl(
     }
 
     override fun getStudySerchData(
-        reqType: String,
-        category: String?,
-        studyType: String,
-        isJoin: Boolean,
-        viewType: String,
-        keword: String?,
+        studyType: String
     ): LiveData<PagingData<StudySearchResponse.Result.Study>> {
         return Pager(
             config = PagingConfig(pageSize = 4, enablePlaceholders = false),
@@ -281,12 +276,7 @@ class UserRepositoryImpl(
                 StudySearchPagingSource(
                     service,
                     pref,
-                    reqType,
-                    category,
-                    studyType,
-                    isJoin,
-                    viewType,
-                    keword
+                    studyType
                 )
             }
         ).liveData

@@ -61,6 +61,8 @@ class GroupStudySerarchFragment :
         pagingStudySearchAdapter = StudySearchPagingAdapter()
         val rv_Search = view?.findViewById<RecyclerView>(R.id.fragment_group_study_rv)
         rv_Search?.adapter = pagingStudySearchAdapter
+
+        viewModel.getStudySearchData("group")
     }
 
     override fun initDataBinding() {
@@ -71,9 +73,13 @@ class GroupStudySerarchFragment :
                 rv_init()
             }
         })
-        viewModel.StudySearchLiveData.observe(this, androidx.lifecycle.Observer {
+        StudySearchActivity.StudySearchLiveData.observe(this, androidx.lifecycle.Observer {
             //검색결과를 성공적으로 반환
+            Log.d(TAG,"검색결과를 성공적으로 반환")
             searchEvent(it)
+        })
+        viewModel.StudySearchPagingData.observe(this,androidx.lifecycle.Observer {
+            pagingStudySearchAdapter.submitData(lifecycle,it)
         })
     }
 
@@ -118,14 +124,7 @@ class GroupStudySerarchFragment :
     }
 
     fun searchEvent(studyInfo : SearchStudy){
-        viewModel.getStudySearchData(
-            "search",
-            studyInfo.category,
-            "group",
-            studyInfo.isJoin,
-            studyInfo.viewType,
-            studyInfo.keyword
-        )
+        pagingStudySearchAdapter.refresh()
     }
 
     fun rv_init() {

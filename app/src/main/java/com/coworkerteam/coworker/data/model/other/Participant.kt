@@ -97,19 +97,6 @@ class Participant {
             remoteAudioTrack!!.setEnabled(isAudio)
             image_mic?.isSelected = false
         }
-//        if (isAudio) {
-//            Log.d("Participant", "toggleAudio() 끔")
-//            isAudio = false
-//            Log.d("Participant", isAudio.toString())
-//            remoteAudioTrack!!.setEnabled(isAudio)
-//            image_mic?.isSelected = true
-//        } else {
-//            Log.d("Participant", "toggleAudio() 킴")
-//            isAudio = true
-//            Log.d("Participant", isAudio.toString())
-//            remoteAudioTrack!!.setEnabled(isAudio)
-//            image_mic?.isSelected = false
-//        }
     }
 
     fun toggleVideo(status: String) {
@@ -128,21 +115,6 @@ class Participant {
             }
             remoteVideoTrack!!.setEnabled(isVideo)
         }
-//        if (isVideo) {
-//            Log.d("Participant", "toggleVideo() 끔")
-//            isVideo = false
-//            CoroutineScope(Dispatchers.Main).async {
-//                profileView?.visibility = View.VISIBLE
-//            }
-//            remoteVideoTrack!!.setEnabled(isVideo)
-//        } else {
-//            Log.d("Participant", "toggleVideo() 킴")
-//            isVideo = true
-//            CoroutineScope(Dispatchers.Main).async {
-//                profileView?.visibility = View.GONE
-//            }
-//            remoteVideoTrack!!.setEnabled(isVideo)
-//        }
     }
 
     fun startHostTimer() {

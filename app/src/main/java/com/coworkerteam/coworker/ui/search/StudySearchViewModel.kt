@@ -35,15 +35,10 @@ class StudySearchViewModel(private val model: UserRepository) : BaseViewModel() 
         get() = _StudySearchPagingData
 
     fun getStudySearchData(
-        reqType: String,
-        category: String?,
-        studyType: String,
-        isJoin: Boolean,
-        viewType: String,
-        keword: String?,
+        studyType: String
     ) {
         _StudySearchPagingData =
-            model.getStudySerchData(reqType, category, studyType, isJoin, viewType, keword)
+            model.getStudySerchData(studyType)
                 .cachedIn(viewModelScope) as MutableLiveData<PagingData<StudySearchResponse.Result.Study>>
     }
 

@@ -36,7 +36,7 @@ class StudySearchPagingAdapter :
                     oldItem: StudySearchResponse.Result.Study,
                     newItem: StudySearchResponse.Result.Study
                 ): Boolean {
-                    return false
+                    return oldItem == newItem
                 }
             }
     }
