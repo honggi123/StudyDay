@@ -9,7 +9,7 @@
 
         <include
             android:id="@+id/leader_transfer_toolbar"
-            layout="@layout/main_toolbar"
+            layout="@layout/toolbar_main"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

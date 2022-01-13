@@ -11,7 +11,7 @@
         tools:context=".ui.camstudy.cam.CamStudyActivity">
 
         <include
-            layout="@layout/camstudy_toolbar"
+            layout="@layout/toolbar_camstudy"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -35,7 +35,7 @@
                 tools:itemCount="6"
                 tools:listitem="@layout/item_camstudy" />
 
-            <include layout="@layout/camstudy_slidmenu" />
+            <include layout="@layout/menu_camstudy_bottom" />
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

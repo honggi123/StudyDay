@@ -10,7 +10,7 @@
 
         <include
             android:id="@+id/member_list_toolbar"
-            layout="@layout/main_toolbar"
+            layout="@layout/toolbar_main"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

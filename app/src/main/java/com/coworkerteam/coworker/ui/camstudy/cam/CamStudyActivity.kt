@@ -207,7 +207,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
         btn_chat.setOnClickListener(View.OnClickListener {
             Log.d(TAG, "btn_chat 클릭")
-            chatDialogView = layoutInflater.inflate(R.layout.camstudy_chat, null)
+            chatDialogView = layoutInflater.inflate(R.layout.dialog_camstudy_chat, null)
             val dialog = BottomSheetDialog(this, R.style.NewDialog)
             dialog.setContentView(chatDialogView!!)
             dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -263,7 +263,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         btn_more.setOnClickListener(View.OnClickListener {
 
             Log.d(TAG, "btn_more 클릭")
-            val dialogView: View = layoutInflater.inflate(R.layout.camstudy_bottom_menu, null)
+            val dialogView: View = layoutInflater.inflate(R.layout.menu_camstudy_more, null)
             val dialog = BottomSheetDialog(this, R.style.NewDialog)
             dialog.setContentView(dialogView)
 

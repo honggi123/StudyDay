@@ -328,7 +328,7 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
         dataSet.add(set)
         val data = BarData(dataSet)
         data.barWidth = 0.7f //막대 너비 설정
-        val barMarker = StatisticsMarkerView(this,R.layout.custom_marker_view,markerStrings)
+        val barMarker = StatisticsMarkerView(this,R.layout.statistics_custom_marker,markerStrings)
         barchart.run {
             this.data = data //차트의 데이터를 data로 설정해줌.
             setFitBars(true)

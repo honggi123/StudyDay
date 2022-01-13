@@ -11,7 +11,7 @@
         tools:context=".ui.camstudy.info.ParticipantsActivity">
 
         <include
-            layout="@layout/camstudy_info_toolbar"
+            layout="@layout/toolbar_camstudy_info"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

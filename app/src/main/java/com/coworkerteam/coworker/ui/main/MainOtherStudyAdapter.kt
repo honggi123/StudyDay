@@ -27,7 +27,7 @@ class MainOtherStudyAdapter(private val context: Context, private val viewModel:
     var datas = mutableListOf<MainResponse.Result.Study>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.item_main_new_study, parent, false)
+        val view = LayoutInflater.from(context).inflate(R.layout.item_main_other_study, parent, false)
         return ViewHolder(view)
     }
 
