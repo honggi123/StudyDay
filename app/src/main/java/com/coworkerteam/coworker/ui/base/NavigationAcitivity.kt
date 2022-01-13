@@ -41,7 +41,7 @@ open abstract class NavigationAcitivity<T : ViewDataBinding, R : BaseViewModel> 
                 .findViewById<CircleImageView>(com.coworkerteam.coworker.R.id.navi_login_image)
 
         if (loginType.equals("google")) {
-            navigationHeaderLogin.setImageResource(com.coworkerteam.coworker.R.drawable.google_icon)
+            navigationHeaderLogin.setImageResource(com.coworkerteam.coworker.R.drawable.btn_google_light_focus)
         } else if (loginType.equals("kakao")) {
             navigationHeaderLogin.setImageResource(com.coworkerteam.coworker.R.drawable.kakao_icon)
         } else if (loginType.equals("naver")) {

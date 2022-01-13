@@ -4,45 +4,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="activitiy"
+            type="com.coworkerteam.coworker.ui.login.LoginActivity" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.login.LoginActivity">
-
-        <ImageButton
-            android:id="@+id/button_login_google"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:background="@drawable/google_login"
-            android:scaleType="fitStart"
-            app:layout_constraintEnd_toStartOf="@+id/guideline26"
-            app:layout_constraintHorizontal_bias="0.531"
-            app:layout_constraintStart_toStartOf="@+id/guideline25"
-            app:layout_constraintTop_toTopOf="@+id/guideline15" />
-
-
-        <ImageButton
-            android:id="@+id/button_login_naver"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/naver_login"
-            android:scaleType="fitStart"
-            app:layout_constraintEnd_toEndOf="@+id/button_login_kakao"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="@+id/button_login_kakao"
-            app:layout_constraintTop_toBottomOf="@+id/button_login_kakao" />
-
-        <ImageButton
-            android:id="@+id/button_login_kakao"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/kakao_login"
-            android:scaleType="fitStart"
-            app:layout_constraintEnd_toStartOf="@+id/guideline26"
-            app:layout_constraintStart_toStartOf="@+id/guideline25"
-            app:layout_constraintTop_toBottomOf="@+id/button_login_google" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline15"
@@ -88,6 +59,64 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.4" />
+
+        <Button
+            android:id="@+id/button_login_google"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
+            android:elevation="5dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="구글 아이디로 로그인"
+            android:textColor="@color/black"
+            android:onClick="@{()->activitiy.googleLogin()}"
+            app:cornerRadius="10dp"
+            app:icon="@drawable/googleg_standard_color_18"
+            app:iconTintMode="multiply"
+            app:layout_constraintEnd_toStartOf="@+id/guideline26"
+            app:layout_constraintStart_toStartOf="@+id/guideline25"
+            app:layout_constraintTop_toTopOf="@+id/guideline15" />
+
+        <Button
+            android:id="@+id/button_login_kakao"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:backgroundTint="#FEE500"
+            android:elevation="5dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="카카오 아이디로 로그인"
+            android:textColor="#191919"
+            android:onClick="@{()->activitiy.kakaoLogin()}"
+            app:cornerRadius="10dp"
+            app:icon="@drawable/kakao"
+            app:iconSize="18dp"
+            app:iconTintMode="multiply"
+            app:layout_constraintEnd_toStartOf="@+id/guideline26"
+            app:layout_constraintStart_toStartOf="@+id/guideline25"
+            app:layout_constraintTop_toBottomOf="@+id/button_login_google" />
+
+        <Button
+            android:id="@+id/button_login_naver"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:backgroundTint="#03C75A"
+            android:elevation="5dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:paddingLeft="9dp"
+            android:text="네이버 아이디로 로그인"
+            android:onClick="@{()->activitiy.naverLogin()}"
+            app:cornerRadius="10dp"
+            app:icon="@drawable/naver"
+            app:iconSize="30dp"
+            app:iconTintMode="multiply"
+            app:layout_constraintEnd_toStartOf="@+id/guideline26"
+            app:layout_constraintStart_toStartOf="@+id/guideline25"
+            app:layout_constraintTop_toBottomOf="@+id/button_login_kakao" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

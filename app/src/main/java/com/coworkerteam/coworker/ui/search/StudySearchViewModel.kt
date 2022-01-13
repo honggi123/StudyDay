@@ -19,11 +19,6 @@ import retrofit2.Response
 class StudySearchViewModel(private val model: UserRepository) : BaseViewModel() {
     private val TAG = "StudySearchViewModel"
 
-    //스터디 입장전 데이터
-    private val _StudySearchResponseLiveData = MutableLiveData<Response<StudySearchResponse>>()
-    val StudySearchResponseLiveData: LiveData<Response<StudySearchResponse>>
-        get() = _StudySearchResponseLiveData
-
     //검색 데이터
     val _StudySearchLiveData = MutableLiveData<SearchStudy>()
     val StudySearchLiveData: LiveData<SearchStudy>

@@ -25,8 +25,9 @@
         android:id="@+id/navi_login_image"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:src="@drawable/naver_icon"
+        android:src="@drawable/btn_google_light_focus"
         app:civ_border_color="#FF000000"
+        app:civ_circle_background_color="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="@+id/navi_profile_image"
         app:layout_constraintEnd_toEndOf="@+id/navi_profile_image" />
 

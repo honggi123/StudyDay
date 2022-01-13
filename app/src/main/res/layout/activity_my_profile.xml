@@ -81,7 +81,7 @@
                 android:layout_marginBottom="20dp"
                 android:text="user1"
                 android:textColor="@color/black"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/textView19"
@@ -114,9 +114,10 @@
                     android:id="@+id/my_profile_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
                     android:text="abc@naver.com"
                     android:textColor="@color/black"
-                    android:textSize="24sp" />
+                    android:textSize="20sp" />
             </LinearLayout>
 
             <TextView

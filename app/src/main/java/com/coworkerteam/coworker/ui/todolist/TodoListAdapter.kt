@@ -5,6 +5,7 @@ import android.widget.Toast
 import android.app.Activity
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import android.util.Log
 import android.view.*
@@ -65,6 +66,14 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
             checkbox.text = item.todo
             checkbox.isChecked = item.isComplete
 
+            if (item.isComplete) {
+                checkbox.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+                checkbox.setTextColor(Color.GRAY)
+            }else{
+                checkbox.paintFlags = 0
+                checkbox.setTextColor(Color.BLACK)
+            }
+
             var items = item
             Log.d("디버그태그", items.toString())
 
@@ -72,8 +81,12 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
                 CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
                     if (isChecked) {
                         viewModel.setCheckTodoListData(item.idx, item.createDate)
+                        checkbox.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+                        checkbox.setTextColor(Color.GRAY)
                     } else {
                         viewModel.setCheckTodoListData(item.idx, item.createDate)
+                        checkbox.paintFlags = 0
+                        checkbox.setTextColor(Color.BLACK)
                     }
                 }
             )

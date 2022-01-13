@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
 import androidx.activity.result.contract.ActivityResultContracts
 import com.coworkerteam.coworker.R
@@ -41,21 +42,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
         }
 
     override fun initStartView() {
-        val btn_google: ImageButton = findViewById(R.id.button_login_google)
-        val btn_kakao: ImageButton = findViewById(R.id.button_login_kakao)
-        val btn_naver: ImageButton = findViewById(R.id.button_login_naver)
-
-        btn_google.setOnClickListener(View.OnClickListener {
-            googleLogin()
-        })
-
-        btn_kakao.setOnClickListener(View.OnClickListener {
-            kakaoLogin()
-        })
-
-        btn_naver.setOnClickListener(View.OnClickListener {
-            NaverLogin()
-        })
+        viewDataBinding.activitiy = this
     }
 
     override fun initDataBinding() {
@@ -96,7 +83,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
         }
     }
 
-    fun NaverLogin() {
+    fun naverLogin() {
         var mOAuthLoginModule = OAuthLogin.getInstance();
         mOAuthLoginModule.init(
             this,

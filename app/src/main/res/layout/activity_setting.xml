@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/under_line_gray"
             android:padding="18dp"
-            android:text="프로필 수정"
+            android:text="프로필 관리"
             android:textColor="@color/black"
             android:textSize="18sp" />
 

@@ -1,6 +1,8 @@
 package com.coworkerteam.coworker.ui.main
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,14 +39,26 @@ class MainTodolistAdapter(private val context: Context, private val viewModel: M
             checkbox.text = item.todo
             checkbox.isChecked = item.isComplete
 
+            if (item.isComplete) {
+                checkbox.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+                checkbox.setTextColor(Color.GRAY)
+            }else{
+                checkbox.paintFlags = 0
+                checkbox.setTextColor(Color.BLACK)
+            }
+
             var items = item
 
             checkbox.setOnCheckedChangeListener(
                 CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
                     if (isChecked) {
                         viewModel.setCheckTodoListData(item.idx, item.todoDate)
+                        checkbox.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+                        checkbox.setTextColor(Color.GRAY)
                     } else {
                         viewModel.setCheckTodoListData(item.idx, item.todoDate)
+                        checkbox.paintFlags = 0
+                        checkbox.setTextColor(Color.BLACK)
                     }
                 }
             )

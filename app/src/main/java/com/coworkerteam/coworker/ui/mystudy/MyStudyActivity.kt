@@ -35,8 +35,6 @@ class MyStudyActivity : NavigationAcitivity<ActivityMyStudyBinding, MyStudyViewM
         get() = findViewById(R.id.navigationView)
 
     lateinit var myStudy: MyStudyResponse
-    lateinit var main_drawer_layout: DrawerLayout
-    lateinit var headerView: View
     lateinit var pagingGroupAdapter: MyStudyGroupPagingAdapter
     lateinit var pagingDailyAdapter: MyStudyDailyPagingAdapter
 
@@ -96,18 +94,5 @@ class MyStudyActivity : NavigationAcitivity<ActivityMyStudyBinding, MyStudyViewM
         txt_menge.setOnClickListener(View.OnClickListener {
             startActivity(Intent(this, ManagementActivity::class.java))
         })
-    }
-
-    fun init_rv() {
-        val rv_open = findViewById<RecyclerView>(R.id.my_study_rv_open_study)
-        val rv_group = findViewById<RecyclerView>(R.id.my_study_rv_group_study)
-
-        //새로운
-        var recyclerNewStudy: RecyclerView =
-            findViewById(R.id.my_study_rv_group_study)
-        var newAdapter: MyStudyAdapter = MyStudyAdapter(this)
-
-        newAdapter.datas = myStudy.result.group.toMutableList()
-        recyclerNewStudy.adapter = newAdapter
     }
 }

@@ -9,6 +9,8 @@
         android:id="@+id/item_home_check_todolist"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
         android:text="CheckBox"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

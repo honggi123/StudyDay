@@ -61,13 +61,6 @@ class OpenStudySerarchFragment :
     }
 
     override fun initDataBinding() {
-        viewModel.StudySearchResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            //검색결과를 성공적으로 반환
-            if (it.isSuccessful) {
-                studySearchResponse = it.body()!!
-                rv_init()
-            }
-        })
 
         StudySearchActivity.StudySearchLiveData.observe(this, androidx.lifecycle.Observer {
             //검색결과를 성공적으로 반환
@@ -117,15 +110,5 @@ class OpenStudySerarchFragment :
 
     fun searchEvent(studyInfo : SearchStudy) {
         pagingStudySearchAdapter.refresh()
-    }
-
-    fun rv_init() {
-        //새로운
-        var recyclerNewStudy =
-            view?.findViewById<RecyclerView>(R.id.fragment_open_study_rv)
-        var newAdapter: SearchAdapter = SearchAdapter(requireContext())
-
-        newAdapter.datas = studySearchResponse.result.study.toMutableList()
-        recyclerNewStudy!!.adapter = newAdapter
     }
 }
