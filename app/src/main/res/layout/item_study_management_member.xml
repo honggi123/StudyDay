@@ -83,14 +83,35 @@
 
     <Button
         android:id="@+id/item_study_menage_btn_withdraw"
-        android:layout_width="70dp"
-        android:layout_height="22dp"
-        android:background="@drawable/button_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/ssub_color"
+        android:insetTop="0dp"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
         android:text="그룹 탈퇴"
         android:textColor="@color/white"
         android:textSize="10sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:cornerRadius="10dp"
         app:layout_constraintEnd_toStartOf="@+id/guideline31"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/item_study_menage_btn_member_list" />
+
+    <Button
+        android:id="@+id/item_study_menage_btn_member_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:text="가입 멤버"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        app:cornerRadius="10dp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline31"
+        app:layout_constraintTop_toTopOf="@+id/item_study_menage_txt_name" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

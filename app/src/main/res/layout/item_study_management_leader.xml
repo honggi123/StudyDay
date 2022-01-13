@@ -8,12 +8,13 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView2"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp"
         app:cardCornerRadius="10dp"
         app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="6:4"
         app:layout_constraintEnd_toStartOf="@+id/guideline33"
         app:layout_constraintStart_toStartOf="@+id/guideline32"
         app:layout_constraintTop_toTopOf="parent">
@@ -21,7 +22,7 @@
         <ImageView
             android:id="@+id/item_study_menage_img"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="match_parent"
             android:scaleType="centerCrop"
             tools:srcCompat="@color/contour" />
     </androidx.cardview.widget.CardView>
@@ -66,7 +67,9 @@
         android:orientation="horizontal"
         app:layoutManager="LinearLayoutManager"
         app:layout_constraintStart_toStartOf="@+id/item_study_menage_txt_name"
-        app:layout_constraintTop_toBottomOf="@+id/item_study_menage_txt_name" />
+        app:layout_constraintTop_toBottomOf="@+id/item_study_menage_txt_name"
+        tools:itemCount="3"
+        tools:listitem="@layout/item_study_categoty" />
 
     <TextView
         android:id="@+id/item_study_menage_context"
@@ -83,41 +86,63 @@
 
     <Button
         android:id="@+id/item_study_menage_btn_modify"
-        android:layout_width="70dp"
-        android:layout_height="22dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:background="@drawable/main_goal"
-        android:drawableRight="@drawable/ic_baseline_mode_14"
-        android:textStyle="bold"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:paddingTop="6dp"
         android:paddingRight="10dp"
+        android:paddingBottom="6dp"
         android:text="수정"
         android:textColor="@color/white"
         android:textSize="10sp"
+        android:textStyle="bold"
+        app:cornerRadius="10dp"
+        app:icon="@drawable/ic_baseline_mode_14"
+        app:iconGravity="textEnd"
+        app:iconPadding="3dp"
         app:layout_constraintBottom_toTopOf="@+id/item_study_menage_btn_leader"
-        app:layout_constraintEnd_toStartOf="@+id/guideline31" />
+        app:layout_constraintEnd_toStartOf="@+id/guideline31"
+        app:layout_constraintStart_toStartOf="@+id/item_study_menage_btn_leader" />
 
     <Button
         android:id="@+id/item_study_menage_leader_btn_withdraw"
-        android:layout_width="70dp"
-        android:layout_height="22dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:background="@drawable/button_delete"
-        android:textStyle="bold"
+        android:backgroundTint="@color/ssub_color"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
         android:text="그룹 삭제"
         android:textColor="@color/white"
         android:textSize="10sp"
+        android:textStyle="bold"
+        app:cornerRadius="10dp"
         app:layout_constraintEnd_toStartOf="@+id/guideline31"
         app:layout_constraintTop_toBottomOf="@+id/item_study_menage_btn_leader" />
 
     <Button
         android:id="@+id/item_study_menage_btn_leader"
-        android:layout_width="70dp"
-        android:layout_height="22dp"
-        android:background="@drawable/main_goal"
-        android:textStyle="bold"
-        android:text="리더 양도"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:text="가입 멤버"
         android:textColor="@color/white"
         android:textSize="10sp"
+        android:textStyle="bold"
+        app:cornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline31"
         app:layout_constraintTop_toTopOf="parent"

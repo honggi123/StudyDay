@@ -24,13 +24,18 @@ class LeaderTransferViewModel(private val model: UserRepository) : BaseViewModel
     private val _LeaderTransferResponseLiveData = MutableLiveData<Response<ApiRequest>>()
     val LeaderTransferResponseLiveData: LiveData<Response<ApiRequest>>
         get() = _LeaderTransferResponseLiveData
+    
+    //멤버 추방
+    private val _ForcedExitResponseLiveData = MutableLiveData<Response<ApiRequest>>()
+    val ForcedExitResponseLiveData: LiveData<Response<ApiRequest>>
+        get() = _ForcedExitResponseLiveData
 
     fun getStudyMemberData(studyIdx: Int) {
         val accessToken = model.getAccessToken()
 
         if (!accessToken.isNullOrEmpty()) {
             addDisposable(
-                model.getStudyMemberData(accessToken, studyIdx)
+                model.getStudyMemberData(accessToken, studyIdx, "manageMember")
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
@@ -58,6 +63,28 @@ class LeaderTransferViewModel(private val model: UserRepository) : BaseViewModel
                     .subscribe({
                         it.run {
                             _LeaderTransferResponseLiveData.postValue(this)
+                            Log.d(TAG, "meta : " + it.toString())
+                        }
+                    }, {
+                        Log.d(TAG, "response error, message : ${it.message}")
+                    })
+            )
+        } else {
+            Log.d(TAG, "setLeaderTransferData:: accessToken 값이 없습니다.")
+        }
+    }
+
+    fun setForcedExitData(userIdx: Int, studyIdx: Int) {
+        val accessToken = model.getAccessToken()
+
+        if (!accessToken.isNullOrEmpty()) {
+            addDisposable(
+                model.setForcedExitData(accessToken, userIdx, studyIdx)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        it.run {
+                            _ForcedExitResponseLiveData.postValue(this)
                             Log.d(TAG, "meta : " + it.toString())
                         }
                     }, {

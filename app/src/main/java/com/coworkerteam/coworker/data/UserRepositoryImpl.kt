@@ -11,7 +11,6 @@ import com.coworkerteam.coworker.data.model.other.*
 import com.coworkerteam.coworker.data.remote.NaverService
 import com.coworkerteam.coworker.data.remote.StudydayService
 import io.reactivex.Single
-import retrofit2.Call
 import retrofit2.Response
 
 class UserRepositoryImpl(
@@ -235,9 +234,18 @@ class UserRepositoryImpl(
 
     override fun getStudyMemberData(
         accessToken: String,
-        studyIdx: Int
+        studyIdx: Int,
+        reqType: String
     ): Single<Response<StudyMemberResponse>> {
-        return service.studyMember(accessToken, studyIdx)
+        return service.studyMember(accessToken, studyIdx, reqType)
+    }
+
+    override fun setForcedExitData(
+        accessToken: String,
+        userIdx: Int,
+        studyIdx: Int
+    ): Single<Response<ApiRequest>> {
+        return service.forcedExit(accessToken,userIdx, studyIdx)
     }
 
     override fun getProfileManageData(

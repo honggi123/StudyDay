@@ -58,6 +58,7 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
         supportActionBar?.title = getString(R.string.app_name)
 
         val mainToolbarMakeStudy = findViewById<ImageView>(R.id.main_toolbar_makeStudy)
+        mainToolbarMakeStudy.visibility = View.VISIBLE
         mainToolbarMakeStudy.setOnClickListener(
             View.OnClickListener {
                 var intent = Intent(this, MakeStudyActivity::class.java)

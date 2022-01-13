@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/item_leader_transfer_profile"
+        android:id="@+id/item_study_member_management_profile"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginTop="15dp"
@@ -18,34 +18,37 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/item_leader_transfer_nickname"
+        android:id="@+id/item_study_member_management_nickname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:text="닉네임"
         android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/item_leader_transfer_profile"
-        app:layout_constraintStart_toEndOf="@+id/item_leader_transfer_profile"
-        app:layout_constraintTop_toTopOf="@+id/item_leader_transfer_profile" />
+        app:layout_constraintBottom_toBottomOf="@+id/item_study_member_management_profile"
+        app:layout_constraintStart_toEndOf="@+id/item_study_member_management_profile"
+        app:layout_constraintTop_toTopOf="@+id/item_study_member_management_profile" />
 
     <Button
-        android:id="@+id/item_leader_transfer_btn"
+        android:id="@+id/item_study_member_management_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="15dp"
+        android:backgroundTint="@color/white"
         android:minWidth="0dp"
         android:minHeight="0dp"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
-        android:text="리더 양도"
-        android:textColor="@color/white"
+        android:text="멤버 탈퇴"
+        android:textColor="@color/ssub_color"
         android:textSize="10sp"
         android:textStyle="bold"
         app:cornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@color/ssub_color"
+        app:strokeWidth="1dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline30"

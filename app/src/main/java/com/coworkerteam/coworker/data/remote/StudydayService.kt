@@ -134,8 +134,16 @@ interface StudydayService {
     @GET("study/members")
     fun studyMember(
         @Header("Authorization") accessToken: String,
-        @Query("studyIdx") studyIdx: Int
+        @Query("studyIdx") studyIdx: Int,
+        @Query("reqType") reqType: String
     ): Single<Response<StudyMemberResponse>>
+
+    @DELETE("study/members/{userIdx}")
+    fun forcedExit(
+        @Header("Authorization") authoriation: String,
+        @Path("userIdx") userIdx: Int,
+        @Query("studyIdx") studyIdx: Int
+    ): Single<Response<ApiRequest>>
 
     @GET("users/{nickname}")
     fun profileManage(

@@ -118,8 +118,15 @@ interface UserRepository {
 
     fun getStudyMemberData(
         accessToken: String,
-        studyIdx: Int
+        studyIdx: Int,
+        reqType: String
     ): Single<Response<StudyMemberResponse>>
+
+    fun setForcedExitData(
+        accessToken: String,
+        userIdx: Int,
+        studyIdx: Int
+    ):Single<Response<ApiRequest>>
 
     fun getProfileManageData(
         accessToken: String,

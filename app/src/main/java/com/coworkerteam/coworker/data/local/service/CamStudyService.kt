@@ -285,6 +285,14 @@ class CamStudyService : Service() {
                                     foreach(name)
                                     adaperDate.add(name)
 
+                                    Log.d(TAG,"newParticipantArrived adpater size"+ adaperDate.size)
+                                    val bundle = Bundle()
+                                    bundle.putStringArrayList("member", adaperDate)
+                                    bundle.putSerializable("peer",peerConnection)
+                                    val handlerMessage = Message.obtain(null, MSG_CAMSTUDY_ITEM)
+                                    handlerMessage.obj = bundle
+                                    sendHandlerMessage(handlerMessage)
+
                                     var participantsResponse =
                                         Gson().fromJson(
                                             message.getString("entry"),
@@ -299,14 +307,6 @@ class CamStudyService : Service() {
                                             return@Listener
                                         }
                                     }
-
-                                    Log.d(TAG,"newParticipantArrived adpater size"+ adaperDate.size)
-                                    val bundle = Bundle()
-                                    bundle.putStringArrayList("member", adaperDate)
-                                    bundle.putSerializable("peer",peerConnection)
-                                    val handlerMessage = Message.obtain(null, MSG_CAMSTUDY_ITEM)
-                                    handlerMessage.obj = bundle
-                                    sendHandlerMessage(handlerMessage)
 
                                     val par = getParticipant(message.getString("name"))
 
@@ -335,7 +335,11 @@ class CamStudyService : Service() {
                                     getParticipant(message.getString("name")).stopCamStduy()
                                     peerConnection.remove(message.getString("name"))
 
+                                    val bundle = Bundle()
+                                    bundle.putStringArrayList("member", adaperDate)
+                                    bundle.putSerializable("peer",peerConnection)
                                     val handlerMessage = Message.obtain(null, MSG_CAMSTUDY_ITEM)
+                                    handlerMessage.obj = bundle
                                     sendHandlerMessage(handlerMessage)
                                 }
                                 "receiveVideoAnswer" -> {

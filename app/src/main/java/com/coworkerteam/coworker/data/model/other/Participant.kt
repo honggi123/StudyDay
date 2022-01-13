@@ -88,13 +88,17 @@ class Participant {
             Log.d("Participant", "toggleAudio() 끔")
             isAudio = false
             Log.d("Participant", isAudio.toString())
-            remoteAudioTrack!!.setEnabled(isAudio)
+            if(remoteAudioTrack != null) {
+                remoteAudioTrack!!.setEnabled(isAudio)
+            }
             image_mic?.isSelected = true
         } else if (status.equals("on")) {
             Log.d("Participant", "toggleAudio() 킴")
             isAudio = true
             Log.d("Participant", isAudio.toString())
-            remoteAudioTrack!!.setEnabled(isAudio)
+            if(remoteAudioTrack != null) {
+                remoteAudioTrack!!.setEnabled(isAudio)
+            }
             image_mic?.isSelected = false
         }
     }
@@ -106,14 +110,18 @@ class Participant {
             CoroutineScope(Dispatchers.Main).async {
                 profileView?.visibility = View.VISIBLE
             }
-            remoteVideoTrack!!.setEnabled(isVideo)
+            if(remoteVideoTrack != null) {
+                remoteVideoTrack!!.setEnabled(isVideo)
+            }
         } else if (status.equals("on")) {
             Log.d("Participant", "toggleVideo() 킴")
             isVideo = true
             CoroutineScope(Dispatchers.Main).async {
                 profileView?.visibility = View.GONE
             }
-            remoteVideoTrack!!.setEnabled(isVideo)
+            if(remoteVideoTrack != null) {
+                remoteVideoTrack!!.setEnabled(isVideo)
+            }
         }
     }
 

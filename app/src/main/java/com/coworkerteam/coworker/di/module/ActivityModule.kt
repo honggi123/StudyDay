@@ -24,6 +24,7 @@ import com.coworkerteam.coworker.ui.study.edit.EditStudyViewModel
 import com.coworkerteam.coworker.ui.study.leader.transfer.LeaderTransferViewModel
 import com.coworkerteam.coworker.ui.study.make.MakeStudyViewModel
 import com.coworkerteam.coworker.ui.study.management.ManagementViewModel
+import com.coworkerteam.coworker.ui.study.memberlist.MemberListViewModel
 import com.coworkerteam.coworker.ui.todolist.TodoListViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -97,6 +98,9 @@ var viewModelModule = module {
     }
     viewModel {
         ParticipantsViewModel(get())
+    }
+    viewModel {
+        MemberListViewModel(get())
     }
 }
 

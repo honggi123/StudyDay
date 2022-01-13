@@ -1,4 +1,5 @@
 package com.coworkerteam.coworker.ui.study.management
+import android.util.Log
 
 import android.content.Context
 import android.content.Intent
@@ -18,6 +19,7 @@ import com.coworkerteam.coworker.data.model.dto.MyStudy
 import com.coworkerteam.coworker.ui.main.StudyCategoryAdapter
 import com.coworkerteam.coworker.ui.study.edit.EditStudyActivity
 import com.coworkerteam.coworker.ui.study.leader.transfer.LeaderTransferActivity
+import com.coworkerteam.coworker.ui.study.memberlist.MemberListActivity
 
 class ManagementAdapter(private val context: Context, private val viewModel: ManagementViewModel) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -137,6 +139,7 @@ class ManagementAdapter(private val context: Context, private val viewModel: Man
         private val img: ImageView = itemView.findViewById(R.id.item_study_menage_img)
         private val studyName: TextView = itemView.findViewById(R.id.item_study_menage_txt_name)
         private val txt_context: TextView = itemView.findViewById(R.id.item_study_menage_context)
+        private val btn_memberList: Button = itemView.findViewById(R.id.item_study_menage_btn_member_list)
         private val btn_studyWithdraw: Button =
             itemView.findViewById(R.id.item_study_menage_btn_withdraw)
         private val rvCategory: RecyclerView =
@@ -147,6 +150,12 @@ class ManagementAdapter(private val context: Context, private val viewModel: Man
 
             studyName.text = item.name
             txt_context.text = item.introduce
+
+            btn_memberList.setOnClickListener(View.OnClickListener {
+                var intent = Intent(context, MemberListActivity::class.java)
+                intent.putExtra("study_idx", item.idx)
+                context.startActivity(intent)
+            })
 
             btn_studyWithdraw.setOnClickListener(View.OnClickListener {
                 val mDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_group_withdrawal, null)

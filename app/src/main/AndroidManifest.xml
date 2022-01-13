@@ -24,7 +24,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Coworker">
-
+        <activity android:name=".ui.study.memberlist.MemberListActivity"/>
         <activity android:name=".ui.camstudy.info.MyStudyInfoActivity" />
         <activity android:name=".ui.camstudy.info.StudyInfoActivity" />
         <activity android:name=".ui.camstudy.info.ParticipantsActivity" />

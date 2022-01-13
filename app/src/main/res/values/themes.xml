@@ -35,24 +35,4 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
-    <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-        <!--FilledBox일 경우 밑줄 색상, OutlinedBox일 경우 테두리 색상-->
-        <item name="boxStrokeColor">@color/white</item>
-        <!--        &lt;!&ndash;Counter&ndash;&gt;-->
-        <!--        <item name="counterTextAppearance">@style/CounterTextAppearance</item>-->
-        <!--        &lt;!&ndash;EditText에 있을때의 Hint&ndash;&gt;-->
-        <!--        <item name="android:textColorHint">@color/blue_grey</item>-->
-        <!--        &lt;!&ndash;상단에 있을때의 Hint&ndash;&gt;-->
-        <!--        <item name="hintTextColor">@color/blue_grey</item>-->
-        <!--        <item name="hintTextAppearance">@style/HintTextAppearance</item>-->
-        <!--        &lt;!&ndash;Helper&ndash;&gt;-->
-        <!--        <item name="helperTextTextAppearance">@style/HelperTextAppearance</item>-->
-        <!--        &lt;!&ndash;Error&ndash;&gt;-->
-        <!--        <item name="errorEnabled">true</item>-->
-        <!--        <item name="colorError">@color/orangey_red</item>-->
-        <!--        <item name="errorIconDrawable">@android:color/transparent</item>-->
-        <!--        <item name="errorTextAppearance">@style/ErrorTextAppearance</item>-->
-    </style>
-
 </resources>
