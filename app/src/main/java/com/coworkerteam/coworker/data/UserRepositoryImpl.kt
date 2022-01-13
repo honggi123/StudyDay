@@ -7,7 +7,7 @@ import androidx.paging.PagingData
 import androidx.paging.liveData
 import com.coworkerteam.coworker.data.local.prefs.PreferencesHelper
 import com.coworkerteam.coworker.data.model.api.*
-import com.coworkerteam.coworker.data.model.other.*
+import com.coworkerteam.coworker.data.model.paging.*
 import com.coworkerteam.coworker.data.remote.NaverService
 import com.coworkerteam.coworker.data.remote.StudydayService
 import io.reactivex.Single

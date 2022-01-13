@@ -11,8 +11,8 @@ import androidx.core.view.ViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.StatisticsResponse
-import com.coworkerteam.coworker.data.model.other.CustBarChart
-import com.coworkerteam.coworker.data.model.other.StatisticsMarkerView
+import com.coworkerteam.coworker.data.model.custom.CustBarChart
+import com.coworkerteam.coworker.data.model.custom.StatisticsMarkerView
 import com.coworkerteam.coworker.databinding.ActivityStatisticsBinding
 import com.coworkerteam.coworker.ui.base.NavigationAcitivity
 import com.github.mikephil.charting.charts.PieChart

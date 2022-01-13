@@ -1,4 +1,4 @@
-package com.coworkerteam.coworker.data.model.other;
+package com.coworkerteam.coworker.data.model.custom;
 
 import android.graphics.Canvas;
 import android.graphics.LinearGradient;

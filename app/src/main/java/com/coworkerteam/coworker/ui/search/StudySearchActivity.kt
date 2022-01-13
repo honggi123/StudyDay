@@ -7,17 +7,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.viewpager.widget.ViewPager
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.model.api.ApiRequest
 import com.coworkerteam.coworker.data.model.api.StudySearchResponse
-import com.coworkerteam.coworker.data.model.dto.SearchStudy
+import com.coworkerteam.coworker.data.model.other.SearchStudy
 import com.coworkerteam.coworker.databinding.ActivityStudySearchBinding
-import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.base.NavigationAcitivity
-import com.coworkerteam.coworker.ui.category.CategoryViewModel
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import retrofit2.Response
 
 class StudySearchActivity :
     NavigationAcitivity<ActivityStudySearchBinding, StudySearchViewModel>() {

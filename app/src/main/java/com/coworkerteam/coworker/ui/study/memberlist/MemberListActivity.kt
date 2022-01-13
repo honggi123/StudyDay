@@ -41,7 +41,7 @@ class MemberListActivity : BaseActivity<ActivityMemberListBinding, MemberListVie
     fun init_rv(myStudy: StudyMemberResponse) {
         //새로운
         var recyclerNewStudy: RecyclerView =
-            findViewById(R.id.leader_transfer_rv)
+            findViewById(R.id.member_list_rv)
         var newAdapter: MemberListAdapter = MemberListAdapter(this)
 
         newAdapter.datas = myStudy.result.toMutableList()

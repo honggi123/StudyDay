@@ -1,4 +1,4 @@
-package com.coworkerteam.coworker.data.model.dto
+package com.coworkerteam.coworker.data.model.other
 
 
 data class SearchStudy(

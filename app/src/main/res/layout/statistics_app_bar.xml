@@ -12,8 +12,7 @@
         android:background="@color/main_color"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:expanded="false"
-        app:layout_behavior="com.coworkerteam.coworker.ui.statistics.ScrollingCalendarBehavior">
+        app:expanded="false">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbarLayout"

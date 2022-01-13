@@ -1,36 +1,17 @@
 package com.coworkerteam.coworker.ui.search
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
 import com.coworkerteam.coworker.data.model.api.StudySearchResponse
-import com.coworkerteam.coworker.data.model.dto.SearchStudy
-import com.coworkerteam.coworker.data.remote.StudydayService
-import com.coworkerteam.coworker.databinding.FragmentGroupStudySerarchBinding
+import com.coworkerteam.coworker.data.model.other.SearchStudy
 import com.coworkerteam.coworker.databinding.FragmentOpenStudySerarchBinding
 import com.coworkerteam.coworker.ui.base.BaseFragment
-import com.coworkerteam.coworker.ui.study.management.ManagementPagingAdapter
-import com.coworkerteam.coworker.utils.RecyclerViewUtils
-import com.google.android.gms.common.api.ApiException
-import okhttp3.OkHttpClient
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

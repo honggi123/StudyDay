@@ -1,20 +1,14 @@
 package com.coworkerteam.coworker.ui.search
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.coworkerteam.coworker.data.UserRepository
-import com.coworkerteam.coworker.data.model.api.ApiRequest
-import com.coworkerteam.coworker.data.model.api.MyStudyDailyPagingResponse
 import com.coworkerteam.coworker.data.model.api.StudySearchResponse
-import com.coworkerteam.coworker.data.model.dto.SearchStudy
+import com.coworkerteam.coworker.data.model.other.SearchStudy
 import com.coworkerteam.coworker.ui.base.BaseViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import retrofit2.Response
 
 class StudySearchViewModel(private val model: UserRepository) : BaseViewModel() {
     private val TAG = "StudySearchViewModel"

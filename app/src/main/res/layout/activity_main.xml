@@ -43,31 +43,40 @@
                     android:orientation="horizontal"
                     tools:context=".ui.main.MainActivity">
 
-                    <TextView
-                        android:id="@+id/textView48"
-                        android:layout_width="wrap_content"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/main_layout_dday"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="디데이를 등록해주세요"
-                        android:textColor="@color/main_color"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="@+id/textView43"
-                        app:layout_constraintStart_toStartOf="@+id/textView43"
-                        app:layout_constraintTop_toBottomOf="@+id/textView43" />
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-                    <TextView
-                        android:id="@+id/textView43"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="32dp"
-                        android:text="D - 0"
-                        android:textColor="@color/main_color"
-                        android:textSize="35sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toStartOf="@+id/guideline8"
-                        app:layout_constraintStart_toStartOf="@+id/guideline7"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        <TextView
+                            android:id="@+id/main_txt_dday_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="디데이를 등록해주세요"
+                            android:textColor="@color/main_color"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="@+id/main_txt_dday"
+                            app:layout_constraintStart_toStartOf="@+id/main_txt_dday"
+                            app:layout_constraintTop_toBottomOf="@+id/main_txt_dday" />
+
+                        <TextView
+                            android:id="@+id/main_txt_dday"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="32dp"
+                            android:text="D - 0"
+                            android:textColor="@color/main_color"
+                            android:textSize="35sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/constraintLayout4"
@@ -79,7 +88,7 @@
                         android:padding="5dp"
                         app:layout_constraintEnd_toStartOf="@+id/guideline8"
                         app:layout_constraintStart_toStartOf="@+id/guideline7"
-                        app:layout_constraintTop_toBottomOf="@+id/textView48">
+                        app:layout_constraintTop_toBottomOf="@+id/main_layout_dday">
 
                         <TextView
                             android:id="@+id/textView"

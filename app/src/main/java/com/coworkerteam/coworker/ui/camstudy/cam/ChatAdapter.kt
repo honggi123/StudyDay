@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.model.other.Chat
+import com.coworkerteam.coworker.data.model.other.ChatData
 
 class ChatAdapter(private val context: Context) :
     RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
 
-    var datas = mutableListOf<Chat>()
+    var datas = mutableListOf<ChatData>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_chat, parent, false)
@@ -33,7 +33,7 @@ class ChatAdapter(private val context: Context) :
         private val time: TextView = itemView.findViewById(R.id.item_chat_time)
         private val context: TextView = itemView.findViewById(R.id.item_chat_context)
 
-        fun bind(item: Chat) {
+        fun bind(item: ChatData) {
 
             if (item.receiver != null) {
                 name.text = item.sender + " → " + item.receiver + "(귓속말)"

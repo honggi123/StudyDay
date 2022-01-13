@@ -16,7 +16,7 @@ import com.coworkerteam.coworker.data.local.prefs.PreferencesHelper
 import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
 import com.coworkerteam.coworker.data.model.api.ParticipantsResponse
 import com.coworkerteam.coworker.data.model.other.CamStudyServiceData
-import com.coworkerteam.coworker.data.model.other.Chat
+import com.coworkerteam.coworker.data.model.other.ChatData
 import com.coworkerteam.coworker.data.model.other.Participant
 import com.coworkerteam.coworker.ui.camstudy.cam.CamStudyActivity
 import com.google.gson.Gson
@@ -86,7 +86,7 @@ class CamStudyService : Service() {
         var timer: Int? = null
 
         var rootEglBase: EglBase = EglBase.create()
-        var chatDate = ArrayList<Chat>()
+        var chatDate = ArrayList<ChatData>()
         var isLeader = false
 
         //스터디 입장전 데이터
@@ -370,7 +370,7 @@ class CamStudyService : Service() {
                                     val receiver = if(message.getString("type").equals("total")) null else "나"
 
                                     chatDate.add(
-                                        Chat(
+                                        ChatData(
                                             message.getString("type"),
                                             message.getString("sender"),
                                             receiver,

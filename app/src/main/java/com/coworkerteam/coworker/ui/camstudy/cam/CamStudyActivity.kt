@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.data.local.service.CamStudyService
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
-import com.coworkerteam.coworker.data.model.other.Chat
+import com.coworkerteam.coworker.data.model.other.ChatData
 import com.coworkerteam.coworker.data.model.other.Participant
 import com.coworkerteam.coworker.databinding.ActivityCamStudyBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
@@ -123,7 +123,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         recyclerNewStudy.adapter = newAdapter
     }
 
-    fun chat_recyclerview_init(data: ArrayList<Chat>) {
+    fun chat_recyclerview_init(data: ArrayList<ChatData>) {
         if (chat_rv != null) {
             var newAdapter = ChatAdapter(this)
             newAdapter.datas = data.toMutableList()
@@ -233,7 +233,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     val msg: Message = Message.obtain(null, CamStudyService.MSG_TOTAL_MESSAGE)
                     msg.obj = bundle
                     sendHandlerMessage(msg)
-                    CamStudyService.chatDate.add(Chat("total", "나", null, chat, time))
+                    CamStudyService.chatDate.add(ChatData("total", "나", null, chat, time))
 
                     chat_recyclerview_init(CamStudyService.chatDate)
                 } else {
@@ -244,7 +244,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     val msg: Message = Message.obtain(null, CamStudyService.MSG_WHISPER_MESSAGE)
                     msg.obj = bundle
                     sendHandlerMessage(msg)
-                    CamStudyService.chatDate.add(Chat("total", "나", receiver, chat, time))
+                    CamStudyService.chatDate.add(ChatData("total", "나", receiver, chat, time))
 
                     chat_recyclerview_init(CamStudyService.chatDate)
                 }

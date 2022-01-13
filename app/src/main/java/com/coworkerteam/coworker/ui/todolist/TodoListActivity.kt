@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.icu.util.LocaleData
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
@@ -17,10 +16,8 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.TodolistResponse
-import com.coworkerteam.coworker.data.model.dto.TheDayTodo
-import com.coworkerteam.coworker.data.model.other.EventDecorator
+import com.coworkerteam.coworker.data.model.custom.EventDecorator
 import com.coworkerteam.coworker.databinding.ActivityTodoListBinding
-import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.base.NavigationAcitivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
@@ -106,7 +103,7 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
 
                 myStudyAdepter.datas = todolistResponse.result.theDayTodo.toMutableList()
                 myStudyAdepter.datas.add(
-                    TheDayTodo(
+                    TodolistResponse.Result.TheDayTodo(
                         day.todoDate,
                         day.idx,
                         day.isComplete,

@@ -11,38 +11,16 @@ import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
-import com.coworkerteam.coworker.data.model.api.CheckTodolistRequest
-import com.coworkerteam.coworker.data.model.api.DeleteTodolistRequest
-import com.coworkerteam.coworker.data.model.api.EditTodolistResponse
-import com.coworkerteam.coworker.data.model.dto.TheDayTodo
-import com.coworkerteam.coworker.data.remote.StudydayService
-import com.google.android.gms.common.api.ApiException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import okhttp3.OkHttpClient
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
+import com.coworkerteam.coworker.data.model.api.TodolistResponse
 
 class TodoListAdapter(private val context: Context, private val viewModel: TodoListViewModel) :
     RecyclerView.Adapter<TodoListAdapter.ViewHolder>() {
 
     val TAG = "TodolistAdapter"
 
-    var datas = mutableListOf<TheDayTodo>()
+    var datas = mutableListOf<TodolistResponse.Result.TheDayTodo>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_todolist, parent, false)
@@ -62,7 +40,7 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
         private val checkbox: CheckBox = itemView.findViewById(R.id.item_todolist_checkbox)
         private val more_menu: ImageView = itemView.findViewById(R.id.item_todolist_more_menu)
 
-        fun bind(item: TheDayTodo) {
+        fun bind(item: TodolistResponse.Result.TheDayTodo) {
             checkbox.text = item.todo
             checkbox.isChecked = item.isComplete
 
@@ -176,7 +154,7 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
     }
 
     fun editTodolist(selectDay: String, todo: String, idx: Int, position: Int, ischeck: Boolean) {
-        var theDayTodo = TheDayTodo(selectDay, idx, ischeck, todo)
+        var theDayTodo = TodolistResponse.Result.TheDayTodo(selectDay, idx, ischeck, todo)
 
         datas.removeAt(position)
         datas.add(position, theDayTodo)

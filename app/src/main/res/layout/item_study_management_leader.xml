@@ -138,7 +138,7 @@
         android:minHeight="0dp"
         android:paddingTop="6dp"
         android:paddingBottom="6dp"
-        android:text="가입 멤버"
+        android:text="멤버 관리"
         android:textColor="@color/white"
         android:textSize="10sp"
         android:textStyle="bold"

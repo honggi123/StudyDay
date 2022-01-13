@@ -1,4 +1,4 @@
-package com.coworkerteam.coworker.data.model.other
+package com.coworkerteam.coworker.data.model.custom
 import android.util.Log
 
 import android.content.Context
@@ -38,7 +38,4 @@ class StatisticsMarkerView : MarkerView {
         super.refreshContent(e, highlight)
     }
 
-//    override fun getOffset(): MPPointF {
-//        return MPPointF((-(width/2)).toFloat(), (-height).toFloat())
-//    }
 }

@@ -229,7 +229,7 @@
 
                         </LinearLayout>
 
-                        <com.coworkerteam.coworker.data.model.other.CustBarChart
+                        <com.coworkerteam.coworker.data.model.custom.CustBarChart
                             android:id="@+id/statistics_barChart"
                             android:layout_width="match_parent"
                             android:layout_height="200dp"
