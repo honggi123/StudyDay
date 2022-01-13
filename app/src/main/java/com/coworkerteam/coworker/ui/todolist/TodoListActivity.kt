@@ -28,6 +28,7 @@ import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.CalendarMode
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
+import com.prolificinteractive.materialcalendarview.OnMonthChangedListener
 import com.prolificinteractive.materialcalendarview.format.TitleFormatter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
@@ -67,15 +68,34 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
         viewModel.TodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
             if (it.isSuccessful) {
                 todolistResponse = it.body()!!
+                Log.d(TAG,todolistResponse.toString())
+                
+                //네비게이션 바에 넣을 정보가 있을 경우
                 if(todolistResponse.result.profile != null) {
                     setNavigaionLoginImage(todolistResponse.result.profile.loginType)
                     setNavigaionProfileImage(todolistResponse.result.profile.img)
                     setNavigaionNickname(todolistResponse.result.profile.nickname)
                 }
-                rv_init()
-                progress_init()
+
+                //프로그레스바, 투두리스트 항목이 있을 경우
+                if(todolistResponse.result.theDayTodo != null){
+                    rv_init()
+                    progress_init()
+                }
+
+                //데코레이터 추가할 날짜가 있을 경우
+                if(todolistResponse.result.todoDate != null) {
+                    var decorators = ArrayList<CalendarDay>()
+                    todolistResponse.result.todoDate.forEach {
+                        val date = it.split("-")
+                        decorators.add(CalendarDay.from(date[0].toInt(), date[1].toInt(), date[2].toInt()))
+                    }
+                    viewDataBinding.calendarView.addDecorator(EventDecorator(decorators))
+                }
+
             }
         })
+
         viewModel.AddTodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
             if (it.isSuccessful) {
                 val day = it.body()!!.result.theDayTodo[0]
@@ -131,16 +151,8 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
         val calender = findViewById<MaterialCalendarView>(R.id.calendarView)
         calender.state().edit()
 //            .setFirstDayOfWeek(Calendar.MONDAY)
-            .setMinimumDate(CalendarDay.from(2020, 4, 3))
-            .setMaximumDate(CalendarDay.from(2022, 5, 12))
             .setCalendarDisplayMode(CalendarMode.WEEKS)
             .commit();
-
-        var tests = ArrayList<CalendarDay>()
-        tests.add(CalendarDay.from(2022, 1, 31))
-
-        calender.addDecorator(EventDecorator(tests))
-
 
         calender.setTitleFormatter(TitleFormatter { day ->
             var cal = Calendar.getInstance()
@@ -150,6 +162,15 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
             var result = simpleDateFormat.format(cal.time)
 
             return@TitleFormatter result
+        })
+
+        calender.setOnMonthChangedListener(OnMonthChangedListener { widget, date ->
+            val month = if(date.month<10)"0${date.month}" else date.month.toString()
+            val day = if(date.day<10)"0${date.day}" else date.day.toString()
+
+            val showDate = date.year.toString()+"-"+month+"-"+day
+            Log.d("먼슬리 데이트 이벤트 테스트",showDate)
+            viewModel.getTodoListData("getTodoDate",showDate)
         })
 
         val listener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
@@ -252,8 +273,6 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
         myStudyAdepter!!.setItemClickListener(object : TodoListAdapter.OnItemClickListener {
             override fun onClick(v: View, position: Int) {
                 Toast.makeText(this@TodoListActivity, "dld", Toast.LENGTH_SHORT).show()
-
-
             }
         })
 

@@ -77,11 +77,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="20dp"
+                android:backgroundTint="@color/main_color"
                 android:clickable="true"
-                app:backgroundTint="@color/main_color"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:srcCompat="@drawable/ic_baseline_add_24" />
+                app:srcCompat="@drawable/ic_baseline_add_24"
+                app:tint="@color/white" />
 
             <TextView
                 android:id="@+id/todo_list_txt_no_todolist"

@@ -46,7 +46,11 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     var isPlay = false
 
     var timer: Int? = null
-    var studyInfo: EnterCamstudyResponse? = null
+
+    companion object {
+        var studyInfo: EnterCamstudyResponse? = null
+    }
+
     var receiver: String? = null
 
     var chatDialogView: View? = null
@@ -72,10 +76,16 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             intent.putExtra("cameraSwith", "front")
             intent.putExtra("studyInfo", studyInfo)
             intent.putExtra("timer", timer)
+            startForegroundService(intent)
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
         } else {
             //오레오 버전 이하일 경우
         }
+
+        recyclerview_init(
+            CamStudyService.adaperDate.toMutableList(),
+            CamStudyService.peerConnection
+        )
     }
 
     override fun initDataBinding() {
@@ -99,13 +109,13 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
         viewModel.getCamstduyLeaveData(studyIdx!!, studyTimeValue, restTime)
         unbindService(mConnection)
+        stopService(Intent(this, CamStudyService::class.java))
         finish()
     }
 
     fun recyclerview_init(data: MutableList<String>, hash: HashMap<String, Participant>) {
         Log.d(TAG, "도착한 메세지로 recyclerview_init를 실행" + data.size)
-        var recyclerNewStudy: RecyclerView =
-            findViewById(R.id.cam_study_rv)
+        var recyclerNewStudy: RecyclerView = findViewById(R.id.cam_study_rv)
         var newAdapter = CamStudyAdapter(this)
         newAdapter.datas = data
         newAdapter.hashmap = hash
@@ -333,6 +343,10 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         getMenuInflater().inflate(R.menu.camstudy_menu, menu);
         return true
@@ -386,10 +400,11 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             when (msg.what) {
                 CamStudyService.MSG_CAMSTUDY_ITEM -> {
                     //캠스터디 아이템
-                    val bundle = msg.obj as Bundle
-                    member = bundle.getStringArrayList("member")!!
-                    recyclerview_init(member.toMutableList(), CamStudyService.peerConnection)
-                    spinnerInit(chatDialogView, member.toTypedArray())
+                    recyclerview_init(
+                        CamStudyService.adaperDate.toMutableList(),
+                        CamStudyService.peerConnection
+                    )
+                    spinnerInit(chatDialogView, CamStudyService.adaperDate.toTypedArray())
                 }
                 CamStudyService.MSG_RECEIVED_MESSAGE -> {
                     //채팅 아이템

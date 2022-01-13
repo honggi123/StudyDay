@@ -93,6 +93,7 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
                 setNavigaionLoginImage(it.body()!!.result[0].profile.loginType)
                 setNavigaionNickname(it.body()!!.result[0].profile.nickname)
 
+                Log.d("디버그태그",it.body()!!.result[0].todo.toString())
                 //내스터디
                 var recyclerMyStudy: RecyclerView =
                     findViewById(R.id.main_todolist_recylerView)

@@ -1,11 +1,13 @@
 package com.coworkerteam.coworker.data.local.service
 
-import android.app.Service
+import android.app.*
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.os.*
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.coworkerteam.coworker.R
@@ -16,6 +18,7 @@ import com.coworkerteam.coworker.data.model.api.ParticipantsResponse
 import com.coworkerteam.coworker.data.model.other.CamStudyServiceData
 import com.coworkerteam.coworker.data.model.other.Chat
 import com.coworkerteam.coworker.data.model.other.Participant
+import com.coworkerteam.coworker.ui.camstudy.cam.CamStudyActivity
 import com.google.gson.Gson
 import io.socket.client.IO
 import io.socket.client.Socket
@@ -45,6 +48,8 @@ class CamStudyService : Service() {
     val VIDEO_RESOLUTION_WIDTH = 1280
     val VIDEO_RESOLUTION_HEIGHT = 720
     val FPS = 30
+    
+    val NOTIFICATION_ID = 1004
 
     var videoCapturer: VideoCapturer? = null
 
@@ -56,11 +61,6 @@ class CamStudyService : Service() {
     var audioConstraints: MediaConstraints? = null
     var audioSource: AudioSource? = null
     var localAudioTrack: AudioTrack? = null
-
-    var isVideo: Boolean? = null
-    var isAudio: Boolean? = null
-    var camearaSwith: String? = null
-    var timer: Int? = null
 
     companion object {
         val MSG_CLIENT_CONNECT = 0
@@ -80,6 +80,11 @@ class CamStudyService : Service() {
         val MSG_RECEIVED_MESSAGE = 14
         val MSG_PARTICIPANTS_ITEM = 15
 
+        var isVideo: Boolean? = null
+        var isAudio: Boolean? = null
+        var camearaSwith: String? = null
+        var timer: Int? = null
+
         var rootEglBase: EglBase = EglBase.create()
         var chatDate = ArrayList<Chat>()
         var isLeader = false
@@ -88,9 +93,10 @@ class CamStudyService : Service() {
         private val _participantLiveData = MutableLiveData<ParticipantsResponse>()
         val participantLiveData: LiveData<ParticipantsResponse>
             get() = _participantLiveData
+
         var peerConnection = HashMap<String, Participant>()
+        var adaperDate = ArrayList<String>()
     }
-    var adaperDate = ArrayList<String>()
 
     private var mClientCallbacks = ArrayList<Messenger>()
     val mMessenger = Messenger(CallbackHandler(Looper.getMainLooper()))
@@ -100,16 +106,18 @@ class CamStudyService : Service() {
 
     //서비스가 시작될 때 호출
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent != null) {
-            Log.d("onStartCommand", intent!!.getStringExtra("cameraSwith")!!)
-        } else {
-            Log.d("onStartCommand", "없어 돌아가")
+        if (socket == null) {
+            val notification = MusicNotification.createNotification(this)
+            startForeground(NOTIFICATION_ID, notification)
         }
-        return super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
 
     //포그라운드 서비스 시작시
     override fun startForegroundService(service: Intent?): ComponentName? {
+//        val notification = MusicNotification.createNotification(this)
+//        startForeground(NOTIFICATION_ID, notification)
+
         return super.startForegroundService(service)
     }
 
@@ -147,11 +155,11 @@ class CamStudyService : Service() {
         hostname = pref.getCurrentUserName()!!
         room = enterCamstudyResponse.result.studyInfo.link
 
-        this.isAudio = camstudyData.isAudio
-        this.isVideo = camstudyData.isVideo
-        this.timer = camstudyData.timer
+        isAudio = camstudyData.isAudio
+        isVideo = camstudyData.isVideo
+        timer = camstudyData.timer
 
-        this.camearaSwith = camstudyData.cameraSwith
+        camearaSwith = camstudyData.cameraSwith
     }
 
     private fun startCamStudy() {
@@ -271,11 +279,7 @@ class CamStudyService : Service() {
                                     }
 
                                     Log.d(TAG,"existingParticipants adpater size"+ adaperDate.size)
-                                    val bundle = Bundle()
-                                    bundle.putStringArrayList("member", adaperDate)
-                                    bundle.putSerializable("peer",peerConnection)
                                     val handlerMessage = Message.obtain(null, MSG_CAMSTUDY_ITEM)
-                                    handlerMessage.obj = bundle
                                     sendHandlerMessage(handlerMessage)
                                 }
                                 "newParticipantArrived" -> {
@@ -286,11 +290,7 @@ class CamStudyService : Service() {
                                     adaperDate.add(name)
 
                                     Log.d(TAG,"newParticipantArrived adpater size"+ adaperDate.size)
-                                    val bundle = Bundle()
-                                    bundle.putStringArrayList("member", adaperDate)
-                                    bundle.putSerializable("peer",peerConnection)
                                     val handlerMessage = Message.obtain(null, MSG_CAMSTUDY_ITEM)
-                                    handlerMessage.obj = bundle
                                     sendHandlerMessage(handlerMessage)
 
                                     var participantsResponse =
@@ -335,11 +335,7 @@ class CamStudyService : Service() {
                                     getParticipant(message.getString("name")).stopCamStduy()
                                     peerConnection.remove(message.getString("name"))
 
-                                    val bundle = Bundle()
-                                    bundle.putStringArrayList("member", adaperDate)
-                                    bundle.putSerializable("peer",peerConnection)
                                     val handlerMessage = Message.obtain(null, MSG_CAMSTUDY_ITEM)
-                                    handlerMessage.obj = bundle
                                     sendHandlerMessage(handlerMessage)
                                 }
                                 "receiveVideoAnswer" -> {
@@ -865,8 +861,7 @@ class CamStudyService : Service() {
 
                 MSG_COMSTUDY_LEFT -> {
                     //퇴장처리
-                    val handlerMessage: Message =
-                        Message.obtain(null, MSG_COMSTUDY_LEFT)
+                    val handlerMessage = Message.obtain(null, MSG_COMSTUDY_LEFT)
 
                     var timerResult =
                         peerConnection.get(hostname)!!.timerPresentTime - peerConnection.get(
@@ -909,4 +904,47 @@ class CamStudyService : Service() {
         }
     }
 
+}
+
+object MusicNotification {
+    const val CHANNEL_ID = "foreground_service_channel" // 임의의 채널 ID
+    fun createNotification(
+        context: Context
+    ): Notification {
+        // 알림 클릭시 MainActivity로 이동됨
+        val notificationIntent = Intent(context, CamStudyActivity::class.java)
+//        notificationIntent.action = Actions.MAIN
+        notificationIntent.putExtra("audio", CamStudyService.isAudio)
+        notificationIntent.putExtra("video", CamStudyService.isVideo)
+        notificationIntent.putExtra("cameraSwith", "front")
+        notificationIntent.putExtra("studyInfo", CamStudyActivity.studyInfo)
+        notificationIntent.putExtra("timer", CamStudyService.timer)
+        notificationIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+        val pendingIntent = PendingIntent
+            .getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        // Oreo 부터는 Notification Channel을 만들어야 함
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val serviceChannel = NotificationChannel(
+                CHANNEL_ID,
+                "StudyDay", // 채널표시명
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val manager = context.getSystemService(NotificationManager::class.java)
+            manager?.createNotificationChannel(serviceChannel)
+        }
+
+        // 알림
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setContentTitle("StudyDay")
+            .setContentText("캠스터디 진행중")
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setOngoing(true) // true 일경우 알림 리스트에서 클릭하거나 좌우로 드래그해도 사라지지 않음
+            .setContentIntent(pendingIntent)
+            .build()
+
+        return notification
+    }
 }
