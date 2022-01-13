@@ -108,7 +108,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="10dp"
-                    app:mcv_selectionColor="#00F"
+                    app:mcv_selectionColor="@color/main_color"
                     app:mcv_showOtherDates="all"
                     app:mcv_tileHeight="30dp" />
             </LinearLayout>
