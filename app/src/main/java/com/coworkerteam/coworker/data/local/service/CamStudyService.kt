@@ -89,7 +89,7 @@ class CamStudyService : Service() {
         var chatDate = ArrayList<ChatData>()
         var isLeader = false
 
-        var ParticipantsResponses: ParticipantsResponse? = null
+        var participantsResponses: ParticipantsResponse? = null
         var peerConnection = HashMap<String, Participant>()
         var adaperDate = ArrayList<String>()
     }
@@ -245,7 +245,7 @@ class CamStudyService : Service() {
                                             ParticipantsResponse::class.java
                                         )
 
-                                    ParticipantsResponses = participantsResponse
+                                    participantsResponses = participantsResponse
 
                                     participantsResponse.participants.forEach {
                                         foreach(it.nickname)
@@ -274,7 +274,7 @@ class CamStudyService : Service() {
                                             ParticipantsResponse::class.java
                                         )
 
-                                    ParticipantsResponses = participantsResponse
+                                    participantsResponses = participantsResponse
 
                                     //참여자 정보를 확인하고 있었다면, 다시 그려주기 -> ParticipantsActivity
                                     val handlerMessageParticipants =
@@ -323,7 +323,7 @@ class CamStudyService : Service() {
                                     sendHandlerMessage(handlerMessage)
 
                                     //참여자 목록에 대한 정보에서 나간사람 빼기
-                                    val refreshParticipantsResponses = ParticipantsResponses!!.participants.toMutableList()
+                                    val refreshParticipantsResponses = participantsResponses!!.participants.toMutableList()
 
                                     refreshParticipantsResponses.forEach {
                                         if(it.nickname.equals(message.getString("name"))){
@@ -331,6 +331,8 @@ class CamStudyService : Service() {
                                             return@forEach
                                         }
                                     }
+
+                                    participantsResponses!!.participants = refreshParticipantsResponses
 
                                     //참여자 정보를 확인하고 있었다면, 다시 그려주기
                                     val handlerMessageParticipants =
@@ -530,7 +532,7 @@ class CamStudyService : Service() {
     }
 
     private fun createVideoTrackFromCameraAndShowIt() {
-        Log.d("디버그태그", "실행테스트 createVideoTrackFromCameraAndShowIt")
+        Log.d("디버그태그", "createVideoTrackFromCameraAndShowIt")
         audioConstraints = MediaConstraints()
         videoCapturer = createVideoCapturer()
         val videoSource: VideoSource = factory.createVideoSource(videoCapturer)
@@ -594,11 +596,11 @@ class CamStudyService : Service() {
     }
 
     private fun startStreamingVideo(name: String) {
+        Log.d(TAG, "startStreamingVideo()")
         val mediaStream: MediaStream = factory.createLocalMediaStream("ARDAMS")
         mediaStream.addTrack(videoTrackFromCamera)
         mediaStream.addTrack(localAudioTrack)
         peerConnection.get(name)?.peer?.addStream(mediaStream)
-        Log.d(TAG, "startStreamingVideo()")
     }
 
     private fun createPeerConnection(
@@ -606,8 +608,10 @@ class CamStudyService : Service() {
         name: String
     ): PeerConnection? {
         val iceServers = ArrayList<PeerConnection.IceServer>()
-        val URL = "stun:stun.l.google.com:19302"
-        iceServers.add(PeerConnection.IceServer(URL))
+        val stunURL = getString(R.string.midea_stun_url)
+        val turnURL = getString(R.string.midea_turn_url)
+        iceServers.add(PeerConnection.IceServer(stunURL))
+        iceServers.add(PeerConnection.IceServer(turnURL,"kurento","kurento"))
         val rtcConfig = PeerConnection.RTCConfiguration(iceServers)
         val pcConstraints = MediaConstraints()
         val pcObserver: PeerConnection.Observer = object : PeerConnection.Observer {
@@ -732,6 +736,11 @@ class CamStudyService : Service() {
             createCameraCapturer(Camera2Enumerator(this))
         } else {
             createCameraCapturer(Camera1Enumerator(true))
+        }
+
+        if(camearaSwith.equals("back")){
+            val cameraVideoCapturer = videoCapturer as CameraVideoCapturer
+            cameraVideoCapturer.switchCamera(null)
         }
         return videoCapturer
     }
@@ -916,7 +925,7 @@ object notification {
 //        notificationIntent.action = Actions.MAIN
         notificationIntent.putExtra("audio", CamStudyService.isAudio)
         notificationIntent.putExtra("video", CamStudyService.isVideo)
-        notificationIntent.putExtra("cameraSwith", "front")
+        notificationIntent.putExtra("cameraSwith", CamStudyService.camearaSwith)
         notificationIntent.putExtra("studyInfo", CamStudyActivity.studyInfo)
         notificationIntent.putExtra("timer", CamStudyService.timer)
         notificationIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or

@@ -9,7 +9,7 @@ data class ParticipantsResponse(
     @SerializedName("participantNum")
     val participantNum: Int,
     @SerializedName("participants")
-    val participants: List<Participant>,
+    var participants: List<Participant>,
     @SerializedName("status")
     val status: String,
     @SerializedName("user")

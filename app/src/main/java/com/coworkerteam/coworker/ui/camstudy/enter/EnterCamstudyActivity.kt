@@ -82,7 +82,7 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
                 var intent = Intent(this, CamStudyActivity::class.java)
                 intent.putExtra("video", isCamera)
                 intent.putExtra("audio", isAudio)
-                intent.putExtra("cameraSwith", "front")
+                intent.putExtra("cameraSwith", cameraSwich)
                 intent.putExtra("studyInfo", dataIntent)
                 intent.putExtra("timer", it.body()!!.result.studyTimeSec)
                 startActivity(intent)
@@ -161,6 +161,14 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
             if (videoCapturer is CameraVideoCapturer) {
                 val cameraVideoCapturer = videoCapturer as CameraVideoCapturer
                 cameraVideoCapturer.switchCamera(null)
+
+                //카메라 앞면 뒷면 구분하기 위한 변수 값 설정
+                if (cameraSwich.equals("front")) {
+                    cameraSwich = "back"
+                } else {
+                    cameraSwich = "front"
+                }
+
             } else {
                 // Will not switch camera, video capturer is not a camera
             }
