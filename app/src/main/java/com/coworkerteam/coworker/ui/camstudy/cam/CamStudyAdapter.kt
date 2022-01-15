@@ -76,14 +76,6 @@ class CamStudyAdapter(private val context: Context) :
             name.text = item
             time.text = user?.time
 
-//            Glide.with(context).load(item.img).into(img)
-//
-//            if (!item.isLeader) {
-//                leader.visibility = View.GONE
-//            }
-//
-//            studyName.text = item.name
-
         }
     }
 }

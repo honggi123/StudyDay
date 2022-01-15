@@ -19,7 +19,7 @@
     <item android:state_selected="true">
         <shape>
             <corners android:radius="100dp" /> <!-- 모서리 기울기 -->
-            <solid android:color="@color/sub_color" /><!-- 배경색 -->
+            <solid android:color="@color/main_color" /><!-- 배경색 -->
             <padding
                 android:bottom="3dp"
                 android:left="7dp"

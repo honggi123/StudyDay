@@ -26,7 +26,7 @@ class MemberListAdapter(private val context: Context) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =
-            LayoutInflater.from(context).inflate(R.layout.item_study_member_management, parent, false)
+            LayoutInflater.from(context).inflate(R.layout.item_study_member_list, parent, false)
         return ViewHolder(view)
     }
 

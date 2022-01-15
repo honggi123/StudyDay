@@ -92,6 +92,7 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
         compactCalendarView.setLocale(TimeZone.getDefault(),  /*Locale.getDefault()*/Locale.KOREA)
 
         compactCalendarView.setShouldDrawDaysHeader(true)
+        compactCalendarView.shouldSelectFirstDayOfMonthOnScroll(false)
 
         compactCalendarView.setListener(object : CompactCalendarViewListener {
             override fun onDayClick(dateClicked: Date?) {

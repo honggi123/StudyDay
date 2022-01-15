@@ -48,15 +48,6 @@ class ParticipantsActivity : BaseActivity<ActivityParticipantsBinding, Participa
     }
 
     override fun initDataBinding() {
-        CamStudyService.participantLiveData.observe(this, androidx.lifecycle.Observer {
-            var newAdapter: ParticipantsAdapter = ParticipantsAdapter(this, mServiceCallback!!)
-            newAdapter.datas = it.participants.toMutableList()
-            viewDataBinding.participantsRv.adapter = newAdapter
-
-            val txt_peple = findViewById<TextView>(R.id.camstudy_info_toolbar_peple)
-            val peple = it.participantNum.toString() + " / " + it.maxNum
-            txt_peple.text = setTextColor(peple)
-        })
     }
 
     override fun initAfterBinding() {
@@ -86,9 +77,21 @@ class ParticipantsActivity : BaseActivity<ActivityParticipantsBinding, Participa
         return builder
     }
 
+    fun setting(it: ParticipantsResponse) {
+        var newAdapter = ParticipantsAdapter(this,mServiceCallback)
+        newAdapter.datas = it.participants.toMutableList()
+        viewDataBinding.participantsRv.adapter = newAdapter
+
+        val txt_peple = findViewById<TextView>(R.id.camstudy_info_toolbar_peple)
+        val peple = it.participantNum.toString() + " / " + it.maxNum
+        txt_peple.text = setTextColor(peple)
+    }
+
     private var mConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             mServiceCallback = Messenger(service)
+
+            setting(CamStudyService.ParticipantsResponses!!)
 
             //서비스랑 연결
             val connectMsg = Message.obtain(null, CamStudyService.MSG_CLIENT_CONNECT)
@@ -112,6 +115,7 @@ class ParticipantsActivity : BaseActivity<ActivityParticipantsBinding, Participa
                 CamStudyService.MSG_PARTICIPANTS_ITEM -> {
                     //캠스터디 아이템
                     var obj = msg.obj as ParticipantsResponse
+                    setting(obj)
                 }
             }
         }

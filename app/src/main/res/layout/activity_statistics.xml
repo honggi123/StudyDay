@@ -213,7 +213,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginRight="8dp"
-                                android:background="@drawable/statistics"
+                                android:background="@drawable/statistics_option_background"
                                 android:onClick="@{(view)->activitiy.changDay(view)}"
                                 android:text="주간"
                                 android:textColor="@color/select_menu" />
@@ -222,7 +222,7 @@
                                 android:id="@+id/statistics_menthly"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:background="@drawable/statistics"
+                                android:background="@drawable/statistics_option_background"
                                 android:onClick="@{(view)->activitiy.changDay(view)}"
                                 android:text="월간"
                                 android:textColor="@color/select_menu" />
@@ -242,9 +242,11 @@
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="120dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
                             android:layout_marginBottom="20dp"
                             android:background="@drawable/main_todolist_background"
-                            android:elevation="10dp">
+                            android:elevation="5dp">
 
                             <TextView
                                 android:id="@+id/textView33"

@@ -313,8 +313,13 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     fun spinnerInit(view: View?, member: Array<String>) {
         if (view != null) {
             //스피너
-            member.set(0, "모두에게")
-            val data = member
+                var members = member
+                if(member.size <= 0){
+                    members = arrayOf("모두에게")
+                }else {
+                    members.set(0, "모두에게")
+                }
+            val data = members
 
             val adapter = ArrayAdapter(this, R.layout.spinner_item_selected_gray, data)
             adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
