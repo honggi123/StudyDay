@@ -2,7 +2,10 @@ package com.coworkerteam.coworker.ui.camstudy.enter
 
 import android.Manifest
 import android.content.Intent
+import android.os.Message
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
@@ -61,6 +64,13 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
         viewDataBinding.studyInfo = data
         studyIndex = data?.result?.studyInfo?.idx
         initRV(data?.result?.studyInfo!!.category)
+
+        var toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolber_enter_camstudy)
+
+        setSupportActionBar(toolbar) // 툴바를 액티비티의 앱바로 지정
+        supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24_write) // 홈버튼 이미지 변경
+        supportActionBar?.title = data.result.studyInfo.name
 
         val perms = arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
         if (EasyPermissions.hasPermissions(this, *perms)) {
@@ -122,6 +132,21 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
         if (videoTrackFromCamera != null) {
             videoTrackFromCamera!!.removeRenderer(VideoRenderer(surface))
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        getMenuInflater().inflate(R.menu.camstudy_menu, menu);
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.camera_chang -> {
+                Log.d(TAG, "카메라 체인지")
+                switchCamera()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun switchDevice(view: View, device: String) {

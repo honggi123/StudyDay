@@ -44,6 +44,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     var isMic = true
     var isVideo = true
     var isPlay = false
+    var cameraSwich = "front"
 
     var timer: Int? = null
 
@@ -73,7 +74,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             var intent = Intent(this, CamStudyService::class.java)
             intent.putExtra("audio", isMic)
             intent.putExtra("video", isVideo)
-            intent.putExtra("cameraSwith", "front")
+            intent.putExtra("cameraSwith", cameraSwich)
             intent.putExtra("studyInfo", studyInfo)
             intent.putExtra("timer", timer)
             startForegroundService(intent)
@@ -99,6 +100,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     fun initData() {
         isMic = intent.getBooleanExtra("audio", false)
         isVideo = intent.getBooleanExtra("video", false)
+        cameraSwich = intent.getStringExtra("cameraSwith")?:"front"
         studyInfo = intent.getSerializableExtra("studyInfo") as EnterCamstudyResponse?
         timer = intent.getIntExtra("timer", 0)
     }

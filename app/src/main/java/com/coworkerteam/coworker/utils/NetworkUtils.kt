@@ -81,8 +81,16 @@ class NetworkUtils(private val context: Context) : LiveData<Boolean>() {
     }
 
     private fun updateConnection() {
-        val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
-        postValue(activeNetwork?.isConnected == true)
+        val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager;
+        if (manager.isDefaultNetworkActive()) {
+            //인터넷 됨
+            postValue(true)
+        } else {
+            // 인터넷 안됨
+            postValue(false)
+        }
+//        val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
+//        postValue(activeNetwork?.isConnected == true)
     }
 
 }

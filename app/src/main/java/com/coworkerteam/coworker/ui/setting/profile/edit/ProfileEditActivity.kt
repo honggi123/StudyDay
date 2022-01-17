@@ -31,6 +31,7 @@ import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.ProfileManageResponse
 import com.coworkerteam.coworker.databinding.ActivityProfileEditBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
+import com.google.android.material.textfield.TextInputLayout
 import de.hdodenhof.circleimageview.CircleImageView
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -117,7 +118,7 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
     fun init() {
         val profile_img = findViewById<CircleImageView>(R.id.my_profile_edit_img)
         val profile_img_chang = findViewById<CircleImageView>(R.id.profile_edit_img_chang)
-        val edt_nickname = findViewById<EditText>(R.id.my_profile_edit_nickname)
+        val edt_nickname = findViewById<TextInputLayout>(R.id.my_profile_edit_nickname)
         val btn_nickname_check = findViewById<Button>(R.id.my_profile_edit_btn_nickname_check)
         val txt_email = findViewById<TextView>(R.id.my_profile_email)
 
@@ -131,14 +132,14 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
         })
 
         btn_nickname_check.setOnClickListener(View.OnClickListener {
-            viewModel.getNicknameCheckData(edt_nickname.text.toString())
+            viewModel.getNicknameCheckData(edt_nickname.editText?.text.toString())
         })
 
         Glide.with(this) //해당 환경의 Context나 객체 입력
             .load(profileManageResponse.img) //URL, URI 등등 이미지를 받아올 경로
             .into(profile_img) //받아온 이미지를 받을 공간(ex. ImageView)
 
-        edt_nickname.setText(profileManageResponse.nickname)
+        edt_nickname.editText?.setText(profileManageResponse.nickname)
         txt_email.text = profileManageResponse.email
         var study = profileManageResponse
 

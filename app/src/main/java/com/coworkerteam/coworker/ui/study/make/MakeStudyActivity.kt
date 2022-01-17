@@ -16,6 +16,7 @@ import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isNotEmpty
 import com.amazonaws.auth.AWSCredentials
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
@@ -91,7 +92,6 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
 
         viewDataBinding.activity = this
 
-        init()
     }
 
     override fun initDataBinding() {
@@ -107,20 +107,6 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
     override fun initAfterBinding() {
     }
 
-    fun init() {
-        val check_pw: CheckBox = findViewById(R.id.make_study_check_pw) //패스워드 선택
-        val edt_pw: EditText = findViewById(R.id.make_study_edt_pw)  //패스워드
-
-        check_pw.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                edt_pw.isFocusableInTouchMode = true
-                edt_pw.isFocusable = true
-            } else {
-                edt_pw.isClickable = false
-                edt_pw.isFocusable = false
-            }
-        })
-    }
 
     fun checkStudyTypeRadio() {
         val checkedId = viewDataBinding.makeStudyType.checkedRadioButtonId
@@ -228,15 +214,15 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
             Toast.makeText(this, "이미지를 설정해주세요.", Toast.LENGTH_SHORT).show()
         } else if (studyType == null) {
             Toast.makeText(this, "스터디 종류를 선택해주세요.", Toast.LENGTH_SHORT).show()
-        } else if (viewDataBinding.makeStudyEdtName.text.isNullOrBlank()) {
+        } else if (viewDataBinding.makeStudyEdtName.editText?.text.isNullOrBlank()) {
             Toast.makeText(this, "스터디 이름을 입력해주세요.", Toast.LENGTH_SHORT).show()
-        } else if (viewDataBinding.makeStudyCheckPw.isChecked && viewDataBinding.makeStudyEdtPw.text.isNullOrBlank()) {
+        } else if (viewDataBinding.makeStudyEdtPw.editText?.text.isNullOrBlank()) {
             Toast.makeText(this, "스터디 비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
-        } else if (viewDataBinding.makeStudyEdtNum.text.isNullOrBlank()) {
+        } else if (viewDataBinding.makeStudyEdtNum.editText?.text.isNullOrBlank()) {
             Toast.makeText(this, "스터디 인원을 입력해주세요.", Toast.LENGTH_SHORT).show()
         } else if (categorys.size == 0) {
             Toast.makeText(this, "스터디 카테고리를 선택해주세요.", Toast.LENGTH_SHORT).show()
-        } else if (viewDataBinding.makeStudyEdtIntroduce.text.isNullOrBlank()) {
+        } else if (viewDataBinding.makeStudyEdtIntroduce.editText?.text.isNullOrBlank()) {
             Toast.makeText(this, "스터디 설명을 입력해주세요.", Toast.LENGTH_SHORT).show()
         } else {
 
@@ -248,16 +234,16 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
 
             var categorys = categorys.joinToString("|")
             var password =
-                if (viewDataBinding.makeStudyCheckPw.isChecked) viewDataBinding.makeStudyEdtPw.text.toString() else null
+                if (viewDataBinding.makeStudyEdtPw.isNotEmpty()) viewDataBinding.makeStudyEdtPw.editText?.text.toString() else null
 
             viewModel.setMakeStudyData(
                 studyType!!,
-                viewDataBinding.makeStudyEdtName.text.toString(),
+                viewDataBinding.makeStudyEdtName.editText?.text.toString(),
                 categorys,
                 imageUrl!!,
                 password,
-                viewDataBinding.makeStudyEdtNum.text.toString().toInt(),
-                viewDataBinding.makeStudyEdtIntroduce.text.toString()
+                viewDataBinding.makeStudyEdtNum.editText?.text.toString().toInt(),
+                viewDataBinding.makeStudyEdtIntroduce.editText?.text.toString()
             )
         }
     }

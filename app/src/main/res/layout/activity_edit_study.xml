@@ -4,9 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="studyInfo"
             type="com.coworkerteam.coworker.data.model.api.EditStudyResponse.Result.StudyInfo" />
+
         <variable
             name="activity"
             type="com.coworkerteam.coworker.ui.study.edit.EditStudyActivity" />
@@ -64,127 +66,85 @@
                         android:layout_width="140dp"
                         android:layout_height="100dp"
                         android:layout_gravity="center_horizontal"
-                        android:scaleType="centerCrop"
                         android:onClick="@{(view)->activity.showImageDialog(view)}"
+                        android:scaleType="centerCrop"
                         app:srcCompat="@color/contour" />
                 </androidx.cardview.widget.CardView>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"></LinearLayout>
-
-                <TextView
-                    android:id="@+id/textView50"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="이름"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <EditText
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/make_study_edt_name"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/edit_text_round"
-                    android:ems="10"
-                    android:hint="스터디 이름을 입력해주세요"
-                    android:inputType="textPersonName"
-                    android:textSize="14sp"
-                    android:text="@{studyInfo.name}"/>
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:hint="스터디 이름"
+                    app:boxCornerRadiusBottomEnd="20dp"
+                    app:boxCornerRadiusBottomStart="20dp"
+                    app:boxCornerRadiusTopEnd="20dp"
+                    app:boxCornerRadiusTopStart="20dp"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="30"
+                    app:endIconMode="clear_text"
+                    app:expandedHintEnabled="false">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/textView51"
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="비밀번호"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:text="@{studyInfo.name}" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-                    <CheckBox
-                        android:id="@+id/make_study_check_pw"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="14dp"
-                        android:checked="@{activity.isPasswordCheck()}" />
-                </LinearLayout>
-
-                <EditText
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/make_study_edt_pw"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/edit_text_round"
-                    android:clickable="@{activity.isPasswordCheck()}"
-                    android:ems="10"
-                    android:focusable="@{activity.isPasswordCheck()}"
-                    android:hint="비밀번호를 입력해주세요"
-                    android:inputType="textPersonName"
-                    android:textSize="14sp"
-                    android:text="@{studyInfo.pw}"/>
+                    android:layout_marginBottom="10dp"
+                    android:hint="스터디 비밀번호"
+                    app:boxCornerRadiusBottomEnd="20dp"
+                    app:boxCornerRadiusBottomStart="20dp"
+                    app:boxCornerRadiusTopEnd="20dp"
+                    app:boxCornerRadiusTopStart="20dp"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="16"
+                    app:endIconMode="password_toggle"
+                    app:expandedHintEnabled="false"
+                    app:helperText="8~16자의 영문 대소문자, 숫자, 특수문자만 가능합니다."
+                    app:helperTextEnabled="true">
 
-                <TextView
-                    android:id="@+id/textView67"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_baseline_info_24"
-                    android:drawablePadding="5dp"
-                    android:gravity="center_vertical"
-                    android:text="8~16자의 영문 대소문자, 숫자, 특수문자만 가능합니다."
-                    android:textSize="12sp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="5dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/textView52"
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text="인원"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:hint="선택사항"
+                        android:inputType="textPassword"
+                        android:text="@{studyInfo.pw}" />
 
-                    <EditText
-                        android:id="@+id/edit_study_edt_num"
-                        android:layout_width="70dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="12dp"
-                        android:background="@drawable/edit_text"
-                        android:ems="10"
-                        android:gravity="center"
-                        android:hint="2"
-                        android:inputType="textPersonName"
-                        android:textSize="14sp"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/textView53"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/make_study_edt_num"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_baseline_info_24"
-                    android:drawablePadding="5dp"
-                    android:gravity="center_vertical"
-                    android:text="2~16명까지 입장 할 수 있습니다."
-                    android:textSize="12sp" />
+                    android:layout_marginBottom="10dp"
+                    android:hint="인원"
+                    app:suffixText="명"
+                    app:boxCornerRadiusBottomEnd="20dp"
+                    app:boxCornerRadiusBottomStart="20dp"
+                    app:boxCornerRadiusTopEnd="20dp"
+                    app:boxCornerRadiusTopStart="20dp"
+                    app:endIconMode="clear_text"
+                    app:expandedHintEnabled="false"
+                    app:helperText="2~16명까지 입장 할 수 있습니다."
+                    app:helperTextEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="1"
+                        android:inputType="number" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
                     android:id="@+id/textView54"
@@ -210,14 +170,14 @@
                         android:layout_weight="1"
                         android:background="@drawable/category"
                         android:gravity="center"
+                        android:onClick="@{(view)->activity.clickCategoryButton(view)}"
                         android:paddingLeft="15dp"
                         android:paddingTop="10dp"
                         android:paddingRight="15dp"
                         android:paddingBottom="10dp"
                         android:text="시험공부"
                         android:textColor="@color/category_text"
-                        android:textSize="13sp"
-                        android:onClick="@{(view)->activity.clickCategoryButton(view)}"/>
+                        android:textSize="13sp" />
 
                     <TextView
                         android:id="@+id/make_study_category_certificate2"
@@ -227,14 +187,14 @@
                         android:layout_weight="1"
                         android:background="@drawable/category"
                         android:gravity="center"
+                        android:onClick="@{(view)->activity.clickCategoryButton(view)}"
                         android:paddingLeft="15dp"
                         android:paddingTop="10dp"
                         android:paddingRight="15dp"
                         android:paddingBottom="10dp"
                         android:text="자격증"
                         android:textColor="@color/category_text"
-                        android:textSize="13sp"
-                        android:onClick="@{(view)->activity.clickCategoryButton(view)}"/>
+                        android:textSize="13sp" />
 
                     <TextView
                         android:id="@+id/make_study_category_official2"
@@ -244,14 +204,14 @@
                         android:layout_weight="1"
                         android:background="@drawable/category"
                         android:gravity="center"
+                        android:onClick="@{(view)->activity.clickCategoryButton(view)}"
                         android:paddingLeft="15dp"
                         android:paddingTop="10dp"
                         android:paddingRight="15dp"
                         android:paddingBottom="10dp"
                         android:text="고시/공시"
                         android:textColor="@color/category_text"
-                        android:textSize="13sp"
-                        android:onClick="@{(view)->activity.clickCategoryButton(view)}"/>
+                        android:textSize="13sp" />
 
                     <TextView
                         android:id="@+id/make_study_category_self2"
@@ -286,14 +246,14 @@
                         android:layout_weight="1"
                         android:background="@drawable/category"
                         android:gravity="center"
+                        android:onClick="@{(view)->activity.clickCategoryButton(view)}"
                         android:paddingLeft="15dp"
                         android:paddingTop="10dp"
                         android:paddingRight="15dp"
                         android:paddingBottom="10dp"
                         android:text="어학"
                         android:textColor="@color/category_text"
-                        android:textSize="13sp"
-                        android:onClick="@{(view)->activity.clickCategoryButton(view)}"/>
+                        android:textSize="13sp" />
 
                     <TextView
                         android:id="@+id/make_study_category_employment2"
@@ -303,14 +263,14 @@
                         android:layout_weight="1"
                         android:background="@drawable/category"
                         android:gravity="center"
+                        android:onClick="@{(view)->activity.clickCategoryButton(view)}"
                         android:paddingLeft="15dp"
                         android:paddingTop="10dp"
                         android:paddingRight="15dp"
                         android:paddingBottom="10dp"
                         android:text="취업"
                         android:textColor="@color/category_text"
-                        android:textSize="13sp"
-                        android:onClick="@{(view)->activity.clickCategoryButton(view)}"/>
+                        android:textSize="13sp" />
 
                     <TextView
                         android:id="@+id/make_study_category_turnover2"
@@ -320,14 +280,14 @@
                         android:layout_weight="1"
                         android:background="@drawable/category"
                         android:gravity="center"
+                        android:onClick="@{(view)->activity.clickCategoryButton(view)}"
                         android:paddingLeft="15dp"
                         android:paddingTop="10dp"
                         android:paddingRight="15dp"
                         android:paddingBottom="10dp"
                         android:text="이직"
                         android:textColor="@color/category_text"
-                        android:textSize="13sp"
-                        android:onClick="@{(view)->activity.clickCategoryButton(view)}"/>
+                        android:textSize="13sp" />
 
                     <TextView
                         android:id="@+id/make_study_category_sat2"
@@ -337,14 +297,14 @@
                         android:layout_weight="1"
                         android:background="@drawable/category"
                         android:gravity="center"
+                        android:onClick="@{(view)->activity.clickCategoryButton(view)}"
                         android:paddingLeft="15dp"
                         android:paddingTop="10dp"
                         android:paddingRight="15dp"
                         android:paddingBottom="10dp"
                         android:text="수능"
                         android:textColor="@color/category_text"
-                        android:textSize="13sp"
-                        android:onClick="@{(view)->activity.clickCategoryButton(view)}"/>
+                        android:textSize="13sp" />
 
                     <TextView
                         android:id="@+id/make_study_category_other2"
@@ -354,14 +314,14 @@
                         android:layout_weight="1"
                         android:background="@drawable/category"
                         android:gravity="center"
+                        android:onClick="@{(view)->activity.clickCategoryButton(view)}"
                         android:paddingLeft="15dp"
                         android:paddingTop="10dp"
                         android:paddingRight="15dp"
                         android:paddingBottom="10dp"
                         android:text="기타"
                         android:textColor="@color/category_text"
-                        android:textSize="13sp"
-                        android:onClick="@{(view)->activity.clickCategoryButton(view)}"/>
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <TextView
@@ -374,25 +334,29 @@
                     android:text="1개 이상의 카테고리를 선택해주세요.(최대 3개)"
                     android:textSize="12sp" />
 
-                <TextView
-                    android:id="@+id/textView55"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/make_study_edt_introduce"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="20dp"
                     android:layout_marginBottom="10dp"
-                    android:text="설명"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:hint="스터디 설명"
+                    app:boxCornerRadiusBottomEnd="20dp"
+                    app:boxCornerRadiusBottomStart="20dp"
+                    app:boxCornerRadiusTopEnd="20dp"
+                    app:boxCornerRadiusTopStart="20dp"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="500"
+                    app:endIconMode="clear_text"
+                    app:expandedHintEnabled="false">
 
-                <EditText
-                    android:id="@+id/make_study_edt_introduce"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:background="@drawable/edit_text_round"
-                    android:ems="10"
-                    android:inputType="textPersonName"
-                    android:text="@{studyInfo.introduce}"/>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{studyInfo.introduce}" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <Button
                     android:id="@+id/make_study_btn_edit"
@@ -401,10 +365,10 @@
                     android:layout_marginTop="15dp"
                     android:layout_marginBottom="20dp"
                     android:background="@drawable/main_goal"
+                    android:onClick="@{()->activity.editStudy()}"
                     android:text="수정 완료하기"
                     android:textColor="@color/white"
-                    android:textStyle="bold"
-                    android:onClick="@{()->activity.editStudy()}"/>
+                    android:textStyle="bold" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>

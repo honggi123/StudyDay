@@ -26,6 +26,7 @@ import com.coworkerteam.coworker.ui.login.LoginActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.material.textfield.TextInputLayout
 import com.kakao.sdk.user.UserApiClient
 import com.nhn.android.naverlogin.OAuthLogin
 import kotlinx.coroutines.CoroutineScope
@@ -76,7 +77,7 @@ class WithdrawalActivity : BaseActivity<ActivityWithdrawalBinding, WithdrawalVie
     fun init() {
         val txt_reason = findViewById<TextView>(R.id.withdrawal_txt_reason)
         val btn_withdrawal = findViewById<Button>(R.id.withdrawal_btn_withdrawal)
-        val edt_reasonOther = findViewById<EditText>(R.id.withdrawal_edt_reason_other)
+        val edt_reasonOther = findViewById<TextInputLayout>(R.id.withdrawal_edt_reason_other)
 
         txt_reason.setOnClickListener(View.OnClickListener {
             val mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_withdrawal, null)
@@ -107,7 +108,7 @@ class WithdrawalActivity : BaseActivity<ActivityWithdrawalBinding, WithdrawalVie
         btn_withdrawal.setOnClickListener(View.OnClickListener {
             if (reason != "") {
                 if (is_other) {
-                    if (edt_reasonOther.text.toString() == "") {
+                    if (edt_reasonOther.editText!!.text.toString() == "") {
                         Toast.makeText(
                             getApplicationContext(),
                             "회원탈퇴 이유를 적어주세요.",
@@ -122,6 +123,7 @@ class WithdrawalActivity : BaseActivity<ActivityWithdrawalBinding, WithdrawalVie
                     .show()
             }
         })
+
     }
 
 

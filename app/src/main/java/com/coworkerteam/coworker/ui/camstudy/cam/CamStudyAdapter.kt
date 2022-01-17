@@ -58,13 +58,13 @@ class CamStudyAdapter(private val context: Context) :
             user?.image_mic = mic
             user?.setRender(surface)
 
-            if(user!!.img != null){
+            if(user?.img != null){
                 Glide.with(context).load(user!!.img).into(img)
             }
 
-            if(user!!.isStartTimer == true){
+            if(user?.isStartTimer == true){
                 startTimer.isSelected = false
-            }else if(user!!.isStartTimer == false || user!!.isStartTimer == null){
+            }else if(user?.isStartTimer == false || user?.isStartTimer == null){
                 startTimer.isSelected = true
             }
 

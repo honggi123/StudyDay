@@ -91,7 +91,7 @@ class ParticipantsActivity : BaseActivity<ActivityParticipantsBinding, Participa
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             mServiceCallback = Messenger(service)
 
-            setting(CamStudyService.ParticipantsResponses!!)
+            setting(CamStudyService.participantsResponses!!)
 
             //서비스랑 연결
             val connectMsg = Message.obtain(null, CamStudyService.MSG_CLIENT_CONNECT)

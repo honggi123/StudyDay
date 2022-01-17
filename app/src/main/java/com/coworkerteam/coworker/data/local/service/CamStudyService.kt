@@ -535,6 +535,13 @@ class CamStudyService : Service() {
         Log.d("디버그태그", "createVideoTrackFromCameraAndShowIt")
         audioConstraints = MediaConstraints()
         videoCapturer = createVideoCapturer()
+
+
+        if(camearaSwith.equals("back")){
+            val cameraVideoCapturer = videoCapturer as CameraVideoCapturer
+            cameraVideoCapturer.switchCamera(null)
+        }
+
         val videoSource: VideoSource = factory.createVideoSource(videoCapturer)
         videoCapturer!!.startCapture(
             VIDEO_RESOLUTION_WIDTH,
@@ -736,11 +743,6 @@ class CamStudyService : Service() {
             createCameraCapturer(Camera2Enumerator(this))
         } else {
             createCameraCapturer(Camera1Enumerator(true))
-        }
-
-        if(camearaSwith.equals("back")){
-            val cameraVideoCapturer = videoCapturer as CameraVideoCapturer
-            cameraVideoCapturer.switchCamera(null)
         }
         return videoCapturer
     }

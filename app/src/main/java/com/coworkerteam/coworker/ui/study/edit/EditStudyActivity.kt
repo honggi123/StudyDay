@@ -16,6 +16,7 @@ import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isNotEmpty
 import com.amazonaws.auth.AWSCredentials
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
@@ -132,21 +133,6 @@ class EditStudyActivity : BaseActivity<ActivityEditStudyBinding, EditStudyViewMo
             .load(study.img) //URL, URI 등등 이미지를 받아올 경로
             .into(viewDataBinding.makeStudyImg) //받아온 이미지를 받을 공간(ex. ImageView)
 
-//        if (study.pw != null) {
-//            viewDataBinding.makeStudyCheckPw.isChecked = true
-//            viewDataBinding.makeStudyEdtPw.setText(study.pw)
-//        }
-
-//        viewDataBinding.makeStudyCheckPw.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
-//            if (isChecked) {
-//                viewDataBinding.makeStudyCheckPw.isFocusableInTouchMode = true
-//                viewDataBinding.makeStudyCheckPw.isFocusable = true
-//            } else {
-//                viewDataBinding.makeStudyCheckPw.isClickable = false
-//                viewDataBinding.makeStudyCheckPw.isFocusable = false
-//            }
-//        })
-
         isCategoryCheck(viewDataBinding.makeStudyCategorySat2)
         isCategoryCheck(viewDataBinding.makeStudyCategoryTest2)
         isCategoryCheck(viewDataBinding.makeStudyCategorySelf2)
@@ -157,7 +143,7 @@ class EditStudyActivity : BaseActivity<ActivityEditStudyBinding, EditStudyViewMo
         isCategoryCheck(viewDataBinding.makeStudyCategoryEmployment2)
         isCategoryCheck(viewDataBinding.makeStudyCategoryCertificate2)
 
-        viewDataBinding.editStudyEdtNum.setText(study.maxNum.toString())
+        viewDataBinding.makeStudyEdtNum.editText?.setText(study.maxNum.toString())
     }
 
     fun isPasswordCheck(): Boolean {
@@ -214,15 +200,13 @@ class EditStudyActivity : BaseActivity<ActivityEditStudyBinding, EditStudyViewMo
         Log.d(TAG, "실행")
         if (imageUrl == null) {
             Toast.makeText(this, "이미지를 설정해주세요.", Toast.LENGTH_SHORT).show()
-        } else if (viewDataBinding.makeStudyEdtName.text.isNullOrBlank()) {
+        } else if (viewDataBinding.makeStudyEdtName.editText?.text.isNullOrBlank()) {
             Toast.makeText(this, "스터디 이름을 입력해주세요.", Toast.LENGTH_SHORT).show()
-        } else if (viewDataBinding.makeStudyCheckPw.isChecked && viewDataBinding.makeStudyEdtPw.text.isNullOrBlank()) {
-            Toast.makeText(this, "스터디 비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
-        } else if (viewDataBinding.editStudyEdtNum.text.isNullOrBlank()) {
+        }else if (viewDataBinding.makeStudyEdtNum.editText?.text.isNullOrBlank()) {
             Toast.makeText(this, "스터디 인원을 입력해주세요.", Toast.LENGTH_SHORT).show()
         } else if (categorys.size == 0) {
             Toast.makeText(this, "스터디 카테고리를 선택해주세요.", Toast.LENGTH_SHORT).show()
-        } else if (viewDataBinding.makeStudyEdtIntroduce.text.isNullOrBlank()) {
+        } else if (viewDataBinding.makeStudyEdtIntroduce.editText?.text.isNullOrBlank()) {
             Toast.makeText(this, "스터디 설명을 입력해주세요.", Toast.LENGTH_SHORT).show()
         } else {
             if (fileName != null) {
@@ -232,16 +216,16 @@ class EditStudyActivity : BaseActivity<ActivityEditStudyBinding, EditStudyViewMo
 
             var categorys = categorys.joinToString("|")
             var password =
-                if (viewDataBinding.makeStudyCheckPw.isChecked) viewDataBinding.makeStudyEdtPw.text.toString() else null
+                if (viewDataBinding.makeStudyEdtPw.isNotEmpty()) viewDataBinding.makeStudyEdtPw.editText?.text.toString() else null
 
             viewModel.setEditStudyData(
                 studyIndex,
-                viewDataBinding.makeStudyEdtName.text.toString(),
+                viewDataBinding.makeStudyEdtName.editText?.text.toString(),
                 categorys,
                 imageUrl!!,
                 password,
-                viewDataBinding.editStudyEdtNum.text.toString().toInt(),
-                viewDataBinding.makeStudyEdtIntroduce.text.toString()
+                viewDataBinding.makeStudyEdtNum.editText?.text.toString().toInt(),
+                viewDataBinding.makeStudyEdtIntroduce.editText?.text.toString()
             )
         }
     }
