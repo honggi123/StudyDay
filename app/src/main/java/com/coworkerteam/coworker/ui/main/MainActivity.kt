@@ -1,5 +1,4 @@
 package com.coworkerteam.coworker.ui.main
-import android.widget.Toast
 
 import android.content.Intent
 import android.graphics.Color
@@ -18,10 +17,10 @@ import com.coworkerteam.coworker.databinding.ActivityMainBinding
 import com.coworkerteam.coworker.ui.base.NavigationAcitivity
 import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.ui.study.make.MakeStudyActivity
-import com.coworkerteam.coworker.ui.study.management.ManagementPagingAdapter
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -75,15 +74,15 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
 
     override fun initDataBinding() {
         viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            if(it.isSuccessful) {
+            if (it.isSuccessful) {
                 var intent = Intent(this, EnterCamstudyActivity::class.java)
                 intent.putExtra("studyInfo", it.body()!!)
                 Log.d(TAG, it.toString())
                 startActivity(intent)
-            }else if(it.code() == 403){
-                Log.d(TAG,"403스테이스 코드 메시지 : "+it.message())
-                Log.d(TAG,"403스테이스 코드 바디 메시지 : "+it.body().toString())
-                Log.d(TAG,"403스테이스 코드 에러 바디 메시지 : "+it.errorBody()?.string())
+            } else if (it.code() == 403) {
+                Log.d(TAG, "403스테이스 코드 메시지 : " + it.message())
+                Log.d(TAG, "403스테이스 코드 바디 메시지 : " + it.body().toString())
+                Log.d(TAG, "403스테이스 코드 에러 바디 메시지 : " + it.errorBody()?.string())
             }
         })
 
@@ -95,7 +94,7 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
                 setNavigaionLoginImage(it.body()!!.result[0].profile.loginType)
                 setNavigaionNickname(it.body()!!.result[0].profile.nickname)
 
-                Log.d("디버그태그",it.body()!!.result[0].todo.toString())
+                Log.d("디버그태그", it.body()!!.result[0].todo.toString())
                 //내스터디
                 var recyclerMyStudy: RecyclerView =
                     findViewById(R.id.main_todolist_recylerView)
@@ -115,8 +114,8 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
             }
         })
 
-        viewModel.MyStudyPagingData.observe(this,androidx.lifecycle.Observer {
-            pagingMainMyStudyAdapter.submitData(lifecycle,it)
+        viewModel.MyStudyPagingData.observe(this, androidx.lifecycle.Observer {
+            pagingMainMyStudyAdapter.submitData(lifecycle, it)
         })
     }
 
@@ -209,9 +208,14 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
                         builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
                         val editTime =
-                            mDialogView.findViewById<TextInputEditText>(R.id.dialog_goal_input_goal_time)
+                            mDialogView.findViewById<TextInputLayout>(R.id.dialog_goal_edit_goal_time)
+                        val editGoal =
+                            mDialogView.findViewById<TextInputLayout>(R.id.dialog_goal_edit_goal)
 
-                        editTime.setOnClickListener(View.OnClickListener {
+                        editTime.editText?.setText(mainResponse.result[0].aimTime)
+                        editGoal.editText?.setText(mainResponse.result[0].dream.goal)
+
+                        editTime.editText?.setOnClickListener(View.OnClickListener {
                             MaterialTimePicker.Builder()
                                 .setTimeFormat(TimeFormat.CLOCK_24H)
                                 .setHour(0)
@@ -219,7 +223,7 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
                                 .build()
                                 .apply {
                                     addOnPositiveButtonClickListener {
-                                        editTime.setText(
+                                        editTime.editText?.setText(
                                             onTimeSelected(
                                                 this.hour,
                                                 this.minute
@@ -231,16 +235,25 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
                                     MaterialTimePicker::class.java.canonicalName
                                 )
                         })
-//                        val btn_cancle = mDialogView.findViewById<Button>(R.id.dialog_logout_btn_cancle)
-//                        val btn_logout = mDialogView.findViewById<Button>(R.id.dialog_logout_btn_logout)
-//
-//                        btn_cancle.setOnClickListener(View.OnClickListener {
-//                            builder.dismiss()
-//                        })
-//
-//                        btn_logout.setOnClickListener(View.OnClickListener {
-//                            builder.dismiss()
-//                        })
+
+                        val btn_cancle =
+                            mDialogView.findViewById<Button>(R.id.dialog_goal_btn_cancle)
+                        val btn_ok = mDialogView.findViewById<Button>(R.id.dialog_goal_btn_ok)
+
+                        btn_cancle.setOnClickListener(View.OnClickListener {
+                            builder.dismiss()
+                        })
+
+                        btn_ok.setOnClickListener(View.OnClickListener {
+                            val aimTime = changTime(editTime.editText?.text.toString()).toString()
+                            val goal = editGoal.editText?.text.toString()
+
+                            mainResponse.result[0].aimTime = editTime.editText?.text.toString()
+                            mainResponse.result[0].dream.goal = goal
+
+                            viewModel.setGoalCamstduyData(aimTime,goal,mainResponse.result[0].dream.ddayDate,mainResponse.result[0].dream.ddayName)
+                            builder.dismiss()
+                        })
                     }
 
                     R.id.ddat_setting -> {
@@ -253,9 +266,13 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
                         builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
                         val editDate =
-                            mDialogView.findViewById<TextInputEditText>(R.id.dialog_dday_input_day)
+                            mDialogView.findViewById<TextInputLayout>(R.id.dialog_dday_edit_day)
+                        val editDdayName = mDialogView.findViewById<TextInputLayout>(R.id.dialog_dday_edit_name)
 
-                        editDate.setOnClickListener(View.OnClickListener {
+                        editDate.editText?.setText(mainResponse.result[0].dream.ddayDate)
+                        editDdayName.editText?.setText(mainResponse.result[0].dream.ddayName)
+
+                        editDate.editText?.setOnClickListener(View.OnClickListener {
                             MaterialDatePicker.Builder.datePicker()
                                 .setTitleText("Select date")
                                 .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
@@ -263,12 +280,31 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
                                 .apply {
                                     addOnPositiveButtonClickListener {
                                         var simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
-                                        editDate.setText(simpleDateFormat.format(it))
+                                        editDate.editText?.setText(simpleDateFormat.format(it))
                                     }
                                 }.show(
                                     supportFragmentManager,
                                     MaterialDatePicker::class.java.canonicalName
                                 )
+                        })
+
+                        val btn_cancle =
+                            mDialogView.findViewById<Button>(R.id.dialog_goal_btn_cancle)
+                        val btn_ok = mDialogView.findViewById<Button>(R.id.dialog_goal_btn_ok)
+
+                        btn_cancle.setOnClickListener(View.OnClickListener {
+                            builder.dismiss()
+                        })
+
+                        btn_ok.setOnClickListener(View.OnClickListener {
+                            val dday = editDate.editText?.text.toString()
+                            val ddayName = editDdayName.editText?.text.toString()
+
+                            mainResponse.result[0].dream.ddayDate = dday
+                            mainResponse.result[0].dream.ddayName = ddayName
+
+                            viewModel.setGoalCamstduyData(mainResponse.result[0].aimTime,mainResponse.result[0].dream.goal,dday,ddayName)
+                            builder.dismiss()
                         })
 
                     }
@@ -316,6 +352,14 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
             recommendAdapter.datas = mainResponse.result[0].groupRecommend.toMutableList()
         }
         recyclerRecommendStudy.adapter = recommendAdapter
+    }
+
+    fun changTime(goalTime: String): Int {
+        val time = goalTime.split(":")
+        val hour = time[0].toInt() * 60 * 60
+        val minute = time[1].toInt() * 60
+
+        return hour + minute
     }
 
 }

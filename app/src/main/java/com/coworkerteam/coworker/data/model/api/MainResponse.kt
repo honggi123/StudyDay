@@ -1,5 +1,6 @@
 package com.coworkerteam.coworker.data.model.api
 
+
 import com.google.gson.annotations.SerializedName
 
 data class MainResponse(
@@ -7,13 +8,14 @@ data class MainResponse(
     val message: String,
     @SerializedName("result")
     val result: List<Result>
-) {
-
+){
     data class Result(
         @SerializedName("achieveTimeRate")
         val achieveTimeRate: Int,
         @SerializedName("achieveTodoRate")
         val achieveTodoRate: Int,
+        @SerializedName("aimTime")
+        var aimTime: String,
         @SerializedName("dream")
         val dream: Dream,
         @SerializedName("groupRecommend")
@@ -30,34 +32,25 @@ data class MainResponse(
         val openRecommend: List<Study>,
         @SerializedName("profile")
         val profile: Profile,
+        @SerializedName("studyTime")
+        val studyTime: String,
         @SerializedName("todo")
         val todo: List<Todo>,
         @SerializedName("todoNum")
         val todoNum: Int,
         @SerializedName("userNum")
         val userNum: Int
-    ) {
-
-        data class MyStudy(
-            @SerializedName("idx")
-            val idx: Int,
-            @SerializedName("img")
-            val img: String,
-            @SerializedName("is_leader")
-            val isLeader: Boolean,
-            @SerializedName("name")
-            val name: String
+    ){
+        data class Dream(
+            @SerializedName("dday")
+            val dday: String,
+            @SerializedName("dday_date")
+            var ddayDate: String,
+            @SerializedName("dday_name")
+            var ddayName: String,
+            @SerializedName("goal")
+            var goal: String
         )
-
-        data class Profile(
-            @SerializedName("img")
-            val img: String,
-            @SerializedName("login_type")
-            val loginType: String,
-            @SerializedName("nickname")
-            val nickname: String
-        )
-
         data class Study(
             @SerializedName("category")
             val category: String,
@@ -73,30 +66,42 @@ data class MainResponse(
             val maxNum: Int,
             @SerializedName("name")
             val name: String,
+            @SerializedName("pw")
+            val pw: String?,
             @SerializedName("type")
             val type: String,
             @SerializedName("user_num")
             val userNum: Int
         )
-
+        data class MyStudy(
+            @SerializedName("idx")
+            val idx: Int,
+            @SerializedName("img")
+            val img: String,
+            @SerializedName("is_leader")
+            val isLeader: Boolean,
+            @SerializedName("name")
+            val name: String,
+            @SerializedName("pw")
+            val pw: String?
+        )
+        data class Profile(
+            @SerializedName("img")
+            val img: String,
+            @SerializedName("login_type")
+            val loginType: String,
+            @SerializedName("nickname")
+            val nickname: String
+        )
         data class Todo(
             @SerializedName("idx")
             val idx: Int,
-            @SerializedName("todo")
-            val todo: String,
             @SerializedName("is_complete")
             val isComplete: Boolean,
+            @SerializedName("todo")
+            val todo: String,
             @SerializedName("todo_date")
             val todoDate: String
-        )
-
-        data class Dream(
-            @SerializedName("dday_date")
-            val ddayDate: Any,
-            @SerializedName("dday_name")
-            val ddayName: Any,
-            @SerializedName("goal")
-            val goal: String
         )
     }
 }
