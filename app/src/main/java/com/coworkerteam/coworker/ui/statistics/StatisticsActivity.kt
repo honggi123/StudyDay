@@ -19,6 +19,7 @@ import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
+import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.utils.ColorTemplate
@@ -31,6 +32,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.google.android.material.navigation.NavigationView
+import java.text.DecimalFormat
 
 
 class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, StatisticsViewModel>() {
@@ -174,9 +176,11 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
 
                         barEntries.add(BarEntry(x.toFloat(), hour.toFloat()))
 
+                        val statistcsDay = statisticsResponse.weekTimeAcheive.get(x).date
+                        val studyTime = statisticsResponse.weekTimeAcheive.get(x).time
                         val timeAcheive = i.timeRate?:"없음"
                         val todoAcheive = statisticsResponse.weekTodoAcheive.get(x).acheiveRate?:"없음"
-                        val text = "공부시간 달성률 : "+timeAcheive+" \n"+"계획 달성률 : "+todoAcheive
+                        val text = statistcsDay+" \n"+"공부시간 : "+studyTime+" \n"+"공부시간 달성률 : "+timeAcheive+" \n"+"계획 달성률 : "+todoAcheive
                         markerStrings.add(text)
 
                         x++
@@ -195,9 +199,11 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
 
                         barEntries.add(BarEntry(x.toFloat(), hour.toFloat()))
 
+                        val statistcsDay = statisticsResponse.monthTimeAcheive.get(x).date
+                        val studyTime = statisticsResponse.monthTimeAcheive.get(x).time
                         val timeAcheive = i.timeRate?:"없음"
                         val todoAcheive = statisticsResponse.monthTodoAcheive.get(x).acheiveRate?:"없음"
-                        val text = "공부시간 달성률 : "+timeAcheive+" \n"+"계획 달성률 : "+todoAcheive
+                        val text = statistcsDay+" \n"+"공부시간 : "+studyTime+" \n"+"공부시간 달성률 : "+timeAcheive+" \n"+"계획 달성률 : "+todoAcheive
                         markerStrings.add(text)
 
                         x++
@@ -248,18 +254,18 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
 
         piechart.run {
             setUsePercentValues(true)
-//            setEntryLabelColor(R.color.white)
-//            setCenterTextColor(R.color.white)
         }
 
         var set = PieDataSet(pieEntries, "공부/휴식 비율") // 데이터셋 초기화
 
         set.colors = MATERIAL_COLORS.toMutableList() // 바 그래프 색 설정
 
+        val formatter = PercentFormatter(piechart)
+        formatter.mFormat = DecimalFormat("###")
+
         val data = PieData(set)
         data.setValueTextSize(15f)
-        data.setValueFormatter(PercentFormatter(piechart))
-//        data.setValueTextColor(R.color.black)
+        data.setValueFormatter(formatter)
         data.setValueTextColors(MATERIAL_WHITE_COLORS.toMutableList())
         piechart.run {
             this.data = data //차트의 데이터를 data로 설정해줌.

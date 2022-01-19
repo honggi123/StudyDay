@@ -103,6 +103,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         cameraSwich = intent.getStringExtra("cameraSwith")?:"front"
         studyInfo = intent.getSerializableExtra("studyInfo") as EnterCamstudyResponse?
         timer = intent.getIntExtra("timer", 0)
+        isPlay = intent.getBooleanExtra("paly",false)
     }
 
     fun stopCamstudy(studyTime: Int, restTime: Int) {
@@ -153,6 +154,12 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             sendHandlerMessage(msg)
         })
 
+        if(isMic){
+            btn_mic.isSelected = false
+        }else{
+            btn_mic.isSelected = true
+        }
+
         btn_mic.setOnClickListener(View.OnClickListener {
             Log.d(TAG, "btn_mic 클릭")
 
@@ -171,6 +178,12 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             sendHandlerMessage(msg)
         })
 
+        if(isVideo){
+            btn_camera.isSelected = false
+        }else{
+            btn_camera.isSelected = true
+        }
+
         btn_camera.setOnClickListener(View.OnClickListener {
             Log.d(TAG, "btn_camera 클릭")
             val msg: Message = Message.obtain(null, CamStudyService.MSG_HOST_VIDEO_ON_OFF)
@@ -187,6 +200,12 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
             sendHandlerMessage(msg)
         })
+
+        if(isPlay){
+            btn_play.isSelected = true
+        }else{
+            btn_play.isSelected = false
+        }
 
         btn_play.setOnClickListener(View.OnClickListener {
             Log.d(TAG, "btn_play 클릭")

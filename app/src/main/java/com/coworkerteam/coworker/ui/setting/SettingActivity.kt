@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.coworkerteam.coworker.BuildConfig
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
 import com.coworkerteam.coworker.data.model.api.ApiRequest
@@ -86,9 +88,10 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
 
         txt_to_developer.setOnClickListener(View.OnClickListener {
             val intent = Intent(Intent.ACTION_SENDTO)
-            intent.data = Uri.parse("mailto: coworkerteam@gmail.com")
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Hello World")
-            intent.putExtra(Intent.EXTRA_TEXT, "ㅎㅎㅎ")
+            val emailTitle = "["+getString(R.string.app_name)+"] 서비스에 대한 문의"
+            val emailContent = String.format("App Version : %s \n Android(SDK) : %d(%s) \n 내용 : ", BuildConfig.VERSION_NAME, Build.VERSION.SDK_INT, Build.VERSION.RELEASE)
+            val uri = getString(R.string.team_email)+"?subject="+Uri.encode(emailTitle)+"&body="+Uri.encode(emailContent)
+            intent.data = Uri.parse(uri)
 
             startActivity(Intent.createChooser(intent, null))
         })

@@ -131,6 +131,7 @@ class CamStudyService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         socket!!.disconnect()
+        adaperDate.clear()
         peerConnection.clear()
         chatDate.clear()
         Log.d(TAG, "service 끝")
@@ -835,6 +836,7 @@ class CamStudyService : Service() {
                 MSG_HOST_VIDEO_ON_OFF -> {
                     //내 카메라 on/off
                     peerConnection.get(hostname)!!.toggleVideo(msg.obj as String)
+
                     val message = JSONObject()
                     message.put("id", "sendDeviceSwitch")
                     message.put("room", room)
@@ -850,6 +852,7 @@ class CamStudyService : Service() {
                 MSG_HOST_TIMER_RUN -> {
                     //내 타이머 상태를 다른 참여자들에게 보낸다 (타이머 시작)
                     peerConnection.get(hostname)!!.startHostTimer()
+
                     val message = JSONObject()
                     message.put("id", "sendStopwatchStatus")
                     message.put("room", room)

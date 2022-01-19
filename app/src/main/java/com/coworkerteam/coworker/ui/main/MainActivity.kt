@@ -17,6 +17,7 @@ import com.coworkerteam.coworker.databinding.ActivityMainBinding
 import com.coworkerteam.coworker.ui.base.NavigationAcitivity
 import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.ui.study.make.MakeStudyActivity
+import com.coworkerteam.coworker.ui.todolist.TodoListActivity
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textfield.TextInputEditText
@@ -367,6 +368,12 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
         val minute = time[1].toInt() * 60
 
         return hour + minute
+    }
+
+    fun moveTodolist(){
+        var intent = Intent(this, TodoListActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
 }

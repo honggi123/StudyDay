@@ -28,6 +28,7 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener
 import com.prolificinteractive.materialcalendarview.format.TitleFormatter
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.threeten.bp.DayOfWeek
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -150,7 +151,7 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
 
         val calender = findViewById<MaterialCalendarView>(R.id.calendarView)
         calender.state().edit()
-//            .setFirstDayOfWeek(Calendar.MONDAY)
+            .setFirstDayOfWeek(DayOfWeek.MONDAY)
             .setCalendarDisplayMode(CalendarMode.WEEKS)
             .commit();
 

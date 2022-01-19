@@ -31,110 +31,123 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context=".ui.mystudy.MyStudyActivity">
+                android:fillViewport="true">
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline21"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.08" />
+                    android:orientation="vertical">
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline22"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.92" />
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        tools:context=".ui.mystudy.MyStudyActivity">
 
-                <TextView
-                    android:id="@+id/textView38"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:fontFamily="@font/notosans_medium_hestia"
-                    android:text="참여했던 일일스터디"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    app:layout_constraintStart_toStartOf="@+id/guideline21"
-                    app:layout_constraintTop_toTopOf="parent" />
+                        <androidx.constraintlayout.widget.Guideline
+                            android:id="@+id/guideline21"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintGuide_percent="0.08" />
 
-                <TextView
-                    android:id="@+id/textView39"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="@font/notosans_medium_hestia"
-                    android:text="가입한 그룹스터디"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    app:layout_constraintStart_toStartOf="@+id/textView38"
-                    app:layout_constraintTop_toBottomOf="@+id/textView23" />
+                        <androidx.constraintlayout.widget.Guideline
+                            android:id="@+id/guideline22"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:layout_constraintGuide_percent="0.92" />
 
-                <TextView
-                    android:id="@+id/my_study_txt_study_menage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableRight="@drawable/ic_baseline_settings_gray_24"
-                    android:fontFamily="@font/notosans_medium_hestia"
-                    android:gravity="center_horizontal|center_vertical"
-                    android:text="스터디 관리"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView39"
-                    app:layout_constraintEnd_toStartOf="@+id/guideline22" />
+                        <TextView
+                            android:id="@+id/textView38"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:fontFamily="@font/notosans_medium_hestia"
+                            android:text="참여했던 일일스터디"
+                            android:textColor="@color/black"
+                            android:textSize="18sp"
+                            app:layout_constraintStart_toStartOf="@+id/guideline21"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/my_study_rv_open_study"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal"
-                    app:layoutManager="LinearLayoutManager"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/guideline21"
-                    app:layout_constraintTop_toBottomOf="@+id/textView38"
-                    tools:listitem="@layout/item_my_study" />
+                        <TextView
+                            android:id="@+id/textView39"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="@font/notosans_medium_hestia"
+                            android:text="가입한 그룹스터디"
+                            android:textColor="@color/black"
+                            android:textSize="18sp"
+                            app:layout_constraintStart_toStartOf="@+id/textView38"
+                            app:layout_constraintTop_toBottomOf="@+id/textView23" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/my_study_rv_group_study"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="10dp"
-                    app:layoutManager="GridLayoutManager"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/guideline21"
-                    app:layout_constraintTop_toBottomOf="@+id/textView25"
-                    app:spanCount="2"
-                    tools:listitem="@layout/item_my_study" />
+                        <TextView
+                            android:id="@+id/my_study_txt_study_menage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableRight="@drawable/ic_baseline_settings_gray_24"
+                            android:fontFamily="@font/notosans_medium_hestia"
+                            android:gravity="center_horizontal|center_vertical"
+                            android:text="스터디 관리"
+                            app:layout_constraintBottom_toBottomOf="@+id/textView39"
+                            app:layout_constraintEnd_toStartOf="@+id/guideline22" />
 
-                <TextView
-                    android:id="@+id/textView23"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal|center_vertical"
-                    android:minHeight="120dp"
-                    android:text="참여했던 일일스터디가 없습니다."
-                    android:visibility="@{mystudyResponse.result.open.size()&lt;1?View.VISIBLE:View.GONE}"
-                    app:layout_constraintEnd_toStartOf="@+id/guideline22"
-                    app:layout_constraintStart_toStartOf="@+id/guideline21"
-                    app:layout_constraintTop_toBottomOf="@+id/my_study_rv_open_study" />
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/my_study_rv_open_study"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal"
+                            app:layoutManager="LinearLayoutManager"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/guideline21"
+                            app:layout_constraintTop_toBottomOf="@+id/textView38"
+                            tools:listitem="@layout/item_my_study" />
 
-                <TextView
-                    android:id="@+id/textView25"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center_horizontal|center_vertical"
-                    android:minHeight="120dp"
-                    android:text="가입한 그룹스터디가 없습니다."
-                    android:visibility="@{mystudyResponse.result.group.size()&lt;1?View.VISIBLE:View.GONE}"
-                    app:layout_constraintEnd_toStartOf="@+id/guideline22"
-                    app:layout_constraintStart_toStartOf="@+id/guideline21"
-                    app:layout_constraintTop_toBottomOf="@+id/textView39" />
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/my_study_rv_group_study"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            app:layoutManager="GridLayoutManager"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/guideline21"
+                            app:layout_constraintTop_toBottomOf="@+id/textView25"
+                            app:spanCount="2"
+                            tools:listitem="@layout/item_my_study" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                        <TextView
+                            android:id="@+id/textView23"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal|center_vertical"
+                            android:minHeight="120dp"
+                            android:text="참여했던 일일스터디가 없습니다."
+                            android:visibility="@{mystudyResponse.result.open.size()&lt;1?View.VISIBLE:View.GONE}"
+                            app:layout_constraintEnd_toStartOf="@+id/guideline22"
+                            app:layout_constraintStart_toStartOf="@+id/guideline21"
+                            app:layout_constraintTop_toBottomOf="@+id/my_study_rv_open_study" />
+
+                        <TextView
+                            android:id="@+id/textView25"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:gravity="center_horizontal|center_vertical"
+                            android:minHeight="120dp"
+                            android:text="가입한 그룹스터디가 없습니다."
+                            android:visibility="@{mystudyResponse.result.group.size()&lt;1?View.VISIBLE:View.GONE}"
+                            app:layout_constraintEnd_toStartOf="@+id/guideline22"
+                            app:layout_constraintStart_toStartOf="@+id/guideline21"
+                            app:layout_constraintTop_toBottomOf="@+id/textView39" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+
         </LinearLayout>
 
 
