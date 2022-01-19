@@ -68,6 +68,8 @@ class MyStudyActivity : NavigationAcitivity<ActivityMyStudyBinding, MyStudyViewM
                 setNavigaionLoginImage(myStudyResponse.result.profile.loginType)
                 setNavigaionProfileImage(myStudyResponse.result.profile.img)
                 setNavigaionNickname(myStudyResponse.result.profile.nickname)
+
+                viewDataBinding.mystudyResponse = it.body()!!
             }
         })
 

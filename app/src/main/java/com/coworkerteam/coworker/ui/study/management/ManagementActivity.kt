@@ -41,6 +41,14 @@ class ManagementActivity : BaseActivity<ActivityManagementBinding, ManagementVie
     lateinit var pagingManagementAdapter: ManagementPagingAdapter
 
     override fun initStartView() {
+        var main_toolbar: androidx.appcompat.widget.Toolbar =
+            findViewById(R.id.management_toolbar)
+
+        setSupportActionBar(main_toolbar) // 툴바를 액티비티의 앱바로 지정
+        supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_new_24) // 홈버튼 이미지 변경
+        supportActionBar?.title = "내 스터디 관리"
+
         pagingManagementAdapter = ManagementPagingAdapter(viewModel)
         val rv_management = findViewById<RecyclerView>(R.id.management_rv)
         rv_management.adapter = pagingManagementAdapter

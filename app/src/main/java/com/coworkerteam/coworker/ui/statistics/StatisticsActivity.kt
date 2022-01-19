@@ -47,6 +47,7 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
 
     lateinit var appBarLayout: AppBarLayout
     lateinit var statisticsResponse: StatisticsResponse
+
     var period = "week"
     var selectDate = getToday()
 
@@ -134,6 +135,7 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
 //            카테고리가 성공적으로 선택
             if (it.isSuccessful) {
                 statisticsResponse = it.body()!!
+                viewDataBinding.statisticsResponse = it.body()!!
 
                 if (statisticsResponse.profile != null) {
                     setNavigaionLoginImage(statisticsResponse.profile.loginType)
@@ -147,11 +149,11 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
                 var pro_studyTime = if(it.body()!!.theDayAcheiveTimeRate == null) 0 else it.body()!!.theDayAcheiveTimeRate
                 var pro_plan = if(it.body()!!.theDayAcheiveRate == null) 0 else it.body()!!.theDayAcheiveRate
 
-                studyTimeProgress.progress = pro_studyTime
-                planProgress.progress = pro_plan
+                studyTimeProgress.progress = pro_studyTime!!
+                planProgress.progress = pro_plan!!
 
-                val studyTime = statisticsResponse.studyRate
-                val restTime = statisticsResponse.restRate
+                val studyTime = statisticsResponse.studyRate?:0
+                val restTime = statisticsResponse.restRate?:0
 
                 pieEntries.clear()
                 pieEntries.add(PieEntry(studyTime.toFloat(), "공부"))

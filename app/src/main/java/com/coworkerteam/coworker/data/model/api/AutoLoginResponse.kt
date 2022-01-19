@@ -13,6 +13,8 @@ data class AutoLoginResponse(
         @SerializedName("accessToken")
         val accessToken: String,
         @SerializedName("refreshToken")
-        val refreshToken: String
+        val refreshToken: String,
+        @SerializedName("isInterest")
+        val isInterest: Boolean
     )
 }

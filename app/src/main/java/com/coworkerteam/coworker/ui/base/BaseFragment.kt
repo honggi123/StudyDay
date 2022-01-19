@@ -11,12 +11,12 @@ import androidx.fragment.app.Fragment
 open abstract class BaseFragment<T : ViewDataBinding, R : BaseViewModel> : Fragment() {
 
     lateinit var viewDataBinding: T
-    abstract val layoutResourceID : Int
+    abstract val layoutResourceID: Int
 
     // viewModel로 쓰일 변수
     abstract val viewModel: R
 
-//    lateinit var mActivity: BaseActivity
+    //    lateinit var mActivity: BaseActivity
     lateinit var mRootView: View
 
     //레이아웃을 띄운 직후 호출 - 뷰나 액티비티의 속성등을 초기화
@@ -33,7 +33,7 @@ open abstract class BaseFragment<T : ViewDataBinding, R : BaseViewModel> : Fragm
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewDataBinding = DataBindingUtil.inflate(inflater,layoutResourceID,container,false)
+        viewDataBinding = DataBindingUtil.inflate(inflater, layoutResourceID, container, false)
         mRootView = viewDataBinding.root
         return mRootView
     }

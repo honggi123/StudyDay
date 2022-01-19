@@ -3,6 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="todolistResponse"
+            type="com.coworkerteam.coworker.data.model.api.TodolistResponse" />
+        <variable
+            name="isAddButton"
+            type="Boolean" />
+    </data>
+
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
@@ -25,11 +35,12 @@
                 android:id="@+id/textView78"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="달성률"
+                android:layout_marginTop="8dp"
+                android:text='@{"계획 달성률 "+todolistResponse.result.theDayAcheiveRate+"%"}'
                 android:textColor="@color/black"
+                android:visibility="@{todolistResponse.result.TheDayTodo.size()>0?View.VISIBLE:View.GONE}"
                 app:layout_constraintStart_toStartOf="@+id/guideline362"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout5" />
+                app:layout_constraintTop_toBottomOf="@+id/textView44" />
 
             <ProgressBar
                 android:id="@+id/todo_list_progress"
@@ -40,6 +51,7 @@
                 android:max="100"
                 android:progress="20"
                 android:progressDrawable="@drawable/progressbar"
+                android:visibility="@{todolistResponse.result.TheDayTodo.size()>0?View.VISIBLE:View.GONE}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline360"
                 app:layout_constraintStart_toStartOf="@+id/guideline362"
                 app:layout_constraintTop_toBottomOf="@+id/textView78" />
@@ -61,10 +73,9 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_todolist"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 app:layoutManager="LinearLayoutManager"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/guideline360"
                 app:layout_constraintStart_toStartOf="@+id/guideline362"
                 app:layout_constraintTop_toBottomOf="@+id/todo_list_progress"
@@ -79,6 +90,7 @@
                 android:layout_marginBottom="20dp"
                 android:backgroundTint="@color/main_color"
                 android:clickable="true"
+                android:visibility="@{isAddButton?View.VISIBLE:View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:srcCompat="@drawable/ic_baseline_add_24"
@@ -88,10 +100,12 @@
                 android:id="@+id/todo_list_txt_no_todolist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:text="오늘의 할일이 없습니다."
+                android:visibility="@{todolistResponse.result.TheDayTodo.size()&lt;1?View.VISIBLE:View.GONE}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline360"
                 app:layout_constraintStart_toStartOf="@+id/guideline362"
-                app:layout_constraintTop_toBottomOf="@+id/rv_todolist" />
+                app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
             <LinearLayout
                 android:id="@+id/linearLayout5"
@@ -112,6 +126,33 @@
                     app:mcv_showOtherDates="all"
                     app:mcv_tileHeight="30dp" />
             </LinearLayout>
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="60dp"
+                android:layout_marginEnd="60dp"
+                android:layout_marginBottom="32dp"
+                android:visibility="@{todolistResponse.result.TheDayTodo.size()&lt;1?View.VISIBLE:View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toStartOf="@+id/guideline360"
+                app:layout_constraintStart_toStartOf="@+id/guideline362"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout5"
+                app:srcCompat="@drawable/notododata" />
+
+            <TextView
+                android:id="@+id/textView44"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@{todolistResponse.result.selectedDate}"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/guideline362"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout5" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -38,7 +38,6 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
     override val navigatinView: NavigationView
         get() = findViewById(R.id.navigationView)
 
-    lateinit var mainResponse: MainResponse
     var NewStudyShowOpen: Boolean = true
     var RecommendStudyShowOpen: Boolean = true
     var setData: Boolean = false
@@ -88,7 +87,7 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
 
         viewModel.MainResponseLiveData.observe(this, androidx.lifecycle.Observer {
             if (it.isSuccessful) {
-                mainResponse = it.body()!!
+                viewDataBinding.mainResponse = it.body()!!
 
                 setNavigaionProfileImage(it.body()!!.result[0].profile.img)
                 setNavigaionLoginImage(it.body()!!.result[0].profile.loginType)
@@ -103,14 +102,18 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
                 myStudyAdepter.datas = it.body()!!.result[0].todo.toMutableList()
                 recyclerMyStudy.adapter = myStudyAdepter
 
-                var goal = findViewById<TextView>(R.id.textView2)
-
-                goal.setText(mainResponse.result[0].dream.goal)
-//                        Log.d("디버그태그",mainResponse.result[0].dream.goal)
-
                 setData = true
                 NewStudy_init()
                 Recommend_init()
+            }
+        })
+
+        viewModel.EditGoalResponseLiveData.observe(this, androidx.lifecycle.Observer {
+            if (it.isSuccessful) {
+                Log.d("확인", it.body().toString())
+                viewDataBinding.mainResponse!!.result[0].dream = it.body()!!.result.dream
+                viewDataBinding.mainResponse!!.result[0].achieveTimeRate = it.body()!!.result.achieveTimeRate
+                viewDataBinding.mainResponse = viewDataBinding.mainResponse
             }
         })
 
@@ -212,8 +215,8 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
                         val editGoal =
                             mDialogView.findViewById<TextInputLayout>(R.id.dialog_goal_edit_goal)
 
-                        editTime.editText?.setText(mainResponse.result[0].aimTime)
-                        editGoal.editText?.setText(mainResponse.result[0].dream.goal)
+                        editTime.editText?.setText(viewDataBinding.mainResponse!!.result[0].aimTime)
+                        editGoal.editText?.setText(viewDataBinding.mainResponse!!.result[0].dream.goal)
 
                         editTime.editText?.setOnClickListener(View.OnClickListener {
                             MaterialTimePicker.Builder()
@@ -248,10 +251,10 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
                             val aimTime = changTime(editTime.editText?.text.toString()).toString()
                             val goal = editGoal.editText?.text.toString()
 
-                            mainResponse.result[0].aimTime = editTime.editText?.text.toString()
-                            mainResponse.result[0].dream.goal = goal
+                            viewDataBinding.mainResponse!!.result[0].aimTime = editTime.editText?.text.toString()
+                            viewDataBinding.mainResponse!!.result[0].dream.goal = goal
 
-                            viewModel.setGoalCamstduyData(aimTime,goal,mainResponse.result[0].dream.ddayDate,mainResponse.result[0].dream.ddayName)
+                            viewModel.setGoalCamstduyData(aimTime,goal,viewDataBinding.mainResponse!!.result[0].dream.ddayDate,viewDataBinding.mainResponse!!.result[0].dream.ddayName)
                             builder.dismiss()
                         })
                     }
@@ -269,8 +272,8 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
                             mDialogView.findViewById<TextInputLayout>(R.id.dialog_dday_edit_day)
                         val editDdayName = mDialogView.findViewById<TextInputLayout>(R.id.dialog_dday_edit_name)
 
-                        editDate.editText?.setText(mainResponse.result[0].dream.ddayDate)
-                        editDdayName.editText?.setText(mainResponse.result[0].dream.ddayName)
+                        editDate.editText?.setText(viewDataBinding.mainResponse!!.result[0].dream.ddayDate)
+                        editDdayName.editText?.setText(viewDataBinding.mainResponse!!.result[0].dream.ddayName)
 
                         editDate.editText?.setOnClickListener(View.OnClickListener {
                             MaterialDatePicker.Builder.datePicker()
@@ -300,10 +303,10 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
                             val dday = editDate.editText?.text.toString()
                             val ddayName = editDdayName.editText?.text.toString()
 
-                            mainResponse.result[0].dream.ddayDate = dday
-                            mainResponse.result[0].dream.ddayName = ddayName
+                            viewDataBinding.mainResponse!!.result[0].dream.ddayDate = dday
+                            viewDataBinding.mainResponse!!.result[0].dream.ddayName = ddayName
 
-                            viewModel.setGoalCamstduyData(mainResponse.result[0].aimTime,mainResponse.result[0].dream.goal,dday,ddayName)
+                            viewModel.setGoalCamstduyData(changTime(viewDataBinding.mainResponse!!.result[0].aimTime).toString(),viewDataBinding.mainResponse!!.result[0].dream.goal,dday,ddayName)
                             builder.dismiss()
                         })
 
@@ -329,12 +332,14 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
         //새로운
         var recyclerNewStudy: RecyclerView =
             findViewById(R.id.main_newstudy_recylerView)
-        var newAdapter: MainOtherStudyAdapter = MainOtherStudyAdapter(this, viewModel)
+        var newAdapter = MainOtherStudyAdapter(this, viewModel)
 
         if (NewStudyShowOpen) {
-            newAdapter.datas = mainResponse.result[0].newOpenStudy.toMutableList()
+            newAdapter.datas = viewDataBinding.mainResponse!!.result[0].newOpenStudy.toMutableList()
+            viewDataBinding.isNewStudy = if(viewDataBinding.mainResponse!!.result[0].newOpenStudy.size < 1) true else false
         } else {
-            newAdapter.datas = mainResponse.result[0].newGroupStudy.toMutableList()
+            newAdapter.datas = viewDataBinding.mainResponse!!.result[0].newGroupStudy.toMutableList()
+            viewDataBinding.isNewStudy = if(viewDataBinding.mainResponse!!.result[0].newGroupStudy.size < 1) true else false
         }
         recyclerNewStudy.adapter = newAdapter
     }
@@ -347,9 +352,11 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
         var recommendAdapter: MainOtherStudyAdapter = MainOtherStudyAdapter(this, viewModel)
 
         if (RecommendStudyShowOpen) {
-            recommendAdapter.datas = mainResponse.result[0].openRecommend.toMutableList()
+            recommendAdapter.datas = viewDataBinding.mainResponse!!.result[0].openRecommend.toMutableList()
+            viewDataBinding.isRecommendStudy = if(viewDataBinding.mainResponse!!.result[0].openRecommend.size < 1) true else false
         } else {
-            recommendAdapter.datas = mainResponse.result[0].groupRecommend.toMutableList()
+            recommendAdapter.datas = viewDataBinding.mainResponse!!.result[0].groupRecommend.toMutableList()
+            viewDataBinding.isRecommendStudy = if(viewDataBinding.mainResponse!!.result[0].groupRecommend.size < 1) true else false
         }
         recyclerRecommendStudy.adapter = recommendAdapter
     }

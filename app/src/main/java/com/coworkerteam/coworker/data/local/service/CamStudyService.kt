@@ -536,12 +536,6 @@ class CamStudyService : Service() {
         audioConstraints = MediaConstraints()
         videoCapturer = createVideoCapturer()
 
-
-        if(camearaSwith.equals("back")){
-            val cameraVideoCapturer = videoCapturer as CameraVideoCapturer
-            cameraVideoCapturer.switchCamera(null)
-        }
-
         val videoSource: VideoSource = factory.createVideoSource(videoCapturer)
         videoCapturer!!.startCapture(
             VIDEO_RESOLUTION_WIDTH,
@@ -924,7 +918,6 @@ object notification {
     ): Notification {
         // 알림 클릭시 MainActivity로 이동됨
         val notificationIntent = Intent(context, CamStudyActivity::class.java)
-//        notificationIntent.action = Actions.MAIN
         notificationIntent.putExtra("audio", CamStudyService.isAudio)
         notificationIntent.putExtra("video", CamStudyService.isVideo)
         notificationIntent.putExtra("cameraSwith", CamStudyService.camearaSwith)

@@ -32,6 +32,7 @@ class MakeStudyViewModel(private val model: UserRepository) : BaseViewModel() {
                         it.run {
                             _MakeStudyResponseLiveData.postValue(this)
                             Log.d(TAG, "meta : " + it.toString())
+                            it.errorBody().toString()
                         }
                     }, {
                         Log.d(TAG, "response error, message : ${it.message}")

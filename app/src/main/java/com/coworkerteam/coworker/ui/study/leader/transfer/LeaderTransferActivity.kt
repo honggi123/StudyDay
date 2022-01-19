@@ -6,6 +6,7 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
@@ -88,6 +89,8 @@ class LeaderTransferActivity :
             var newAdapter: LeaderTransferAdapter = LeaderTransferAdapter(this, viewModel)
 
             newAdapter.datas = myStudy.result.toMutableList()
+            newAdapter.emptyView  = viewDataBinding.leaderTransferEmpty
+
             newAdapter.study_idx = studyIdx
             recyclerNewStudy.adapter = newAdapter
         } else {
@@ -96,6 +99,8 @@ class LeaderTransferActivity :
             var newAdapter: MemberManagementAdapter = MemberManagementAdapter(this, viewModel)
 
             newAdapter.datas = myStudy.result.toMutableList()
+            newAdapter.emptyView  = viewDataBinding.leaderTransferEmpty
+
             newAdapter.study_idx = studyIdx
             recyclerNewStudy.adapter = newAdapter
         }

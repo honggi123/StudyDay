@@ -26,8 +26,14 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
         viewModel.AutoLoginResponseLiveData.observe(this, androidx.lifecycle.Observer {
             //자동로그인 성공적으로 되었는지 판단
             if(it.isSuccessful){
-                //메인으로 이동
-                moveMain()
+                //카테고리를 선택했었는지에 대한 여부
+                if(it.body()!!.result.isInterest){
+                    //메인으로 이동
+                    moveMain()
+                }else{
+                    //카테고리 선택하러 이동
+                    moveCategory()
+                }
             }else if(it.code() == 401){
                 //refreshToken이 만료되었을 경우, 로그인 페이지로 이동
                 moveLogin()
@@ -60,6 +66,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     //메인페이지로 이동하는 메소드
     fun moveMain(){
         var intent = Intent(this,MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    //카테고리로 이동하는 메소드
+    fun moveCategory(){
+        var intent = Intent(this,CategoryActivity::class.java)
         startActivity(intent)
         finish()
     }

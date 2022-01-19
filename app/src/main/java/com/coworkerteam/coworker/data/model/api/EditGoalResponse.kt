@@ -15,17 +15,6 @@ data class EditGoalResponse(
         @SerializedName("aimTime")
         val aimTime: String,
         @SerializedName("dream")
-        val dream: Dream
-    ){
-        data class Dream(
-            @SerializedName("dday")
-            val dday: String,
-            @SerializedName("dday_date")
-            val ddayDate: String,
-            @SerializedName("dday_name")
-            val ddayName: String,
-            @SerializedName("goal")
-            val goal: String
-        )
-    }
+        val dream: MainResponse.Result.Dream
+    )
 }

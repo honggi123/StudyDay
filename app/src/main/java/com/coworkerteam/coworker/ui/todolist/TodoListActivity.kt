@@ -45,9 +45,8 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
     override val navigatinView: NavigationView
         get() = findViewById(R.id.navigationView)
 
-    lateinit var todolistResponse: TodolistResponse
-
     var myStudyAdepter: TodoListAdapter? = null
+    var selectData = getToday()
 
     override fun initStartView() {
         super.initStartView()
@@ -64,26 +63,26 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
     override fun initDataBinding() {
         viewModel.TodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
             if (it.isSuccessful) {
-                todolistResponse = it.body()!!
-                Log.d(TAG,todolistResponse.toString())
+                viewDataBinding.todolistResponse = it.body()!!
+                Log.d(TAG,viewDataBinding.todolistResponse!!.toString())
                 
                 //네비게이션 바에 넣을 정보가 있을 경우
-                if(todolistResponse.result.profile != null) {
-                    setNavigaionLoginImage(todolistResponse.result.profile.loginType)
-                    setNavigaionProfileImage(todolistResponse.result.profile.img)
-                    setNavigaionNickname(todolistResponse.result.profile.nickname)
+                if(viewDataBinding.todolistResponse!!.result.profile != null) {
+                    setNavigaionLoginImage(viewDataBinding.todolistResponse!!.result.profile.loginType)
+                    setNavigaionProfileImage(viewDataBinding.todolistResponse!!.result.profile.img)
+                    setNavigaionNickname(viewDataBinding.todolistResponse!!.result.profile.nickname)
                 }
 
                 //프로그레스바, 투두리스트 항목이 있을 경우
-                if(todolistResponse.result.theDayTodo != null){
+                if(viewDataBinding.todolistResponse!!.result.theDayTodo != null){
                     rv_init()
                     progress_init()
                 }
 
                 //데코레이터 추가할 날짜가 있을 경우
-                if(todolistResponse.result.todoDate != null) {
+                if(viewDataBinding.todolistResponse!!.result.todoDate != null) {
                     var decorators = ArrayList<CalendarDay>()
-                    todolistResponse.result.todoDate.forEach {
+                    viewDataBinding.todolistResponse!!.result.todoDate.forEach {
                         val date = it.split("-")
                         decorators.add(CalendarDay.from(date[0].toInt(), date[1].toInt(), date[2].toInt()))
                     }
@@ -101,7 +100,7 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
 
                 var myStudyAdepter: TodoListAdapter = TodoListAdapter(this, viewModel)
 
-                myStudyAdepter.datas = todolistResponse.result.theDayTodo.toMutableList()
+                myStudyAdepter.datas = viewDataBinding.todolistResponse!!.result.theDayTodo.toMutableList()
                 myStudyAdepter.datas.add(
                     TodolistResponse.Result.TheDayTodo(
                         day.todoDate,
@@ -111,7 +110,8 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                     )
                 )
 
-                todolistResponse.result.theDayTodo = myStudyAdepter.datas.toList()
+                viewDataBinding.todolistResponse!!.result.theDayTodo = myStudyAdepter.datas.toList()
+                viewDataBinding.todolistResponse = viewDataBinding.todolistResponse
                 rv.adapter = myStudyAdepter
 
                 val todoProgress = findViewById<ProgressBar>(R.id.todo_list_progress)
@@ -130,6 +130,8 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
         viewModel.DeleteTodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
             if (it.isSuccessful) {
                 myStudyAdepter!!.notifyDataSetChanged()
+                viewDataBinding.todolistResponse!!.result.theDayTodo = myStudyAdepter!!.datas.toList()
+                viewDataBinding.todolistResponse = viewDataBinding.todolistResponse
             }
         })
         viewModel.EditTodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
@@ -141,6 +143,7 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
 
     override fun initAfterBinding() {
         viewModel.getTodoListData("start", getToday())
+        viewDataBinding.isAddButton = true
     }
 
     fun init() {
@@ -166,7 +169,6 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
             val day = if(date.day<10)"0${date.day}" else date.day.toString()
 
             val showDate = date.year.toString()+"-"+month+"-"+day
-            Log.d("먼슬리 데이트 이벤트 테스트",showDate)
             viewModel.getTodoListData("getTodoDate",showDate)
         })
 
@@ -182,10 +184,22 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                     dayOfMonth
                 ), true
             )
+
+            var cal = Calendar.getInstance()
+            cal.set(year, month, dayOfMonth)
+            var simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
+            var dates = simpleDateFormat.format(cal.time)
+
+            selectData = dates
+            viewDataBinding.isAddButton = compareDate(selectData,getToday())
+
+            viewModel.getTodoListData("old", dates)
+            viewModel.getTodoListData("getTodoDate",dates)
         }
 
         calender.setOnTitleClickListener(View.OnClickListener {
-            var dialog = DatePickerDialog(this, listener, 2022, 0, 2)
+            val today = selectData.split("-")
+            var dialog = DatePickerDialog(this, listener, today[0].toInt(),  today[1].toInt()-1,  today[2].toInt())
             dialog.show()
         })
 
@@ -195,6 +209,10 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                 cal.set(date.year, date.month-1, date.day)
                 var simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
                 var dates = simpleDateFormat.format(cal.time)
+
+                selectData = dates
+                viewDataBinding.isAddButton = compareDate(selectData,getToday())
+
                 viewModel.getTodoListData("old", dates)
             }
         })
@@ -234,6 +252,12 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                 mDialogView.findViewById<EditText>(R.id.dialog_todo_list_edt_todolist)
             val btn_add = mDialogView.findViewById<ImageView>(R.id.dialog_todo_list_add)
 
+            if(selectData.equals(getToday())){
+                txt_calendar.setText("오늘")
+            }else{
+                txt_calendar.setText(selectData)
+            }
+
             edt_todolist.requestFocus()
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
@@ -244,7 +268,7 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
 
 
             btn_add.setOnClickListener(View.OnClickListener {
-                viewModel.setAddTodoListData(getToday(), edt_todolist.text.toString())
+                viewModel.setAddTodoListData(selectData, edt_todolist.text.toString())
                 builder.dismiss()
             })
 
@@ -261,7 +285,7 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
         val rv = findViewById<RecyclerView>(R.id.rv_todolist)
 
         myStudyAdepter = TodoListAdapter(this, viewModel)
-        myStudyAdepter!!.datas = todolistResponse.result.theDayTodo.toMutableList()
+        myStudyAdepter!!.datas = viewDataBinding.todolistResponse!!.result.theDayTodo.toMutableList()
         if (myStudyAdepter!!.datas.size > 0) {
             val notext = findViewById<TextView>(R.id.todo_list_txt_no_todolist)
             notext.visibility = View.GONE
@@ -279,7 +303,7 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
     fun progress_init() {
         val todoProgress = findViewById<ProgressBar>(R.id.todo_list_progress)
 
-        todoProgress.progress = todolistResponse.result.theDayAcheiveRate
+        todoProgress.progress = viewDataBinding.todolistResponse!!.result.theDayAcheiveRate
     }
 
     fun getToday(): String {
@@ -287,5 +311,13 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
         val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.KOREAN).format(now)
 
         return simpleDateFormat
+    }
+
+    fun compareDate(selectDay:String, today:String): Boolean {
+        var simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
+        val compareSelectDay = simpleDateFormat.parse(selectDay).time
+        val compareToday = simpleDateFormat.parse(today).time
+
+        return if((compareSelectDay - compareToday) < 0) false else true
     }
 }

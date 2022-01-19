@@ -11,13 +11,13 @@ data class MainResponse(
 ){
     data class Result(
         @SerializedName("achieveTimeRate")
-        val achieveTimeRate: Int,
+        var achieveTimeRate: Int,
         @SerializedName("achieveTodoRate")
         val achieveTodoRate: Int,
         @SerializedName("aimTime")
         var aimTime: String,
         @SerializedName("dream")
-        val dream: Dream,
+        var dream: Dream,
         @SerializedName("groupRecommend")
         val groupRecommend: List<Study>,
         @SerializedName("myStudy")

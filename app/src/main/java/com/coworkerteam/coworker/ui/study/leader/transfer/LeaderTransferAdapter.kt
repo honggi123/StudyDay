@@ -32,12 +32,16 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
-class LeaderTransferAdapter(private val context: Context, private val viewModel:LeaderTransferViewModel) :
+class LeaderTransferAdapter(
+    private val context: Context,
+    private val viewModel: LeaderTransferViewModel
+) :
     RecyclerView.Adapter<LeaderTransferAdapter.ViewHolder>() {
 
     val TAG = "LeaderTransferAdapter"
 
     var datas = mutableListOf<StudyMemberResponse.Result>()
+    var emptyView: View? = null
     var study_idx = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -47,6 +51,11 @@ class LeaderTransferAdapter(private val context: Context, private val viewModel:
     }
 
     override fun getItemCount(): Int {
+        if(datas.size <= 0){
+            emptyView!!.visibility = View.VISIBLE
+        }else{
+            emptyView!!.visibility = View.GONE
+        }
         return datas.size
     }
 
@@ -66,21 +75,27 @@ class LeaderTransferAdapter(private val context: Context, private val viewModel:
             nickname.text = item.nickname
 
             leader.setOnClickListener(View.OnClickListener {
-                val mDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_leader_transfer, null)
+                val mDialogView =
+                    LayoutInflater.from(context).inflate(R.layout.dialog_leader_transfer, null)
                 val mBuilder = AlertDialog.Builder(context).setView(mDialogView)
                 val builder = mBuilder.show()
 
                 builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-                val btn_cancle = mDialogView.findViewById<Button>(R.id.dialog_leader_transfer_btn_cancle)
-                val btn_logout = mDialogView.findViewById<Button>(R.id.dialog_leader_transfer_btn_leader)
+                val btn_cancle =
+                    mDialogView.findViewById<Button>(R.id.dialog_leader_transfer_btn_cancle)
+                val btn_logout =
+                    mDialogView.findViewById<Button>(R.id.dialog_leader_transfer_btn_leader)
 
                 btn_cancle.setOnClickListener(View.OnClickListener {
                     builder.dismiss()
                 })
 
                 btn_logout.setOnClickListener(View.OnClickListener {
-                    viewModel.setLeaderTransferData(item.idx,study_idx)
+                    viewModel.setLeaderTransferData(item.idx, study_idx)
+                    datas.remove(item)
+
+                    notifyDataSetChanged()
                 })
             })
         }

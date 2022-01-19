@@ -22,6 +22,7 @@ class MemberManagementAdapter(private val context: Context, private val viewMode
     val TAG = "LeaderTransferAdapter"
 
     var datas = mutableListOf<StudyMemberResponse.Result>()
+    var emptyView: View? = null
     var study_idx = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -31,6 +32,11 @@ class MemberManagementAdapter(private val context: Context, private val viewMode
     }
 
     override fun getItemCount(): Int {
+        if(datas.size <= 0){
+            emptyView!!.visibility = View.VISIBLE
+        }else{
+            emptyView!!.visibility = View.GONE
+        }
         return datas.size
     }
 

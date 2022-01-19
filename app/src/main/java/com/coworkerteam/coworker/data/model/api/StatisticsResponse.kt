@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName
 
 data class StatisticsResponse(
     @SerializedName("achieveTimeRate")
-    val achieveTimeRate: Int,
+    val achieveTimeRate: Int?,
     @SerializedName("achieveTodoRate")
-    val achieveTodoRate: Int,
+    val achieveTodoRate: Int?,
     @SerializedName("aimTime")
     val aimTime: String,
     @SerializedName("dream")
@@ -15,17 +15,17 @@ data class StatisticsResponse(
     @SerializedName("profile")
     val profile: Profile,
     @SerializedName("restRate")
-    val restRate: Int,
+    val restRate: Int?,
     @SerializedName("selectDate")
     val selectDate: String,
     @SerializedName("studyRate")
-    val studyRate: Int,
+    val studyRate: Int?,
     @SerializedName("studyTime")
     val studyTime: String,
     @SerializedName("theDayAcheiveRate")
-    val theDayAcheiveRate: Int,
+    val theDayAcheiveRate: Int?,
     @SerializedName("theDayAcheiveTimeRate")
-    val theDayAcheiveTimeRate: Int,
+    val theDayAcheiveTimeRate: Int?,
     @SerializedName("weekTimeAVG")
     val weekTimeAVG: WeekTimeAVG,
     @SerializedName("weekTimeAcheive")

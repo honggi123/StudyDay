@@ -3,6 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="mystudyResponse"
+            type="com.coworkerteam.coworker.data.model.api.MyStudyResponse" />
+
+    </data>
+
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
@@ -58,13 +66,13 @@
                     android:id="@+id/textView39"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="8dp"
                     android:fontFamily="@font/notosans_medium_hestia"
                     android:text="가입한 그룹스터디"
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="@+id/textView38"
-                    app:layout_constraintTop_toBottomOf="@+id/my_study_rv_open_study" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView23" />
 
                 <TextView
                     android:id="@+id/my_study_txt_study_menage"
@@ -93,13 +101,38 @@
                     android:id="@+id/my_study_rv_group_study"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
                     app:layoutManager="GridLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/guideline21"
-                    app:layout_constraintTop_toBottomOf="@+id/textView39"
+                    app:layout_constraintTop_toBottomOf="@+id/textView25"
                     app:spanCount="2"
                     tools:listitem="@layout/item_my_study" />
+
+                <TextView
+                    android:id="@+id/textView23"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:minHeight="120dp"
+                    android:text="참여했던 일일스터디가 없습니다."
+                    android:visibility="@{mystudyResponse.result.open.size()&lt;1?View.VISIBLE:View.GONE}"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline22"
+                    app:layout_constraintStart_toStartOf="@+id/guideline21"
+                    app:layout_constraintTop_toBottomOf="@+id/my_study_rv_open_study" />
+
+                <TextView
+                    android:id="@+id/textView25"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:minHeight="120dp"
+                    android:text="가입한 그룹스터디가 없습니다."
+                    android:visibility="@{mystudyResponse.result.group.size()&lt;1?View.VISIBLE:View.GONE}"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline22"
+                    app:layout_constraintStart_toStartOf="@+id/guideline21"
+                    app:layout_constraintTop_toBottomOf="@+id/textView39" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
