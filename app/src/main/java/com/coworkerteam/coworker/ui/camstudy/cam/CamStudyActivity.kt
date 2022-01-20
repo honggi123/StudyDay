@@ -27,6 +27,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import android.content.ClipData
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
 class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel>() {
@@ -442,8 +443,12 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 }
                 CamStudyService.MSG_LEADER_FORCED_EXIT -> {
                     //리더에게 추방
-                    val msg: Message = Message.obtain(null, CamStudyService.MSG_COMSTUDY_LEFT)
-                    sendHandlerMessage(msg)
+                    MaterialAlertDialogBuilder(this@CamStudyActivity)
+                        .setMessage("스터디에서 추방되었습니다.")
+                        .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
+                            val msg: Message = Message.obtain(null, CamStudyService.MSG_COMSTUDY_LEFT)
+                            sendHandlerMessage(msg)
+                        }).show()
                 }
                 CamStudyService.MSG_LEADER_FORCED_AUDIO_OFF -> {
                     //리더에게 마이크 off

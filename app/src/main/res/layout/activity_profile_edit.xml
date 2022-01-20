@@ -6,7 +6,7 @@
     <data>
         <variable
             name="activitiy"
-            type="com.coworkerteam.coworker.ui.setting.profile.MyProfileActivity" />
+            type="com.coworkerteam.coworker.ui.setting.profile.edit.ProfileEditActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -49,6 +49,7 @@
                 android:layout_width="130dp"
                 android:layout_height="130dp"
                 android:src="@color/contour"
+                android:onClick="@{()->activitiy.startImagePick()}"
                 app:civ_border_color="#FF000000"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -123,8 +124,7 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="잉" />
+                        android:layout_height="wrap_content" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -137,6 +137,7 @@
                     android:text="중복확인"
                     android:textColor="@color/white"
                     android:textSize="12sp"
+                    android:onClick="@{()->activitiy.clickNicknameCheck()}"
                     app:cornerRadius="20dp" />
 
             </LinearLayout>
@@ -211,6 +212,7 @@
                     android:paddingRight="15dp"
                     android:paddingBottom="10dp"
                     android:text="시험공부"
+                    android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
                     android:textColor="@color/category_text"
                     android:textSize="13sp" />
 
@@ -226,6 +228,7 @@
                     android:paddingRight="15dp"
                     android:paddingBottom="10dp"
                     android:text="수능"
+                    android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
                     android:textColor="@color/category_text"
                     android:textSize="13sp" />
 
@@ -241,6 +244,7 @@
                     android:paddingRight="15dp"
                     android:paddingBottom="10dp"
                     android:text="취업"
+                    android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
                     android:textColor="@color/category_text"
                     android:textSize="13sp" />
 
@@ -265,6 +269,7 @@
                     android:paddingRight="15dp"
                     android:paddingBottom="10dp"
                     android:text="자기개발"
+                    android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
                     android:textColor="@color/category_text"
                     android:textSize="13sp" />
 
@@ -280,6 +285,7 @@
                     android:paddingRight="15dp"
                     android:paddingBottom="10dp"
                     android:text="어학"
+                    android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
                     android:textColor="@color/category_text"
                     android:textSize="13sp" />
 
@@ -295,6 +301,7 @@
                     android:paddingRight="15dp"
                     android:paddingBottom="10dp"
                     android:text="자격증"
+                    android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
                     android:textColor="@color/category_text"
                     android:textSize="13sp" />
 
@@ -319,6 +326,7 @@
                     android:paddingRight="15dp"
                     android:paddingBottom="10dp"
                     android:text="고시/공시"
+                    android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
                     android:textColor="@color/category_text"
                     android:textSize="13sp" />
 
@@ -334,6 +342,7 @@
                     android:paddingRight="15dp"
                     android:paddingBottom="10dp"
                     android:text="이직"
+                    android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
                     android:textColor="@color/category_text"
                     android:textSize="13sp" />
 
@@ -349,6 +358,7 @@
                     android:paddingRight="15dp"
                     android:paddingBottom="10dp"
                     android:text="기타"
+                    android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
                     android:textColor="@color/category_text"
                     android:textSize="13sp" />
             </LinearLayout>

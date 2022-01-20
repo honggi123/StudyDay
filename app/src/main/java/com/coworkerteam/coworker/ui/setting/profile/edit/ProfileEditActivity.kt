@@ -33,6 +33,7 @@ import com.coworkerteam.coworker.databinding.ActivityProfileEditBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.google.android.material.textfield.TextInputLayout
 import de.hdodenhof.circleimageview.CircleImageView
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
@@ -44,7 +45,7 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
     override val viewModel: ProfileEditViewModel by viewModel()
 
     lateinit var profileManageResponse: ProfileManageResponse.Result.Profile
-    var category = ArrayList<String>()
+    var categorys = ArrayList<String>()
 
     var realpath: String? = null
     var fileName: String? = null
@@ -66,9 +67,6 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
                 }
                 Glide.with(this).load(uri)
                     .into(findViewById(R.id.my_profile_edit_img))
-
-//                uploadWithTransferUtilty("testAndroid",File(uri.toString()))
-
             }
         }
 
@@ -85,6 +83,8 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
             intent.getSerializableExtra("profile") as ProfileManageResponse.Result.Profile
         setLoginImage(viewDataBinding.myProfileLoginImg,profileManageResponse.loginType)
 
+        viewDataBinding.activitiy = this
+
         init()
     }
 
@@ -92,6 +92,9 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
         viewModel.ProfileEditResponseLiveData.observe(this, androidx.lifecycle.Observer {
             if (it.isSuccessful) {
                 finish()
+            }else if(it.code() >= 500){
+                //Api서버에 문제가 있을 경우
+                showServerErrorDialog()
             }
         })
 
@@ -99,15 +102,33 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
             if (it.isSuccessful) {
                 is_edit = true
 
-                val check_text = findViewById<TextView>(R.id.my_profile_edit_txt_nickname_check)
-                check_text.visibility = View.VISIBLE
-                if(it.body().toString() != null) {
-                    check_text.text = it.body()!!.message
-                    nickname_check = it.body()!!.isUse
-                }else{
-                    check_text.text = "중복된 닉네임입니다."
-                    nickname_check = "false"
+                //사용할 수 있는 닉네임 이므로 EditText가 Error처리 되어있었다면 해제
+                viewDataBinding.myProfileEditNickname.error = null
+                viewDataBinding.myProfileEditNickname.isErrorEnabled = false
+
+                //닉네임 사용 가능하다는 설명 셋팅
+                viewDataBinding.myProfileEditNickname.helperText = it.body()!!.message
+
+                //닉네임 사용 가능하다는 판별 전역변수에 값 수정
+                nickname_check = it.body()!!.isUse
+
+            }else if(it.code() == 400){
+                val errorResult = JSONObject(it.errorBody()!!.string())
+
+                when(errorResult.getInt("code")){
+                    -1 -> {
+                        //클라이언트에서 값을 다 보내지 않았을 경우
+                        Log.d(TAG,"닉네임 변경 API 호출 시, 클라이언트에서 값을 다 보내지 않음")
+                    }
+                    -10 -> {
+                        //닉네임이 중복되어 사용할 수 없는 경우
+                        viewDataBinding.myProfileEditNickname.error = errorResult.getString("message")
+                        nickname_check = errorResult.getString("isUse")
+                    }
                 }
+            }else if(it.code() >= 500){
+                //Api서버에 문제가 있을 경우
+                showServerErrorDialog()
             }
         })
     }
@@ -116,119 +137,63 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
     }
 
     fun init() {
-        val profile_img = findViewById<CircleImageView>(R.id.my_profile_edit_img)
-        val profile_img_chang = findViewById<CircleImageView>(R.id.profile_edit_img_chang)
-        val edt_nickname = findViewById<TextInputLayout>(R.id.my_profile_edit_nickname)
-        val btn_nickname_check = findViewById<Button>(R.id.my_profile_edit_btn_nickname_check)
-        val txt_email = findViewById<TextView>(R.id.my_profile_email)
+        
+        //내 기존 프로필과 닉네임, 이메일 등의 값 세팅
+        Glide.with(this)
+            .load(profileManageResponse.img)
+            .into(viewDataBinding.myProfileEditImg)
 
-        profile_img_chang.setOnClickListener(View.OnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = MediaStore.Images.Media.CONTENT_TYPE
-
-            intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-
-            startForResult.launch(intent)
-        })
-
-        btn_nickname_check.setOnClickListener(View.OnClickListener {
-            viewModel.getNicknameCheckData(edt_nickname.editText?.text.toString())
-        })
-
-        Glide.with(this) //해당 환경의 Context나 객체 입력
-            .load(profileManageResponse.img) //URL, URI 등등 이미지를 받아올 경로
-            .into(profile_img) //받아온 이미지를 받을 공간(ex. ImageView)
-
-        edt_nickname.editText?.setText(profileManageResponse.nickname)
-        txt_email.text = profileManageResponse.email
+        viewDataBinding.myProfileEditNickname.editText?.setText(profileManageResponse.nickname)
+        viewDataBinding.myProfileEmail.text = profileManageResponse.email
         var study = profileManageResponse
 
-        val btn_category_test_study: TextView = findViewById(R.id.my_profile_edit_txt_test) //시험공부
-        val btn_category_sat: TextView = findViewById(R.id.my_profile_edit_txt_sat)   //수능
-        val btn_category_employment: TextView = findViewById(R.id.my_profile_edit_txt_emp) //취업
-        val btn_category_language_study: TextView = findViewById(R.id.my_profile_edit_txt_laug) //어학
-        val btn_category_certificate: TextView = findViewById(R.id.my_profile_edit_txt_cre)   //자격증
-        val btn_category_official: TextView = findViewById(R.id.my_profile_edit_txt_off) //고시,공시
-        val btn_category_Turnover: TextView = findViewById(R.id.my_profile_edit_txt_tran) //이직
-        val btn_category_self_development: TextView =
-            findViewById(R.id.my_profile_edit_txt_self) //자기개발
-        val btn_category_other: TextView = findViewById(R.id.my_profile_edit_txt_other)   //기타
-
+        
+        //내가 이미 설정해놓았던 카테고리 UI 반영 및, 선택관련 ArrayList에 값 추가
         if (study.category.contains("시험공부")) {
-            btn_category_test_study.isSelected = true
-            category.add("시험공부")
+            viewDataBinding.myProfileEditTxtTest.isSelected = true
+            categorys.add("시험공부")
         }
 
         if (study.category.contains("수능")) {
-            btn_category_sat.isSelected = true
-            category.add("수능")
+            viewDataBinding.myProfileEditTxtSat.isSelected = true
+            categorys.add("수능")
         }
 
         if (study.category.contains("취업")) {
-            btn_category_employment.isSelected = true
-            category.add("취업")
+            viewDataBinding.myProfileEditTxtEmp.isSelected = true
+            categorys.add("취업")
         }
 
         if (study.category.contains("어학")) {
-            btn_category_language_study.isSelected = true
-            category.add("어학")
+            viewDataBinding.myProfileEditTxtLaug.isSelected = true
+            categorys.add("어학")
         }
 
         if (study.category.contains("자격증")) {
-            btn_category_certificate.isSelected = true
-            category.add("자격증")
+            viewDataBinding.myProfileEditTxtCre.isSelected = true
+            categorys.add("자격증")
         }
 
         if (study.category.contains("고시/공시")) {
-            btn_category_official.isSelected = true
-            category.add("고시/공시")
+            viewDataBinding.myProfileEditTxtOff.isSelected = true
+            categorys.add("고시/공시")
         }
 
         if (study.category.contains("이직")) {
-            btn_category_Turnover.isSelected = true
-            category.add("이직")
+            viewDataBinding.myProfileEditTxtTran.isSelected = true
+            categorys.add("이직")
         }
 
         if (study.category.contains("자기개발")) {
-            btn_category_self_development.isSelected = true
-            category.add("자기개발")
+            viewDataBinding.myProfileEditTxtSelf.isSelected = true
+            categorys.add("자기개발")
         }
 
-        btn_category_test_study.setOnClickListener(View.OnClickListener {
-            categoryEvent(it, "시험공부")
-        })
+        if (study.category.contains("기타")) {
+            viewDataBinding.myProfileEditTxtOther.isSelected = true
+            categorys.add("기타")
+        }
 
-        btn_category_sat.setOnClickListener(View.OnClickListener {
-            categoryEvent(it, "수능")
-        })
-
-        btn_category_employment.setOnClickListener(View.OnClickListener {
-            categoryEvent(it, "취업")
-        })
-
-        btn_category_language_study.setOnClickListener(View.OnClickListener {
-            categoryEvent(it, "어학")
-        })
-
-        btn_category_certificate.setOnClickListener(View.OnClickListener {
-            categoryEvent(it, "자격증")
-        })
-
-        btn_category_official.setOnClickListener(View.OnClickListener {
-            categoryEvent(it, "고시/공시")
-        })
-
-        btn_category_Turnover.setOnClickListener(View.OnClickListener {
-            categoryEvent(it, "이직")
-        })
-
-        btn_category_self_development.setOnClickListener(View.OnClickListener {
-            categoryEvent(it, "자기계발")
-        })
-
-        btn_category_other.setOnClickListener(View.OnClickListener {
-            categoryEvent(it, "기타")
-        })
     }
 
     fun setLoginImage(v: View, loginType: String) {
@@ -256,8 +221,7 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
                         if(fileName!=null) {
                             uploadWithTransferUtilty(fileName!!, File(realpath), this)
                         }else{
-                            var nickname = findViewById<EditText>(R.id.my_profile_edit_nickname)
-                            viewModel.setProfileEditData(nickname.text.toString(),category.joinToString("|"),profileManageResponse.img)
+                            viewModel.setProfileEditData(viewDataBinding.myProfileEditNickname.editText?.text.toString(),categorys.joinToString("|"),profileManageResponse.img)
                         }
                     }else{
                         Toast.makeText(getApplicationContext(), "닉네임 중복 검사를 해주세요.", Toast.LENGTH_SHORT).show()
@@ -270,23 +234,48 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
         return super.onOptionsItemSelected(item)
     }
 
-    fun categoryEvent(view: View, categoryName: String) {
+    fun clickCategoryButton(v: View) {
+        //카테고리 관련 클릭 이벤트
+        
+        val view = v as TextView
+        //카테고리 이름
+        val categoryName = view.text.toString()
+
         if (view.isSelected) {
+            //선택되어있던 카테고리라면 선택해제
             view.setSelected(false)
-            category.remove(categoryName)
+            categorys.remove(categoryName)
+
+            //카테고리가 변경되었다는 확인용 전역변수 값 설정
+            is_edit = true
+
         } else {
-            if (category.size >= 3) {
-                category_much()
-                return
+            //선택되지 않았던 카테고리라면 선택추가
+            if (categorys.size >= 3) {
+                //카테고리가 3개 이상 이미 선택되어 있다면
+                Toast.makeText(this, "카테고리는 최대 3개까지 선택 가능합니다.", Toast.LENGTH_SHORT).show()
+            } else {
+                //카테고리가 3개 이하라면
+                view.setSelected(true)
+                categorys.add(categoryName)
+
+                //카테고리가 변경되었다는 확인용 전역변수 값 설정
+                is_edit = true
             }
-            view.setSelected(true)
-            category.add(categoryName)
         }
-        is_edit = true
     }
 
-    fun category_much() {
-        Toast.makeText(this, "카테고리는 최대 3개까지 선택 가능합니다.", Toast.LENGTH_SHORT).show()
+    fun clickNicknameCheck(){
+        //닉네임 중복 체크
+        viewModel.getNicknameCheckData(viewDataBinding.myProfileEditNickname.editText?.text.toString())
+    }
+
+    fun startImagePick(){
+        //프로필 사진 이미지 선택하러 갤러리로 보내기
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = MediaStore.Images.Media.CONTENT_TYPE
+        intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        startForResult.launch(intent)
     }
 
     fun uploadWithTransferUtilty(fileName: String, file: File, content: Context) {
@@ -317,7 +306,7 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
                     if(fileName != null){
                         profileManageResponse.img = getString(R.string.s3_coworker_study_url) + fileName
                     }
-                    viewModel.setProfileEditData(nickname.text.toString(),category.joinToString("|"),profileManageResponse.img)
+                    viewModel.setProfileEditData(nickname.text.toString(),categorys.joinToString("|"),profileManageResponse.img)
                 }
             }
 

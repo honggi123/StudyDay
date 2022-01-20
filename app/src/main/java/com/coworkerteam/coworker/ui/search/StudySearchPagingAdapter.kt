@@ -44,7 +44,7 @@ class StudySearchPagingAdapter :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
         val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_my_study, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.item_main_other_study, parent, false)
         return ViewHolder(view)
     }
 
@@ -62,6 +62,7 @@ class StudySearchPagingAdapter :
 
         private val img: ImageView = itemView.findViewById(R.id.item_my_study_img)
         private val leader: TextView = itemView.findViewById(R.id.item_my_study_leader)
+        private val pw: ImageView = itemView.findViewById(R.id.txt_item_main_new_study_pw)
         private val studyName: TextView = itemView.findViewById(R.id.item_my_study_txt_name)
         private val studyNum: TextView = itemView.findViewById(R.id.item_my_study_txt_num)
         private val rvCategory: RecyclerView = itemView.findViewById(R.id.item_my_study_rv_category)
@@ -71,6 +72,10 @@ class StudySearchPagingAdapter :
 
             if (!item.isLeader) {
                 leader.visibility = View.GONE
+            }
+
+            if(!item.isPw){
+                pw.visibility = View.GONE
             }
 
             studyName.text = item.name

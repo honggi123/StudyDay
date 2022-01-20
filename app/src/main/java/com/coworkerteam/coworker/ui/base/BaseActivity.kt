@@ -75,4 +75,13 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
             }
         })
     }
+
+    fun showServerErrorDialog(){
+        MaterialAlertDialogBuilder(this)
+            .setTitle("시스템 에러")
+            .setMessage("죄송합니다. 현재 시스템 오류가 발생했습니다. 나중에 다시 시도해주세요.")
+            .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
+                dialog.dismiss()
+            }).show()
+    }
 }
