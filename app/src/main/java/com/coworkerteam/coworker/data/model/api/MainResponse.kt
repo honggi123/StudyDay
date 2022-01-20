@@ -43,13 +43,13 @@ data class MainResponse(
     ){
         data class Dream(
             @SerializedName("dday")
-            val dday: String,
+            val dday: String?,
             @SerializedName("dday_date")
-            var ddayDate: String,
+            var ddayDate: String?,
             @SerializedName("dday_name")
-            var ddayName: String,
+            var ddayName: String?,
             @SerializedName("goal")
-            var goal: String
+            var goal: String?
         )
         data class Study(
             @SerializedName("category")

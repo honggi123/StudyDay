@@ -60,7 +60,7 @@ data class TodolistResponse(
             @SerializedName("idx")
             val idx: Int,
             @SerializedName("is_complete")
-            val isComplete: Boolean,
+            var isComplete: Boolean,
             @SerializedName("todo")
             val todo: String
         )

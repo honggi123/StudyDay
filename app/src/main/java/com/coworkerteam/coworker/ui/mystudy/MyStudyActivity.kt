@@ -12,6 +12,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.MyStudyResponse
+import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityMyStudyBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.base.NavigationAcitivity
@@ -65,9 +66,13 @@ class MyStudyActivity : NavigationAcitivity<ActivityMyStudyBinding, MyStudyViewM
         viewModel.MyStudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
             if (it.isSuccessful) {
                 val myStudyResponse = it.body()!!
+
+                //네비게이션 정보 셋팅
                 setNavigaionLoginImage(myStudyResponse.result.profile.loginType)
                 setNavigaionProfileImage(myStudyResponse.result.profile.img)
                 setNavigaionNickname(myStudyResponse.result.profile.nickname)
+
+                viewDataBinding.draworInfo = DrawerBottomInfo(it.body()!!.result.achieveTimeRate,it.body()!!.result.achieveTodoRate,it.body()!!.result.dream.dday,it.body()!!.result.dream.ddayName)
 
                 viewDataBinding.mystudyResponse = it.body()!!
             }

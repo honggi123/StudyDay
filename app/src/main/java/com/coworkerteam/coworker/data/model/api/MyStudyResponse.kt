@@ -31,12 +31,14 @@ data class MyStudyResponse(
     ){
 
         data class Dream(
+            @SerializedName("dday")
+            val dday: String?,
             @SerializedName("dday_date")
-            val ddayDate: Any,
+            var ddayDate: String?,
             @SerializedName("dday_name")
-            val ddayName: Any,
+            var ddayName: String?,
             @SerializedName("goal")
-            val goal: Any
+            var goal: String?
         )
 
         data class Group(

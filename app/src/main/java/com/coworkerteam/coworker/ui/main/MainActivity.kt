@@ -13,6 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.MainResponse
+import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityMainBinding
 import com.coworkerteam.coworker.ui.base.NavigationAcitivity
 import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
@@ -90,9 +91,12 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
             if (it.isSuccessful) {
                 viewDataBinding.mainResponse = it.body()!!
 
+                //네비게이션 정보 세팅
                 setNavigaionProfileImage(it.body()!!.result[0].profile.img)
                 setNavigaionLoginImage(it.body()!!.result[0].profile.loginType)
                 setNavigaionNickname(it.body()!!.result[0].profile.nickname)
+
+                viewDataBinding.draworInfo = DrawerBottomInfo(it.body()!!.result[0].achieveTimeRate,it.body()!!.result[0].achieveTodoRate,it.body()!!.result[0].dream.dday,it.body()!!.result[0].dream.ddayName)
 
                 Log.d("디버그태그", it.body()!!.result[0].todo.toString())
                 //내스터디

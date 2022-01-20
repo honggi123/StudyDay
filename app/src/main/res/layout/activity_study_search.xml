@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -8,6 +9,10 @@
         <variable
             name="activitiy"
             type="com.coworkerteam.coworker.ui.search.StudySearchActivity" />
+
+        <variable
+            name="draworInfo"
+            type="com.coworkerteam.coworker.data.model.other.DrawerBottomInfo" />
     </data>
 
     <androidx.drawerlayout.widget.DrawerLayout
@@ -276,7 +281,8 @@
                 layout="@layout/drawer_bottom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom" />
+                android:layout_gravity="bottom"
+                bind:draworInfo="@{draworInfo}"/>
 
         </com.google.android.material.navigation.NavigationView>
     </androidx.drawerlayout.widget.DrawerLayout>

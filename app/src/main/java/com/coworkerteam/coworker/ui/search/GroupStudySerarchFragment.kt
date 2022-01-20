@@ -31,11 +31,10 @@ class GroupStudySerarchFragment :
     override fun initStartView() {
         pagingStudySearchAdapter = StudySearchPagingAdapter()
         pagingStudySearchAdapter.addLoadStateListener { loadState ->
-            val emptyView = mRootView.findViewById<TextView>(R.id.group_search_empty_view)
             if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && pagingStudySearchAdapter.itemCount < 1) {
-                emptyView.visibility = View.GONE
+                viewDataBinding.groupSearchEmptyView.visibility = View.VISIBLE
             } else {
-                emptyView.visibility = View.VISIBLE
+                viewDataBinding.groupSearchEmptyView.visibility = View.GONE
             }
         }
         val rv_Search = view?.findViewById<RecyclerView>(R.id.fragment_group_study_rv)

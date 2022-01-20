@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="studyInfo"
             type="com.coworkerteam.coworker.data.model.api.EditStudyResponse.Result.StudyInfo" />

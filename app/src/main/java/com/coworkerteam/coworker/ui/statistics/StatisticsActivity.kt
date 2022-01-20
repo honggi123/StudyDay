@@ -13,6 +13,7 @@ import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.StatisticsResponse
 import com.coworkerteam.coworker.data.model.custom.CustBarChart
 import com.coworkerteam.coworker.data.model.custom.StatisticsMarkerView
+import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityStatisticsBinding
 import com.coworkerteam.coworker.ui.base.NavigationAcitivity
 import com.github.mikephil.charting.charts.PieChart
@@ -143,16 +144,15 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
                     setNavigaionLoginImage(statisticsResponse.profile.loginType)
                     setNavigaionProfileImage(statisticsResponse.profile.img)
                     setNavigaionNickname(statisticsResponse.profile.nickname)
-                }
 
-                val studyTimeProgress = findViewById<ProgressBar>(R.id.statistics_progress_today_study_time)
-                val planProgress = findViewById<ProgressBar>(R.id.statistics_progress_plan)
+                    viewDataBinding.draworInfo = DrawerBottomInfo(it.body()!!.achieveTimeRate,it.body()!!.achieveTodoRate,it.body()!!.dream.dday,it.body()!!.dream.ddayName)
+                }
 
                 var pro_studyTime = if(it.body()!!.theDayAcheiveTimeRate == null) 0 else it.body()!!.theDayAcheiveTimeRate
                 var pro_plan = if(it.body()!!.theDayAcheiveRate == null) 0 else it.body()!!.theDayAcheiveRate
 
-                studyTimeProgress.progress = pro_studyTime!!
-                planProgress.progress = pro_plan!!
+                viewDataBinding.statisticsProgressTodayStudyTime.progress = pro_studyTime!!
+                viewDataBinding.statisticsProgressPlan.progress = pro_plan!!
 
                 val studyTime = statisticsResponse.studyRate?:0
                 val restTime = statisticsResponse.restRate?:0
@@ -177,7 +177,7 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
                         barEntries.add(BarEntry(x.toFloat(), hour.toFloat()))
 
                         val statistcsDay = statisticsResponse.weekTimeAcheive.get(x).date
-                        val studyTime = statisticsResponse.weekTimeAcheive.get(x).time
+                        val studyTime = if(statisticsResponse.weekTimeAcheive.get(x).time == null) "없음" else statisticsResponse.weekTimeAcheive.get(x).time
                         val timeAcheive = i.timeRate?:"없음"
                         val todoAcheive = statisticsResponse.weekTodoAcheive.get(x).acheiveRate?:"없음"
                         val text = statistcsDay+" \n"+"공부시간 : "+studyTime+" \n"+"공부시간 달성률 : "+timeAcheive+" \n"+"계획 달성률 : "+todoAcheive
@@ -200,7 +200,7 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
                         barEntries.add(BarEntry(x.toFloat(), hour.toFloat()))
 
                         val statistcsDay = statisticsResponse.monthTimeAcheive.get(x).date
-                        val studyTime = statisticsResponse.monthTimeAcheive.get(x).time
+                        val studyTime = if(statisticsResponse.monthTimeAcheive.get(x).time == null) "없음" else statisticsResponse.monthTimeAcheive.get(x).time
                         val timeAcheive = i.timeRate?:"없음"
                         val todoAcheive = statisticsResponse.monthTodoAcheive.get(x).acheiveRate?:"없음"
                         val text = statistcsDay+" \n"+"공부시간 : "+studyTime+" \n"+"공부시간 달성률 : "+timeAcheive+" \n"+"계획 달성률 : "+todoAcheive

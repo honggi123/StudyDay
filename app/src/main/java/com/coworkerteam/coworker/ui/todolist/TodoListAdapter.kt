@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.TodolistResponse
+import com.google.android.material.textfield.TextInputLayout
 
 class TodoListAdapter(private val context: Context, private val viewModel: TodoListViewModel) :
     RecyclerView.Adapter<TodoListAdapter.ViewHolder>() {
@@ -43,6 +44,7 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
         fun bind(item: TodolistResponse.Result.TheDayTodo) {
             checkbox.text = item.todo
             checkbox.isChecked = item.isComplete
+            val index = datas.indexOf(item)
 
             if (item.isComplete) {
                 checkbox.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
@@ -61,10 +63,22 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
                         viewModel.setCheckTodoListData(item.idx, item.createDate)
                         checkbox.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
                         checkbox.setTextColor(Color.GRAY)
+
+                        var theDayTodo = TodolistResponse.Result.TheDayTodo(items.createDate, index, isChecked, item.todo)
+
+                        datas.removeAt(index)
+                        datas.add(index, theDayTodo)
+
                     } else {
                         viewModel.setCheckTodoListData(item.idx, item.createDate)
                         checkbox.paintFlags = 0
                         checkbox.setTextColor(Color.BLACK)
+
+                        var theDayTodo = TodolistResponse.Result.TheDayTodo(items.createDate, index, isChecked, item.todo)
+
+                        datas.removeAt(index)
+                        datas.add(index, theDayTodo)
+
                     }
                 }
             )
@@ -86,16 +100,16 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
                                 builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
                                 val txt_day =
-                                    mDialogView.findViewById<TextView>(R.id.dialog_todolist_edt__txt_day)
+                                    mDialogView.findViewById<TextInputLayout>(R.id.dialog_todolist_edt__txt_day)
                                 val edt_todo =
-                                    mDialogView.findViewById<EditText>(R.id.dialog_todolist_edt_edit)
+                                    mDialogView.findViewById<TextInputLayout>(R.id.dialog_todolist_edt_edit)
                                 val btn_cancle =
                                     mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_cancle)
                                 val btn_remove =
                                     mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_remove)
 
-                                txt_day.text = items.createDate
-                                edt_todo.setText(items.todo)
+                                txt_day.editText?.setText(items.createDate)
+                                edt_todo.editText?.setText(items.todo)
 
                                 btn_cancle.setOnClickListener(View.OnClickListener {
                                     builder.dismiss()
@@ -104,14 +118,14 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
                                 btn_remove.setOnClickListener(View.OnClickListener {
                                     editTodolist(
                                         items.createDate,
-                                        edt_todo.text.toString(),
+                                        edt_todo.editText?.text.toString(),
                                         items.idx,
-                                        adapterPosition,
-                                        items.isComplete
+                                        index,
+                                        checkbox.isChecked
                                     )
                                     viewModel.setEditTodoListData(
                                         items.createDate,
-                                        edt_todo.text.toString(),
+                                        edt_todo.editText?.text.toString(),
                                         items.idx
                                     )
                                     builder.dismiss()
@@ -119,7 +133,7 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
                             }
 
                             R.id.menu_delete -> {
-                                removeTodolist(adapterPosition)
+                                removeTodolist(index)
                                 viewModel.deleteTodoListData(items.idx, items.createDate)
                             }
                         }

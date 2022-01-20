@@ -7,6 +7,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.*
 import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 
 class NetworkUtils(private val context: Context) : LiveData<Boolean>() {
@@ -14,6 +16,7 @@ class NetworkUtils(private val context: Context) : LiveData<Boolean>() {
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onActive() {
         super.onActive()
         updateConnection()
@@ -37,7 +40,15 @@ class NetworkUtils(private val context: Context) : LiveData<Boolean>() {
     override fun onInactive() {
         super.onInactive()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            connectivityManager.unregisterNetworkCallback(connectivityManagerCallback())
+            try {
+                connectivityManager.unregisterNetworkCallback(connectivityManagerCallback())
+            } catch (e: IllegalArgumentException) {
+
+            } catch (e: Exception){
+
+            }finally {
+
+            }
         } else {
             context.unregisterReceiver(networkReceiver)
         }
@@ -75,22 +86,22 @@ class NetworkUtils(private val context: Context) : LiveData<Boolean>() {
     }
 
     private val networkReceiver = object : BroadcastReceiver() {
+        @RequiresApi(Build.VERSION_CODES.M)
         override fun onReceive(context: Context?, intent: Intent?) {
             updateConnection()
         }
     }
 
-    private fun updateConnection() {
+    @RequiresApi(Build.VERSION_CODES.M)
+    open fun updateConnection() {
         val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager;
-        if (manager.isDefaultNetworkActive()) {
+        if (manager.activeNetwork != null) {
             //인터넷 됨
             postValue(true)
         } else {
             // 인터넷 안됨
             postValue(false)
         }
-//        val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
-//        postValue(activeNetwork?.isConnected == true)
     }
 
 }

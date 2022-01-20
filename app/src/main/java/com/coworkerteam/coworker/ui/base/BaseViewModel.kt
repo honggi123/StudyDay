@@ -20,19 +20,20 @@ open class BaseViewModel() : ViewModel() {
         super.onCleared()
     }
 
-    fun getReissuanceToken(model: UserRepository) {
-        val refreshToken =model.getRefreshToken()
+    fun getReissuanceToken(model: UserRepository, unit: Unit) {
+        val refreshToken = model.getRefreshToken()
         val accessToken = model.getAccessToken()
         val nickname = model.getCurrentUserName()
 
-        if (!refreshToken.isNullOrEmpty() && !accessToken.isNullOrEmpty()&& nickname.isNullOrEmpty()) {
+        if (!refreshToken.isNullOrEmpty() && !accessToken.isNullOrEmpty() && nickname.isNullOrEmpty()) {
             addDisposable(
-                model.getTokenResetData(refreshToken,accessToken,nickname!!)
+                model.getTokenResetData(refreshToken, accessToken, nickname!!)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         it.run {
                             Log.d("BaseViewModel", "meta : " + it.toString())
+                            unit
                         }
                     }, {
                         Log.d("BaseViewModel", "response error, message : ${it.message}")

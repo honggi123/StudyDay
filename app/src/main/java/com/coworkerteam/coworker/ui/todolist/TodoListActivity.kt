@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.TodolistResponse
 import com.coworkerteam.coworker.data.model.custom.EventDecorator
+import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityTodoListBinding
 import com.coworkerteam.coworker.ui.base.NavigationAcitivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -64,26 +65,31 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
     override fun initDataBinding() {
         viewModel.TodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
             if (it.isSuccessful) {
-                viewDataBinding.todolistResponse = it.body()!!
-                Log.d(TAG,viewDataBinding.todolistResponse!!.toString())
-                
+
+                //데코레이터용 날짜 받아올때는 DataBinding에 넣지 않음
+                if(!it.body()!!.message.equals("선택한 달에서, 할 일이 있는 날짜입니다.")){
+                    viewDataBinding.todolistResponse = it.body()!!
+                }
+
                 //네비게이션 바에 넣을 정보가 있을 경우
-                if(viewDataBinding.todolistResponse!!.result.profile != null) {
+                if(it.body()!!.result.profile != null) {
                     setNavigaionLoginImage(viewDataBinding.todolistResponse!!.result.profile.loginType)
                     setNavigaionProfileImage(viewDataBinding.todolistResponse!!.result.profile.img)
                     setNavigaionNickname(viewDataBinding.todolistResponse!!.result.profile.nickname)
+
+                    viewDataBinding.draworInfo = DrawerBottomInfo(it.body()!!.result.achieveTimeRate,it.body()!!.result.achieveTodoRate,it.body()!!.result.dream.dday,it.body()!!.result.dream.ddayName)
                 }
 
                 //프로그레스바, 투두리스트 항목이 있을 경우
-                if(viewDataBinding.todolistResponse!!.result.theDayTodo != null){
+                if(it.body()!!.result.theDayTodo != null){
                     rv_init()
                     progress_init()
                 }
 
                 //데코레이터 추가할 날짜가 있을 경우
-                if(viewDataBinding.todolistResponse!!.result.todoDate != null) {
+                if(it.body()!!.result.todoDate != null) {
                     var decorators = ArrayList<CalendarDay>()
-                    viewDataBinding.todolistResponse!!.result.todoDate.forEach {
+                    it.body()!!.result.todoDate.forEach {
                         val date = it.split("-")
                         decorators.add(CalendarDay.from(date[0].toInt(), date[1].toInt(), date[2].toInt()))
                     }
@@ -95,6 +101,7 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
 
         viewModel.AddTodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
             if (it.isSuccessful) {
+                //새로 추가한 투두리스트
                 val day = it.body()!!.result.theDayTodo[0]
 
                 val rv = findViewById<RecyclerView>(R.id.rv_todolist)
@@ -110,9 +117,15 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                         day.todo
                     )
                 )
+                //네비게이션 드로어 오늘 할일 달성률 갱신
+                viewDataBinding.draworInfo!!.achieveTodoRate = it.body()!!.result.achieveTodoRate
+                viewDataBinding.draworInfo = viewDataBinding.draworInfo
 
+                //추가된 새로 받아온 투두리스트로 DataBinding 정보 갱신
                 viewDataBinding.todolistResponse!!.result.theDayTodo = myStudyAdepter.datas.toList()
                 viewDataBinding.todolistResponse = viewDataBinding.todolistResponse
+                
+                //리사이클러뷰 갱신
                 rv.adapter = myStudyAdepter
 
                 val todoProgress = findViewById<ProgressBar>(R.id.todo_list_progress)
@@ -124,8 +137,11 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
         viewModel.CheckTodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
             if (it.isSuccessful) {
                 val todoProgress = findViewById<ProgressBar>(R.id.todo_list_progress)
-
                 todoProgress.progress = it.body()!!.result.theDayAcheiveRate
+
+                //네비게이션 드로어 오늘 할일 달성률 갱신
+                viewDataBinding.draworInfo!!.achieveTodoRate = it.body()!!.result.achieveTodoRate
+                viewDataBinding.draworInfo = viewDataBinding.draworInfo
             }
         })
         viewModel.DeleteTodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
@@ -133,6 +149,19 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                 myStudyAdepter!!.notifyDataSetChanged()
                 viewDataBinding.todolistResponse!!.result.theDayTodo = myStudyAdepter!!.datas.toList()
                 viewDataBinding.todolistResponse = viewDataBinding.todolistResponse
+
+                //달력 데코레이터 다시 세팅
+                viewDataBinding.calendarView.removeDecorators()
+                var decorators = ArrayList<CalendarDay>()
+                it.body()!!.result.todoDate.forEach {
+                    val date = it.split("-")
+                    decorators.add(CalendarDay.from(date[0].toInt(), date[1].toInt(), date[2].toInt()))
+                }
+                viewDataBinding.calendarView.addDecorator(EventDecorator(decorators))
+
+                //네비게이션 드로어 오늘 할일 달성률 갱신
+                viewDataBinding.draworInfo!!.achieveTodoRate = it.body()!!.result.achieveTodoRate
+                viewDataBinding.draworInfo = viewDataBinding.draworInfo
             }
         })
         viewModel.EditTodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {

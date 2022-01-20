@@ -31,9 +31,11 @@ class OpenStudySerarchFragment :
         pagingStudySearchAdapter = StudySearchPagingAdapter()
         pagingStudySearchAdapter.addLoadStateListener { loadState ->
             if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && pagingStudySearchAdapter.itemCount < 1) {
-                viewDataBinding.openSearchEmptyView.visibility = View.GONE
-            } else {
+                Log.d("아이템","아이템이 있어")
                 viewDataBinding.openSearchEmptyView.visibility = View.VISIBLE
+            } else {
+                Log.d("아이템","아이템이 있어?")
+                viewDataBinding.openSearchEmptyView.visibility = View.GONE
             }
         }
         val rv_Search = view?.findViewById<RecyclerView>(R.id.fragment_open_study_rv)
