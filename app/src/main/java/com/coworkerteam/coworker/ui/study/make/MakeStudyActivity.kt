@@ -216,8 +216,6 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
             Toast.makeText(this, "스터디 종류를 선택해주세요.", Toast.LENGTH_SHORT).show()
         } else if (viewDataBinding.makeStudyEdtName.editText?.text.isNullOrBlank()) {
             Toast.makeText(this, "스터디 이름을 입력해주세요.", Toast.LENGTH_SHORT).show()
-        } else if (viewDataBinding.makeStudyEdtPw.editText?.text.isNullOrBlank()) {
-            Toast.makeText(this, "스터디 비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
         } else if (viewDataBinding.makeStudyEdtNum.editText?.text.isNullOrBlank()) {
             Toast.makeText(this, "스터디 인원을 입력해주세요.", Toast.LENGTH_SHORT).show()
         } else if (categorys.size == 0) {

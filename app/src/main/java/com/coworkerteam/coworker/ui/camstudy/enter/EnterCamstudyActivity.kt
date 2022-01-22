@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.data.local.service.CamStudyService
 
 import com.coworkerteam.coworker.R
@@ -61,6 +62,8 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
         dataIntent = intent.getSerializableExtra("studyInfo") as EnterCamstudyResponse?
         var data = dataIntent
 
+        Glide.with(this).load(data?.result?.userImg).into(viewDataBinding.enterCamstudyProfile)
+
         viewDataBinding.studyInfo = data
         studyIndex = data?.result?.studyInfo?.idx
         initRV(data?.result?.studyInfo!!.category)
@@ -69,7 +72,7 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
 
         setSupportActionBar(toolbar) // 툴바를 액티비티의 앱바로 지정
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24_write) // 홈버튼 이미지 변경
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_new_24_black) // 홈버튼 이미지 변경
         supportActionBar?.title = data.result.studyInfo.name
 
         val perms = arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
@@ -134,20 +137,20 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        getMenuInflater().inflate(R.menu.camstudy_menu, menu);
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.camera_chang -> {
-                Log.d(TAG, "카메라 체인지")
-                switchCamera()
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
+//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//        getMenuInflater().inflate(R.menu.camstudy_menu, menu);
+//        return true
+//    }
+//
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        when (item.itemId) {
+//            R.id.camera_chang -> {
+//                Log.d(TAG, "카메라 체인지")
+//                switchCamera()
+//            }
+//        }
+//        return super.onOptionsItemSelected(item)
+//    }
 
     private fun switchDevice(view: View, device: String) {
         when (device) {
@@ -162,13 +165,17 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
             }
             "camera" -> {
                 if (isCamera) {
+                    //카메라가 켜진 상태였으면 끈 상태로 전환
                     isCamera = false
                     videoTrackFromCamera!!.setEnabled(isCamera)
                     view.isSelected = true
+                    viewDataBinding.enterCamstudyProfile.visibility = View.VISIBLE
                 } else {
+                    //카메라가 끈 상태였으면 켜진 상태로 전환
                     isCamera = true
                     videoTrackFromCamera!!.setEnabled(isCamera)
                     view.isSelected = false
+                    viewDataBinding.enterCamstudyProfile.visibility = View.GONE
                 }
             }
         }
@@ -223,6 +230,7 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
             videoSource
         )
 
+        viewDataBinding.enterCamstudyProfile.visibility = View.GONE
         videoTrackFromCamera!!.setEnabled(true)
         videoTrackFromCamera!!.addRenderer(VideoRenderer(surface))
 

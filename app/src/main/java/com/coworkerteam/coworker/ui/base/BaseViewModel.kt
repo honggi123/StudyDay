@@ -33,6 +33,11 @@ open class BaseViewModel() : ViewModel() {
                     .subscribe({
                         it.run {
                             Log.d("BaseViewModel", "meta : " + it.toString())
+                            
+                            //재설정 받은 액세스토큰 다시 로컬에 저장
+                            model.setAccessToken(it.body()!!.accessToken)
+                            
+                            //액세스토큰 만료때문에 실행 실패했던 api요청 재실행
                             unit
                         }
                     }, {

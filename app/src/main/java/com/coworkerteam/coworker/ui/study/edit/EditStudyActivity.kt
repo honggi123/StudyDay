@@ -120,6 +120,8 @@ class EditStudyActivity : BaseActivity<ActivityEditStudyBinding, EditStudyViewMo
             if (it.isSuccessful) {
                 //메인으로 이동
                 finish()
+            }else{
+                Log.d(TAG, it.errorBody()!!.string())
             }
         })
     }

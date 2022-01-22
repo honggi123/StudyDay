@@ -1,8 +1,10 @@
 package com.coworkerteam.coworker.ui.main
+
 import android.app.Activity
 import android.util.Log
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
@@ -13,13 +15,17 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.data.local.service.CamStudyService
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.MainResponse
+import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.utils.ScreenSizeUtils
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+import org.json.JSONObject
 
 class MainOtherStudyAdapter(private val context: Context, private val viewModel: MainViewModel) :
     RecyclerView.Adapter<MainOtherStudyAdapter.ViewHolder>() {
@@ -27,7 +33,8 @@ class MainOtherStudyAdapter(private val context: Context, private val viewModel:
     var datas = mutableListOf<MainResponse.Result.Study>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.item_main_other_study, parent, false)
+        val view =
+            LayoutInflater.from(context).inflate(R.layout.item_main_other_study, parent, false)
         return ViewHolder(view)
     }
 
@@ -40,7 +47,8 @@ class MainOtherStudyAdapter(private val context: Context, private val viewModel:
 
         // 간격 설정
         val layoutParams = holder.itemView.layoutParams
-        layoutParams.width = (ScreenSizeUtils().getScreenWidthSize(context as Activity)/2.25).toInt()
+        layoutParams.width =
+            (ScreenSizeUtils().getScreenWidthSize(context as Activity) / 2.25).toInt()
         holder.itemView.requestLayout()
     }
 
@@ -75,35 +83,52 @@ class MainOtherStudyAdapter(private val context: Context, private val viewModel:
             rvCategory.adapter = studyCategoryAdapter
 
             item_layout.setOnClickListener(View.OnClickListener {
-                if (item.isPw) {
-
-                    val mDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_camstudy_password, null)
+                if (item.pw.equals("private")) {
+                    //가입, 참여를 하지 않았던 비밀번호가 걸려있는 스터디를 선택했을 경우 비밀번호 입력 dialog가 노출
+                    val mDialogView = LayoutInflater.from(context)
+                        .inflate(R.layout.dialog_camstudy_password, null)
                     val mBuilder = AlertDialog.Builder(context).setView(mDialogView)
                     val builder = mBuilder.show()
 
                     builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-                    val btn_cancle = mDialogView.findViewById<Button>(R.id.dialog_camstudy_password_btn_cancle)
-                    val btn_ok = mDialogView.findViewById<Button>(R.id.dialog_camstudy_password_btn_ok)
+                    val btn_cancle =
+                        mDialogView.findViewById<Button>(R.id.dialog_camstudy_password_btn_cancle)
+                    val btn_ok =
+                        mDialogView.findViewById<Button>(R.id.dialog_camstudy_password_btn_ok)
 
                     btn_cancle.setOnClickListener(View.OnClickListener {
                         builder.dismiss()
                     })
 
                     btn_ok.setOnClickListener(View.OnClickListener {
-                        var password = mDialogView.findViewById<TextInputEditText>(R.id.edit_input_dialog_study_password)
-                        if(password.text.isNullOrBlank()){
-                            Log.d("MainOtherStudyAdapter","비밀번호를 올바르게 치지 않음")
-                        }else{
-                            viewModel.getEnterCamstduyData(item.idx, password.text.toString())
-                        }
+                        var password =
+                            mDialogView.findViewById<TextInputLayout>(R.id.edit_dialog_study_password)
+                        viewModel.getEnterCamstduyData(item.idx, password.editText?.text.toString())
+                        viewModel.EnterCamstudyResponseLiveData.observe(
+                            context as LifecycleOwner,
+                            androidx.lifecycle.Observer {
+                                if (it.isSuccessful) {
+                                    builder.dismiss()
+                                } else if (it.code() == 403) {
+                                    Log.d("다이얼로그안","403에러당")
+                                    Log.d("다이얼로그안", it.errorBody()!!.string())
+//                                    val errorResult = JSONObject(it.errorBody()!!.string())
+//                                    when (errorResult.getInt("code")) {
+//                                        -12 -> {
+                                    //비밀번호를 틀린 경우
+                                    password.error = "비밀번호가 틀렸습니다."
+//                                        }
+//                                    }
+                                }
+                            })
                     })
 
                 } else {
 
-                    if(item.isLeader){
+                    if (item.isLeader) {
                         CamStudyService.isLeader = true
-                    }else{
+                    } else {
                         CamStudyService.isLeader = false
                     }
 
