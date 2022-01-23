@@ -65,6 +65,7 @@ class MainMyStudyPagingAdapter(private val viewModel: MainViewModel) :
         private val img: ImageView = itemView.findViewById(R.id.item_my_study_img)
         private val leader: TextView = itemView.findViewById(R.id.item_my_study_leader)
         private val studyName: TextView = itemView.findViewById(R.id.item_my_study_txt_name)
+        private val studyNum: TextView = itemView.findViewById(R.id.item_my_study_txt_num)
 
         fun bind(item: MainMyStudyPagingResponse.Result.MyStudy?) {
             Glide.with(context).load(item!!.img).into(img)
@@ -74,13 +75,10 @@ class MainMyStudyPagingAdapter(private val viewModel: MainViewModel) :
             }
 
             studyName.text = item.name
+            studyNum.text = "참여인원 " + item.userNum.toString() + "/" + item.maxNum.toString()
 
             item_layout.setOnClickListener(View.OnClickListener {
-                if(item.isLeader){
-                    CamStudyService.isLeader = true
-                }else{
-                    CamStudyService.isLeader = false
-                }
+                CamStudyService.isLeader = item.isLeader
 
                 viewModel.getEnterCamstduyData(item.idx, null)
             })

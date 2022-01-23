@@ -9,6 +9,10 @@
         <import type="android.view.View" />
 
         <variable
+            name="selectDate"
+            type="String" />
+
+        <variable
             name="todolistResponse"
             type="com.coworkerteam.coworker.data.model.api.TodolistResponse" />
 
@@ -43,8 +47,9 @@
                 android:id="@+id/textView78"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
                 android:layout_marginTop="8dp"
-                android:text='@{"계획 달성률 "+todolistResponse.result.theDayAcheiveRate+"%"}'
+                android:text='@{"→ 계획 달성률 "+todolistResponse.result.theDayAcheiveRate+"%"}'
                 android:textColor="@color/black"
                 android:visibility="@{todolistResponse.result.TheDayTodo.size()>0?View.VISIBLE:View.GONE}"
                 app:layout_constraintStart_toStartOf="@+id/guideline362"
@@ -155,7 +160,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@{todolistResponse.result.selectedDate}"
+                android:text='@{selectDate+" 할 일"}'
+                android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/guideline362"

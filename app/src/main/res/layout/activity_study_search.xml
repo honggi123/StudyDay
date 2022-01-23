@@ -215,7 +215,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
                         android:background="@drawable/search_sort_background"
-                        android:text="출석률순"
+                        android:text="공부시간순"
                         android:textColor="@color/select_menu"
                         android:textSize="12sp" />
 

@@ -4,7 +4,6 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -20,11 +19,9 @@ import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
-import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.utils.ColorTemplate
-import com.github.sundeepk.compactcalendarview.CompactCalendarView
 import com.github.sundeepk.compactcalendarview.CompactCalendarView.CompactCalendarViewListener
 import com.google.android.material.appbar.AppBarLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -68,8 +65,6 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
     private val apiDateFormat: SimpleDateFormat =
         SimpleDateFormat("yyyy-MM-dd",  /*Locale.getDefault()*/Locale.KOREA)
 
-    lateinit var compactCalendarView: CompactCalendarView
-
     private var shouldShow = true
 
     val pieEntries = ArrayList<PieEntry>()
@@ -89,30 +84,33 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24_write) // 홈버튼 이미지 변경
 
-        // Set up the CompactCalendarView
-        compactCalendarView = findViewById<CompactCalendarView>(R.id.compactcalendar_view)
+        //시간을 한국 기준으로 설정
+        viewDataBinding.compactcalendarView.setLocale(
+            TimeZone.getDefault(),  /*Locale.getDefault()*/
+            Locale.KOREA
+        )
 
-        // Force Korea
-        compactCalendarView.setLocale(TimeZone.getDefault(),  /*Locale.getDefault()*/Locale.KOREA)
+        viewDataBinding.compactcalendarView.setShouldDrawDaysHeader(true)
+        viewDataBinding.compactcalendarView.shouldSelectFirstDayOfMonthOnScroll(false)
 
-        compactCalendarView.setShouldDrawDaysHeader(true)
-        compactCalendarView.shouldSelectFirstDayOfMonthOnScroll(false)
-
-        compactCalendarView.setListener(object : CompactCalendarViewListener {
+        viewDataBinding.compactcalendarView.setListener(object : CompactCalendarViewListener {
             override fun onDayClick(dateClicked: Date?) {
                 setSubtitle(dateFormat.format(dateClicked))
 
                 selectDate = apiDateFormat.format(dateClicked)
-                Log.d(TAG, selectDate)
                 viewModel.getStatisticsData("old", selectDate, period)
                 setRangeTime(selectDate)
             }
 
             override fun onMonthScroll(firstDayOfNewMonth: Date?) {
                 setSubtitle(dateFormat.format(firstDayOfNewMonth))
+                setCurrentDate(firstDayOfNewMonth!!)
+                selectDate = apiDateFormat.format(firstDayOfNewMonth)
+                viewModel.getStatisticsData("old", selectDate, period)
+                setRangeTime(selectDate)
             }
         })
-        compactCalendarView.hideCalendar()
+        viewDataBinding.compactcalendarView.hideCalendar()
 
         // Set current date to today
         setCurrentDate(Date())
@@ -145,17 +143,24 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
                     setNavigaionProfileImage(statisticsResponse.profile.img)
                     setNavigaionNickname(statisticsResponse.profile.nickname)
 
-                    viewDataBinding.draworInfo = DrawerBottomInfo(it.body()!!.achieveTimeRate,it.body()!!.achieveTodoRate,it.body()!!.dream.dday,it.body()!!.dream.ddayName)
+                    viewDataBinding.draworInfo = DrawerBottomInfo(
+                        it.body()!!.achieveTimeRate,
+                        it.body()!!.achieveTodoRate,
+                        it.body()!!.dream.dday,
+                        it.body()!!.dream.ddayName
+                    )
                 }
 
-                var pro_studyTime = if(it.body()!!.theDayAcheiveTimeRate == null) 0 else it.body()!!.theDayAcheiveTimeRate
-                var pro_plan = if(it.body()!!.theDayAcheiveRate == null) 0 else it.body()!!.theDayAcheiveRate
+                var pro_studyTime =
+                    if (it.body()!!.theDayAcheiveTimeRate == null) 0 else it.body()!!.theDayAcheiveTimeRate
+                var pro_plan =
+                    if (it.body()!!.theDayAcheiveRate == null) 0 else it.body()!!.theDayAcheiveRate
 
                 viewDataBinding.statisticsProgressTodayStudyTime.progress = pro_studyTime!!
                 viewDataBinding.statisticsProgressPlan.progress = pro_plan!!
 
-                val studyTime = statisticsResponse.studyRate?:0
-                val restTime = statisticsResponse.restRate?:0
+                val studyTime = statisticsResponse.studyRate ?: 0
+                val restTime = statisticsResponse.restRate ?: 0
 
                 pieEntries.clear()
                 pieEntries.add(PieEntry(studyTime.toFloat(), "공부"))
@@ -166,8 +171,9 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
                 markerStrings.clear()
 
                 if (statisticsResponse.weekTimeAcheive != null) {
-                    viewDataBinding.timeAVG = it.body()!!.weekTimeAVG.hour+"시간 "+it.body()!!.weekTimeAVG.min+"분"
-                    viewDataBinding.todoAVG = it.body()!!.weekTodoAVG+"%"
+                    viewDataBinding.timeAVG =
+                        it.body()!!.weekTimeAVG.hour + "시간 " + it.body()!!.weekTimeAVG.min + "분"
+                    viewDataBinding.todoAVG = it.body()!!.weekTodoAVG + "%"
 
                     Log.d(TAG, statisticsResponse.weekTimeAcheive.size.toString())
                     var x = 0
@@ -177,10 +183,15 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
                         barEntries.add(BarEntry(x.toFloat(), hour.toFloat()))
 
                         val statistcsDay = statisticsResponse.weekTimeAcheive.get(x).date
-                        val studyTime = if(statisticsResponse.weekTimeAcheive.get(x).time == null) "없음" else statisticsResponse.weekTimeAcheive.get(x).time
-                        val timeAcheive = i.timeRate?:"없음"
-                        val todoAcheive = statisticsResponse.weekTodoAcheive.get(x).acheiveRate?:"없음"
-                        val text = statistcsDay+" \n"+"공부시간 : "+studyTime+" \n"+"공부시간 달성률 : "+timeAcheive+" \n"+"계획 달성률 : "+todoAcheive
+                        val studyTime =
+                            if (statisticsResponse.weekTimeAcheive.get(x).time == null) "없음" else statisticsResponse.weekTimeAcheive.get(
+                                x
+                            ).time
+                        val timeAcheive = i.timeRate ?: "없음"
+                        val todoAcheive =
+                            statisticsResponse.weekTodoAcheive.get(x).acheiveRate ?: "없음"
+                        val text =
+                            "$statistcsDay \n공부시간 : $studyTime \n공부시간 달성률 : $timeAcheive \n계획 달성률 : $todoAcheive"
                         markerStrings.add(text)
 
                         x++
@@ -189,8 +200,9 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
                     }
                     barChart()
                 } else if (statisticsResponse.monthTimeAcheive != null) {
-                    viewDataBinding.timeAVG = it.body()!!.monthTimeAVG.hour+"시간 "+it.body()!!.monthTimeAVG.min+"분"
-                    viewDataBinding.todoAVG = it.body()!!.monthTodoAVG+"%"
+                    viewDataBinding.timeAVG =
+                        it.body()!!.monthTimeAVG.hour + "시간 " + it.body()!!.monthTimeAVG.min + "분"
+                    viewDataBinding.todoAVG = it.body()!!.monthTodoAVG + "%"
 
                     var x = 0
                     Log.d(TAG, statisticsResponse.monthTimeAcheive.size.toString())
@@ -200,10 +212,15 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
                         barEntries.add(BarEntry(x.toFloat(), hour.toFloat()))
 
                         val statistcsDay = statisticsResponse.monthTimeAcheive.get(x).date
-                        val studyTime = if(statisticsResponse.monthTimeAcheive.get(x).time == null) "없음" else statisticsResponse.monthTimeAcheive.get(x).time
-                        val timeAcheive = i.timeRate?:"없음"
-                        val todoAcheive = statisticsResponse.monthTodoAcheive.get(x).acheiveRate?:"없음"
-                        val text = statistcsDay+" \n"+"공부시간 : "+studyTime+" \n"+"공부시간 달성률 : "+timeAcheive+" \n"+"계획 달성률 : "+todoAcheive
+                        val studyTime =
+                            if (statisticsResponse.monthTimeAcheive.get(x).time == null) "없음" else statisticsResponse.monthTimeAcheive.get(
+                                x
+                            ).time
+                        val timeAcheive = i.timeRate ?: "없음"
+                        val todoAcheive =
+                            statisticsResponse.monthTodoAcheive.get(x).acheiveRate ?: "없음"
+                        val text =
+                            statistcsDay + " \n" + "공부시간 : " + studyTime + " \n" + "공부시간 달성률 : " + timeAcheive + " \n" + "계획 달성률 : " + todoAcheive
                         markerStrings.add(text)
 
                         x++
@@ -231,19 +248,16 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
 
     fun getToday(): String {
         val now = System.currentTimeMillis()
-        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.KOREAN).format(now)
-        Log.d("테스트 날짜 데이터입니다.", simpleDateFormat)
-
-        return simpleDateFormat
+        return SimpleDateFormat("yyyy-MM-dd", Locale.KOREAN).format(now)
     }
 
     fun calendarEven() {
-        if (!compactCalendarView.isAnimating) {
+        if (!viewDataBinding.compactcalendarView.isAnimating) {
             if (shouldShow) {
-                compactCalendarView.visibility = View.VISIBLE
-                compactCalendarView.showCalendar()
+                viewDataBinding.compactcalendarView.visibility = View.VISIBLE
+                viewDataBinding.compactcalendarView.showCalendar()
             } else {
-                compactCalendarView.hideCalendar()
+                viewDataBinding.compactcalendarView.hideCalendar()
             }
             shouldShow = !shouldShow
         }
@@ -337,7 +351,7 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
         dataSet.add(set)
         val data = BarData(dataSet)
         data.barWidth = 0.7f //막대 너비 설정
-        val barMarker = StatisticsMarkerView(this,R.layout.statistics_custom_marker,markerStrings)
+        val barMarker = StatisticsMarkerView(this, R.layout.statistics_custom_marker, markerStrings)
         barchart.run {
             this.data = data //차트의 데이터를 data로 설정해줌.
             setFitBars(true)
@@ -380,7 +394,6 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
     fun dateRangeComputer(today: String): String {
         var todays = today.split("-")
         var cal = Calendar.getInstance()
-        val simpleDateFormat = SimpleDateFormat("yyyy.MM.dd", Locale.KOREAN)
 
         cal.set(
             Integer.parseInt(todays[0]),
@@ -393,18 +406,18 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
         var dayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - cal.firstDayOfWeek
 
 
-        if(period.equals("month")) {
-            cal.set(Calendar.DAY_OF_MONTH,1)
-            val firstDay = simpleDateFormat.format(cal.time)
-            cal.set(Calendar.DAY_OF_MONTH,cal.getActualMaximum(Calendar.DAY_OF_MONTH))
-            val lastDay = simpleDateFormat.format(cal.time)
+        if (period.equals("month")) {
+            cal.set(Calendar.DAY_OF_MONTH, 1)
+            val firstDay = dateFormat.format(cal.time)
+            cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH))
+            val lastDay = dateFormat.format(cal.time)
             return firstDay + " ~ " + lastDay
-        }else{
+        } else {
             cal.add(Calendar.DAY_OF_MONTH, -dayOfWeek)
-            val firstDay = simpleDateFormat.format(cal.time)
+            val firstDay = dateFormat.format(cal.time)
             cal.add(Calendar.DAY_OF_MONTH, 6);
 
-            val lastDay = simpleDateFormat.format(cal.time)
+            val lastDay = dateFormat.format(cal.time)
             return firstDay + " ~ " + lastDay
         }
     }
@@ -412,8 +425,8 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
 
     private fun setCurrentDate(date: Date) {
         setSubtitle(dateFormat.format(date))
-        if (compactCalendarView != null) {
-            compactCalendarView!!.setCurrentDate(date)
+        if (viewDataBinding.compactcalendarView != null) {
+            viewDataBinding.compactcalendarView!!.setCurrentDate(date)
         }
     }
 

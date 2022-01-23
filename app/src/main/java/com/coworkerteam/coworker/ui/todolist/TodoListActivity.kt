@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
@@ -48,7 +47,10 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
         get() = findViewById(R.id.navigationView)
 
     var myStudyAdepter: TodoListAdapter? = null
-    var selectData = getToday()
+    var selectData = getToday() //API의 데이터 포멧에 맞춘 선택한 날짜의 값
+
+    private val dateFormat: SimpleDateFormat =
+        SimpleDateFormat("MM.dd",  /*Locale.getDefault()*/Locale.KOREA)
 
     override fun initStartView() {
         super.initStartView()
@@ -181,6 +183,7 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
             .setCalendarDisplayMode(CalendarMode.WEEKS)
             .commit();
 
+        //캘린터 타이틀의 표기되는 이름을 설정하는 함수 ex) 2020년 02월
         calender.setTitleFormatter(TitleFormatter { day ->
             var cal = Calendar.getInstance()
             cal.set(day.year, day.month-1, day.day)
@@ -191,6 +194,7 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
             return@TitleFormatter result
         })
 
+        //캘린더의 월이 바뀔대마다 발생하는 이벤트
         calender.setOnMonthChangedListener(OnMonthChangedListener { widget, date ->
             val month = if(date.month<10)"0${date.month}" else date.month.toString()
             val day = if(date.day<10)"0${date.day}" else date.day.toString()
@@ -199,6 +203,7 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
             viewModel.getTodoListData("getTodoDate",showDate)
         })
 
+        //캘린더 다이얼로그(월간)의 이벤트
         val listener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
             var local = CalendarDay.from(year,month+1,dayOfMonth)
             calender.setCurrentDate(local)
@@ -218,18 +223,21 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
             var dates = simpleDateFormat.format(cal.time)
 
             selectData = dates
+            viewDataBinding.selectDate = dateFormat.format(cal.time)
             viewDataBinding.isAddButton = compareDate(selectData,getToday())
 
             viewModel.getTodoListData("old", dates)
             viewModel.getTodoListData("getTodoDate",dates)
         }
 
+        //캘린더의 2020년 03월 이라고 적힌 타이틀을 누르면 캘린더 다이얼로그(월간)이 나온다.
         calender.setOnTitleClickListener(View.OnClickListener {
             val today = selectData.split("-")
             var dialog = DatePickerDialog(this, listener, today[0].toInt(),  today[1].toInt()-1,  today[2].toInt())
             dialog.show()
         })
 
+        //캘린더의 날짜를 선택했을 경우 발생하는 이벤트
         calender.setOnDateChangedListener(OnDateSelectedListener { widget, date, selected ->
             if (selected) {
                 var cal = Calendar.getInstance()
@@ -238,13 +246,16 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                 var dates = simpleDateFormat.format(cal.time)
 
                 selectData = dates
+                viewDataBinding.selectDate = dateFormat.format(cal.time)
                 viewDataBinding.isAddButton = compareDate(selectData,getToday())
 
                 viewModel.getTodoListData("old", dates)
             }
         })
 
+        //달력에 오늘의 날짜 기본으로 설정해놓기
         val todays = getToday().split("-")
+        viewDataBinding.selectDate = dateFormat.format(System.currentTimeMillis())
 
         calender.setDateSelected(
             CalendarDay.from(
@@ -327,24 +338,22 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
         rv.adapter = myStudyAdepter
     }
 
-    fun progress_init() {
+    private fun progress_init() {
         val todoProgress = findViewById<ProgressBar>(R.id.todo_list_progress)
 
         todoProgress.progress = viewDataBinding.todolistResponse!!.result.theDayAcheiveRate
     }
 
-    fun getToday(): String {
+    private fun getToday(): String {
         val now = System.currentTimeMillis()
-        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.KOREAN).format(now)
-
-        return simpleDateFormat
+        return SimpleDateFormat("yyyy-MM-dd", Locale.KOREAN).format(now)
     }
 
-    fun compareDate(selectDay:String, today:String): Boolean {
+    private fun compareDate(selectDay:String, today:String): Boolean {
         var simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
         val compareSelectDay = simpleDateFormat.parse(selectDay).time
         val compareToday = simpleDateFormat.parse(today).time
 
-        return if((compareSelectDay - compareToday) < 0) false else true
+        return (compareSelectDay - compareToday) >= 0
     }
 }

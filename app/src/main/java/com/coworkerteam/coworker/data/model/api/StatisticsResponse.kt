@@ -75,7 +75,7 @@ data class StatisticsResponse(
         @SerializedName("time")
         val time: String,
         @SerializedName("time_rate")
-        val timeRate: Int
+        val timeRate: Int?
     )
 
     data class MonthTimeAcheive(
@@ -105,7 +105,7 @@ data class StatisticsResponse(
 
     data class WeekTodoAcheive(
         @SerializedName("acheive_rate")
-        val acheiveRate: String,
+        val acheiveRate: String?,
         @SerializedName("todo_date")
         val todoDate: String
     )

@@ -19,7 +19,11 @@ data class MainMyStudyPagingResponse(
     ){
         data class MyStudy(
             @SerializedName("category")
-            val category: String,
+            val category: String?,
+            @SerializedName("user_num")
+            val userNum: Int,
+            @SerializedName("max_num")
+            val maxNum: Int,
             @SerializedName("idx")
             val idx: Int,
             @SerializedName("img")
@@ -29,7 +33,7 @@ data class MainMyStudyPagingResponse(
             @SerializedName("name")
             val name: String,
             @SerializedName("pw")
-            val pw: Any
+            val pw: String?
         )
     }
 }
