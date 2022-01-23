@@ -34,7 +34,6 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListViewModel>() {
-
     private val TAG = "TodoListActivity"
 
     override val layoutResourceID: Int
