@@ -12,6 +12,8 @@ import com.coworkerteam.coworker.data.remote.NaverService
 import com.coworkerteam.coworker.data.remote.StudydayService
 import io.reactivex.Single
 import retrofit2.Response
+import retrofit2.http.Header
+import retrofit2.http.Query
 
 class UserRepositoryImpl(
     private val service: StudydayService,
@@ -245,7 +247,7 @@ class UserRepositoryImpl(
         userIdx: Int,
         studyIdx: Int
     ): Single<Response<ApiRequest>> {
-        return service.forcedExit(accessToken,userIdx, studyIdx)
+        return service.forcedExit(accessToken, userIdx, studyIdx)
     }
 
     override fun getProfileManageData(
@@ -288,6 +290,11 @@ class UserRepositoryImpl(
                 )
             }
         ).liveData
+    }
+
+    //네비게이션 정보만 단순히 사용하기 위한것..ㅠㅠ 효율적인 구도는 아니라 나중 수정 필요
+    override fun getStudySerchStartData(accessToken: String): Single<Response<StudySearchStartResponse>> {
+        return service.studySerchStart(accessToken, reqType = "start", category = null,studyType = "open",isJoin = false,viewType="latest",keyword = null,page = 1)
     }
 
     override fun getEditStudyData(

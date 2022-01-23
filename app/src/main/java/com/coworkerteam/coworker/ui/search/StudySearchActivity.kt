@@ -1,16 +1,20 @@
 package com.coworkerteam.coworker.ui.search
 
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.StudySearchResponse
+import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.data.model.other.SearchStudy
 import com.coworkerteam.coworker.databinding.ActivityStudySearchBinding
 import com.coworkerteam.coworker.ui.base.NavigationAcitivity
+import com.coworkerteam.coworker.ui.main.MainTodolistAdapter
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -72,10 +76,20 @@ class StudySearchActivity :
     }
 
     override fun initDataBinding() {
+        viewModel.StudySearchStartLiveData.observe(this, androidx.lifecycle.Observer {
+            if (it.isSuccessful) {
+                //네비게이션 정보 세팅
+                setNavigaionProfileImage(it.body()!!.result.profile.img)
+                setNavigaionLoginImage(it.body()!!.result.profile.loginType)
+                setNavigaionNickname(it.body()!!.result.profile.nickname)
 
+                viewDataBinding.draworInfo = DrawerBottomInfo(it.body()!!.result.achieveTimeRate,it.body()!!.result.achieveTodoRate,it.body()!!.result.dream.dday,it.body()!!.result.dream.ddayName)
+            }
+        })
     }
 
     override fun initAfterBinding() {
+        viewModel.getStudySearchStartData()
     }
 
     fun init() {

@@ -153,6 +153,8 @@ interface UserRepository {
         studyType: String,
     ): LiveData<PagingData<StudySearchResponse.Result.Study>>
 
+    fun getStudySerchStartData(accessToken: String) : Single<Response<StudySearchStartResponse>>
+
     fun getEditStudyData(accessToken: String, studyIdx: Int): Single<Response<EditStudyResponse>>
 
     fun setEditStudyData(

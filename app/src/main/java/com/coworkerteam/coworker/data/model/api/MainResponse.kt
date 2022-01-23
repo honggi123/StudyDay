@@ -11,9 +11,9 @@ data class MainResponse(
 ){
     data class Result(
         @SerializedName("achieveTimeRate")
-        var achieveTimeRate: Int,
+        var achieveTimeRate: Int?,
         @SerializedName("achieveTodoRate")
-        val achieveTodoRate: Int,
+        var achieveTodoRate: Int?,
         @SerializedName("aimTime")
         var aimTime: String,
         @SerializedName("dream")

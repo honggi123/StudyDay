@@ -183,6 +183,18 @@ interface StudydayService {
         @Query("page") page: Int
     ): Call<StudySearchResponse>
 
+    @GET("study/search")
+    fun studySerchStart(
+        @Header("Authorization") accessToken: String,
+        @Query("reqType") reqType: String,
+        @Query("category") category: String?,
+        @Query("studyType") studyType: String,
+        @Query("isJoin") isJoin: Boolean,
+        @Query("viewType") viewType: String,
+        @Query("keyword") keyword: String?,
+        @Query("page") page: Int
+    ): Single<Response<StudySearchStartResponse>>
+
     @GET("study/{idx}")
     fun editStudyInfo(
         @Header("Authorization") accessToken: String,

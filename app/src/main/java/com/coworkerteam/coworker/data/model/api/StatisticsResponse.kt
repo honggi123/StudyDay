@@ -45,13 +45,13 @@ data class StatisticsResponse(
 ) {
     data class Dream(
         @SerializedName("dday")
-        val dday: String,
+        val dday: String?,
         @SerializedName("dday_date")
-        val ddayDate: String,
+        val ddayDate: String?,
         @SerializedName("dday_name")
-        val ddayName: String,
+        val ddayName: String?,
         @SerializedName("goal")
-        val goal: String
+        val goal: String?
     )
 
     data class Profile(

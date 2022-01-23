@@ -136,9 +136,6 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
 
         viewModel.CheckTodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
             if (it.isSuccessful) {
-                val todoProgress = findViewById<ProgressBar>(R.id.todo_list_progress)
-                todoProgress.progress = it.body()!!.result.theDayAcheiveRate
-
                 //네비게이션 드로어 오늘 할일 달성률 갱신
                 viewDataBinding.draworInfo!!.achieveTodoRate = it.body()!!.result.achieveTodoRate
                 viewDataBinding.draworInfo = viewDataBinding.draworInfo

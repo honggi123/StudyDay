@@ -3,7 +3,7 @@ package com.coworkerteam.coworker.data.model.api
 
 import com.google.gson.annotations.SerializedName
 
-data class MyStudyResponse(
+data class StudySearchStartResponse(
     @SerializedName("message")
     val message: String,
     @SerializedName("result")
@@ -14,51 +14,37 @@ data class MyStudyResponse(
         val achieveTimeRate: Int?,
         @SerializedName("achieveTodoRate")
         val achieveTodoRate: Int?,
+        @SerializedName("currentPage")
+        val currentPage: Int,
         @SerializedName("dream")
         val dream: Dream,
-        @SerializedName("group")
-        val group: List<Group>,
-        @SerializedName("groupPage")
-        val groupPage: Int,
-        @SerializedName("open")
-        val `open`: List<Any>,
-        @SerializedName("openPage")
-        val openPage: Int,
+        @SerializedName("keyword")
+        val keyword: String,
         @SerializedName("profile")
         val profile: Profile,
-        @SerializedName("todoNum")
-        val todoNum: Int
+        @SerializedName("resultNum")
+        val resultNum: Int,
+        @SerializedName("study")
+        val study: List<StudySearchResponse.Result.Study>,
+        @SerializedName("totalPage")
+        val totalPage: Int
     ){
-
         data class Dream(
             @SerializedName("dday")
             val dday: String?,
             @SerializedName("dday_date")
-            var ddayDate: String?,
+            val ddayDate: String?,
             @SerializedName("dday_name")
-            var ddayName: String?,
+            val ddayName: String?,
             @SerializedName("goal")
-            var goal: String?
-        )
-
-        data class Group(
-            @SerializedName("idx")
-            val idx: Int,
-            @SerializedName("img")
-            val img: String,
-            @SerializedName("is_leader")
-            val isLeader: Boolean,
-            @SerializedName("max_num")
-            val maxNum: Int,
-            @SerializedName("name")
-            val name: String,
-            @SerializedName("user_num")
-            val userNum: Int,
-            @SerializedName("category")
-            val category: String
+            val goal: String?
         )
 
         data class Profile(
+            @SerializedName("category")
+            val category: String,
+            @SerializedName("email")
+            val email: String,
             @SerializedName("img")
             val img: String,
             @SerializedName("login_type")

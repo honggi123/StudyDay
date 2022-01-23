@@ -10,9 +10,9 @@ data class TodolistResponse(
 ) {
     data class Result(
         @SerializedName("achieveTimeRate")
-        val achieveTimeRate: Int,
+        val achieveTimeRate: Int?,
         @SerializedName("achieveTodoRate")
-        val achieveTodoRate: Int,
+        val achieveTodoRate: Int?,
         @SerializedName("aimTime")
         val aimTime: String,
         @SerializedName("dream")

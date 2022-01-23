@@ -98,7 +98,7 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
 
                 viewDataBinding.draworInfo = DrawerBottomInfo(it.body()!!.result[0].achieveTimeRate,it.body()!!.result[0].achieveTodoRate,it.body()!!.result[0].dream.dday,it.body()!!.result[0].dream.ddayName)
 
-                Log.d("디버그태그", it.body()!!.result[0].todo.toString())
+                Log.d("디버그태그", it.body()!!.result[0].achieveTodoRate.toString())
                 //내스터디
                 var recyclerMyStudy: RecyclerView =
                     findViewById(R.id.main_todolist_recylerView)
@@ -119,6 +119,14 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
                 viewDataBinding.mainResponse!!.result[0].dream = it.body()!!.result.dream
                 viewDataBinding.mainResponse!!.result[0].achieveTimeRate = it.body()!!.result.achieveTimeRate
                 viewDataBinding.mainResponse = viewDataBinding.mainResponse
+            }
+        })
+
+        viewModel.CheckTodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
+            if (it.isSuccessful) {
+                //네비게이션 드로어 오늘 할일 달성률 갱신
+                viewDataBinding.draworInfo!!.achieveTodoRate = it.body()!!.result.achieveTodoRate
+                viewDataBinding.draworInfo = viewDataBinding.draworInfo
             }
         })
 

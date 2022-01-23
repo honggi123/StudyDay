@@ -52,24 +52,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingLeft="5dp">
 
                 <TextView
                     android:id="@+id/textView81"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:text='@{draworInfo.achieveTimeRate==null?"목표시간을 설정해주세요.":"목표시간 "}'
-                    android:textColor="@color/black" />
+                    android:text='@{draworInfo.achieveTimeRate==null?"→ 목표시간을 설정해주세요.":"목표시간 "}'
+                    android:textColor="@{draworInfo.achieveTimeRate==null?@color/gray:@color/black}" />
 
                 <TextView
                     android:id="@+id/navi_txt_goal_time_precent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
                     android:text="@{String.valueOf(draworInfo.achieveTimeRate)+'%'}"
                     android:textColor="@color/black"
-                    android:visibility="@{draworInfo.achieveTimeRate==null?View.GONE:View.VISIBLE}"/>
+                    android:visibility="@{draworInfo.achieveTimeRate==null?View.GONE:View.VISIBLE}" />
             </LinearLayout>
 
             <ProgressBar
@@ -77,6 +76,7 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
                 android:progress="@{draworInfo.achieveTimeRate}"
                 android:progressDrawable="@drawable/progressber_blue"
                 android:visibility="@{draworInfo.achieveTimeRate==null?View.GONE:View.VISIBLE}" />
@@ -85,24 +85,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="10dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingLeft="5dp">
 
                 <TextView
                     android:id="@+id/textView82"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:text='@{draworInfo.achieveTodoRate==null?"오늘 할 일을 설정해주세요.":"오늘 할 일 "}'
-                    android:textColor="@color/black" />
+                    android:text='@{draworInfo.achieveTodoRate==null?"→ 오늘 할 일을 추가해주세요.":"오늘 할 일 "}'
+                    android:textColor="@{draworInfo.achieveTodoRate==null?@color/gray:@color/black}" />
 
                 <TextView
                     android:id="@+id/navi_txt_todolist_precent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
                     android:text="@{String.valueOf(draworInfo.achieveTodoRate)+'%'}"
                     android:textColor="@color/black"
-                    android:visibility="@{draworInfo.achieveTodoRate==null?View.GONE:View.VISIBLE}"/>
+                    android:visibility="@{draworInfo.achieveTodoRate==null?View.GONE:View.VISIBLE}" />
             </LinearLayout>
 
             <ProgressBar
@@ -110,6 +109,7 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
                 android:progress="@{draworInfo.achieveTodoRate}"
                 android:progressDrawable="@drawable/progressber_blue"
                 android:visibility="@{draworInfo.achieveTodoRate==null?View.GONE:View.VISIBLE}" />
@@ -142,6 +142,8 @@
                 android:gravity="center"
                 android:text="@{draworInfo.dday}"
                 android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
                 android:visibility="@{draworInfo.dday==null?View.GONE:View.VISIBLE}" />
         </LinearLayout>
     </LinearLayout>
