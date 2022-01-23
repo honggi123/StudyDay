@@ -24,16 +24,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/cam_study_rv"
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/cam_study_felxbox_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:padding="5dp"
-                app:layoutManager="GridLayoutManager"
-                app:spanCount="2"
-                tools:itemCount="6"
-                tools:listitem="@layout/item_camstudy" />
+                android:layout_height="match_parent"
+                app:alignContent="center"
+                app:alignItems="center"
+                app:flexDirection="row"
+                app:flexWrap="wrap"
+                app:justifyContent="center">
+
+            </com.google.android.flexbox.FlexboxLayout>
 
             <include layout="@layout/menu_camstudy_bottom" />
 

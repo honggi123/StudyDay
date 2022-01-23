@@ -2,10 +2,7 @@ package com.coworkerteam.coworker.ui.camstudy.enter
 
 import android.Manifest
 import android.content.Intent
-import android.os.Message
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
@@ -42,7 +39,6 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
     var videoTrackFromCamera: VideoTrack? = null
 
     var studyIndex: Int? = null
-    var cameraSwich = "front"
 
     var isCamera = true
     var isAudio = true
@@ -95,7 +91,6 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
                 var intent = Intent(this, CamStudyActivity::class.java)
                 intent.putExtra("video", isCamera)
                 intent.putExtra("audio", isAudio)
-                intent.putExtra("cameraSwith", cameraSwich)
                 intent.putExtra("studyInfo", dataIntent)
                 intent.putExtra("timer", it.body()!!.result.studyTimeSec)
                 startActivity(intent)
@@ -137,21 +132,6 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
         }
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        getMenuInflater().inflate(R.menu.camstudy_menu, menu);
-//        return true
-//    }
-//
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        when (item.itemId) {
-//            R.id.camera_chang -> {
-//                Log.d(TAG, "카메라 체인지")
-//                switchCamera()
-//            }
-//        }
-//        return super.onOptionsItemSelected(item)
-//    }
-
     private fun switchDevice(view: View, device: String) {
         when (device) {
             "audio" -> {
@@ -186,25 +166,6 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
         surface.init(CamStudyService.rootEglBase?.getEglBaseContext(), null)
         surface.setEnableHardwareScaler(true)
         surface.setMirror(true)
-    }
-
-    private fun switchCamera() {
-        if (videoCapturer != null) {
-            if (videoCapturer is CameraVideoCapturer) {
-                val cameraVideoCapturer = videoCapturer as CameraVideoCapturer
-                cameraVideoCapturer.switchCamera(null)
-
-                //카메라 앞면 뒷면 구분하기 위한 변수 값 설정
-                if (cameraSwich.equals("front")) {
-                    cameraSwich = "back"
-                } else {
-                    cameraSwich = "front"
-                }
-
-            } else {
-                // Will not switch camera, video capturer is not a camera
-            }
-        }
     }
 
     private fun initializePeerConnectionFactory() {

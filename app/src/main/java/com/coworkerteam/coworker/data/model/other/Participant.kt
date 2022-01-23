@@ -1,247 +1,98 @@
 package com.coworkerteam.coworker.data.model.other
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.os.Looper
-import android.util.Log
-
-import android.view.SurfaceView
-import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import com.bumptech.glide.Glide
-import com.coworkerteam.coworker.ui.camstudy.cam.CamStudyActivity
-import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import org.webrtc.*
-import java.util.*
-import java.util.logging.Handler
-import kotlin.math.roundToInt
 
-class Participant {
+class Participant(context: Context, name: String) {
     val TAG = "Participant"
 
-    var profileView: CircleImageView? = null
+    var idx: Int = -1
 
-    //    lateinit var name: String
-    var nickname: String = "hyunju"
-    var img: String?= null
-    var idx: Int? = null
-    var is_leader: Boolean? = false
-    var is_me: Boolean? = false
-    var time: String = "00:00:00"
-    var txt_time: TextView? = null
-
-    var timer = Timer()
-    var timerStratTime: Double = 0.0
-    var timerPresentTime: Double = 0.0
-    var timerRestTime: Double = 0.0
-    var isStartTimer: Boolean? = null
-    var playStateImage: ImageView? = null
-
-    var image_mic: ImageView? = null
+    var itemView: CamStudyItemView = CamStudyItemView(context)
+    var timer: CamStudyTimer
 
     var peer: PeerConnection? = null
-    var surfaceView: org.webrtc.SurfaceViewRenderer? = null
+
     var remoteVideoTrack: VideoTrack? = null
     var remoteAudioTrack: AudioTrack? = null
+
+    //오디오와 비디오의 on/off 상태
     var isAudio: Boolean = true
     var isVideo: Boolean = true
 
-    fun setImgUrl(imgUrl:String, context:Context){
-        this.img = imgUrl
-        if(profileView!=null){
-            CoroutineScope(Dispatchers.Main).async {
-                Glide.with(context).load(img).into(profileView!!)
-            }
-        }
+    init {
+        itemView.userNameView.text = name
+        timer = CamStudyTimer(itemView.timerTextView, itemView.timerImageView)
     }
 
-    fun setRender(surfaceView: SurfaceViewRenderer) {
-        if (this.surfaceView != null) {
-            remoteVideoTrack!!.removeRenderer(VideoRenderer(this.surfaceView))
-        }
+    fun settingDevice(isVideo: Boolean, isAudio: Boolean) {
+        this.isVideo = isVideo
+        this.isAudio = isAudio
 
-        this.surfaceView = surfaceView
+        itemView.showProfileImage(isVideo.toString())
+        itemView.changAudioImage(isVideo.toString())
     }
 
-    fun startRender() {
+    //surfaceView에 받아온 비디오를 그리고, 받아온 오디오를 재생하는 함수
+    fun startRender(remoteVideoTrack: VideoTrack?, remoteAudioTrack: AudioTrack?) {
         if (isVideo) {
-            CoroutineScope(Dispatchers.Main).async {
-                profileView?.visibility = View.GONE
-            }
+            itemView.showProfileImage("off")
         } else {
-            CoroutineScope(Dispatchers.Main).async {
-                profileView?.visibility = View.VISIBLE
-            }
+            itemView.showProfileImage("on")
         }
-        remoteAudioTrack!!.setEnabled(isAudio)
-        remoteVideoTrack!!.setEnabled(isVideo)
-        remoteVideoTrack!!.addRenderer(VideoRenderer(surfaceView))
+
+        this.remoteVideoTrack = remoteVideoTrack
+        this.remoteAudioTrack = remoteAudioTrack
+
+        remoteAudioTrack?.setEnabled(isAudio)
+        remoteVideoTrack?.setEnabled(isVideo)
+        remoteVideoTrack?.addRenderer(VideoRenderer(itemView.surfaceView))
     }
 
+    //Audio를 on/off 하는 함수
     fun toggleAudio(status: String) {
         if (status.equals("off")) {
-            Log.d("Participant", "toggleAudio() 끔")
             isAudio = false
-            Log.d("Participant", isAudio.toString())
-            if(remoteAudioTrack != null) {
-                remoteAudioTrack!!.setEnabled(isAudio)
+
+            if (remoteAudioTrack != null) {
+                remoteAudioTrack!!.setEnabled(false)
             }
-            image_mic?.isSelected = true
         } else if (status.equals("on")) {
-            Log.d("Participant", "toggleAudio() 킴")
-            isAudio = true
-            Log.d("Participant", isAudio.toString())
-            if(remoteAudioTrack != null) {
-                remoteAudioTrack!!.setEnabled(isAudio)
+            isAudio = false
+
+            if (remoteAudioTrack != null) {
+                remoteAudioTrack!!.setEnabled(false)
             }
-            image_mic?.isSelected = false
         }
+
+        itemView.changAudioImage(status)
     }
 
+    //Video를 on/off 하는 함수
     fun toggleVideo(status: String) {
         if (status.equals("off")) {
-            Log.d("Participant", "toggleVideo() 끔")
             isVideo = false
-            CoroutineScope(Dispatchers.Main).async {
-                profileView?.visibility = View.VISIBLE
-            }
-            if(remoteVideoTrack != null) {
-                remoteVideoTrack!!.setEnabled(isVideo)
+
+            if (remoteVideoTrack != null) {
+                remoteVideoTrack!!.setEnabled(false)
             }
         } else if (status.equals("on")) {
-            Log.d("Participant", "toggleVideo() 킴")
             isVideo = true
-            CoroutineScope(Dispatchers.Main).async {
-                profileView?.visibility = View.GONE
-            }
-            if(remoteVideoTrack != null) {
-                remoteVideoTrack!!.setEnabled(isVideo)
+
+            if (remoteVideoTrack != null) {
+                remoteVideoTrack!!.setEnabled(true)
             }
         }
+
+        itemView.showProfileImage(status)
     }
 
-    fun startHostTimer() {
-        if (isStartTimer == null) {
-            timer = Timer()
-            isStartTimer = true
-            if (timerPresentTime > 0.0) {
-                val time = timerPresentTime
-                timer.scheduleAtFixedRate(TimeTask(time), 0, 1000)
-            } else {
-                val time = timerStratTime
-                timer.scheduleAtFixedRate(TimeTask(time), 0, 1000)
-            }
-            playStateImage?.isSelected = false
-        } else if (isStartTimer == false) {
-            timer.cancel()
-            timer = Timer()
-
-            isStartTimer = true
-            if (timerPresentTime > 0.0) {
-                val time = timerPresentTime
-                timer.scheduleAtFixedRate(TimeTask(time), 0, 1000)
-            } else {
-                val time = timerStratTime
-                timer.scheduleAtFixedRate(TimeTask(time), 0, 1000)
-            }
-            playStateImage?.isSelected = false
-        }
-    }
-
-    fun stopHostTimer() {
-        if (isStartTimer == true) {
-            timer.cancel()
-
-            isStartTimer = false
-            playStateImage?.isSelected = true
-            timer = Timer()
-            timer.scheduleAtFixedRate(TimeTask(timerRestTime), 0, 1000)
-        }
-    }
-
-    fun setTimer(status: String) {
-        if (status.equals("run")) {
-
-            timer = Timer()
-            isStartTimer = true
-            if (timerPresentTime > 0.0) {
-                val time = timerPresentTime
-                timer.scheduleAtFixedRate(TimeTask(time), 0, 1000)
-            } else {
-                val time = timerStratTime
-                timer.scheduleAtFixedRate(TimeTask(time), 0, 1000)
-            }
-            playStateImage?.isSelected = false
-
-        } else if (status.equals("pause")) {
-            timer.cancel()
-
-            isStartTimer = false
-            playStateImage?.isSelected = true
-        }
-    }
-
-    fun getTimerStatus() : String {
-        if(isStartTimer == true){
-            return "run"
-        }else{
-            return "pause"
-        }
-    }
-
-    private inner class TimeTask(private var time: Double) : TimerTask() {
-        override fun run() {
-            time++
-            Log.d(TAG, time.toString())
-
-            CoroutineScope(Dispatchers.Main).async {
-                if (isStartTimer == true) {
-                    setTextTime(time)
-                } else if (isStartTimer == false) {
-                    setRestTime(time)
-                }
-            }
-        }
-    }
-
-    fun setTextTime(time: Double) {
-        timerPresentTime = time
-
-        var timeString = getTimeStringFromDouble(timerPresentTime)
-        this.time = timeString
-        txt_time?.text = timeString
-    }
-
-    fun setRestTime(time: Double) {
-        timerRestTime = time
-    }
-
-    fun setStudyTime(time: Int) {
-        timerStratTime = time.toDouble()
-        this.time = getTimeStringFromDouble(timerStratTime)
-    }
-
+    //캠스터디 종료할때, 진행중이던 타이머와 비디오를 멈추기 위한 함수
     fun stopCamStduy() {
-        if (isStartTimer != null) {
-            timer.cancel()
+        timer.endTimer()
+
+        if (remoteVideoTrack != null) {
+            remoteVideoTrack!!.removeRenderer(VideoRenderer(itemView.surfaceView))
         }
-        remoteVideoTrack?.removeRenderer(VideoRenderer(surfaceView))
     }
-
-    private fun getTimeStringFromDouble(time: Double): String {
-        val resultInt = time.roundToInt()
-        val hours = resultInt % 86400 / 3600
-        val minutes = resultInt % 86400 % 3600 / 60
-        val seconds = resultInt % 86400 % 3600 % 60
-
-        return makeTimeString(hours, minutes, seconds)
-    }
-
-    private fun makeTimeString(hour: Int, min: Int, sec: Int): String =
-        String.format("%02d:%02d:%02d", hour, min, sec)
 }

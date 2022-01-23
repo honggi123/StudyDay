@@ -38,13 +38,8 @@ class ParticipantsActivity : BaseActivity<ActivityParticipantsBinding, Participa
         supportActionBar?.setDisplayShowTitleEnabled(false) // 툴바에 타이틀 안보이게
 
         init()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //오레오 버전 이상일 경우
-            var intent = Intent(this, CamStudyService::class.java)
-            bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
-        } else {
-            //오레오 버전 이하일 경우
-        }
+        var intent = Intent(this, CamStudyService::class.java)
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
     }
 
     override fun initDataBinding() {
@@ -78,7 +73,7 @@ class ParticipantsActivity : BaseActivity<ActivityParticipantsBinding, Participa
     }
 
     fun setting(it: ParticipantsResponse) {
-        var newAdapter = ParticipantsAdapter(this,mServiceCallback)
+        var newAdapter = ParticipantsAdapter(this, mServiceCallback)
         newAdapter.datas = it.participants.toMutableList()
         viewDataBinding.participantsRv.adapter = newAdapter
 
@@ -114,8 +109,7 @@ class ParticipantsActivity : BaseActivity<ActivityParticipantsBinding, Participa
             when (msg.what) {
                 CamStudyService.MSG_PARTICIPANTS_ITEM -> {
                     //캠스터디 아이템
-                    var obj = msg.obj as ParticipantsResponse
-                    setting(obj)
+                    setting(CamStudyService.participantsResponses!!)
                 }
             }
         }

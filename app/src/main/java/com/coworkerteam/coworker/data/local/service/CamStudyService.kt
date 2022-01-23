@@ -1,21 +1,17 @@
 package com.coworkerteam.coworker.data.local.service
 
 import android.app.*
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.*
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
 import com.coworkerteam.coworker.data.local.prefs.PreferencesHelper
 import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
 import com.coworkerteam.coworker.data.model.api.ParticipantsResponse
-import com.coworkerteam.coworker.data.model.other.CamStudyServiceData
 import com.coworkerteam.coworker.data.model.other.ChatData
 import com.coworkerteam.coworker.data.model.other.Participant
 import com.coworkerteam.coworker.ui.camstudy.cam.CamStudyActivity
@@ -44,6 +40,7 @@ import org.webrtc.CameraVideoCapturer
 
 class CamStudyService : Service() {
     val TAG = "CamStudyService"
+
     val VIDEO_TRACK_ID = "ARDAMSv0"
     val VIDEO_RESOLUTION_WIDTH = 1280
     val VIDEO_RESOLUTION_HEIGHT = 720
@@ -51,21 +48,19 @@ class CamStudyService : Service() {
 
     val NOTIFICATION_ID = 1004
 
-    var videoCapturer: VideoCapturer? = null
-
     var socket: Socket? = null
 
-    var hostname = "hyunju"
-    var room = "https://test/study/dsf-xjsdfdjx"
+    lateinit var hostname: String
+    lateinit var room: String
 
-    var audioConstraints: MediaConstraints? = null
-    var audioSource: AudioSource? = null
-    var localAudioTrack: AudioTrack? = null
+    lateinit var audioConstraints: MediaConstraints
+    var videoCapturer: VideoCapturer? = null
+    lateinit var audioSource: AudioSource
+    lateinit var localAudioTrack: AudioTrack
 
     companion object {
         val MSG_CLIENT_CONNECT = 0
         val MSG_CLIENT_DISCNNECT = 1
-        val MSG_CAMSTUDY_ITEM = 2
         val MSG_TOTAL_MESSAGE = 3
         val MSG_WHISPER_MESSAGE = 4
         val MSG_HOST_VIDEO_ON_OFF = 5
@@ -79,10 +74,12 @@ class CamStudyService : Service() {
         val MSG_LEADER_FORCED_VIDEO_OFF = 13
         val MSG_RECEIVED_MESSAGE = 14
         val MSG_PARTICIPANTS_ITEM = 15
+        val MSG_EXISTINGPARTICIPANNTS = 16
+        val MSG_NEWPARTICIPANTARRIVED = 17
+        val MSG_PARTICIPANTLEFT = 18
 
         var isVideo: Boolean? = null
         var isAudio: Boolean? = null
-        var camearaSwith: String? = null
         var timer: Int? = null
 
         var rootEglBase: EglBase = EglBase.create()
@@ -91,7 +88,6 @@ class CamStudyService : Service() {
 
         var participantsResponses: ParticipantsResponse? = null
         var peerConnection = HashMap<String, Participant>()
-        var adaperDate = ArrayList<String>()
     }
 
     private var mClientCallbacks = ArrayList<Messenger>()
@@ -131,21 +127,18 @@ class CamStudyService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         socket!!.disconnect()
-        adaperDate.clear()
         peerConnection.clear()
         chatDate.clear()
         Log.d(TAG, "service 끝")
     }
 
     private fun startCamStudy() {
-        CoroutineScope(Dispatchers.IO).async {
-            connectToSignallingServer()
-            initializePeerConnectionFactory()
-            createVideoTrackFromCameraAndShowIt()
-            initializePeerConnections(hostname)
-            startStreamingVideo(hostname)
-            socket!!.connect()
-        }
+        connectToSignallingServer()
+        initializePeerConnectionFactory()
+        createVideoTrackFromCameraAndShowIt()
+        initializePeerConnections(hostname)
+        startStreamingVideo(hostname)
+        socket!!.connect()
     }
 
     private fun getData(intent: Intent?) {
@@ -159,8 +152,6 @@ class CamStudyService : Service() {
         isAudio = intent.getBooleanExtra("audio", false)
         isVideo = intent.getBooleanExtra("video", false)
         timer = intent.getIntExtra("timer", 0)
-
-        camearaSwith = intent.getStringExtra("cameraSwith")
     }
 
     private fun connectToSignallingServer() {
@@ -203,10 +194,8 @@ class CamStudyService : Service() {
 
             // $ hostname -I
             val URL = getString(R.string.midea_url)
-            Log.e(
-                TAG,
-                "REPLACE ME: IO Socket:$URL"
-            )
+            Log.e(TAG, "REPLACE ME: IO Socket:$URL")
+
             socket = IO.socket(URL, opts)
             socket!!.on(
                 Socket.EVENT_CONNECT,
@@ -220,6 +209,10 @@ class CamStudyService : Service() {
                     //재연결 처리
                     Log.d(TAG, "reconnectToSignallingServer: reconnect")
                     sendMessage(getSendMessage("reconnectJoinRoom"))
+
+                }).on(Socket.EVENT_CONNECT_ERROR,
+                Emitter.Listener { args: Array<Any> ->
+                    Log.d(TAG, "소켓연결 에러")
 
                 }).on("message",
                 Emitter.Listener { args: Array<Any> ->
@@ -250,11 +243,13 @@ class CamStudyService : Service() {
 
                                     participantsResponse.participants.forEach {
                                         foreach(it.nickname)
-                                        adaperDate.add(it.nickname)
-                                        peerConnection.get(it.nickname)!!.setImgUrl(it.img, this)
+                                        peerConnection.get(it.nickname)?.itemView?.setProfileImage(
+                                            it.img
+                                        )
                                     }
 
-                                    val handlerMessage = Message.obtain(null, MSG_CAMSTUDY_ITEM)
+                                    val handlerMessage =
+                                        Message.obtain(null, MSG_EXISTINGPARTICIPANNTS)
                                     sendHandlerMessage(handlerMessage)
                                 }
                                 "newParticipantArrived" -> {
@@ -262,10 +257,10 @@ class CamStudyService : Service() {
                                     Log.d(TAG, "newParticipantArrived")
                                     val name = message.getString("name")
                                     foreach(name)
-                                    adaperDate.add(name)
 
                                     //CamStudyActivity의 비디오 Item을 그려주는 리사이클러뷰 다시 그리기
-                                    val handlerMessage = Message.obtain(null, MSG_CAMSTUDY_ITEM)
+                                    val handlerMessage =
+                                        Message.obtain(null, MSG_NEWPARTICIPANTARRIVED)
                                     sendHandlerMessage(handlerMessage)
 
                                     //미디어 서버에서 넘겨준 스터디 참가자 '전원'의 정보가 담긴 객체
@@ -285,8 +280,9 @@ class CamStudyService : Service() {
                                     //새로운 참여자의 프로필을 참여자 전원의 정보가 있는 객체에서 찾아서 넣는다.
                                     participantsResponse.participants.forEach {
                                         if (it.nickname.equals(name)) {
-                                            getParticipant(message.getString("name"))
-                                                .setImgUrl(it.img, this)
+                                            getParticipant(message.getString("name")).itemView.setProfileImage(
+                                                it.img
+                                            )
                                             return@forEach
                                         }
                                     }
@@ -298,8 +294,8 @@ class CamStudyService : Service() {
                                     val message_send = JSONObject()
 
                                     message_send.put("id", "sendStopwatchTime")
-                                    message_send.put("stopwatchTime", par.timerPresentTime)
-                                    message_send.put("stopwatchStatus", par.getTimerStatus())
+                                    message_send.put("stopwatchTime", par.timer.timerStratTime)
+                                    message_send.put("stopwatchStatus", par.timer.getTimerStatus())
                                     message_send.put("sender", hostname)
                                     message_send.put("receiver", message.getString("name"))
                                     message_send.put(
@@ -315,25 +311,25 @@ class CamStudyService : Service() {
                                 "participantLeft" -> {
                                     //참여자가 방을 떠났을 경우
                                     Log.d(TAG, "participantLeft")
-                                    var index = adaperDate.indexOf(message.getString("name"))
-                                    adaperDate.removeAt(index)
                                     getParticipant(message.getString("name")).stopCamStduy()
                                     peerConnection.remove(message.getString("name"))
 
-                                    val handlerMessage = Message.obtain(null, MSG_CAMSTUDY_ITEM)
+                                    val handlerMessage = Message.obtain(null, MSG_PARTICIPANTLEFT)
                                     sendHandlerMessage(handlerMessage)
 
                                     //참여자 목록에 대한 정보에서 나간사람 빼기
-                                    val refreshParticipantsResponses = participantsResponses!!.participants.toMutableList()
+                                    val refreshParticipantsResponses =
+                                        participantsResponses!!.participants.toMutableList()
 
                                     refreshParticipantsResponses.forEach {
-                                        if(it.nickname.equals(message.getString("name"))){
+                                        if (it.nickname.equals(message.getString("name"))) {
                                             refreshParticipantsResponses.remove(it)
                                             return@forEach
                                         }
                                     }
 
-                                    participantsResponses!!.participants = refreshParticipantsResponses
+                                    participantsResponses!!.participants =
+                                        refreshParticipantsResponses
 
                                     //참여자 정보를 확인하고 있었다면, 다시 그려주기
                                     val handlerMessageParticipants =
@@ -390,7 +386,7 @@ class CamStudyService : Service() {
                                     //기존 참여자가 새로운 참여자의 타이머 시간 받기
                                     Log.d(TAG, "requestStopwatchTime")
                                     var par = getParticipant(message.getString("receiver"))
-                                    par.setStudyTime(message.getInt("stopwatchTime"))
+                                    par.timer.init(message.getInt("stopwatchTime").toDouble())
                                     par.toggleAudio(message.getString("audioStatus"))
                                     par.toggleVideo(message.getString("videoStatus"))
                                 }
@@ -398,15 +394,15 @@ class CamStudyService : Service() {
                                     //새로운 참여자가 캠스터디에 참여하고 있는 모든 참여자들의 타이머 시간/ 스탑워치 상태를 받는다
                                     Log.d(TAG, "receiveStopwatchTime")
                                     var par = getParticipant(message.getString("sender"))
-                                    par.setStudyTime(message.getInt("stopwatchTime"))
-                                    par.setTimer(message.getString("stopwatchStatus"))
+                                    par.timer.init(message.getInt("stopwatchTime").toDouble())
+                                    par.itemView.setTimerImage(message.getString("stopwatchStatus"))
                                     par.toggleAudio(message.getString("audioStatus"))
                                     par.toggleVideo(message.getString("videoStatus"))
                                 }
                                 "receiveStopwatchStatus" -> {
                                     //다른 참여자 타이머 상태 받기
                                     Log.d(TAG, "receiveStopwatchStatus")
-                                    getParticipant(message.getString("sender")).setTimer(
+                                    getParticipant(message.getString("sender")).timer.setOtherTimer(
                                         message.getString("stopwatchStatus")
                                     )
                                 }
@@ -555,15 +551,15 @@ class CamStudyService : Service() {
         var participant = getParticipant(hostname)
         participant.remoteVideoTrack = videoTrackFromCamera
         participant.remoteAudioTrack = localAudioTrack
+        
+        participant.startRender(videoTrackFromCamera,localAudioTrack)
     }
 
     private fun makeMe(): Participant {
-        var participantMe = Participant()
+        var participantMe = Participant(this, hostname)
 
-        participantMe.nickname = hostname
-        participantMe.isAudio = isAudio!!
-        participantMe.isVideo = isVideo!!
-        participantMe.setStudyTime(timer!!)
+        participantMe.settingDevice(isVideo!!, isAudio!!)
+        participantMe.timer.setTextTime(timer!!.toDouble())
 
         return participantMe
     }
@@ -578,7 +574,7 @@ class CamStudyService : Service() {
             peerConnection.put(name, participant)
             return participant
         } else {
-            participant = Participant()
+            participant = Participant(this, name)
             peerConnection.put(name, participant)
             return participant
         }
@@ -613,7 +609,7 @@ class CamStudyService : Service() {
         val stunURL = getString(R.string.midea_stun_url)
         val turnURL = getString(R.string.midea_turn_url)
         iceServers.add(PeerConnection.IceServer(stunURL))
-        iceServers.add(PeerConnection.IceServer(turnURL,"kurento","kurento"))
+        iceServers.add(PeerConnection.IceServer(turnURL, "kurento", "kurento"))
         val rtcConfig = PeerConnection.RTCConfiguration(iceServers)
         val pcConstraints = MediaConstraints()
         val pcObserver: PeerConnection.Observer = object : PeerConnection.Observer {
@@ -673,10 +669,7 @@ class CamStudyService : Service() {
                 val remoteAudioTrack = mediaStream.audioTracks[0]
 
                 if (!name.equals(hostname)) {
-                    peerConnection.get(name)?.remoteVideoTrack = remoteVideoTrack
-                    peerConnection.get(name)?.remoteAudioTrack = remoteAudioTrack
-
-                    peerConnection.get(name)?.startRender()
+                    peerConnection.get(name)?.startRender(remoteVideoTrack, remoteAudioTrack)
                 }
             }
 
@@ -798,9 +791,6 @@ class CamStudyService : Service() {
                     Log.d(TAG, "Received MSG_CLIENT_DISCONNECT message from client");
                     mClientCallbacks.remove(msg.replyTo);
                 }
-                MSG_PARTICIPANTS_ITEM -> {
-
-                }
                 MSG_TOTAL_MESSAGE -> {
                     //모두에게 채팅 보내기
                     val message = JSONObject()
@@ -851,8 +841,7 @@ class CamStudyService : Service() {
                 }
                 MSG_HOST_TIMER_RUN -> {
                     //내 타이머 상태를 다른 참여자들에게 보낸다 (타이머 시작)
-                    peerConnection.get(hostname)!!.startHostTimer()
-
+                    peerConnection.get(hostname)!!.timer.startStudyTimer()
                     val message = JSONObject()
                     message.put("id", "sendStopwatchStatus")
                     message.put("room", room)
@@ -862,7 +851,7 @@ class CamStudyService : Service() {
                 }
                 MSG_HOST_TIMER_PAUSE -> {
                     //내 타이머 상태를 다른 참여자들에게 보낸다 (타이머 멈춤)
-                    peerConnection.get(hostname)!!.stopHostTimer()
+                    peerConnection.get(hostname)!!.timer.startRestTimer()
                     val message = JSONObject()
                     message.put("id", "sendStopwatchStatus")
                     message.put("room", room)
@@ -875,11 +864,11 @@ class CamStudyService : Service() {
                     val handlerMessage = Message.obtain(null, MSG_COMSTUDY_LEFT)
 
                     var timerResult =
-                        peerConnection.get(hostname)!!.timerPresentTime - peerConnection.get(
+                        peerConnection.get(hostname)!!.timer.timerStratTime - peerConnection.get(
                             hostname
-                        )!!.timerStratTime
+                        )!!.timer.timerStratTime
                     handlerMessage.arg1 = timerResult.toInt()
-                    handlerMessage.arg2 = peerConnection.get(hostname)!!.timerRestTime.toInt()
+                    handlerMessage.arg2 = peerConnection.get(hostname)!!.timer.timerRestTime.toInt()
 
                     sendHandlerMessage(handlerMessage)
                 }
@@ -923,7 +912,6 @@ object notification {
         val notificationIntent = Intent(context, CamStudyActivity::class.java)
         notificationIntent.putExtra("audio", CamStudyService.isAudio)
         notificationIntent.putExtra("video", CamStudyService.isVideo)
-        notificationIntent.putExtra("cameraSwith", CamStudyService.camearaSwith)
         notificationIntent.putExtra("studyInfo", CamStudyActivity.studyInfo)
         notificationIntent.putExtra("timer", CamStudyService.timer)
         notificationIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
