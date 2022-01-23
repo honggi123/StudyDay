@@ -3,7 +3,6 @@ package com.coworkerteam.coworker.ui.base
 import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -76,6 +75,7 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
         })
     }
 
+    //API 서버 에러시 띄우는 다이얼로그 ( Status 코드 500번대 )
     fun showServerErrorDialog(){
         MaterialAlertDialogBuilder(this)
             .setTitle("시스템 에러")

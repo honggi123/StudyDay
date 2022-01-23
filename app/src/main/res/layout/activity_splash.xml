@@ -54,5 +54,17 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.3" />
 
+        <com.github.ybq.android.spinkit.SpinKitView
+            android:id="@+id/spin_kit"
+            style="@style/SpinKitView.Wave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="32dp"
+            app:SpinKit_Color="@color/cardview_light_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            app:layout_constraintStart_toStartOf="@+id/guideline2" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

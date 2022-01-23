@@ -123,8 +123,8 @@ dependencies {
     //그래프 그리는 라이브러리
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
-    //프로그래스바 라이브러리
-    implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
+    //로딩 애니메이션
+    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
 
     //위클리 캘린더
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'

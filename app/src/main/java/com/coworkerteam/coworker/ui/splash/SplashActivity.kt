@@ -10,6 +10,10 @@ import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.category.CategoryActivity
 import com.coworkerteam.coworker.ui.login.LoginActivity
 import com.coworkerteam.coworker.ui.main.MainActivity
+import com.github.ybq.android.spinkit.sprite.Sprite
+import com.github.ybq.android.spinkit.style.CubeGrid
+import com.github.ybq.android.spinkit.style.DoubleBounce
+import com.github.ybq.android.spinkit.style.Wave
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -20,6 +24,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     override val viewModel: SplashViewModel by viewModel()
 
     override fun initStartView() {
+        //프로그래스바 로딩 이미지 세팅
+        viewDataBinding.spinKit.setIndeterminateDrawable(Wave())
     }
 
     override fun initDataBinding() {
