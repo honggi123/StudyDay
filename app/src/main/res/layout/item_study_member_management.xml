@@ -39,7 +39,7 @@
         android:minHeight="0dp"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
-        android:text="멤버 탈퇴"
+        android:text="멤버 추방"
         android:textColor="@color/ssub_color"
         android:textSize="10sp"
         android:textStyle="bold"

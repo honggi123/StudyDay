@@ -4,7 +4,6 @@ import android.app.Activity
 import android.util.Log
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
@@ -20,12 +19,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.data.local.service.CamStudyService
 import com.coworkerteam.coworker.R
+import com.coworkerteam.coworker.data.model.api.ErrorResponse
 import com.coworkerteam.coworker.data.model.api.MainResponse
-import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.utils.ScreenSizeUtils
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import org.json.JSONObject
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class MainOtherStudyAdapter(private val context: Context, private val viewModel: MainViewModel) :
     RecyclerView.Adapter<MainOtherStudyAdapter.ViewHolder>() {
@@ -105,23 +104,6 @@ class MainOtherStudyAdapter(private val context: Context, private val viewModel:
                         var password =
                             mDialogView.findViewById<TextInputLayout>(R.id.edit_dialog_study_password)
                         viewModel.getEnterCamstduyData(item.idx, password.editText?.text.toString())
-                        viewModel.EnterCamstudyResponseLiveData.observe(
-                            context as LifecycleOwner,
-                            androidx.lifecycle.Observer {
-                                if (it.isSuccessful) {
-                                    builder.dismiss()
-                                } else if (it.code() == 403) {
-                                    Log.d("다이얼로그안","403에러당")
-                                    Log.d("다이얼로그안", it.errorBody()!!.string())
-//                                    val errorResult = JSONObject(it.errorBody()!!.string())
-//                                    when (errorResult.getInt("code")) {
-//                                        -12 -> {
-                                    //비밀번호를 틀린 경우
-                                    password.error = "비밀번호가 틀렸습니다."
-//                                        }
-//                                    }
-                                }
-                            })
                     })
 
                 } else {

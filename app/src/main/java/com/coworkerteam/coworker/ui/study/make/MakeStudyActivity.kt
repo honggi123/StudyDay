@@ -35,6 +35,7 @@ import com.coworkerteam.coworker.databinding.ActivityCategoryBinding
 import com.coworkerteam.coworker.databinding.ActivityMakeStudyBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.category.CategoryViewModel
+import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.gms.common.api.ApiException
 import okhttp3.OkHttpClient
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -58,12 +59,18 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
         get() = R.layout.activity_make_study
     override val viewModel: MakeStudyViewModel by viewModel()
 
-    var imageUrl: String? = null
-    var studyType: String? = null
-    var categorys = ArrayList<String>()
     lateinit var mDialogView: View
+
     var realpath: String? = null
     var fileName: String? = null
+
+    var imageUrl: String? = null
+    var studyType: String? = null
+    var isStudyName = false
+    var isPassword = false
+    var isStudyNum = false
+    var categorys = ArrayList<String>()
+    var isIntroduce = false
 
     val startForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -78,7 +85,6 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
                 }
                 Glide.with(this).load(uri)
                     .into(mDialogView.findViewById(R.id.dialog_select_image_selet_image))
-
             }
         }
 
@@ -113,10 +119,10 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
 
         if (checkedId == R.id.make_study_radio_open) {
             studyType = "open"
-            Log.d(TAG,"open")
+            Log.d(TAG, "open")
         } else if (checkedId == R.id.make_study_radio_group) {
             studyType = "group"
-            Log.d(TAG,"group")
+            Log.d(TAG, "group")
         } else {
             studyType = null
         }
@@ -145,8 +151,68 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
         }
     }
 
-    fun showImageDialog(v: View) {
-        val view = v as ImageView
+    fun onCheckedChangedPassword(checked: Boolean) {
+        if(checked){
+            viewDataBinding.makeStudyEdtPw.visibility = View.VISIBLE
+        }else{
+            viewDataBinding.makeStudyEdtPw.visibility = View.GONE
+        }
+    }
+
+    fun changTextStudyName(s: CharSequence, start: Int, before: Int, count: Int) {
+        val result = PatternUtils.matcheStudyName(s.toString())
+
+        if (result.isNotError) {
+            isStudyName = true
+            viewDataBinding.makeStudyEdtName.isErrorEnabled = false
+            viewDataBinding.makeStudyEdtName.error = null
+        } else {
+            isStudyName = false
+            viewDataBinding.makeStudyEdtName.error = result.ErrorMessge
+        }
+    }
+
+    fun changTextStudyPassword(s: CharSequence, start: Int, before: Int, count: Int) {
+        val result = PatternUtils.matcheStudyPassword(s.toString())
+
+        if (result.isNotError) {
+            isPassword = true
+            viewDataBinding.makeStudyEdtPw.isErrorEnabled = false
+            viewDataBinding.makeStudyEdtPw.error = null
+        } else {
+            isPassword = false
+            viewDataBinding.makeStudyEdtPw.error = result.ErrorMessge
+        }
+    }
+
+    fun changTextStudyNum(s: CharSequence, start: Int, before: Int, count: Int) {
+        val result = PatternUtils.matcheStudyNum(s.toString())
+
+        if (result.isNotError) {
+            isStudyNum = true
+            viewDataBinding.makeStudyEdtNum.isErrorEnabled = false
+            viewDataBinding.makeStudyEdtNum.error = null
+        } else {
+            isStudyNum = false
+            viewDataBinding.makeStudyEdtNum.error = result.ErrorMessge
+        }
+    }
+
+    fun changTextIntroduce(s: CharSequence, start: Int, before: Int, count: Int) {
+        val result = PatternUtils.matcheDescript(s.toString())
+
+        if (result.isNotError) {
+            isIntroduce = true
+            viewDataBinding.makeStudyEdtIntroduce.isErrorEnabled = false
+            viewDataBinding.makeStudyEdtIntroduce.error = null
+        } else {
+            isIntroduce = false
+            viewDataBinding.makeStudyEdtIntroduce.error = result.ErrorMessge
+        }
+    }
+
+    fun showImageDialog() {
+        val view = viewDataBinding.makeStudyImg
         val baseImages: List<String> = listOf(
             "https://coworker-study.s3.ap-northeast-2.amazonaws.com/basicImage1.jpg",
             "https://coworker-study.s3.ap-northeast-2.amazonaws.com/basicImage2.jpg",
@@ -214,14 +280,16 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
             Toast.makeText(this, "이미지를 설정해주세요.", Toast.LENGTH_SHORT).show()
         } else if (studyType == null) {
             Toast.makeText(this, "스터디 종류를 선택해주세요.", Toast.LENGTH_SHORT).show()
-        } else if (viewDataBinding.makeStudyEdtName.editText?.text.isNullOrBlank()) {
-            Toast.makeText(this, "스터디 이름을 입력해주세요.", Toast.LENGTH_SHORT).show()
-        } else if (viewDataBinding.makeStudyEdtNum.editText?.text.isNullOrBlank()) {
-            Toast.makeText(this, "스터디 인원을 입력해주세요.", Toast.LENGTH_SHORT).show()
+        } else if (!isStudyName) {
+            Toast.makeText(this, "스터디 이름을 확인해주세요.", Toast.LENGTH_SHORT).show()
+        } else if (viewDataBinding.makeStudyCheckPw.isChecked && !isPassword) {
+            Toast.makeText(this, "스터디 비밀번호을 확인해주세요.", Toast.LENGTH_SHORT).show()
+        } else if (!isStudyNum) {
+            Toast.makeText(this, "스터디 인원을 확인해주세요.", Toast.LENGTH_SHORT).show()
         } else if (categorys.size == 0) {
-            Toast.makeText(this, "스터디 카테고리를 선택해주세요.", Toast.LENGTH_SHORT).show()
-        } else if (viewDataBinding.makeStudyEdtIntroduce.editText?.text.isNullOrBlank()) {
-            Toast.makeText(this, "스터디 설명을 입력해주세요.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "스터디 카테고리를 확인해주세요.", Toast.LENGTH_SHORT).show()
+        } else if (!isIntroduce) {
+            Toast.makeText(this, "스터디 설명을 확인해주세요.", Toast.LENGTH_SHORT).show()
         } else {
 
             if (fileName != null) {
@@ -232,7 +300,7 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
 
             var categorys = categorys.joinToString("|")
             var password =
-                if (viewDataBinding.makeStudyEdtPw.isNotEmpty()) viewDataBinding.makeStudyEdtPw.editText?.text.toString() else null
+                if (viewDataBinding.makeStudyCheckPw.isChecked) viewDataBinding.makeStudyEdtPw.editText?.text.toString() else null
 
             viewModel.setMakeStudyData(
                 studyType!!,

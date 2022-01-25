@@ -4,6 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
+        <import type="android.view.View" />
+
         <variable
             name="studyInfo"
             type="com.coworkerteam.coworker.data.model.api.EditStudyResponse.Result.StudyInfo" />
@@ -53,22 +56,52 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
-                <androidx.cardview.widget.CardView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    app:cardCornerRadius="15dp"
-                    app:cardElevation="0dp">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                    <ImageView
-                        android:id="@+id/make_study_img"
-                        android:layout_width="140dp"
-                        android:layout_height="100dp"
-                        android:layout_gravity="center_horizontal"
-                        android:onClick="@{(view)->activity.showImageDialog(view)}"
-                        android:scaleType="centerCrop"
-                        app:srcCompat="@color/contour" />
-                </androidx.cardview.widget.CardView>
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardView4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="16dp"
+                        app:cardCornerRadius="15dp"
+                        app:cardElevation="0dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:id="@+id/make_study_img"
+                            android:layout_width="140dp"
+                            android:layout_height="100dp"
+                            android:layout_gravity="center_horizontal"
+                            android:scaleType="centerCrop"
+                            app:srcCompat="@color/contour" />
+                    </androidx.cardview.widget.CardView>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/image_select_background"
+                        android:onClick="@{()->activity.showImageDialog()}"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@+id/cardView4"
+                        app:layout_constraintStart_toEndOf="@+id/cardView4">
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/profile_edit_img_chang"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_margin="6dp"
+                            android:src="@drawable/ic_baseline_camera_alt_24"
+                            app:civ_border_color="#FF000000" />
+                    </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/make_study_edt_name"
@@ -90,34 +123,8 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:onTextChanged="@{activity.changTextStudyName}"
                         android:text="@{studyInfo.name}" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/make_study_edt_pw"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:hint="스터디 비밀번호(선택)"
-                    app:boxCornerRadiusBottomEnd="20dp"
-                    app:boxCornerRadiusBottomStart="20dp"
-                    app:boxCornerRadiusTopEnd="20dp"
-                    app:boxCornerRadiusTopStart="20dp"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="16"
-                    app:endIconMode="password_toggle"
-                    app:expandedHintEnabled="false"
-                    app:helperText="8~16자의 영문 대소문자, 숫자, 특수문자만 가능"
-                    app:helperTextEnabled="true">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="선택사항"
-                        android:inputType="textPassword"
-                        android:text="@{studyInfo.pw}" />
-
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -141,7 +148,47 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="1"
-                        android:inputType="number" />
+                        android:inputType="number"
+                        android:onTextChanged="@{activity.changTextStudyNum}" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <CheckBox
+                    android:id="@+id/make_study_check_pw"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="@{studyInfo.pw == null?false:true}"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:onCheckedChanged="@{(buttonView,isChecked)->activity.onCheckedChangedPassword(isChecked)}"
+                    android:text="비밀번호 설정" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/make_study_edt_pw"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="스터디 비밀번호(선택)"
+                    android:visibility="@{studyInfo.pw == null?View.GONE:View.VISIBLE}"
+                    app:boxCornerRadiusBottomEnd="20dp"
+                    app:boxCornerRadiusBottomStart="20dp"
+                    app:boxCornerRadiusTopEnd="20dp"
+                    app:boxCornerRadiusTopStart="20dp"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="16"
+                    app:endIconMode="password_toggle"
+                    app:expandedHintEnabled="false"
+                    app:helperText="8~16자의 영문 대소문자, 숫자, 특수문자만 가능"
+                    app:helperTextEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="선택사항"
+                        android:inputType="textPassword"
+                        android:onTextChanged="@{activity.changTextStudyPassword}"
+                        android:text="@{studyInfo.pw}" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -353,6 +400,7 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:onTextChanged="@{activity.changTextIntroduce}"
                         android:text="@{studyInfo.introduce}" />
 
                 </com.google.android.material.textfield.TextInputLayout>

@@ -40,17 +40,18 @@ open abstract class NavigationAcitivity<T : ViewDataBinding, R : BaseViewModel> 
             navigatinView.getHeaderView(0)
                 .findViewById<CircleImageView>(com.coworkerteam.coworker.R.id.navi_login_image)
 
-        if (loginType.equals("google")) {
+        if (loginType == "google") {
             navigationHeaderLogin.setImageResource(com.coworkerteam.coworker.R.drawable.btn_google_light_focus)
-        } else if (loginType.equals("kakao")) {
+        } else if (loginType == "kakao") {
             navigationHeaderLogin.setImageResource(com.coworkerteam.coworker.R.drawable.kakao_icon)
-        } else if (loginType.equals("naver")) {
+        } else if (loginType == "naver") {
             navigationHeaderLogin.setImageResource(com.coworkerteam.coworker.R.drawable.naver_icon)
         }
     }
 
     fun setNavigaionNickname(nickname: String) {
-        navigatinView.getHeaderView(0).findViewById<TextView>(com.coworkerteam.coworker.R.id.navi_nickname).text = nickname
+        navigatinView.getHeaderView(0)
+            .findViewById<TextView>(com.coworkerteam.coworker.R.id.navi_nickname).text = nickname
     }
 
     override fun initStartView() {
@@ -65,38 +66,27 @@ open abstract class NavigationAcitivity<T : ViewDataBinding, R : BaseViewModel> 
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        var moveIntent: Intent? = null
         when (item.itemId) {
-            com.coworkerteam.coworker.R.id.menuitem1 -> startActivity(
-                Intent(
-                    this,
-                    MainActivity::class.java
-                )
-            )
-            com.coworkerteam.coworker.R.id.menuitem2 -> startActivity(
-                Intent(
-                    this,
-                    MyStudyActivity::class.java
-                )
-            )
-            com.coworkerteam.coworker.R.id.menuitem3 -> startActivity(
-                Intent(
-                    this,
-                    StudySearchActivity::class.java
-                )
-            )
-            com.coworkerteam.coworker.R.id.menuitem4 -> startActivity(
-                Intent(
-                    this,
-                    StatisticsActivity::class.java
-                )
-            )
-            com.coworkerteam.coworker.R.id.menuitem5 -> startActivity(
-                Intent(
-                    this,
-                    TodoListActivity::class.java
-                )
-            )
+            com.coworkerteam.coworker.R.id.menuitem1 -> {
+                moveIntent = Intent(this, MainActivity::class.java)
+            }
+            com.coworkerteam.coworker.R.id.menuitem2 -> {
+                moveIntent = Intent(this, MyStudyActivity::class.java)
+            }
+            com.coworkerteam.coworker.R.id.menuitem3 -> {
+                moveIntent = Intent(this, StudySearchActivity::class.java)
+            }
+            com.coworkerteam.coworker.R.id.menuitem4 -> {
+                moveIntent = Intent(this, StatisticsActivity::class.java)
+            }
+            com.coworkerteam.coworker.R.id.menuitem5 -> {
+                moveIntent = Intent(this, TodoListActivity::class.java)
+            }
         }
+        moveIntent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        moveIntent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(moveIntent)
         return false
     }
 

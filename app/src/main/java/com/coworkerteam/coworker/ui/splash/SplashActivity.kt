@@ -46,6 +46,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             }else if(it.code() == 404){
                 //유효하지 않은 refreshToken,없는 유저인 경우 로그인 페이지로 이동
                 moveLogin()
+            }else if(it.code() >= 500){
+                //서버 내부오류
+                showServerErrorDialog()
             }else{
                 Toast.makeText(getApplicationContext(), it.message(),Toast.LENGTH_SHORT).show()
             }

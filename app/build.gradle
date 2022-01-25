@@ -117,7 +117,7 @@ dependencies {
     // Gson 변환기 라이브러리
     implementation 'com.squareup.retrofit2:converter-gson:2.6.4'
 
-    // Scalars 변환기 라이브러리
+    // Scalars 변환기 라이브러리(retrofit에서 String을 처리하는데 사용됨)
     implementation 'com.squareup.retrofit2:converter-scalars:2.6.4'
 
     //그래프 그리는 라이브러리

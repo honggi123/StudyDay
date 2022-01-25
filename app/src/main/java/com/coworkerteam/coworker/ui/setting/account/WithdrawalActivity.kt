@@ -23,6 +23,7 @@ import com.coworkerteam.coworker.databinding.ActivityWithdrawalBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.category.CategoryViewModel
 import com.coworkerteam.coworker.ui.login.LoginActivity
+import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -58,6 +59,7 @@ class WithdrawalActivity : BaseActivity<ActivityWithdrawalBinding, WithdrawalVie
     val content = this
 
     override fun initStartView() {
+        viewDataBinding.activity = this
         init()
     }
 
@@ -96,36 +98,31 @@ class WithdrawalActivity : BaseActivity<ActivityWithdrawalBinding, WithdrawalVie
                 if (reason == "기타") {
                     edt_reasonOther.visibility = View.VISIBLE
                     is_other = true
+                    viewDataBinding.withdrawalBtnWithdrawal.isEnabled = viewDataBinding.withdrawalEdtReasonOther.isErrorEnabled
                 }else{
                     edt_reasonOther.visibility = View.GONE
                     is_other = false
+                    viewDataBinding.withdrawalBtnWithdrawal.isEnabled = true
                 }
 
                 builder.dismiss()
             })
         })
-
-        btn_withdrawal.setOnClickListener(View.OnClickListener {
-            if (reason != "") {
-                if (is_other) {
-                    if (edt_reasonOther.editText!!.text.toString() == "") {
-                        Toast.makeText(
-                            getApplicationContext(),
-                            "회원탈퇴 이유를 적어주세요.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                } else {
-                    withdrawal()
-                }
-            } else {
-                Toast.makeText(getApplicationContext(), "회원탈퇴 이유를 선택해주세요.", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        })
-
     }
 
+    fun changTextOther(s: CharSequence, start: Int, before: Int, count: Int) {
+        val result = PatternUtils.matcheWithdrawal(s.toString())
+        Log.d(TAG,s.toString())
+
+        if (result.isNotError) {
+            viewDataBinding.withdrawalEdtReasonOther.isErrorEnabled = false
+            viewDataBinding.withdrawalEdtReasonOther.error = null
+            viewDataBinding.withdrawalBtnWithdrawal.isEnabled = true
+        } else {
+            viewDataBinding.withdrawalEdtReasonOther.error = result.ErrorMessge
+            viewDataBinding.withdrawalBtnWithdrawal.isEnabled = false
+        }
+    }
 
     fun withdrawal() {
         var loginType = viewModel.getLoginTypeData()

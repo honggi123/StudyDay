@@ -83,7 +83,7 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
             } else if (it.code() == 403) {
                 Log.d(TAG, "403스테이스 코드 메시지 : " + it.message())
                 Log.d(TAG, "403스테이스 코드 바디 메시지 : " + it.body().toString())
-                Log.d(TAG, "403스테이스 코드 에러 바디 메시지 : " + it.errorBody()?.string())
+//                Log.d(TAG, "403스테이스 코드 에러 바디 메시지 : " + it.errorBody()?.string())
             }
         })
 

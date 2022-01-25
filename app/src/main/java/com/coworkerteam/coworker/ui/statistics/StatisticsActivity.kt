@@ -1,5 +1,9 @@
 package com.coworkerteam.coworker.ui.statistics
 
+import android.graphics.Color
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -368,6 +372,14 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
         override fun getAxisLabel(value: Float, axis: AxisBase?): String {
             return days.getOrNull(value.toInt()) ?: value.toString()
         }
+    }
+
+    //TextView 글자색 변경
+    fun setTextColor(text: String, start: Int, end: Int): SpannableStringBuilder {
+        val builder = SpannableStringBuilder(text)
+        val colorBlueSpan = ForegroundColorSpan(Color.BLUE)
+        builder.setSpan(colorBlueSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return builder
     }
 
     fun changDay(v: View) {

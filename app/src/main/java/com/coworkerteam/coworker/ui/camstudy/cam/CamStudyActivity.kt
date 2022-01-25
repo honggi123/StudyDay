@@ -5,9 +5,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.*
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.data.local.service.CamStudyService
@@ -25,8 +22,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import android.content.ClipData
-import android.view.ViewGroup
+import android.view.*
 import androidx.annotation.RequiresApi
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexboxItemDecoration
 import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -297,10 +296,10 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         if (view != null) {
             //스피너
             var members = member
-            if (member.size <= 0) {
+            if (member.isEmpty()) {
                 members = arrayOf("모두에게")
             } else {
-                members.set(0, "모두에게")
+                members[0] = "모두에게"
             }
             val data = members
 
@@ -329,10 +328,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 }
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -399,6 +394,26 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         return lp
     }
 
+    private fun setFlexOption(count: Int) {
+        if (count == 2) {
+            viewDataBinding.camStudyFelxboxLayout.flexDirection = FlexDirection.COLUMN
+        } else {
+            viewDataBinding.camStudyFelxboxLayout.flexDirection = FlexDirection.ROW
+        }
+
+        if(count > 2){
+            val lp = viewDataBinding.camStudyFelxboxLayout.layoutParams as FlexboxLayout.LayoutParams
+            lp.width = WindowManager.LayoutParams.MATCH_PARENT
+            lp.height = WindowManager.LayoutParams.WRAP_CONTENT
+            viewDataBinding.camStudyFelxboxLayout.layoutParams = lp
+        } else{
+            val lp = viewDataBinding.camStudyFelxboxLayout.layoutParams as FlexboxLayout.LayoutParams
+            lp.width = WindowManager.LayoutParams.MATCH_PARENT
+            lp.height = WindowManager.LayoutParams.MATCH_PARENT
+            viewDataBinding.camStudyFelxboxLayout.layoutParams = lp
+        }
+    }
+
     inner class CallbackHandler(looper: Looper) : Handler(looper) {
         override fun handleMessage(msg: Message) {
             Log.d(TAG, "Activity에 메세지 도착" + msg.toString())
@@ -408,14 +423,15 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
                     CamStudyService.peerConnection.keys.forEach {
                         val item = CamStudyService.peerConnection.get(it)?.itemView
-                        item?.layoutParams = getLayoutParams(viewDataBinding.camStudyFelxboxLayout.flexItemCount)
+                        item?.layoutParams =
+                            getLayoutParams(viewDataBinding.camStudyFelxboxLayout.flexItemCount)
 
                         viewDataBinding.camStudyFelxboxLayout.addView(
-                            CamStudyService.peerConnection.get(
-                                it
-                            )?.itemView
+                            CamStudyService.peerConnection[it]?.itemView
                         )
                     }
+
+                    setFlexOption(viewDataBinding.camStudyFelxboxLayout.flexItemCount)
 
                     Log.d(TAG, "추가된 뷰의 수 : " + viewDataBinding.camStudyFelxboxLayout.flexItemCount)
 
@@ -423,14 +439,21 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 CamStudyService.MSG_NEWPARTICIPANTARRIVED -> {
                     //새로운 참여자가 들어왔을때
 
+                    //레이아웃 초기화
                     viewDataBinding.camStudyFelxboxLayout.removeAllViews()
+
+                    //레이아웃 다시 설정
                     CamStudyService.peerConnection.keys.forEach {
+                        val item = CamStudyService.peerConnection.get(it)?.itemView
+                        item?.layoutParams =
+                            getLayoutParams(viewDataBinding.camStudyFelxboxLayout.flexItemCount)
+
                         viewDataBinding.camStudyFelxboxLayout.addView(
-                            CamStudyService.peerConnection.get(
-                                it
-                            )?.itemView
+                            CamStudyService.peerConnection[it]?.itemView
                         )
                     }
+
+                    setFlexOption(viewDataBinding.camStudyFelxboxLayout.flexItemCount)
 
                 }
                 CamStudyService.MSG_PARTICIPANTLEFT -> {
@@ -438,12 +461,18 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
                     viewDataBinding.camStudyFelxboxLayout.removeAllViews()
                     CamStudyService.peerConnection.keys.forEach {
+                        val item = CamStudyService.peerConnection.get(it)?.itemView
+                        item?.layoutParams =
+                            getLayoutParams(viewDataBinding.camStudyFelxboxLayout.flexItemCount)
+
                         viewDataBinding.camStudyFelxboxLayout.addView(
                             CamStudyService.peerConnection.get(
                                 it
                             )?.itemView
                         )
                     }
+
+                    setFlexOption(viewDataBinding.camStudyFelxboxLayout.flexItemCount)
 
                 }
                 CamStudyService.MSG_RECEIVED_MESSAGE -> {

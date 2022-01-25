@@ -76,12 +76,14 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
     }
 
     //API 서버 에러시 띄우는 다이얼로그 ( Status 코드 500번대 )
-    fun showServerErrorDialog(){
+    fun showServerErrorDialog() {
         MaterialAlertDialogBuilder(this)
             .setTitle("시스템 에러")
             .setMessage("죄송합니다. 현재 시스템 오류가 발생했습니다. 나중에 다시 시도해주세요.")
             .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
-                dialog.dismiss()
+                moveTaskToBack(true); // 태스크를 백그라운드로 이동
+                finishAndRemoveTask(); // 액티비티 종료 + 태스크 리스트에서 지우기
+                android.os.Process.killProcess(android.os.Process.myPid()); // 앱 프로세스 종료
             }).show()
     }
 }

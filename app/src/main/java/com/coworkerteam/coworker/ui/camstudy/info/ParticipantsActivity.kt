@@ -61,7 +61,6 @@ class ParticipantsActivity : BaseActivity<ActivityParticipantsBinding, Participa
 
         //텍스트뷰 일부분 색상바꾸기
         val text = txt_peple.text.toString()
-
         txt_peple.text = setTextColor(text)
     }
 

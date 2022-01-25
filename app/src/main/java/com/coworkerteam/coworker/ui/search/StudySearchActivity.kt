@@ -15,6 +15,7 @@ import com.coworkerteam.coworker.data.model.other.SearchStudy
 import com.coworkerteam.coworker.databinding.ActivityStudySearchBinding
 import com.coworkerteam.coworker.ui.base.NavigationAcitivity
 import com.coworkerteam.coworker.ui.main.MainTodolistAdapter
+import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -97,7 +98,7 @@ class StudySearchActivity :
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                keword = query
+                keword = PatternUtils.replaceEmojiSearch(query)
                 searchEvent()
                 return false
             }
