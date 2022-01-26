@@ -2,6 +2,7 @@ package com.coworkerteam.coworker.ui.mystudy
 
 import android.app.Activity
 import android.content.Context
+import android.media.Image
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -66,6 +67,7 @@ class MyStudyDailyPagingAdapter(private val dialog: PasswordDialog) :
         private val leader: TextView = itemView.findViewById(R.id.item_my_study_leader)
         private val studyName: TextView = itemView.findViewById(R.id.item_my_study_txt_name)
         private val studyNum: TextView = itemView.findViewById(R.id.item_my_study_txt_num)
+        private val password: ImageView = itemView.findViewById(R.id.txt_item_main_new_study_pw2)
         private val rvCategory: RecyclerView = itemView.findViewById(R.id.item_my_study_rv_category)
 
         fun bind(item: MyStudyDailyPagingResponse.Result.Open?) {
@@ -77,6 +79,10 @@ class MyStudyDailyPagingAdapter(private val dialog: PasswordDialog) :
 
             studyName.text = item.name
             studyNum.text = "참여인원 " + item.userNum.toString() + "/" + item.maxNum.toString()
+
+            if(item.isPw){
+                password.visibility = View.VISIBLE
+            }
 
             var studyCategoryAdapter: StudyCategoryAdapter = StudyCategoryAdapter(context)
             studyCategoryAdapter.datas = item.category.split("|").toMutableList()

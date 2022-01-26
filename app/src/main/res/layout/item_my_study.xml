@@ -6,6 +6,16 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
+    <ImageView
+        android:id="@+id/txt_item_main_new_study_pw2"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/item_my_study_txt_num"
+        app:layout_constraintStart_toEndOf="@+id/item_my_study_txt_num"
+        app:layout_constraintTop_toTopOf="@+id/item_my_study_txt_num"
+        app:srcCompat="@drawable/ic_baseline_lock_24" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="0dp"

@@ -27,7 +27,7 @@ data class MyStudyDailyPagingResponse(
             @SerializedName("is_leader")
             val isLeader: Boolean,
             @SerializedName("is_pw")
-            val isPw: String,
+            val isPw: Boolean,
             @SerializedName("max_num")
             val maxNum: Int,
             @SerializedName("name")
