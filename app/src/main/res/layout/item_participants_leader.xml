@@ -12,7 +12,7 @@
         android:id="@+id/item_leader_transfer_profile"
         android:layout_width="45dp"
         android:layout_height="45dp"
-        android:src="@mipmap/ic_launcher" />
+        android:src="@mipmap/ic_studyday" />
 
     <TextView
         android:id="@+id/item_leader_transfer_nickname"

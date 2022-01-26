@@ -932,7 +932,7 @@ object notification {
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle("StudyDay")
             .setContentText("캠스터디 진행중")
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.mipmap.ic_studyday)
             .setOngoing(true) // true 일경우 알림 리스트에서 클릭하거나 좌우로 드래그해도 사라지지 않음
             .setContentIntent(pendingIntent)
             .build()

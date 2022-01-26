@@ -60,7 +60,7 @@
                             android:id="@+id/enter_camstudy_profile"
                             android:layout_width="70dp"
                             android:layout_height="70dp"
-                            android:src="@mipmap/ic_launcher_round"
+                            android:src="@mipmap/ic_studyday_round"
                             app:civ_border_color="#FF000000"
                             app:layout_constraintBottom_toBottomOf="@+id/surfaceView"
                             app:layout_constraintEnd_toEndOf="@+id/surfaceView"

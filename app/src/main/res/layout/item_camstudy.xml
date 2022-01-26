@@ -36,7 +36,7 @@
                 android:layout_height="70dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
-                android:src="@mipmap/ic_launcher_round"
+                android:src="@mipmap/ic_studyday_round"
                 app:civ_border_color="#FF000000"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/cam_surface_view"

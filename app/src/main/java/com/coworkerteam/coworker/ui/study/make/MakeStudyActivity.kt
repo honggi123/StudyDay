@@ -34,10 +34,12 @@ import com.coworkerteam.coworker.data.remote.StudydayService
 import com.coworkerteam.coworker.databinding.ActivityCategoryBinding
 import com.coworkerteam.coworker.databinding.ActivityMakeStudyBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
+import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.ui.category.CategoryViewModel
 import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.gms.common.api.ApiException
 import okhttp3.OkHttpClient
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -104,8 +106,31 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
         viewModel.MakeStudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
             //스터디 만들기 성공
             if (it.isSuccessful) {
-                //메인으로 이동
+                //오디오 세팅 페이지로 이동
+                viewModel.getEnterCamstduyData(it.body()!!.result.studyIdx,it.body()!!.result.pw)
+            } else{
+                Log.d(TAG,it.errorBody()!!.string())
+            }
+        })
+
+        viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
+            if (it.isSuccessful) {
+                var intent = Intent(this, EnterCamstudyActivity::class.java)
+                intent.putExtra("studyInfo", it.body()!!)
+
+                startActivity(intent)
                 finish()
+            } else if (it.code() == 403) {
+                val errorMessage = JSONObject(it.errorBody()?.string())
+
+                when(errorMessage.getInt("code")){
+                    -12 -> {
+                        //비밀번호를 틀린 경우
+                        Log.d(TAG,"스터디 만든 후, 오디오/비디오 비밀번호 불일치로 세팅 페이지로 이동 실패")
+                    }
+                }
+            } else{
+                Log.d(TAG,it.errorBody()!!.string())
             }
         })
     }

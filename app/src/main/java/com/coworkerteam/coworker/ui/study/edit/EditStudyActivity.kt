@@ -122,7 +122,7 @@ class EditStudyActivity : BaseActivity<ActivityEditStudyBinding, EditStudyViewMo
         viewModel.EditStudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
             //카테고리가 성공적으로 선택
             if (it.isSuccessful) {
-                //메인으로 이동
+                //이전화면으로 이동
                 finish()
             }else{
                 Log.d(TAG, it.errorBody()!!.string())

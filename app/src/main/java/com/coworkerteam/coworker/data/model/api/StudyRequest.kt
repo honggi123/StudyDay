@@ -6,6 +6,6 @@ data class StudyRequest(
 ) {
     data class Result(
         var pw: String,
-        var studyIdx: String
+        var studyIdx: Int
     )
 }
