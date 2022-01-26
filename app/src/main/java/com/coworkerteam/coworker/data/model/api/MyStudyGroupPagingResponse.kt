@@ -31,7 +31,7 @@ data class MyStudyGroupPagingResponse(
             @SerializedName("name")
             val name: String,
             @SerializedName("pw")
-            val pw: String
+            val pw: String?
         )
     }
 }

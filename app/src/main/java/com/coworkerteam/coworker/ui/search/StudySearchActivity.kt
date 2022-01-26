@@ -1,5 +1,7 @@
 package com.coworkerteam.coworker.ui.search
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -14,10 +16,13 @@ import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.data.model.other.SearchStudy
 import com.coworkerteam.coworker.databinding.ActivityStudySearchBinding
 import com.coworkerteam.coworker.ui.base.NavigationAcitivity
+import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
+import com.coworkerteam.coworker.ui.dialog.PasswordDialog
 import com.coworkerteam.coworker.ui.main.MainTodolistAdapter
 import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class StudySearchActivity :
@@ -51,6 +56,9 @@ class StudySearchActivity :
             }
             return categorys
         }
+
+        @SuppressLint("StaticFieldLeak")
+        val passwordDialog = PasswordDialog()
     }
 
     lateinit var studySearchResponse: StudySearchResponse
@@ -68,9 +76,10 @@ class StudySearchActivity :
 
         viewDataBinding.activitiy = this
 
-        setNavigaionLoginImage(viewModel.getLoginType()!!)
-        setNavigaionProfileImage(viewModel.getUserProfile()!!)
-        setNavigaionNickname(viewModel.getUserNickname()!!)
+        //패스워드 다이얼로그 ok버튼 함수 세팅
+        passwordDialog.onClickOKButton = {i: Int, s: String? ->
+            viewModel.getEnterCamstduyData(i, s)
+        }
 
         init()
         fragment_init()
@@ -85,6 +94,25 @@ class StudySearchActivity :
                 setNavigaionNickname(it.body()!!.result.profile.nickname)
 
                 viewDataBinding.draworInfo = DrawerBottomInfo(it.body()!!.result.achieveTimeRate,it.body()!!.result.achieveTodoRate,it.body()!!.result.dream.dday,it.body()!!.result.dream.ddayName)
+            }
+        })
+
+        viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
+            if (it.isSuccessful) {
+                var intent = Intent(this, EnterCamstudyActivity::class.java)
+                intent.putExtra("studyInfo", it.body()!!)
+
+                passwordDialog.dismissDialog()
+                startActivity(intent)
+            } else if (it.code() == 403) {
+                val errorMessage = JSONObject(it.errorBody()?.string())
+
+                when(errorMessage.getInt("code")){
+                    -12 -> {
+                        //비밀번호를 틀린 경우
+                        passwordDialog.setErrorMessage(errorMessage.getString("message"))
+                    }
+                }
             }
         })
     }
@@ -113,7 +141,7 @@ class StudySearchActivity :
         val btn_latest = findViewById<TextView>(R.id.study_search_txt_latest)
         val btn_studyTime = findViewById<TextView>(R.id.study_search_txt_studyTime)
 
-        btn_latest.setSelected(true)
+        btn_latest.isSelected = true
 
         btn_latest.setOnClickListener(View.OnClickListener {
             sortEvent(it, btn_studyTime, "latest")
@@ -171,8 +199,8 @@ class StudySearchActivity :
     fun sortEvent(view: View, otherView: View, sort: String) {
         if (view.isSelected) {
         } else {
-            view.setSelected(true)
-            otherView.setSelected(false)
+            view.isSelected = true
+            otherView.isSelected = false
             viewType = sort
         }
         searchEvent()
@@ -183,10 +211,10 @@ class StudySearchActivity :
         val categoryName = v.text.toString()
 
         if (view.isSelected) {
-            view.setSelected(false)
+            view.isSelected = false
             category.remove(categoryName)
         } else {
-            view.setSelected(true)
+            view.isSelected = true
             category.add(categoryName)
         }
         searchEvent()

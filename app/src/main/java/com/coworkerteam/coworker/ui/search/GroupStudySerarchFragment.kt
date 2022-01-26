@@ -1,5 +1,6 @@
 package com.coworkerteam.coworker.ui.search
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -14,6 +15,10 @@ import com.coworkerteam.coworker.data.model.api.StudySearchResponse
 import com.coworkerteam.coworker.data.model.other.SearchStudy
 import com.coworkerteam.coworker.databinding.FragmentGroupStudySerarchBinding
 import com.coworkerteam.coworker.ui.base.BaseFragment
+import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
+import com.coworkerteam.coworker.ui.dialog.PasswordDialog
+import com.coworkerteam.coworker.utils.RecyclerViewUtils
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class GroupStudySerarchFragment :
@@ -39,6 +44,7 @@ class GroupStudySerarchFragment :
         }
         val rv_Search = view?.findViewById<RecyclerView>(R.id.fragment_group_study_rv)
         rv_Search?.adapter = pagingStudySearchAdapter
+        RecyclerViewUtils().setHorizonSpaceDecration(rv_Search!!,10)
 
         viewModel.getStudySearchData("group")
     }

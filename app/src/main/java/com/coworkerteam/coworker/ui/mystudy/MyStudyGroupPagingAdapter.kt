@@ -7,16 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.MyStudyGroupPagingResponse
+import com.coworkerteam.coworker.ui.dialog.PasswordDialog
+import com.coworkerteam.coworker.ui.main.MainViewModel
 import com.coworkerteam.coworker.ui.main.StudyCategoryAdapter
 import com.coworkerteam.coworker.utils.ScreenSizeUtils
 
-class MyStudyGroupPagingAdapter :
+class MyStudyGroupPagingAdapter(private val dialog: PasswordDialog) :
     PagingDataAdapter<MyStudyGroupPagingResponse.Result.Group, MyStudyGroupPagingAdapter.ViewHolder>(
         differ
     ) {
@@ -60,6 +63,7 @@ class MyStudyGroupPagingAdapter :
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
+        private val item_layout: ConstraintLayout = itemView.findViewById(R.id.item_my_study)
         private val img: ImageView = itemView.findViewById(R.id.item_my_study_img)
         private val leader: TextView = itemView.findViewById(R.id.item_my_study_leader)
         private val studyName: TextView = itemView.findViewById(R.id.item_my_study_txt_name)
@@ -79,6 +83,15 @@ class MyStudyGroupPagingAdapter :
             var studyCategoryAdapter: StudyCategoryAdapter = StudyCategoryAdapter(context)
             studyCategoryAdapter.datas = item.category.split("|").toMutableList()
             rvCategory.adapter = studyCategoryAdapter
+
+            item_layout.setOnClickListener(View.OnClickListener {
+                if (item.pw.equals("private")) {
+                    //가입, 참여를 하지 않았던 비밀번호가 걸려있는 스터디를 선택했을 경우 비밀번호 입력 dialog가 노출
+                    dialog.showDialog(context, item.idx)
+                } else {
+                    dialog.onClickOKButton(item.idx,null)
+                }
+            })
         }
     }
 }

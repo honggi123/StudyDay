@@ -21,12 +21,13 @@ import com.coworkerteam.coworker.data.local.service.CamStudyService
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.ErrorResponse
 import com.coworkerteam.coworker.data.model.api.MainResponse
+import com.coworkerteam.coworker.ui.dialog.PasswordDialog
 import com.coworkerteam.coworker.utils.ScreenSizeUtils
 import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class MainOtherStudyAdapter(private val context: Context, private val viewModel: MainViewModel) :
+class MainOtherStudyAdapter(private val context: Context, private val dialog: PasswordDialog) :
     RecyclerView.Adapter<MainOtherStudyAdapter.ViewHolder>() {
 
     var datas = mutableListOf<MainResponse.Result.Study>()
@@ -84,30 +85,9 @@ class MainOtherStudyAdapter(private val context: Context, private val viewModel:
             item_layout.setOnClickListener(View.OnClickListener {
                 if (item.pw.equals("private")) {
                     //가입, 참여를 하지 않았던 비밀번호가 걸려있는 스터디를 선택했을 경우 비밀번호 입력 dialog가 노출
-                    val mDialogView = LayoutInflater.from(context)
-                        .inflate(R.layout.dialog_camstudy_password, null)
-                    val mBuilder = AlertDialog.Builder(context).setView(mDialogView)
-                    val builder = mBuilder.show()
-
-                    builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-                    val btn_cancle =
-                        mDialogView.findViewById<Button>(R.id.dialog_camstudy_password_btn_cancle)
-                    val btn_ok =
-                        mDialogView.findViewById<Button>(R.id.dialog_camstudy_password_btn_ok)
-
-                    btn_cancle.setOnClickListener(View.OnClickListener {
-                        builder.dismiss()
-                    })
-
-                    btn_ok.setOnClickListener(View.OnClickListener {
-                        var password =
-                            mDialogView.findViewById<TextInputLayout>(R.id.edit_dialog_study_password)
-                        viewModel.getEnterCamstduyData(item.idx, password.editText?.text.toString())
-                    })
-
+                    dialog.showDialog(context, item.idx)
                 } else {
-                    viewModel.getEnterCamstduyData(item.idx, null)
+                    dialog.onClickOKButton(item.idx, null)
                 }
             })
         }

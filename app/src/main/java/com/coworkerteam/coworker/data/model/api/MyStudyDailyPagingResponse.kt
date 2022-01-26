@@ -33,7 +33,7 @@ data class MyStudyDailyPagingResponse(
             @SerializedName("name")
             val name: String,
             @SerializedName("pw")
-            val pw: String,
+            val pw: String?,
             @SerializedName("user_num")
             val userNum: Int
         )

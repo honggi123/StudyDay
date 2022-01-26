@@ -32,6 +32,8 @@ data class StudySearchResponse(
             val isLeader: Boolean,
             @SerializedName("is_pw")
             val isPw: Boolean,
+            @SerializedName("pw")
+            val pw: String?,
             @SerializedName("max_num")
             val maxNum: Int,
             @SerializedName("name")

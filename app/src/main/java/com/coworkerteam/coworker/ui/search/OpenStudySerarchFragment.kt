@@ -1,5 +1,6 @@
 package com.coworkerteam.coworker.ui.search
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,7 +13,11 @@ import com.coworkerteam.coworker.data.model.api.StudySearchResponse
 import com.coworkerteam.coworker.data.model.other.SearchStudy
 import com.coworkerteam.coworker.databinding.FragmentOpenStudySerarchBinding
 import com.coworkerteam.coworker.ui.base.BaseFragment
+import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
+import com.coworkerteam.coworker.ui.dialog.PasswordDialog
+import com.coworkerteam.coworker.utils.RecyclerViewUtils
 import kotlinx.coroutines.flow.collectLatest
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class OpenStudySerarchFragment :
@@ -40,8 +45,10 @@ class OpenStudySerarchFragment :
         }
         val rv_Search = view?.findViewById<RecyclerView>(R.id.fragment_open_study_rv)
         rv_Search?.adapter = pagingStudySearchAdapter
+        RecyclerViewUtils().setHorizonSpaceDecration(rv_Search!!,10)
 
         viewModel.getStudySearchData("open")
+
     }
 
     override fun initDataBinding() {
@@ -54,6 +61,7 @@ class OpenStudySerarchFragment :
         viewModel.StudySearchPagingData.observe(this,androidx.lifecycle.Observer {
             pagingStudySearchAdapter.submitData(lifecycle,it)
         })
+
     }
 
     override fun initAfterBinding() {

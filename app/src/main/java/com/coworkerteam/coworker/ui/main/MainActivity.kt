@@ -12,19 +12,19 @@ import androidx.appcompat.app.AlertDialog
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.model.api.MainResponse
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityMainBinding
 import com.coworkerteam.coworker.ui.base.NavigationAcitivity
 import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
+import com.coworkerteam.coworker.ui.dialog.PasswordDialog
 import com.coworkerteam.coworker.ui.study.make.MakeStudyActivity
 import com.coworkerteam.coworker.ui.todolist.TodoListActivity
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.navigation.NavigationView
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 
@@ -46,10 +46,13 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
 
     lateinit var pagingMainMyStudyAdapter: MainMyStudyPagingAdapter
 
+    val passwordDialog = PasswordDialog()
+
     override fun initStartView() {
         super.initStartView()
         viewDataBinding.activitiy = this
 
+        //툴바 세팅
         var main_toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.main_toolber)
 
         setSupportActionBar(main_toolbar) // 툴바를 액티비티의 앱바로 지정
@@ -57,6 +60,7 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24_write) // 홈버튼 이미지 변경
         supportActionBar?.title = getString(R.string.app_name)
 
+        //툴바의 + 아이콘에 대한 세팅
         val mainToolbarMakeStudy = findViewById<ImageView>(R.id.main_toolbar_makeStudy)
         mainToolbarMakeStudy.visibility = View.VISIBLE
         mainToolbarMakeStudy.setOnClickListener(
@@ -66,9 +70,15 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
             }
         )
 
+        //내스터디 페이징 Adapter 적용
         pagingMainMyStudyAdapter = MainMyStudyPagingAdapter(viewModel)
         val rv_MyStudy = findViewById<RecyclerView>(R.id.main_mystudy_recylerView)
         rv_MyStudy.adapter = pagingMainMyStudyAdapter
+
+        //패스워드 다이얼로그 ok버튼 함수 세팅
+        passwordDialog.onClickOKButton = {i: Int, s: String? ->
+            viewModel.getEnterCamstduyData(i, s)
+        }
 
         init()
     }
@@ -78,12 +88,18 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
             if (it.isSuccessful) {
                 var intent = Intent(this, EnterCamstudyActivity::class.java)
                 intent.putExtra("studyInfo", it.body()!!)
-                Log.d(TAG, it.toString())
+
+                passwordDialog.dismissDialog()
                 startActivity(intent)
             } else if (it.code() == 403) {
-                Log.d(TAG, "403스테이스 코드 메시지 : " + it.message())
-                Log.d(TAG, "403스테이스 코드 바디 메시지 : " + it.body().toString())
-//                Log.d(TAG, "403스테이스 코드 에러 바디 메시지 : " + it.errorBody()?.string())
+                val errorMessage = JSONObject(it.errorBody()?.string())
+
+                when(errorMessage.getInt("code")){
+                    -12 -> {
+                        //비밀번호를 틀린 경우
+                        passwordDialog.setErrorMessage(errorMessage.getString("message"))
+                    }
+                }
             }
         })
 
@@ -153,6 +169,7 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
 
         val spinner_new = findViewById<Spinner>(R.id.main_spinner_new_study)
         val spinner_dcommend = findViewById<Spinner>(R.id.main_spinner_dcommend)
+
         spinner_new.adapter = adapter
         spinner_new.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -345,7 +362,7 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
         //새로운
         var recyclerNewStudy: RecyclerView =
             findViewById(R.id.main_newstudy_recylerView)
-        var newAdapter = MainOtherStudyAdapter(this, viewModel)
+        var newAdapter = MainOtherStudyAdapter(this,passwordDialog)
 
         if (NewStudyShowOpen) {
             newAdapter.datas = viewDataBinding.mainResponse!!.result[0].newOpenStudy.toMutableList()
@@ -362,7 +379,7 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
         //추천
         var recyclerRecommendStudy: RecyclerView =
             findViewById(R.id.main_recommend_study_recylerView)
-        var recommendAdapter: MainOtherStudyAdapter = MainOtherStudyAdapter(this, viewModel)
+        var recommendAdapter: MainOtherStudyAdapter = MainOtherStudyAdapter(this,passwordDialog)
 
         if (RecommendStudyShowOpen) {
             recommendAdapter.datas = viewDataBinding.mainResponse!!.result[0].openRecommend.toMutableList()

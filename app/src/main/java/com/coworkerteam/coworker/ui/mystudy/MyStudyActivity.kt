@@ -16,12 +16,15 @@ import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityMyStudyBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.base.NavigationAcitivity
+import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
+import com.coworkerteam.coworker.ui.dialog.PasswordDialog
 import com.coworkerteam.coworker.ui.search.StudySearchActivity
 import com.coworkerteam.coworker.ui.statistics.StatisticsActivity
 import com.coworkerteam.coworker.ui.study.management.ManagementActivity
 import com.coworkerteam.coworker.ui.todolist.TodoListActivity
 import com.coworkerteam.coworker.utils.RecyclerViewUtils
 import com.google.android.material.navigation.NavigationView
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MyStudyActivity : NavigationAcitivity<ActivityMyStudyBinding, MyStudyViewModel>() , NavigationView.OnNavigationItemSelectedListener  {
@@ -39,17 +42,19 @@ class MyStudyActivity : NavigationAcitivity<ActivityMyStudyBinding, MyStudyViewM
     lateinit var pagingGroupAdapter: MyStudyGroupPagingAdapter
     lateinit var pagingDailyAdapter: MyStudyDailyPagingAdapter
 
+    val passwordDialog = PasswordDialog()
+
     override fun initStartView() {
         super.initStartView()
 
         init()
 
-        pagingGroupAdapter = MyStudyGroupPagingAdapter()
+        pagingGroupAdapter = MyStudyGroupPagingAdapter(passwordDialog)
         val rv_group = findViewById<RecyclerView>(R.id.my_study_rv_group_study)
         rv_group.adapter = pagingGroupAdapter
         RecyclerViewUtils().setHorizonSpaceDecration(rv_group,10)
 
-        pagingDailyAdapter = MyStudyDailyPagingAdapter()
+        pagingDailyAdapter = MyStudyDailyPagingAdapter(passwordDialog)
         val rv_daily = findViewById<RecyclerView>(R.id.my_study_rv_open_study)
         rv_daily.adapter = pagingDailyAdapter
         RecyclerViewUtils().setHorizonSpaceDecration(rv_daily,10)
@@ -60,6 +65,11 @@ class MyStudyActivity : NavigationAcitivity<ActivityMyStudyBinding, MyStudyViewM
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24_write) // 홈버튼 이미지 변경
         supportActionBar?.title = "내 스터디"
+
+        //패스워드 다이얼로그 ok버튼 함수 세팅
+        passwordDialog.onClickOKButton = {i: Int, s: String? ->
+            viewModel.getEnterCamstduyData(i, s)
+        }
     }
 
     override fun initDataBinding() {
@@ -84,6 +94,25 @@ class MyStudyActivity : NavigationAcitivity<ActivityMyStudyBinding, MyStudyViewM
 
         viewModel.MyStudyDailyPagingData.observe(this,androidx.lifecycle.Observer {
             pagingDailyAdapter.submitData(lifecycle,it)
+        })
+
+        viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
+            if (it.isSuccessful) {
+                var intent = Intent(this, EnterCamstudyActivity::class.java)
+                intent.putExtra("studyInfo", it.body()!!)
+
+                passwordDialog.dismissDialog()
+                startActivity(intent)
+            } else if (it.code() == 403) {
+                val errorMessage = JSONObject(it.errorBody()?.string())
+
+                when(errorMessage.getInt("code")){
+                    -12 -> {
+                        //비밀번호를 틀린 경우
+                        passwordDialog.setErrorMessage(errorMessage.getString("message"))
+                    }
+                }
+            }
         })
     }
 
