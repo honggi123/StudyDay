@@ -107,10 +107,7 @@ class MainOtherStudyAdapter(private val context: Context, private val viewModel:
                     })
 
                 } else {
-
-                    CamStudyService.isLeader = item.isLeader
                     viewModel.getEnterCamstduyData(item.idx, null)
-
                 }
             })
         }

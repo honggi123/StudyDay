@@ -30,4 +30,8 @@ class CamStudyViewModel(private val model: UserRepository) : BaseViewModel() {
             Log.d(TAG,"getCamstduyLeaveData:: accessTokenr값 또는 nickname 값이 없습니다.")
         }
     }
+
+    fun getNickName(): String? {
+        return model.getCurrentUserName()
+    }
 }

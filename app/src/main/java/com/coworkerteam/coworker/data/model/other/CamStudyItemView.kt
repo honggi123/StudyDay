@@ -36,14 +36,14 @@ class CamStudyItemView : ConstraintLayout {
         //camstudy item에 대한 요소 초기화
         surfaceView = view.findViewById(R.id.cam_surface_view)
         profileView = view.findViewById(R.id.item_camstudy_profile)
-        timerImageView = view.findViewById(R.id.imageView8)
+        timerImageView = view.findViewById(R.id.item_camstudy_img_timer)
         timerTextView = view.findViewById(R.id.item_camstudy_txt_time)
-        audioView = view.findViewById(R.id.imageView9)
+        audioView = view.findViewById(R.id.item_camstudy_mic)
         userNameView = view.findViewById(R.id.item_camstudy_txt_name)
 
         //surfaceView에 관련한 설정
         CoroutineScope(Dispatchers.Main).async {
-            surfaceView.init(CamStudyService.rootEglBase?.getEglBaseContext(), null)
+            surfaceView.init(CamStudyService.rootEglBase.eglBaseContext, null)
             surfaceView.setEnableHardwareScaler(true)
             surfaceView.setMirror(true)
         }
@@ -52,52 +52,57 @@ class CamStudyItemView : ConstraintLayout {
     //프로필 이미지 세팅 함수
     fun setProfileImage(imageUrl: String) {
         CoroutineScope(Dispatchers.Main).async {
-            Glide.with(context).load(imageUrl).into(profileView!!)
+            Glide.with(context).load(imageUrl).into(profileView)
         }
     }
 
     //비디오 표시 여부에 따라 비디오가 off면 프로필을 보이고, on이면 프로필을 숨기는 함수
     fun showProfileImage(status: String) {
-        if (status == "off" || status == "false") {
+        if (status == "off") {
             //비디오가 off일 경우, 프로필 사진을 보여준다.
             CoroutineScope(Dispatchers.Main).async {
-                profileView?.visibility = View.VISIBLE
+                profileView.visibility = View.VISIBLE
             }
-        } else if (status == "on" || status == "true") {
+        } else if (status == "on") {
             //비디오가 on일 경우, 프로필 사진을 숨긴다.
             CoroutineScope(Dispatchers.Main).async {
-                profileView?.visibility = View.GONE
+                profileView.visibility = View.GONE
             }
         }
     }
 
-    fun setTimerImage(status: String) {
-        if (status == "run" || status == "true") {
-            //타이머 시작 아이콘 (초록색 동그라미)
-            timerImageView.isSelected = false
-        } else if (status == "pause" || status == "false") {
-            //일시정지 아이콘 (빨간색 동그라미)
-            timerImageView.isSelected = true
-        }
-    }
-
-    //타이머 상태 이미지 변경 함수
-    fun changTimerImage(isStartTimer: Boolean) {
-        if (isStartTimer) {
-            //타이머 시작 아이콘 (초록색 동그라미)로 변경
-            timerImageView.isSelected = false
-        } else if (isStartTimer) {
-            //일시정지 아이콘 (빨간색 동그라미)로 변경
-            timerImageView.isSelected = true
+    //비디오 표시 여부에 따라 비디오가 off면 프로필을 보이고, on이면 프로필을 숨기는 함수
+    fun showProfileImage(status: Boolean) {
+        if (!status) {
+            //비디오가 off일 경우, 프로필 사진을 보여준다.
+            CoroutineScope(Dispatchers.Main).async {
+                profileView.visibility = View.VISIBLE
+            }
+        } else if (status) {
+            //비디오가 on일 경우, 프로필 사진을 숨긴다.
+            CoroutineScope(Dispatchers.Main).async {
+                profileView.visibility = View.GONE
+            }
         }
     }
 
     //오디오 이미지 변경 함수
     fun changAudioImage(status: String) {
-        if (status == "off" || status == "false") {
+        if (status == "off") {
             //오디오 off 아이콘으로 변경
             audioView.isSelected = true
-        } else if (status == "on" || status == "true") {
+        } else if (status == "on") {
+            //오디오 on 아이콘으로 변경
+            audioView.isSelected = false
+        }
+    }
+
+    //오디오 이미지 변경 함수
+    fun changAudioImage(status: Boolean) {
+        if (!status) {
+            //오디오 off 아이콘으로 변경
+            audioView.isSelected = true
+        } else if (status) {
             //오디오 on 아이콘으로 변경
             audioView.isSelected = false
         }

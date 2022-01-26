@@ -26,6 +26,7 @@ class ParticipantsAdapter(private val context: Context,private val mServiceCallb
     val viewNotLeader = 1
 
     var datas = mutableListOf<ParticipantsResponse.Participant>()
+    var isLeader = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view: View?
@@ -66,10 +67,8 @@ class ParticipantsAdapter(private val context: Context,private val mServiceCallb
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (datas[position].isLeader) {
             (holder as ViewHolderLeader).bind(datas[position])
-//            holder.setIsRecyclable(false)
         } else {
             (holder as ViewHolderNotLeader).bind(datas[position])
-//            holder.setIsRecyclable(false)
         }
     }
 
@@ -96,7 +95,7 @@ class ParticipantsAdapter(private val context: Context,private val mServiceCallb
             nickname.text = item.nickname
             val par = item
 
-            if(CamStudyService.isLeader){
+            if(isLeader){
                 more.setOnClickListener(View.OnClickListener {
                     var popup = PopupMenu(context, it)
                     var con = context as Activity

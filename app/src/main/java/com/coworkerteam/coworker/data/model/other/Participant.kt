@@ -29,17 +29,14 @@ class Participant(context: Context, name: String) {
         this.isVideo = isVideo
         this.isAudio = isAudio
 
-        itemView.showProfileImage(isVideo.toString())
-        itemView.changAudioImage(isVideo.toString())
+        itemView.showProfileImage(isVideo)
+        itemView.changAudioImage(isAudio)
     }
 
     //surfaceView에 받아온 비디오를 그리고, 받아온 오디오를 재생하는 함수
     fun startRender(remoteVideoTrack: VideoTrack?, remoteAudioTrack: AudioTrack?) {
-        if (isVideo) {
-            itemView.showProfileImage("off")
-        } else {
-            itemView.showProfileImage("on")
-        }
+        itemView.showProfileImage(isVideo)
+        itemView.changAudioImage(isAudio)
 
         this.remoteVideoTrack = remoteVideoTrack
         this.remoteAudioTrack = remoteAudioTrack
@@ -51,17 +48,17 @@ class Participant(context: Context, name: String) {
 
     //Audio를 on/off 하는 함수
     fun toggleAudio(status: String) {
-        if (status.equals("off")) {
+        if (status == "off") {
             isAudio = false
 
             if (remoteAudioTrack != null) {
                 remoteAudioTrack!!.setEnabled(false)
             }
-        } else if (status.equals("on")) {
-            isAudio = false
+        } else if (status == "on") {
+            isAudio = true
 
             if (remoteAudioTrack != null) {
-                remoteAudioTrack!!.setEnabled(false)
+                remoteAudioTrack!!.setEnabled(true)
             }
         }
 
@@ -70,13 +67,13 @@ class Participant(context: Context, name: String) {
 
     //Video를 on/off 하는 함수
     fun toggleVideo(status: String) {
-        if (status.equals("off")) {
+        if (status == "off") {
             isVideo = false
 
             if (remoteVideoTrack != null) {
                 remoteVideoTrack!!.setEnabled(false)
             }
-        } else if (status.equals("on")) {
+        } else if (status == "on") {
             isVideo = true
 
             if (remoteVideoTrack != null) {

@@ -78,8 +78,6 @@ class MainMyStudyPagingAdapter(private val viewModel: MainViewModel) :
             studyNum.text = "참여인원 " + item.userNum.toString() + "/" + item.maxNum.toString()
 
             item_layout.setOnClickListener(View.OnClickListener {
-                CamStudyService.isLeader = item.isLeader
-
                 viewModel.getEnterCamstduyData(item.idx, null)
             })
         }

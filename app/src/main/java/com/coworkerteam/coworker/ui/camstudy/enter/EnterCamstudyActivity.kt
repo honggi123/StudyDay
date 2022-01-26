@@ -28,10 +28,10 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
 
     lateinit var surface: SurfaceViewRenderer
 
-    val VIDEO_TRACK_ID = "ARDAMSv0"
-    val VIDEO_RESOLUTION_WIDTH = 1280
-    val VIDEO_RESOLUTION_HEIGHT = 720
-    val FPS = 30
+    private val VIDEO_TRACK_ID = "ARDAMSv0"
+    private val VIDEO_RESOLUTION_WIDTH = 1280
+    private val VIDEO_RESOLUTION_HEIGHT = 720
+    private val FPS = 30
 
     var videoCapturer: VideoCapturer? = null
 
@@ -40,7 +40,7 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
 
     var studyIndex: Int? = null
 
-    var isCamera = true
+    var isVideo = true
     var isAudio = true
 
     var dataIntent: EnterCamstudyResponse? = null
@@ -89,10 +89,11 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
         viewModel.EnterCamstudyResponseLiveData.observe(this, Observer {
             if (it.isSuccessful) {
                 var intent = Intent(this, CamStudyActivity::class.java)
-                intent.putExtra("video", isCamera)
-                intent.putExtra("audio", isAudio)
                 intent.putExtra("studyInfo", dataIntent)
-                intent.putExtra("timer", it.body()!!.result.studyTimeSec)
+                CamStudyService.isVideo = isVideo
+                CamStudyService.isAudio = isAudio
+                CamStudyService.isPlay = false
+                CamStudyService.timer = it.body()!!.result.studyTimeSec
                 startActivity(intent)
                 finish()
             }
@@ -144,16 +145,16 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
                 }
             }
             "camera" -> {
-                if (isCamera) {
+                if (isVideo) {
                     //카메라가 켜진 상태였으면 끈 상태로 전환
-                    isCamera = false
-                    videoTrackFromCamera!!.setEnabled(isCamera)
+                    isVideo = false
+                    videoTrackFromCamera!!.setEnabled(isVideo)
                     view.isSelected = true
                     viewDataBinding.enterCamstudyProfile.visibility = View.VISIBLE
                 } else {
                     //카메라가 끈 상태였으면 켜진 상태로 전환
-                    isCamera = true
-                    videoTrackFromCamera!!.setEnabled(isCamera)
+                    isVideo = true
+                    videoTrackFromCamera!!.setEnabled(isVideo)
                     view.isSelected = false
                     viewDataBinding.enterCamstudyProfile.visibility = View.GONE
                 }

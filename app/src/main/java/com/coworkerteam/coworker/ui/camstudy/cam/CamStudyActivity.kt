@@ -24,8 +24,6 @@ import kotlin.collections.ArrayList
 import android.content.ClipData
 import android.view.*
 import androidx.annotation.RequiresApi
-import com.google.android.flexbox.FlexDirection
-import com.google.android.flexbox.FlexboxItemDecoration
 import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -42,12 +40,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     private var mClientCallback = Messenger(CallbackHandler(Looper.getMainLooper()))
 
     var chat_rv: RecyclerView? = null
-
-    var isMic = true
-    var isVideo = true
-    var isPlay = false
-
-    var timer: Int? = null
 
     companion object {
         var studyInfo: EnterCamstudyResponse? = null
@@ -70,13 +62,12 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         init()
 
         var intent = Intent(this, CamStudyService::class.java)
-        intent.putExtra("audio", isMic)
-        intent.putExtra("video", isVideo)
         intent.putExtra("studyInfo", studyInfo)
-        intent.putExtra("timer", timer)
         startForegroundService(intent)
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
 
+        //레이아웃 다시 설정
+        addCamStudyItemView()
     }
 
     override fun initDataBinding() {
@@ -84,15 +75,31 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     }
 
     override fun initAfterBinding() {
+    }
 
+    override fun onStart() {
+        super.onStart()
+        Log.d("생명주기", "onStart")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        //FelxboxLayout 초기화
+        viewDataBinding.camStudyFelxboxLayout.removeAllViews()
+
+        //서비스랑 메신저 연결 해제
+        val connectMsg = Message.obtain(null, CamStudyService.MSG_CLIENT_DISCNNECT)
+        connectMsg.replyTo = mClientCallback
+
+        try {
+            mServiceCallback!!.send(connectMsg)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     fun initData() {
-        isMic = intent.getBooleanExtra("audio", false)
-        isVideo = intent.getBooleanExtra("video", false)
         studyInfo = intent.getSerializableExtra("studyInfo") as EnterCamstudyResponse?
-        timer = intent.getIntExtra("timer", 0)
-        isPlay = intent.getBooleanExtra("paly", false)
     }
 
     fun stopCamstudy(studyTime: Int, restTime: Int) {
@@ -133,17 +140,17 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             sendHandlerMessage(msg)
         })
 
-        btn_mic.isSelected = !isMic
+        btn_mic.isSelected = !CamStudyService.isAudio!!
 
         btn_mic.setOnClickListener(View.OnClickListener {
             val msg: Message = Message.obtain(null, CamStudyService.MSG_HOST_AUDIO_ON_OFF)
 
-            if (isMic) {
-                isMic = false
+            if (CamStudyService.isAudio!!) {
+                CamStudyService.isAudio = false
                 msg.obj = "off"
                 it.isSelected = true
             } else {
-                isMic = true
+                CamStudyService.isAudio = true
                 msg.obj = "on"
                 it.isSelected = false
             }
@@ -151,17 +158,17 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             sendHandlerMessage(msg)
         })
 
-        btn_camera.isSelected = !isVideo
+        btn_camera.isSelected = !CamStudyService.isVideo!!
 
         btn_camera.setOnClickListener(View.OnClickListener {
             val msg: Message = Message.obtain(null, CamStudyService.MSG_HOST_VIDEO_ON_OFF)
 
-            if (isVideo) {
-                isVideo = false
+            if (CamStudyService.isVideo!!) {
+                CamStudyService.isVideo = false
                 msg.obj = "off"
                 it.isSelected = true
             } else {
-                isVideo = true
+                CamStudyService.isVideo = true
                 msg.obj = "on"
                 it.isSelected = false
             }
@@ -169,19 +176,19 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             sendHandlerMessage(msg)
         })
 
-        btn_play.isSelected = isPlay
+        btn_play.isSelected = CamStudyService.isPlay!!
 
         btn_play.setOnClickListener(View.OnClickListener {
-            if (isPlay) {
+            if (CamStudyService.isPlay!!) {
                 //일시정지
-                isPlay = false
+                CamStudyService.isPlay = false
                 it.isSelected = false
 
                 val msg: Message = Message.obtain(null, CamStudyService.MSG_HOST_TIMER_PAUSE)
                 sendHandlerMessage(msg)
             } else {
                 //타이머 재생
-                isPlay = true
+                CamStudyService.isPlay = true
                 it.isSelected = true
 
                 val msg: Message = Message.obtain(null, CamStudyService.MSG_HOST_TIMER_RUN)
@@ -205,6 +212,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
             btn_chat.setOnClickListener(View.OnClickListener {
                 var chat = edt_chat.text.toString()
+                edt_chat.text.clear()
 
                 var dataformat = SimpleDateFormat("a HH:mm", Locale.KOREA)
                 var time = dataformat.format(System.currentTimeMillis())
@@ -234,7 +242,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             })
 
             val members = CamStudyService.peerConnection.keys
-            spinnerInit(chatDialogView, members.toTypedArray())
+            spinnerInit(chatDialogView, members.toMutableList())
 
             dialog.setOnDismissListener(DialogInterface.OnDismissListener {
                 chat_rv = null
@@ -292,18 +300,20 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         })
     }
 
-    fun spinnerInit(view: View?, member: Array<String>) {
+    fun spinnerInit(view: View?, members: MutableList<String>) {
         if (view != null) {
             //스피너
-            var members = member
-            if (member.isEmpty()) {
-                members = arrayOf("모두에게")
-            } else {
-                members[0] = "모두에게"
-            }
-            val data = members
 
-            val adapter = ArrayAdapter(this, R.layout.spinner_item_selected_gray, data)
+            //선택목록에 나는 제외
+            members.remove(viewModel.getNickName())
+
+            if (members.isEmpty()) {
+                members.add("모두에게")
+            } else {
+                members.add(0, "모두에게")
+            }
+
+            val adapter = ArrayAdapter(this, R.layout.spinner_item_selected_gray, members)
             adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
 
             val spinner_new = view.findViewById<Spinner>(R.id.camstudy_chat_spinner_sender)
@@ -386,6 +396,9 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
         if (size == 0) {
             lp.flexGrow = 1.0F
+        } else if (size == 1 && CamStudyService.peerConnection.keys.size == 2) {
+            lp.flexGrow = 1.0F
+            lp.isWrapBefore = true
         }
 
         lp.flexShrink = 1.0F
@@ -394,23 +407,15 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         return lp
     }
 
-    private fun setFlexOption(count: Int) {
-        if (count == 2) {
-            viewDataBinding.camStudyFelxboxLayout.flexDirection = FlexDirection.COLUMN
-        } else {
-            viewDataBinding.camStudyFelxboxLayout.flexDirection = FlexDirection.ROW
-        }
+    fun addCamStudyItemView() {
+        CamStudyService.peerConnection.keys.forEach {
+            val item = CamStudyService.peerConnection.get(it)?.itemView
+            item?.layoutParams =
+                getLayoutParams(viewDataBinding.camStudyFelxboxLayout.flexItemCount)
 
-        if(count > 2){
-            val lp = viewDataBinding.camStudyFelxboxLayout.layoutParams as FlexboxLayout.LayoutParams
-            lp.width = WindowManager.LayoutParams.MATCH_PARENT
-            lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-            viewDataBinding.camStudyFelxboxLayout.layoutParams = lp
-        } else{
-            val lp = viewDataBinding.camStudyFelxboxLayout.layoutParams as FlexboxLayout.LayoutParams
-            lp.width = WindowManager.LayoutParams.MATCH_PARENT
-            lp.height = WindowManager.LayoutParams.MATCH_PARENT
-            viewDataBinding.camStudyFelxboxLayout.layoutParams = lp
+            viewDataBinding.camStudyFelxboxLayout.addView(
+                CamStudyService.peerConnection[it]?.itemView
+            )
         }
     }
 
@@ -420,20 +425,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             when (msg.what) {
                 CamStudyService.MSG_EXISTINGPARTICIPANNTS -> {
                     //내가 방에 맨 먼저 참여했을 경우
-
-                    CamStudyService.peerConnection.keys.forEach {
-                        val item = CamStudyService.peerConnection.get(it)?.itemView
-                        item?.layoutParams =
-                            getLayoutParams(viewDataBinding.camStudyFelxboxLayout.flexItemCount)
-
-                        viewDataBinding.camStudyFelxboxLayout.addView(
-                            CamStudyService.peerConnection[it]?.itemView
-                        )
-                    }
-
-                    setFlexOption(viewDataBinding.camStudyFelxboxLayout.flexItemCount)
-
-                    Log.d(TAG, "추가된 뷰의 수 : " + viewDataBinding.camStudyFelxboxLayout.flexItemCount)
+                    addCamStudyItemView()
 
                 }
                 CamStudyService.MSG_NEWPARTICIPANTARRIVED -> {
@@ -443,36 +435,13 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     viewDataBinding.camStudyFelxboxLayout.removeAllViews()
 
                     //레이아웃 다시 설정
-                    CamStudyService.peerConnection.keys.forEach {
-                        val item = CamStudyService.peerConnection.get(it)?.itemView
-                        item?.layoutParams =
-                            getLayoutParams(viewDataBinding.camStudyFelxboxLayout.flexItemCount)
-
-                        viewDataBinding.camStudyFelxboxLayout.addView(
-                            CamStudyService.peerConnection[it]?.itemView
-                        )
-                    }
-
-                    setFlexOption(viewDataBinding.camStudyFelxboxLayout.flexItemCount)
-
+                    addCamStudyItemView()
                 }
                 CamStudyService.MSG_PARTICIPANTLEFT -> {
                     //누군가 스터디를 떠났을 경우
 
                     viewDataBinding.camStudyFelxboxLayout.removeAllViews()
-                    CamStudyService.peerConnection.keys.forEach {
-                        val item = CamStudyService.peerConnection.get(it)?.itemView
-                        item?.layoutParams =
-                            getLayoutParams(viewDataBinding.camStudyFelxboxLayout.flexItemCount)
-
-                        viewDataBinding.camStudyFelxboxLayout.addView(
-                            CamStudyService.peerConnection.get(
-                                it
-                            )?.itemView
-                        )
-                    }
-
-                    setFlexOption(viewDataBinding.camStudyFelxboxLayout.flexItemCount)
+                    addCamStudyItemView()
 
                 }
                 CamStudyService.MSG_RECEIVED_MESSAGE -> {
@@ -497,14 +466,14 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     //리더에게 마이크 off
                     val btn_mic = findViewById<ImageButton>(R.id.camstudy_btn_mic)
 
-                    isMic = false
+                    CamStudyService.isAudio = false
                     btn_mic.isSelected = true
                 }
                 CamStudyService.MSG_LEADER_FORCED_VIDEO_OFF -> {
                     //리더에게 카메라 off
                     val btn_camera = findViewById<ImageButton>(R.id.camstudy_btn_camera)
 
-                    isVideo = false
+                    CamStudyService.isVideo = false
                     btn_camera.isSelected = true
                 }
             }

@@ -56,7 +56,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.setting.profile.MyProfileActivity" />
-        <activity android:name=".ui.camstudy.enter.EnterCamstudyActivity" />
+        <activity android:name=".ui.camstudy.enter.EnterCamstudyActivity" android:launchMode="singleInstance"/>
         <activity android:name=".ui.setting.SettingActivity" />
         <activity android:name=".ui.splash.SplashActivity">
             <intent-filter>

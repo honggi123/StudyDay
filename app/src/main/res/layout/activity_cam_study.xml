@@ -28,6 +28,7 @@
                 android:id="@+id/cam_study_felxbox_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_margin="20dp"
                 app:alignContent="center"
                 app:alignItems="center"
                 app:flexDirection="row"

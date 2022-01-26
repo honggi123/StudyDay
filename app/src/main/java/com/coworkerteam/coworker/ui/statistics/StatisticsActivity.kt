@@ -187,6 +187,7 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
                         barEntries.add(BarEntry(x.toFloat(), hour.toFloat()))
 
                         val statistcsDay = statisticsResponse.weekTimeAcheive.get(x).date
+                        Log.d(TAG, "weekTimeAcheive 사이즈 : "+ x.toString())
                         val studyTime =
                             if (statisticsResponse.weekTimeAcheive.get(x).time == null) "없음" else statisticsResponse.weekTimeAcheive.get(
                                 x

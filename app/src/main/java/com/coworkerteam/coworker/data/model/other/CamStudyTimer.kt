@@ -48,7 +48,7 @@ class CamStudyTimer(private var textView: TextView, private var statusImage: Ima
             timer.scheduleAtFixedRate(TimeTask(time), 0, 1000)
         }
 
-        statusImage.isSelected = false
+        statusImage.isSelected = true
     }
 
     //Host에 대한 함수, 쉬기 시작하는 타이머 세팅
@@ -68,7 +68,7 @@ class CamStudyTimer(private var textView: TextView, private var statusImage: Ima
             timer.scheduleAtFixedRate(TimeTask(timerRestTime), 0, 1000)
         }
 
-        statusImage.isSelected = true
+        statusImage.isSelected = false
     }
 
     //호스트가 아닌 다른 타인의 타이머를 변경상태를 적용시키는 함수
@@ -83,7 +83,7 @@ class CamStudyTimer(private var textView: TextView, private var statusImage: Ima
             val time = timerStudyTime
             timer.scheduleAtFixedRate(TimeTask(time), 0, 1000)
 
-            statusImage.isSelected = false
+            statusImage.isSelected = true
 
             //타이머를 일시 중지 상태로 변경
         } else if (status.equals("pause")) {
@@ -95,7 +95,7 @@ class CamStudyTimer(private var textView: TextView, private var statusImage: Ima
                 timer.cancel()
             }
 
-            statusImage.isSelected = true
+            statusImage.isSelected = false
         }
     }
 
@@ -142,6 +142,7 @@ class CamStudyTimer(private var textView: TextView, private var statusImage: Ima
 
             if (isStudyTimer!!) {
                 setTextTime(time)
+                timerStudyTime = time
             } else {
                 timerRestTime = time
             }

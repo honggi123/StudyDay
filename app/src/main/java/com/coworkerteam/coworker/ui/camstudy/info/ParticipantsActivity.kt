@@ -48,9 +48,20 @@ class ParticipantsActivity : BaseActivity<ActivityParticipantsBinding, Participa
     override fun initAfterBinding() {
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
+        //binding 해제
         unbindService(mConnection)
+
+        //서비스랑 메신저 연결 해제
+        val connectMsg = Message.obtain(null, CamStudyService.MSG_CLIENT_DISCNNECT)
+        connectMsg.replyTo = mClientCallback
+
+        try {
+            mServiceCallback!!.send(connectMsg)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     fun init() {
@@ -74,10 +85,11 @@ class ParticipantsActivity : BaseActivity<ActivityParticipantsBinding, Participa
     fun setting(it: ParticipantsResponse) {
         var newAdapter = ParticipantsAdapter(this, mServiceCallback)
         newAdapter.datas = it.participants.toMutableList()
+        newAdapter.isLeader = it.participants[0].nickname == viewModel.getUserNickName()
         viewDataBinding.participantsRv.adapter = newAdapter
 
         val txt_peple = findViewById<TextView>(R.id.camstudy_info_toolbar_peple)
-        val peple = it.participantNum.toString() + " / " + it.maxNum
+        val peple = ""+it.participants.size + " / " + it.maxNum
         txt_peple.text = setTextColor(peple)
     }
 
