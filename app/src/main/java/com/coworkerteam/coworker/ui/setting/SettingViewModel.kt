@@ -30,10 +30,13 @@ class SettingViewModel(private val model: UserRepository) : BaseViewModel() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         it.run {
-                            if(isSuccessful) {
+                            _SettingResponseLiveData.postValue(this)
+                            Log.d(TAG, "meta : " + it.toString())
+
+                            if (isSuccessful || it.code() == 404 || it.code() == 401) {
+                                //로그아웃에 성공하거나, 리프레시 토큰 만료 및 존재안할경우, 회원이 아닐경우에도 로그아웃 시킴 => 다 로그인 유지되면 문제가 되는것들이라
+                                // 로컬에 저장되어있던 정보들 삭제
                                 model.deletePreferencesData()
-                                _SettingResponseLiveData.postValue(this)
-                                Log.d(TAG, "meta : " + it.toString())
                             }
                         }
                     }, {

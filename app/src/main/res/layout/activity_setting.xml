@@ -16,95 +16,183 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/setting_profile"
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/under_line_gray"
-            android:padding="18dp"
-            android:text="프로필 관리"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
-        <TextView
-            android:id="@+id/textView12"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/under_line_gray"
-            android:padding="18dp"
-            android:text="서비스 이용약관"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#F8F8F8"
+                android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView13"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/under_line_gray"
-            android:padding="18dp"
-            android:text="개인정보처리방침"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+                <TextView
+                    android:id="@+id/textView52"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:paddingLeft="15dp"
+                    android:text="내 정보"
+                    android:textColor="#A8A8A8" />
 
-        <TextView
-            android:id="@+id/textView14"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/under_line_gray"
-            android:padding="18dp"
-            android:text="오픈 라이센스 정책"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+                <TextView
+                    android:id="@+id/setting_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:drawableRight="@drawable/ic_baseline_navigate_next_24"
+                    android:elevation="2dp"
+                    android:gravity="center_vertical"
+                    android:padding="15dp"
+                    android:text="프로필 관리"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/textView15"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/under_line_gray"
-            android:padding="18dp"
-            android:text="공지사항"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+                <TextView
+                    android:id="@+id/textView50"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="5dp"
+                    android:paddingLeft="15dp"
+                    android:text="서비스"
+                    android:textColor="#A8A8A8" />
 
-        <TextView
-            android:id="@+id/setting_to_developer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/under_line_gray"
-            android:padding="18dp"
-            android:text="개발자에게 문의"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#F8F8F8"
+                    android:elevation="2dp"
+                    android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView112"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/under_line_gray"
-            android:padding="18dp"
-            android:text="앱 버전 1.0.1"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+                    <TextView
+                        android:id="@+id/textView15"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:drawableRight="@drawable/ic_baseline_navigate_next_24"
+                        android:gravity="center_vertical"
+                        android:padding="15dp"
+                        android:text="공지사항"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/setting_logout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/under_line_gray"
-            android:padding="18dp"
-            android:text="로그아웃"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+                    <TextView
+                        android:id="@+id/textView13"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:background="@color/white"
+                        android:drawableRight="@drawable/ic_baseline_navigate_next_24"
+                        android:gravity="center_vertical"
+                        android:padding="15dp"
+                        android:text="개인정보처리방침"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/setting_withdrawal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/under_line_gray"
-            android:padding="18dp"
-            android:text="회원탈퇴"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+                    <TextView
+                        android:id="@+id/textView12"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:background="@color/white"
+                        android:drawableRight="@drawable/ic_baseline_navigate_next_24"
+                        android:gravity="center_vertical"
+                        android:padding="15dp"
+                        android:text="서비스 이용약관"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/textView14"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:background="@color/white"
+                        android:drawableRight="@drawable/ic_baseline_navigate_next_24"
+                        android:gravity="center_vertical"
+                        android:padding="15dp"
+                        android:text="오픈 라이센스 정책"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/setting_to_developer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:background="@color/white"
+                        android:drawableRight="@drawable/ic_baseline_navigate_next_24"
+                        android:gravity="center_vertical"
+                        android:padding="15dp"
+                        android:text="개발자에게 문의"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/textView112"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:background="@color/white"
+                        android:drawableRight="@drawable/ic_baseline_navigate_next_24"
+                        android:gravity="center_vertical"
+                        android:padding="15dp"
+                        android:text="앱 버전 1.0.1"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/textView48"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="5dp"
+                    android:paddingLeft="15dp"
+                    android:text="계정설정"
+                    android:textColor="#A8A8A8" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="30dp"
+                    android:background="#F8F8F8"
+                    android:elevation="2dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/setting_logout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:background="@color/white"
+                        android:drawableRight="@drawable/ic_baseline_navigate_next_24"
+                        android:gravity="center_vertical"
+                        android:padding="15dp"
+                        android:text="로그아웃"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/setting_withdrawal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:background="@color/white"
+                        android:drawableRight="@drawable/ic_baseline_navigate_next_24"
+                        android:gravity="center_vertical"
+                        android:padding="15dp"
+                        android:text="회원탈퇴"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
 
     </LinearLayout>
 </layout>

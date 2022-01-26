@@ -31,11 +31,13 @@ class LoginViewModel(private val model: UserRepository) : BaseViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     it.run {
+                        _LoginResponseLiveData.postValue(this)
+
                         if (this.isSuccessful) {
+                            //로그인이 성공적으로 되었으면, User정보를 로컬에 저장한다.
                             Log.d(TAG, "meta : " + it.toString())
                             val user = this.body()!!.result[0]
 
-                            _LoginResponseLiveData.postValue(this)
                             model.setPreferencesData(
                                 user.accessToken,
                                 user.refreshToken,

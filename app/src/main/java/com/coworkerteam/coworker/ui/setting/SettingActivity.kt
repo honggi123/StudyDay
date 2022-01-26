@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.coworkerteam.coworker.BuildConfig
@@ -32,6 +33,7 @@ import com.google.android.gms.common.api.ApiException
 import com.kakao.sdk.user.UserApiClient
 import com.nhn.android.naverlogin.OAuthLogin
 import okhttp3.OkHttpClient
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -67,9 +69,28 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
             //로그아웃이 성공적으로 이뤄짐
             if (it.isSuccessful) {
                 //로그인으로 이동
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
+                moveLogin()
+            } else if (it.code() == 400) {
+                //로그인에 실패한 원인이 클라이언트 측에 있을 경우
+                val errorMessage = JSONObject(it.errorBody()?.string())
+
+                //400번대 에러로 로그인이 실패했을 경우, 사용자에게 알려준다.
+                Toast.makeText(this, "로그아웃에 실패했습니다. 나중 다시 시도해주세요", Toast.LENGTH_SHORT).show()
+
+            } else if (it.code() == 404 || it.code() == 401) {
+                //404 : 존재하지 않는 회원이나 존재하지 않은 리프레시 토큰 401 : 만료된 리프레쉬 토큰일 경우
+                val errorMessage = JSONObject(it.errorBody()?.string())
+
+                //회원이 아니거나, 존재하지 않는 리프레시 토큰, 만료된 리프레시 토큰 일경우 어차피 다시 로그인 시켜야함
+                moveLogin()
+
+            } else if (it.code() >= 500) {
+                //서비스 서버에 문제가 있을 경우
+                showServerErrorDialog()
+            } else {
+                //그외 기타적인 사유가 있을 경우 로그 출력
+                val errorMessage = JSONObject(it.errorBody()?.string())
+                Log.e(TAG, errorMessage.getString("message"))
             }
         })
     }
@@ -88,9 +109,17 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
 
         txt_to_developer.setOnClickListener(View.OnClickListener {
             val intent = Intent(Intent.ACTION_SENDTO)
-            val emailTitle = "["+getString(R.string.app_name)+"] 서비스에 대한 문의"
-            val emailContent = String.format("App Version : %s \n Android(SDK) : %d(%s) \n 내용 : ", BuildConfig.VERSION_NAME, Build.VERSION.SDK_INT, Build.VERSION.RELEASE)
-            val uri = getString(R.string.team_email)+"?subject="+Uri.encode(emailTitle)+"&body="+Uri.encode(emailContent)
+            val emailTitle = "[" + getString(R.string.app_name) + "] 서비스에 대한 문의"
+            val emailContent = String.format(
+                "App Version : %s \n Android(SDK) : %d(%s) \n 내용 : ",
+                BuildConfig.VERSION_NAME,
+                Build.VERSION.SDK_INT,
+                Build.VERSION.RELEASE
+            )
+            val uri =
+                getString(R.string.team_email) + "?subject=" + Uri.encode(emailTitle) + "&body=" + Uri.encode(
+                    emailContent
+                )
             intent.data = Uri.parse(uri)
 
             startActivity(Intent.createChooser(intent, null))
@@ -155,7 +184,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
 
         mGoogleSignInClient.signOut()
             .addOnCompleteListener(this) {
-                Log.d(TAG,"GoogleLogout 성공")
+                Log.d(TAG, "GoogleLogout 성공")
             }
     }
 
@@ -183,6 +212,13 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
         );
 
         mOAuthLoginModule.logout(this);
+    }
+
+    fun moveLogin() {
+        //로그인으로 이동
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
 }

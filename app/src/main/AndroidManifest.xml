@@ -25,7 +25,19 @@
         android:roundIcon="@mipmap/ic_studyday_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Coworker">
-        <activity android:name=".ui.study.memberlist.MemberListActivity"/>
+        <activity
+            android:name=".ui.setting.info.NoticeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.setting.info.OpenLicenseActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.setting.info.PrivacyPolicyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.setting.info.TermsOfServiceActivity"
+            android:exported="false" />
+        <activity android:name=".ui.study.memberlist.MemberListActivity" />
         <activity android:name=".ui.camstudy.info.MyStudyInfoActivity" />
         <activity android:name=".ui.camstudy.info.StudyInfoActivity" />
         <activity android:name=".ui.camstudy.info.ParticipantsActivity" />
@@ -56,7 +68,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.setting.profile.MyProfileActivity" />
-        <activity android:name=".ui.camstudy.enter.EnterCamstudyActivity" android:launchMode="singleInstance"/>
+        <activity
+            android:name=".ui.camstudy.enter.EnterCamstudyActivity"
+            android:launchMode="singleInstance" />
         <activity android:name=".ui.setting.SettingActivity" />
         <activity android:name=".ui.splash.SplashActivity">
             <intent-filter>

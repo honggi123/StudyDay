@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.databinding.ActivityLoginBinding
@@ -18,6 +19,7 @@ import com.google.android.gms.common.api.ApiException
 import com.kakao.sdk.user.UserApiClient
 import com.nhn.android.naverlogin.OAuthLogin
 import com.nhn.android.naverlogin.OAuthLoginHandler
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -47,8 +49,27 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
 
     override fun initDataBinding() {
         viewModel.LoginResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            val isCategory = it.body()!!.result[0].isInterest
-            moveActivity(isCategory)
+            if (it.isSuccessful) {
+                //로그인에 성공했을 경우
+                val isCategory = it.body()!!.result[0].isInterest
+                moveActivity(isCategory)
+
+            } else if (it.code() == 400) {
+                //로그인에 실패한 원인이 클라이언트 측에 있을 경우
+                val errorMessage = JSONObject(it.errorBody()?.string())
+                Log.e(TAG, errorMessage.getString("message"))
+
+                //400번대 에러로 로그인이 실패했을 경우, 사용자에게 알려준다.
+                Toast.makeText(this,"로그인에 실패했습니다. 나중에 다시 시도해주세요.",Toast.LENGTH_SHORT).show()
+
+            } else if (it.code() >= 500) {
+                //서비스 서버에 문제가 있을 경우
+                showServerErrorDialog()
+            } else {
+                //그외 기타적인 사유가 있을 경우 로그 출력
+                val errorMessage = JSONObject(it.errorBody()?.string())
+                Log.e(TAG, errorMessage.getString("message"))
+            }
         })
     }
 
