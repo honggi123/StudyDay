@@ -26,6 +26,10 @@ import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.category.CategoryViewModel
 import com.coworkerteam.coworker.ui.login.LoginActivity
 import com.coworkerteam.coworker.ui.setting.account.WithdrawalActivity
+import com.coworkerteam.coworker.ui.setting.info.NoticeActivity
+import com.coworkerteam.coworker.ui.setting.info.OpenLicenseActivity
+import com.coworkerteam.coworker.ui.setting.info.PrivacyPolicyActivity
+import com.coworkerteam.coworker.ui.setting.info.TermsOfServiceActivity
 import com.coworkerteam.coworker.ui.setting.profile.MyProfileActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -60,6 +64,8 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_new_24) // 홈버튼 이미지 변경
         supportActionBar?.title = "설정"
+
+        viewDataBinding.activitiy = this
 
         init()
     }
@@ -219,6 +225,30 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    fun moveOpenLicense(){
+        //오픈 라이센스
+        val intent = Intent(this, OpenLicenseActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun moveNotice(){
+        //공지사항으로 이동
+        val intent = Intent(this, NoticeActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun movePrivacyPolicy(){
+        //개인정보 약관 이동
+        val intent = Intent(this, PrivacyPolicyActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun moveTermsOfService(){
+        //서비스 이용약관 이등
+        val intent = Intent(this, TermsOfServiceActivity::class.java)
+        startActivity(intent)
     }
 
 }

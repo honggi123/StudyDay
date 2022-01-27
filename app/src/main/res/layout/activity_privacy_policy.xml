@@ -6,6 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".ui.setting.info.PrivacyPolicyActivity">
 
+    <include
+        android:id="@+id/main_toolber"
+        layout="@layout/toolbar_main"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <WebView
         android:id="@+id/privacy_policy_webview"
         android:layout_width="0dp"
@@ -13,5 +20,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/main_toolber" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

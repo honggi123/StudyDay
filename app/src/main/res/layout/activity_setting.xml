@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="activitiy"
+            type="com.coworkerteam.coworker.ui.setting.SettingActivity" />
+    </data>
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -77,7 +84,8 @@
                         android:padding="15dp"
                         android:text="공지사항"
                         android:textColor="@color/black"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        android:onClick="@{()->activitiy.moveNotice()}"/>
 
                     <TextView
                         android:id="@+id/textView13"
@@ -90,7 +98,8 @@
                         android:padding="15dp"
                         android:text="개인정보처리방침"
                         android:textColor="@color/black"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        android:onClick="@{()->activitiy.movePrivacyPolicy()}"/>
 
                     <TextView
                         android:id="@+id/textView12"
@@ -103,7 +112,8 @@
                         android:padding="15dp"
                         android:text="서비스 이용약관"
                         android:textColor="@color/black"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        android:onClick="@{()->activitiy.moveTermsOfService()}"/>
 
                     <TextView
                         android:id="@+id/textView14"
@@ -116,7 +126,8 @@
                         android:padding="15dp"
                         android:text="오픈 라이센스 정책"
                         android:textColor="@color/black"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        android:onClick="@{()->activitiy.moveOpenLicense()}"/>
 
                     <TextView
                         android:id="@+id/setting_to_developer"

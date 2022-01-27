@@ -114,7 +114,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="오늘의 할일이 없습니다."
+                android:text="등록된 할일이 없습니다."
                 android:visibility="@{todolistResponse.result.TheDayTodo.size()&lt;1?View.VISIBLE:View.GONE}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline360"
                 app:layout_constraintStart_toStartOf="@+id/guideline362"

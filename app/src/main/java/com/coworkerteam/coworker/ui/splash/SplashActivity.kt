@@ -2,6 +2,7 @@ package com.coworkerteam.coworker.ui.splash
 import android.widget.Toast
 
 import android.content.Intent
+import android.util.Log
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
 import com.coworkerteam.coworker.data.local.prefs.PreferencesHelper
@@ -18,6 +19,8 @@ import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
+
+    val TAG = "SplashActivity"
 
     override val layoutResourceID: Int
         get() = R.layout.activity_splash
@@ -50,7 +53,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
                 //서버 내부오류
                 showServerErrorDialog()
             }else{
-                Toast.makeText(getApplicationContext(), it.message(),Toast.LENGTH_SHORT).show()
+                Log.e(TAG,it.errorBody()!!.string())
             }
         })
     }
