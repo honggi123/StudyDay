@@ -49,6 +49,12 @@ import java.security.cert.X509Certificate
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
+import android.content.pm.PackageManager
+
+import android.content.pm.PackageInfo
+
+
+
 
 
 class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>() {
@@ -66,6 +72,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
         supportActionBar?.title = "설정"
 
         viewDataBinding.activitiy = this
+        viewDataBinding.appVersion = getVersion(this)
 
         init()
     }
@@ -105,15 +112,8 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
     }
 
     fun init() {
-        val txt_profile: TextView = findViewById(R.id.setting_profile)
-        val txt_to_developer: TextView = findViewById(R.id.setting_to_developer)
-        val txt_logout: TextView = findViewById(R.id.setting_logout)
-        val txt_wirhdrawal: TextView = findViewById(R.id.setting_withdrawal)
 
-        //테스트
-        val app: TextView = findViewById(R.id.textView112)
-
-        txt_to_developer.setOnClickListener(View.OnClickListener {
+        viewDataBinding.settingToDeveloper.setOnClickListener(View.OnClickListener {
             val intent = Intent(Intent.ACTION_SENDTO)
             val emailTitle = "[" + getString(R.string.app_name) + "] 서비스에 대한 문의"
             val emailContent = String.format(
@@ -123,21 +123,19 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
                 Build.VERSION.RELEASE
             )
             val uri =
-                getString(R.string.team_email) + "?subject=" + Uri.encode(emailTitle) + "&body=" + Uri.encode(
-                    emailContent
-                )
+                getString(R.string.team_email) + "?subject=" + Uri.encode(emailTitle) + "&body=" + Uri.encode(emailContent,"\\n")
             intent.data = Uri.parse(uri)
 
             startActivity(Intent.createChooser(intent, null))
         })
 
-        txt_profile.setOnClickListener(View.OnClickListener {
+        viewDataBinding.settingProfile.setOnClickListener(View.OnClickListener {
             val intent = Intent(this, MyProfileActivity::class.java)
             startActivity(intent)
         })
 
 
-        txt_logout.setOnClickListener(View.OnClickListener {
+        viewDataBinding.settingLogout.setOnClickListener(View.OnClickListener {
             val mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_logout, null)
             val mBuilder = AlertDialog.Builder(this).setView(mDialogView)
             val builder = mBuilder.show()
@@ -157,7 +155,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
             })
         })
 
-        txt_wirhdrawal.setOnClickListener(View.OnClickListener {
+        viewDataBinding.settingWithdrawal.setOnClickListener(View.OnClickListener {
             val intent = Intent(this, WithdrawalActivity::class.java)
             startActivity(intent)
         })
@@ -218,6 +216,17 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
         );
 
         mOAuthLoginModule.logout(this);
+    }
+
+    fun getVersion(context: Context): String? {
+        var versionName = ""
+        try {
+            val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            versionName = pInfo.versionName + ""
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+        return versionName
     }
 
     fun moveLogin() {

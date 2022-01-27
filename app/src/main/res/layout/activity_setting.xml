@@ -7,6 +7,9 @@
         <variable
             name="activitiy"
             type="com.coworkerteam.coworker.ui.setting.SettingActivity" />
+        <variable
+            name="appVersion"
+            type="String" />
     </data>
 
 
@@ -151,7 +154,7 @@
                         android:drawableRight="@drawable/ic_baseline_navigate_next_24"
                         android:gravity="center_vertical"
                         android:padding="15dp"
-                        android:text="앱 버전 1.0.1"
+                        android:text='@{"앱 버전 "+appVersion}'
                         android:textColor="@color/black"
                         android:textSize="18sp" />
                 </LinearLayout>

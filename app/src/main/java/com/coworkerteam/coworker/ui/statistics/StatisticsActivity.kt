@@ -177,7 +177,7 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
                 if (statisticsResponse.weekTimeAcheive != null) {
                     viewDataBinding.timeAVG =
                         it.body()!!.weekTimeAVG.hour + "시간 " + it.body()!!.weekTimeAVG.min + "분"
-                    viewDataBinding.todoAVG = it.body()!!.weekTodoAVG + "%"
+                    viewDataBinding.todoAVG = if(it.body()!!.weekTodoAVG==null) "없음" else it.body()!!.weekTodoAVG+"%"
 
                     Log.d(TAG, statisticsResponse.weekTimeAcheive.size.toString())
                     var x = 0
@@ -207,7 +207,7 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
                 } else if (statisticsResponse.monthTimeAcheive != null) {
                     viewDataBinding.timeAVG =
                         it.body()!!.monthTimeAVG.hour + "시간 " + it.body()!!.monthTimeAVG.min + "분"
-                    viewDataBinding.todoAVG = it.body()!!.monthTodoAVG + "%"
+                    viewDataBinding.todoAVG = if(it.body()!!.monthTodoAVG==null) "없음" else it.body()!!.monthTodoAVG+"%"
 
                     var x = 0
                     Log.d(TAG, statisticsResponse.monthTimeAcheive.size.toString())

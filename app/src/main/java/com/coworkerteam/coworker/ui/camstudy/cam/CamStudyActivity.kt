@@ -59,12 +59,13 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         setSupportActionBar(main_toolbar) // 툴바를 액티비티의 앱바로 지정
         supportActionBar?.setDisplayShowTitleEnabled(false) // 툴바에 타이틀 안보이게
 
-        init()
-
+        //받아온값 세팅
         var intent = Intent(this, CamStudyService::class.java)
         intent.putExtra("studyInfo", studyInfo)
         startForegroundService(intent)
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
+
+        init()
 
         //레이아웃 다시 설정
         addCamStudyItemView()
@@ -133,6 +134,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         val btn_play = findViewById<ImageButton>(R.id.camstudy_btn_play)
         val btn_chat = findViewById<ImageButton>(R.id.camstudy_btn_chat)
         val btn_more = findViewById<ImageButton>(R.id.camstudy_btn_more)
+        
+        txt_toolbarName.text = studyInfo?.result?.studyInfo?.name?:""
 
         btn_end.setOnClickListener(View.OnClickListener {
             //종료하기 캠스터디
