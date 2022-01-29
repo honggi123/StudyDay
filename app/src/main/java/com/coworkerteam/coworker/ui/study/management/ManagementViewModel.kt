@@ -16,44 +16,16 @@ import retrofit2.Response
 class ManagementViewModel(private val model: UserRepository) : BaseViewModel()  {
     private val TAG = "ManagementViewModel"
 
-//    //내 스터디
-//    private val _ManagementResponseLiveData = MutableLiveData<Response<MyStudyManageResponse>>()
-//    val ManagementResponseLiveData: LiveData<Response<MyStudyManageResponse>>
-//        get() = _ManagementResponseLiveData
-
     //내 스터디
-    private val _ApiResponseLiveData = MutableLiveData<Response<ApiRequest>>()
-    val ApiResponseLiveData: LiveData<Response<ApiRequest>>
-        get() = _ApiResponseLiveData
+    private val _StudyDeleteResponseLiveData = MutableLiveData<Response<ApiRequest>>()
+    val StudyDeleteResponseLiveData: LiveData<Response<ApiRequest>>
+        get() = _StudyDeleteResponseLiveData
 
     //내스터디 페이징
     private val _MyStudyManagementPagingData = model.getMyStudyManagePagingData()
         .cachedIn(viewModelScope) as MutableLiveData<PagingData<MyStudyManagePagingResponse.Result.Group>>
     val MyStudyManagementPagingData: LiveData<PagingData<MyStudyManagePagingResponse.Result.Group>>
         get() = _MyStudyManagementPagingData
-
-//    fun getManagementData() {
-//        val accessToken = model.getAccessToken()
-//        val nickname = model.getCurrentUserName()
-//
-//        if (!accessToken.isNullOrEmpty() && !nickname.isNullOrEmpty()) {
-//            addDisposable(
-//                model.getMyStudyManageData(accessToken, nickname)
-//                    .subscribeOn(Schedulers.io())
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribe({
-//                        it.run {
-//                            _ManagementResponseLiveData.postValue(this)
-//                            Log.d(TAG, "meta : " + it.toString())
-//                        }
-//                    }, {
-//                        Log.d(TAG, "response error, message : ${it.message}")
-//                    })
-//            )
-//        }else{
-//            Log.d(TAG, "getManagementData:: accessToken 또는 nickname 값이 없습니다.")
-//        }
-//    }
 
     fun setDeleteStudyData(studyIdx : Int) {
         val accessToken = model.getAccessToken()
@@ -65,15 +37,32 @@ class ManagementViewModel(private val model: UserRepository) : BaseViewModel()  
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         it.run {
-                            _ApiResponseLiveData.postValue(this)
-                            Log.d(TAG, "meta : " + it.toString())
+                            Log.d(TAG, "meta : $it")
+
+                            when {
+                                it.code() == 401 -> {
+                                    //액세스토큰이 만료된 경우
+                                    Log.d(TAG, "액세스토큰이 만료된 경우")
+
+                                    //액세스 토큰 재발급
+                                    getReissuanceToken(TAG,model,setDeleteStudyData(studyIdx))
+                                }
+                                it.code() > 500 -> {
+                                    //서비스 서버에 문제가 있을 경우
+                                    setServiceError(TAG, it.errorBody())
+                                }
+                                else -> {
+                                    //그 외에는 값 Activity에 전달 ( 200, 400번대의 경우 )
+                                    _StudyDeleteResponseLiveData.postValue(this)
+                                }
+                            }
                         }
                     }, {
                         Log.d(TAG, "response error, message : ${it.message}")
                     })
             )
         }else{
-            Log.d(TAG, "getManagementData:: accessToken 또는 nickname 값이 없습니다.")
+            Log.d(TAG, "setDeleteStudyData:: accessToken 또는 nickname 값이 없습니다.")
         }
     }
 
@@ -87,15 +76,32 @@ class ManagementViewModel(private val model: UserRepository) : BaseViewModel()  
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         it.run {
-                            _ApiResponseLiveData.postValue(this)
-                            Log.d(TAG, "meta : " + it.toString())
+                            Log.d(TAG, "meta : $it")
+
+                            when {
+                                it.code() == 401 -> {
+                                    //액세스토큰이 만료된 경우
+                                    Log.d(TAG, "액세스토큰이 만료된 경우")
+
+                                    //액세스 토큰 재발급
+                                    getReissuanceToken(TAG,model,setWithdrawStudyData(studyIdx))
+                                }
+                                it.code() > 500 -> {
+                                    //서비스 서버에 문제가 있을 경우
+                                    setServiceError(TAG, it.errorBody())
+                                }
+                                else -> {
+                                    //그 외에는 값 Activity에 전달 ( 200, 400번대의 경우 )
+                                    _StudyDeleteResponseLiveData.postValue(this)
+                                }
+                            }
                         }
                     }, {
                         Log.d(TAG, "response error, message : ${it.message}")
                     })
             )
         }else{
-            Log.d(TAG, "getManagementData:: accessToken 또는 nickname 값이 없습니다.")
+            Log.d(TAG, "setWithdrawStudyData:: accessToken 또는 nickname 값이 없습니다.")
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.coworkerteam.coworker.ui.category
 
 import android.content.Intent
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 
@@ -9,6 +10,7 @@ import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.databinding.ActivityCategoryBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.main.MainActivity
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CategoryActivity : BaseActivity<ActivityCategoryBinding, CategoryViewModel>() {
@@ -27,9 +29,26 @@ class CategoryActivity : BaseActivity<ActivityCategoryBinding, CategoryViewModel
     override fun initDataBinding() {
         viewModel.CategoryResponseLiveData.observe(this, androidx.lifecycle.Observer {
             //카테고리가 성공적으로 선택
-            if (it.isSuccessful) {
-                //메인으로 이동
-                moveMain()
+            when {
+                it.isSuccessful -> {
+                    //메인으로 이동
+                    moveMain()
+                }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //400번대 에러로 카테고리 설정이 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"카테고리 설정을 실패했습니다.",Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 404 -> {
+                    //존재하지 않은 회원일 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    moveLogin()
+                }
             }
         })
     }

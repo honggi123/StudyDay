@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -15,6 +16,7 @@ import com.coworkerteam.coworker.databinding.ActivityEnterCamstudyBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.camstudy.CamStudyCategotyAdapter
 import com.coworkerteam.coworker.ui.camstudy.cam.CamStudyActivity
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.webrtc.*
 import pub.devrel.easypermissions.EasyPermissions
@@ -87,15 +89,59 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
 
     override fun initDataBinding() {
         viewModel.EnterCamstudyResponseLiveData.observe(this, Observer {
-            if (it.isSuccessful) {
-                var intent = Intent(this, CamStudyActivity::class.java)
-                intent.putExtra("studyInfo", dataIntent)
-                CamStudyService.isVideo = isVideo
-                CamStudyService.isAudio = isAudio
-                CamStudyService.isPlay = false
-                CamStudyService.timer = it.body()!!.result.studyTimeSec
-                startActivity(intent)
-                finish()
+            when {
+                it.isSuccessful -> {
+                    var intent = Intent(this, CamStudyActivity::class.java)
+                    intent.putExtra("studyInfo", dataIntent)
+                    CamStudyService.isVideo = isVideo
+                    CamStudyService.isAudio = isAudio
+                    CamStudyService.isPlay = false
+                    CamStudyService.timer = it.body()!!.result.studyTimeSec
+                    startActivity(intent)
+                    finish()
+                }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //400번대 에러로 스터디 입장페이지 진입 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"스터디에 입장할 수 없습니다. 나중 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 403 -> {
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when(errorMessage.getInt("code")){
+                        -3 ->{
+                            //참여 가능 인원을 초과하여 입장할 수 없는 경우
+                            Toast.makeText(this,"현재 참여가능한 인원이 가득 찼습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                        -4 ->{
+                            //해당 스터디에 강제 탈퇴 당해 더 이상 입장할 수 없는 경우
+                            Toast.makeText(this,"강제 퇴장당한 스터디입니다. 입장할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                        -5 ->{
+                            //참여중인 스터디가 있을 경우
+                            Toast.makeText(this,"이미 공부중인 스터디가 있습니다. 바로 참여할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                it.code() == 404 -> {
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when(errorMessage.getInt("code")){
+                        -2 ->{
+                            //존재하지 않는 회원인 경우
+                            moveLogin()
+                        }
+                        -3 ->{
+                            //존재하지 않는 스터디일 경우
+                            Toast.makeText(this,"더이상 존재하지 않는 스터디입니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             }
         })
     }

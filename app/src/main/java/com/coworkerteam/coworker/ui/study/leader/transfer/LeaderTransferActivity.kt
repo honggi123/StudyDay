@@ -19,6 +19,7 @@ import com.coworkerteam.coworker.ui.category.CategoryViewModel
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.button.MaterialButtonToggleGroup
 import okhttp3.OkHttpClient
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -58,20 +59,114 @@ class LeaderTransferActivity :
 
     override fun initDataBinding() {
         viewModel.StudyMemberResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            if (it.isSuccessful) {
-                init_rv(it.body()!!)
+            when {
+                it.isSuccessful -> {
+                    init_rv(it.body()!!)
+                }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //400번대 에러로 멤버 데이터 가져오기 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"스터디 멤버 리스트를 가져오는 것을 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 404 -> {
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when(errorMessage.getInt("code")){
+                        -2 ->{
+                            //존재하지 않는 회원인 경우
+                            moveLogin()
+                        }
+                        -3 ->{
+                            //존재하지 않는 스터디일 경우
+                            Toast.makeText(this,"더이상 존재하지 않는 스터디입니다.", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                    }
+                }
             }
         })
 
         viewModel.ForcedExitResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            if (it.isSuccessful) {
-                Toast.makeText(getApplicationContext(), "성공적으로 추방했습니다.", Toast.LENGTH_SHORT).show()
+            when {
+                it.isSuccessful -> {
+                    Toast.makeText(this, "성공적으로 추방했습니다.", Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //400번대 에러로 강제 탈퇴 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"해당 스터디 멤버 강제추방 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 403 -> {
+                    //리더가 아니라서 강제 탈퇴 시킬 수 없는 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //403번대 에러로 강제 탈퇴 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"강제추방 권한이 없습니다.", Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 404 -> {
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when(errorMessage.getInt("code")){
+                        -2 ->{
+                            //존재하지 않는 회원인 경우
+                            moveLogin()
+                        }
+                        -3 ->{
+                            //존재하지 않는 스터디일 경우
+                            Toast.makeText(this,"더이상 존재하지 않는 스터디입니다.", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                    }
+                }
             }
         })
 
         viewModel.LeaderTransferResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            if (it.isSuccessful) {
-                finish()
+            when {
+                it.isSuccessful -> {
+                    finish()
+                }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //400번대 에러로 리더 양도 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"스터디 리더 양도하는 것을 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 403 -> {
+                    //리더 양도 권한이 없는 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //403번대 에러로 리더 양도 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"리더 양도할 권한이 없습니다.", Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 404 -> {
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when(errorMessage.getInt("code")){
+                        -3 ->{
+                            //존재하지 않는 스터디일 경우
+                            Toast.makeText(this,"더이상 존재하지 않는 스터디입니다.", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                        -5 ->{
+                            //위임 받을 회원이 해당 스터디 멤버가 아닌 경우
+                            Toast.makeText(this,"해당 회원은 더이상 해당 스터디 멤버가 아닙니다. 다른사람에게 위임해주세요.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             }
         })
     }

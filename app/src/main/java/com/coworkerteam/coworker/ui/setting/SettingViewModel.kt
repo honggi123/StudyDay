@@ -30,13 +30,23 @@ class SettingViewModel(private val model: UserRepository) : BaseViewModel() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         it.run {
-                            _SettingResponseLiveData.postValue(this)
-                            Log.d(TAG, "meta : " + it.toString())
+                            Log.d(TAG, "meta : $it")
 
-                            if (isSuccessful || it.code() == 404 || it.code() == 401) {
+                            if (isSuccessful || it.code() == 401 || it.code() == 404) {
                                 //로그아웃에 성공하거나, 리프레시 토큰 만료 및 존재안할경우, 회원이 아닐경우에도 로그아웃 시킴 => 다 로그인 유지되면 문제가 되는것들이라
                                 // 로컬에 저장되어있던 정보들 삭제
                                 model.deletePreferencesData()
+                            }
+
+                            when {
+                                it.code() > 500 -> {
+                                    //서비스 서버에 문제가 있을 경우
+                                    setServiceError(TAG,it.errorBody())
+                                }
+                                else -> {
+                                    //그 외에는 값 Activity에 전달 ( 200, 400번대의 경우 )
+                                    _SettingResponseLiveData.postValue(this)
+                                }
                             }
                         }
                     }, {
@@ -44,7 +54,7 @@ class SettingViewModel(private val model: UserRepository) : BaseViewModel() {
                     })
             )
         } else {
-            Log.d(TAG, "getMyProfileData:: accessToken 또는 nickname 값이 없습니다.")
+            Log.d(TAG, "setLogoutData:: accessToken 또는 nickname 값이 없습니다.")
         }
     }
 

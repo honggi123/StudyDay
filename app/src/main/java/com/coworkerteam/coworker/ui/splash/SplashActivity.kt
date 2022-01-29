@@ -1,4 +1,5 @@
 package com.coworkerteam.coworker.ui.splash
+
 import android.widget.Toast
 
 import android.content.Intent
@@ -15,12 +16,12 @@ import com.github.ybq.android.spinkit.sprite.Sprite
 import com.github.ybq.android.spinkit.style.CubeGrid
 import com.github.ybq.android.spinkit.style.DoubleBounce
 import com.github.ybq.android.spinkit.style.Wave
+import org.json.JSONObject
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
-
-    val TAG = "SplashActivity"
+    private val TAG = "SplashActivity"
 
     override val layoutResourceID: Int
         get() = R.layout.activity_splash
@@ -34,57 +35,56 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     override fun initDataBinding() {
         viewModel.AutoLoginResponseLiveData.observe(this, androidx.lifecycle.Observer {
             //자동로그인 성공적으로 되었는지 판단
-            if(it.isSuccessful){
-                //카테고리를 선택했었는지에 대한 여부
-                if(it.body()!!.result.isInterest){
-                    //메인으로 이동
-                    moveMain()
-                }else{
-                    //카테고리 선택하러 이동
-                    moveCategory()
+            when {
+                it.isSuccessful -> {
+                    //카테고리를 선택했었는지에 대한 여부
+                    if (it.body()!!.result.isInterest) {
+                        //메인으로 이동
+                        moveMain()
+                    } else {
+                        //카테고리 선택하러 이동
+                        moveCategory()
+                    }
                 }
-            }else if(it.code() == 401){
-                //refreshToken이 만료되었을 경우, 로그인 페이지로 이동
-                moveLogin()
-            }else if(it.code() == 404){
-                //유효하지 않은 refreshToken,없는 유저인 경우 로그인 페이지로 이동
-                moveLogin()
-            }else if(it.code() >= 500){
-                //서버 내부오류
-                showServerErrorDialog()
-            }else{
-                Log.e(TAG,it.errorBody()!!.string())
+                else -> {
+                    //400번대 에러 -> 클라이언트의 문제일 경우가 높음(안드)
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //400번대 에러 시 로그인 페이지로 이동
+                    moveLogin()
+                }
             }
         })
     }
 
     override fun initAfterBinding() {
         //저장되어 있는 리프레쉬 토큰이 있다면
-        if(!viewModel.getRefreshToken().isNullOrEmpty()){
+        if (!viewModel.getRefreshToken().isNullOrEmpty()) {
             viewModel.getAutoLoginData()
-        }else{
+        } else {
             //없다면 어플을 다시 깔거나, 신규회원이므로 로그인 화면
             moveLogin()
         }
     }
 
     //로그인 페이지로 이동하는 메소드
-    fun moveLogin(){
-        var intent = Intent(this,LoginActivity::class.java)
+    private fun moveLogin() {
+        var intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()
     }
 
     //메인페이지로 이동하는 메소드
-    fun moveMain(){
-        var intent = Intent(this,MainActivity::class.java)
+    private fun moveMain() {
+        var intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
     }
 
     //카테고리로 이동하는 메소드
-    fun moveCategory(){
-        var intent = Intent(this,CategoryActivity::class.java)
+    private fun moveCategory() {
+        var intent = Intent(this, CategoryActivity::class.java)
         startActivity(intent)
         finish()
     }

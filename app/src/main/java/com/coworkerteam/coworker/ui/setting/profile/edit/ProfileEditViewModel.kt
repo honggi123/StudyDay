@@ -36,20 +36,40 @@ class ProfileEditViewModel(private val model: UserRepository) : BaseViewModel() 
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
+                        Log.d(TAG, "meta : $it")
+
                         it.run {
                             if(isSuccessful){
+                                //요청에 성공했을 경우 로컬에 저장되어있던 값을 변경해준다.
                                 model.setCurrentUserName(changNickname)
                                 model.setCurrentUserProfilePicUrl(imgUrl)
                             }
-                            _ProfileEditResponseLiveData.postValue(this)
-                            Log.d(TAG, "meta : " + it.toString())
+
+                            when {
+                                it.code() == 401 -> {
+                                    //액세스토큰이 만료된 경우
+                                    Log.d(TAG, "액세스토큰이 만료된 경우")
+
+                                    //액세스 토큰 재발급
+                                    getReissuanceToken(TAG,model,setProfileEditData(changNickname, category, imgUrl))
+                                }
+                                it.code() > 500 -> {
+                                    //서비스 서버에 문제가 있을 경우
+                                    setServiceError(TAG, it.errorBody())
+                                }
+                                else -> {
+                                    //그 외에는 값 Activity에 전달 ( 200, 400번대의 경우 )
+                                    _ProfileEditResponseLiveData.postValue(this)
+                                }
+                            }
+
                         }
                     }, {
                         Log.d(TAG, "response error, message : ${it.message}")
                     })
             )
         } else {
-            Log.d(TAG, "getProfileEditData:: accessToken 또는 nickname 값이 없습니다.")
+            Log.d(TAG, "setProfileEditData:: accessToken 또는 nickname 값이 없습니다.")
         }
     }
 
@@ -65,8 +85,26 @@ class ProfileEditViewModel(private val model: UserRepository) : BaseViewModel() 
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         it.run {
-                            _NicknameCheckResponseLiveData.postValue(this)
-                            Log.d(TAG, "meta : " + it.toString())
+                            Log.d(TAG, "meta : $it")
+
+                            when {
+                                it.code() == 401 -> {
+                                    //액세스토큰이 만료된 경우
+                                    Log.d(TAG, "액세스토큰이 만료된 경우")
+
+                                    //액세스 토큰 재발급
+                                    getReissuanceToken(TAG,model,getNicknameCheckData(changNickname))
+                                }
+                                it.code() > 500 -> {
+                                    //서비스 서버에 문제가 있을 경우
+                                    setServiceError(TAG, it.errorBody())
+                                }
+                                else -> {
+                                    //그 외에는 값 Activity에 전달 ( 200, 400번대의 경우 )
+                                    _NicknameCheckResponseLiveData.postValue(this)
+                                }
+                            }
+
                         }
                     }, {
                         Log.d(TAG, "response error, message : ${it.message}")

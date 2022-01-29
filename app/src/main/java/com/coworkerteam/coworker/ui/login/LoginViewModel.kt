@@ -31,21 +31,24 @@ class LoginViewModel(private val model: UserRepository) : BaseViewModel() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     it.run {
-                        _LoginResponseLiveData.postValue(this)
+                        Log.d(TAG, "meta : $it")
 
                         if (this.isSuccessful) {
                             //로그인이 성공적으로 되었으면, User정보를 로컬에 저장한다.
-                            Log.d(TAG, "meta : " + it.toString())
                             val user = this.body()!!.result[0]
 
-                            model.setPreferencesData(
-                                user.accessToken,
-                                user.refreshToken,
-                                user.nickname,
-                                email,
-                                loginType,
-                                imgUri
-                            )
+                            model.setPreferencesData(user.accessToken, user.refreshToken, user.nickname, email, loginType, imgUri)
+                        }
+
+                        when {
+                            it.code() > 500 -> {
+                                //서비스 서버에 문제가 있을 경우
+                                setServiceError(TAG,it.errorBody())
+                            }
+                            else -> {
+                                //그 외에는 값 Activity에 전달 ( 200, 400번대의 경우 )
+                                _LoginResponseLiveData.postValue(this)
+                            }
                         }
                     }
                 }, {

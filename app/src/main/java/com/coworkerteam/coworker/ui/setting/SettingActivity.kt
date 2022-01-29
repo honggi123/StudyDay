@@ -74,36 +74,33 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
         viewDataBinding.activitiy = this
         viewDataBinding.appVersion = getVersion(this)
 
-        init()
     }
 
     override fun initDataBinding() {
         viewModel.SettingResponseLiveData.observe(this, androidx.lifecycle.Observer {
             //로그아웃이 성공적으로 이뤄짐
-            if (it.isSuccessful) {
-                //로그인으로 이동
-                moveLogin()
-            } else if (it.code() == 400) {
-                //로그인에 실패한 원인이 클라이언트 측에 있을 경우
-                val errorMessage = JSONObject(it.errorBody()?.string())
+            when {
+                it.isSuccessful -> {
+                    //로그인으로 이동
+                    moveLogin()
+                }
+                it.code() == 400 -> {
+                    //로그인에 실패한 원인이 클라이언트 측에 있을 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
 
-                //400번대 에러로 로그인이 실패했을 경우, 사용자에게 알려준다.
-                Toast.makeText(this, "로그아웃에 실패했습니다. 나중 다시 시도해주세요", Toast.LENGTH_SHORT).show()
+                    //400번대 에러로 로그인이 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this, "로그아웃에 실패했습니다. 나중 다시 시도해주세요", Toast.LENGTH_SHORT).show()
 
-            } else if (it.code() == 404 || it.code() == 401) {
-                //404 : 존재하지 않는 회원이나 존재하지 않은 리프레시 토큰 401 : 만료된 리프레쉬 토큰일 경우
-                val errorMessage = JSONObject(it.errorBody()?.string())
+                }
+                else -> {
+                    //401 : 만료된 리프레쉬 토큰일 경우 404 : 존재하지 않는 회원이나 존재하지 않은 리프레시 토큰
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
 
-                //회원이 아니거나, 존재하지 않는 리프레시 토큰, 만료된 리프레시 토큰 일경우 어차피 다시 로그인 시켜야함
-                moveLogin()
-
-            } else if (it.code() >= 500) {
-                //서비스 서버에 문제가 있을 경우
-                showServerErrorDialog()
-            } else {
-                //그외 기타적인 사유가 있을 경우 로그 출력
-                val errorMessage = JSONObject(it.errorBody()?.string())
-                Log.e(TAG, errorMessage.getString("message"))
+                    //회원이 아니거나, 존재하지 않는 리프레시 토큰, 만료된 리프레시 토큰 일경우 어차피 다시 로그인 시켜야함
+                    moveLogin()
+                }
             }
         })
     }
@@ -111,58 +108,27 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
     override fun initAfterBinding() {
     }
 
-    fun init() {
+    fun showLogoutDialog(){
+        val mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_logout, null)
+        val mBuilder = AlertDialog.Builder(this).setView(mDialogView)
+        val builder = mBuilder.show()
 
-        viewDataBinding.settingToDeveloper.setOnClickListener(View.OnClickListener {
-            val intent = Intent(Intent.ACTION_SENDTO)
-            val emailTitle = "[" + getString(R.string.app_name) + "] 서비스에 대한 문의"
-            val emailContent = String.format(
-                "App Version : %s \n Android(SDK) : %d(%s) \n 내용 : ",
-                BuildConfig.VERSION_NAME,
-                Build.VERSION.SDK_INT,
-                Build.VERSION.RELEASE
-            )
-            val uri =
-                getString(R.string.team_email) + "?subject=" + Uri.encode(emailTitle) + "&body=" + Uri.encode(emailContent,"\\n")
-            intent.data = Uri.parse(uri)
+        builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-            startActivity(Intent.createChooser(intent, null))
+        val btn_cancle = mDialogView.findViewById<Button>(R.id.dialog_logout_btn_cancle)
+        val btn_logout = mDialogView.findViewById<Button>(R.id.dialog_logout_btn_logout)
+
+        btn_cancle.setOnClickListener(View.OnClickListener {
+            builder.dismiss()
         })
 
-        viewDataBinding.settingProfile.setOnClickListener(View.OnClickListener {
-            val intent = Intent(this, MyProfileActivity::class.java)
-            startActivity(intent)
-        })
-
-
-        viewDataBinding.settingLogout.setOnClickListener(View.OnClickListener {
-            val mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_logout, null)
-            val mBuilder = AlertDialog.Builder(this).setView(mDialogView)
-            val builder = mBuilder.show()
-
-            builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-            val btn_cancle = mDialogView.findViewById<Button>(R.id.dialog_logout_btn_cancle)
-            val btn_logout = mDialogView.findViewById<Button>(R.id.dialog_logout_btn_logout)
-
-            btn_cancle.setOnClickListener(View.OnClickListener {
-                builder.dismiss()
-            })
-
-            btn_logout.setOnClickListener(View.OnClickListener {
-                LogOut()
-                builder.dismiss()
-            })
-        })
-
-        viewDataBinding.settingWithdrawal.setOnClickListener(View.OnClickListener {
-            val intent = Intent(this, WithdrawalActivity::class.java)
-            startActivity(intent)
+        btn_logout.setOnClickListener(View.OnClickListener {
+            LogOut()
+            builder.dismiss()
         })
     }
 
     fun LogOut() {
-
         var loginType = viewModel.getLoginType()
 
         if (loginType == "google") {
@@ -174,7 +140,6 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
         }
 
         viewModel.setLogoutData()
-
     }
 
     fun GoogleLogout() {
@@ -218,6 +183,22 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
         mOAuthLoginModule.logout(this);
     }
 
+    fun sendToDeveloper(){
+        val intent = Intent(Intent.ACTION_SENDTO)
+        val emailTitle = "[" + getString(R.string.app_name) + "] 서비스에 대한 문의"
+        val emailContent = String.format(
+            "App Version : %s \n Android(SDK) : %d(%s) \n 내용 : ",
+            BuildConfig.VERSION_NAME,
+            Build.VERSION.SDK_INT,
+            Build.VERSION.RELEASE
+        )
+        val uri =
+            getString(R.string.team_email) + "?subject=" + Uri.encode(emailTitle) + "&body=" + Uri.encode(emailContent,"\\n")
+        intent.data = Uri.parse(uri)
+
+        startActivity(Intent.createChooser(intent, null))
+    }
+
     fun getVersion(context: Context): String? {
         var versionName = ""
         try {
@@ -234,6 +215,12 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    fun moveProfile(){
+        //프로필로 이동
+        val intent = Intent(this, MyProfileActivity::class.java)
+        startActivity(intent)
     }
 
     fun moveOpenLicense(){
@@ -257,6 +244,12 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
     fun moveTermsOfService(){
         //서비스 이용약관 이등
         val intent = Intent(this, TermsOfServiceActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun moveWithdrawal(){
+        //회원탈퇴로 이동
+        val intent = Intent(this, WithdrawalActivity::class.java)
         startActivity(intent)
     }
 

@@ -24,8 +24,12 @@ import kotlin.collections.ArrayList
 import android.content.ClipData
 import android.view.*
 import androidx.annotation.RequiresApi
+import com.coworkerteam.coworker.data.model.custom.EventDecorator
+import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.prolificinteractive.materialcalendarview.CalendarDay
+import org.json.JSONObject
 
 
 class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel>() {
@@ -72,15 +76,41 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     }
 
     override fun initDataBinding() {
+        viewModel.CamstduyLeaveResponseLiveData.observe(this, androidx.lifecycle.Observer {
+            when {
+                it.isSuccessful -> {
+                    //퇴장처리 성공
+                    unbindService(mConnection)
+                    stopService(Intent(this, CamStudyService::class.java))
+                    finish()
+                }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
 
+                    //400번대 에러로 퇴장처리가 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this, "스터디 공부시간을 저장하는데 실패하였습니다.", Toast.LENGTH_SHORT).show()
+
+                    unbindService(mConnection)
+                    stopService(Intent(this, CamStudyService::class.java))
+                    finish()
+                }
+                it.code() == 404 -> {
+                    //존재하지 않은 회원일 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    unbindService(mConnection)
+                    stopService(Intent(this, CamStudyService::class.java))
+
+                    moveLogin()
+                }
+            }
+        })
     }
 
     override fun initAfterBinding() {
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Log.d("생명주기", "onStart")
     }
 
     override fun onDestroy() {
@@ -108,9 +138,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         var studyTimeValue = if (studyTime < 0) 0 else studyTime
 
         viewModel.getCamstduyLeaveData(studyIdx!!, studyTimeValue, restTime)
-        unbindService(mConnection)
-        stopService(Intent(this, CamStudyService::class.java))
-        finish()
     }
 
     fun chat_recyclerview_init(data: ArrayList<ChatData>) {
@@ -134,8 +161,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         val btn_play = findViewById<ImageButton>(R.id.camstudy_btn_play)
         val btn_chat = findViewById<ImageButton>(R.id.camstudy_btn_chat)
         val btn_more = findViewById<ImageButton>(R.id.camstudy_btn_more)
-        
-        txt_toolbarName.text = studyInfo?.result?.studyInfo?.name?:""
+
+        txt_toolbarName.text = studyInfo?.result?.studyInfo?.name ?: ""
 
         btn_end.setOnClickListener(View.OnClickListener {
             //종료하기 캠스터디

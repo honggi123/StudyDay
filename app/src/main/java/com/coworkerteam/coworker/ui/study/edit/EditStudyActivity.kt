@@ -39,6 +39,7 @@ import com.coworkerteam.coworker.ui.category.CategoryViewModel
 import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.gms.common.api.ApiException
 import okhttp3.OkHttpClient
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -103,30 +104,87 @@ class EditStudyActivity : BaseActivity<ActivityEditStudyBinding, EditStudyViewMo
 
     override fun initDataBinding() {
         viewModel.EditStudyInfoResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            //카테고리가 성공적으로 선택
-            if (it.isSuccessful) {
-                var categoryResult = it.body()!!.result.studyInfo.category.split("|")
-                //카테고리 값 추가
-                for (i in categoryResult) {
-                    categorys.add(i)
+            //스터디 정보 수정 데이터 받아오기
+            when {
+                it.isSuccessful -> {
+                    var categoryResult = it.body()!!.result.studyInfo.category.split("|")
+                    //카테고리 값 추가
+                    for (i in categoryResult) {
+                        categorys.add(i)
+                    }
+
+                    //이미지 주소 추가
+                    imageUrl = it.body()!!.result.studyInfo.img
+
+                    viewDataBinding.studyInfo = it.body()!!.result.studyInfo
+                    settingData(it.body()!!.result.studyInfo)
                 }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
 
-                //이미지 주소 추가
-                imageUrl = it.body()!!.result.studyInfo.img
+                    //400번대 에러로 수정이 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"수정할 스터디 정보를 가져오는 것에 실패했습니다.",Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 404 -> {
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
 
-                viewDataBinding.studyInfo = it.body()!!.result.studyInfo
-                settingData(it.body()!!.result.studyInfo)
+                    when(errorMessage.getInt("code")){
+                        -2 ->{
+                            //존재하지 않는 회원인 경우
+                            moveLogin()
+                        }
+                        -3 ->{
+                            //수정하고자 하는 스터디가 실제로 존재하지 않은 경우
+                            Toast.makeText(this,"해당 스터디가 존재하지 않습니다.",Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             }
         })
 
         viewModel.EditStudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            //카테고리가 성공적으로 선택
-            if (it.isSuccessful) {
-                //이전화면으로 이동
-                finish()
-            }else{
-                Log.d(TAG, it.errorBody()!!.string())
+            //스터디 정보 수정 완료
+            when {
+                it.isSuccessful -> {
+                    //이전화면으로 이동
+                    finish()
+                }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //400번대 에러로 수정이 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,errorMessage.getString("message"),Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 403 ->{
+                    //스터디 정보를 수정할 권한이 없을 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //403번대 에러로 수정이 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"스터디 정보를 수정할 권한이 없습니다.",Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 404 -> {
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when(errorMessage.getInt("code")){
+                        -2 ->{
+                            //존재하지 않는 회원인 경우
+                            moveLogin()
+                        }
+                        -3 ->{
+                            //수정하고자 하는 스터디가 실제로 존재하지 않은 경우
+                            Toast.makeText(this,"해당 스터디가 존재하지 않습니다.",Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             }
+
         })
     }
 
@@ -380,11 +438,11 @@ class EditStudyActivity : BaseActivity<ActivityEditStudyBinding, EditStudyViewMo
 
             override fun onProgressChanged(id: Int, current: Long, total: Long) {
                 val done = (current.toDouble() / total * 100.0).toInt()
-                Log.d("MYTAG", "UPLOAD - - ID: \$id, percent done = \$done")
+                Log.d(TAG, "UPLOAD - - ID: \$id, percent done = \$done")
             }
 
             override fun onError(id: Int, ex: Exception) {
-                Log.d("MYTAG", "UPLOAD ERROR - - ID: \$id - - EX:$ex")
+                Log.d(TAG, "UPLOAD ERROR - - ID: \$id - - EX:$ex")
             }
         })
     }

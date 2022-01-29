@@ -1,34 +1,14 @@
 package com.coworkerteam.coworker.ui.study.management
 
-import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import androidx.recyclerview.widget.RecyclerView
+import android.widget.Toast
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
 import com.coworkerteam.coworker.data.model.api.MyStudyManageResponse
-import com.coworkerteam.coworker.data.remote.StudydayService
-import com.coworkerteam.coworker.databinding.ActivityCategoryBinding
 import com.coworkerteam.coworker.databinding.ActivityManagementBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
-import com.coworkerteam.coworker.ui.category.CategoryViewModel
-import com.coworkerteam.coworker.ui.mystudy.MyStudyDailyPagingAdapter
-import com.coworkerteam.coworker.ui.mystudy.MyStudyGroupPagingAdapter
-import com.coworkerteam.coworker.utils.RecyclerViewUtils
-import com.google.android.gms.common.api.ApiException
-import okhttp3.OkHttpClient
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
 
 class ManagementActivity : BaseActivity<ActivityManagementBinding, ManagementViewModel>() {
 
@@ -41,23 +21,61 @@ class ManagementActivity : BaseActivity<ActivityManagementBinding, ManagementVie
     lateinit var pagingManagementAdapter: ManagementPagingAdapter
 
     override fun initStartView() {
-        var main_toolbar: androidx.appcompat.widget.Toolbar =
-            findViewById(R.id.management_toolbar)
-
-        setSupportActionBar(main_toolbar) // 툴바를 액티비티의 앱바로 지정
+        setSupportActionBar(viewDataBinding.managementToolbar) // 툴바를 액티비티의 앱바로 지정
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_new_24) // 홈버튼 이미지 변경
         supportActionBar?.title = "내 스터디 관리"
 
         pagingManagementAdapter = ManagementPagingAdapter(viewModel)
-        val rv_management = findViewById<RecyclerView>(R.id.management_rv)
-        rv_management.adapter = pagingManagementAdapter
+        viewDataBinding.managementRv.adapter = pagingManagementAdapter
     }
 
     override fun initDataBinding() {
-        viewModel.ApiResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            if (it.isSuccessful) {
-                pagingManagementAdapter.refresh()
+        viewModel.StudyDeleteResponseLiveData.observe(this, androidx.lifecycle.Observer {
+            when {
+                it.isSuccessful -> {
+                    pagingManagementAdapter.refresh()
+                }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //400번대 에러로 스터디 삭제, 탈퇴 실패했을 경우 사용자에게 알려준다.
+                    Toast.makeText(this,"스터디 삭제, 탈퇴에 실패했습니다. 나중 다시 시도해주세요.",Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 403 -> {
+                    //스터디 삭제 권한이 없을 경우 ( 리더가 아닐 경우 ), 리더인데 스터디를 탈퇴하려는 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when(errorMessage.getInt("code")){
+                        -10 ->{
+                            //403번대 에러로 스터디 삭제 실패했을 경우 사용자에게 알려준다.
+                            Toast.makeText(this,"스터디 삭제 권한이 없습니다.",Toast.LENGTH_SHORT).show()
+                        }
+                        -11 ->{
+                            //403번대 에러로 스터디 탈퇴 실패했을 경우 사용자에게 알려준다.
+                            Toast.makeText(this,"리더는 탈퇴할 수 없습니다. 리더를 양도해주세요",Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                it.code() == 404 -> {
+                    //존재하지 않은 회원일 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when(errorMessage.getInt("code")){
+                        -2 ->{
+                            //존재하지 않는 회원인 경우
+                            moveLogin()
+                        }
+                        -3 ->{
+                            //삭제, 탈퇴하고자 하는 스터디가 실제로 존재하지 않은 경우
+                            Toast.makeText(this,"해당 스터디가 존재하지 않습니다.",Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             }
         })
         viewModel.MyStudyManagementPagingData.observe(this,androidx.lifecycle.Observer {

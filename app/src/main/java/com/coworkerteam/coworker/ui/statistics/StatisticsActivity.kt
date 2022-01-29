@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -34,6 +35,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.google.android.material.navigation.NavigationView
+import org.json.JSONObject
 import java.text.DecimalFormat
 
 
@@ -138,101 +140,118 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
     override fun initDataBinding() {
         viewModel.StatisticsResponseLiveData.observe(this, androidx.lifecycle.Observer {
 //            카테고리가 성공적으로 선택
-            if (it.isSuccessful) {
-                statisticsResponse = it.body()!!
-                viewDataBinding.statisticsResponse = it.body()!!
+            when {
+                it.isSuccessful -> {
+                    statisticsResponse = it.body()!!
+                    viewDataBinding.statisticsResponse = it.body()!!
 
-                if (statisticsResponse.profile != null) {
-                    setNavigaionLoginImage(statisticsResponse.profile.loginType)
-                    setNavigaionProfileImage(statisticsResponse.profile.img)
-                    setNavigaionNickname(statisticsResponse.profile.nickname)
+                    if (statisticsResponse.profile != null) {
+                        setNavigaionLoginImage(statisticsResponse.profile.loginType)
+                        setNavigaionProfileImage(statisticsResponse.profile.img)
+                        setNavigaionNickname(statisticsResponse.profile.nickname)
 
-                    viewDataBinding.draworInfo = DrawerBottomInfo(
-                        it.body()!!.achieveTimeRate,
-                        it.body()!!.achieveTodoRate,
-                        it.body()!!.dream.dday,
-                        it.body()!!.dream.ddayName
-                    )
+                        viewDataBinding.draworInfo = DrawerBottomInfo(
+                            it.body()!!.achieveTimeRate,
+                            it.body()!!.achieveTodoRate,
+                            it.body()!!.dream.dday,
+                            it.body()!!.dream.ddayName
+                        )
+                    }
+
+                    var pro_studyTime =
+                        if (it.body()!!.theDayAcheiveTimeRate == null) 0 else it.body()!!.theDayAcheiveTimeRate
+                    var pro_plan =
+                        if (it.body()!!.theDayAcheiveRate == null) 0 else it.body()!!.theDayAcheiveRate
+
+                    viewDataBinding.statisticsProgressTodayStudyTime.progress = pro_studyTime!!
+                    viewDataBinding.statisticsProgressPlan.progress = pro_plan!!
+
+                    val studyTime = statisticsResponse.studyRate ?: 0
+                    val restTime = statisticsResponse.restRate ?: 0
+
+                    pieEntries.clear()
+                    pieEntries.add(PieEntry(studyTime.toFloat(), "공부"))
+                    pieEntries.add(PieEntry(restTime.toFloat(), "휴식"))
+                    pieChart()
+
+                    barEntries.clear()
+                    markerStrings.clear()
+
+                    if (statisticsResponse.weekTimeAcheive != null) {
+                        viewDataBinding.timeAVG =
+                            it.body()!!.weekTimeAVG.hour + "시간 " + it.body()!!.weekTimeAVG.min + "분"
+                        viewDataBinding.todoAVG = if(it.body()!!.weekTodoAVG==null) "없음" else it.body()!!.weekTodoAVG+"%"
+
+                        Log.d(TAG, statisticsResponse.weekTimeAcheive.size.toString())
+                        var x = 0
+                        statisticsResponse.weekTimeAcheive.forEach { i ->
+                            var hour = if (i.hour != null) i.hour else 0
+
+                            barEntries.add(BarEntry(x.toFloat(), hour.toFloat()))
+
+                            val statistcsDay = statisticsResponse.weekTimeAcheive.get(x).date
+                            Log.d(TAG, "weekTimeAcheive 사이즈 : "+ x.toString())
+                            val studyTime =
+                                if (statisticsResponse.weekTimeAcheive.get(x).time == null) "없음" else statisticsResponse.weekTimeAcheive.get(
+                                    x
+                                ).time
+                            val timeAcheive = i.timeRate ?: "없음"
+                            val todoAcheive =
+                                statisticsResponse.weekTodoAcheive.get(x).acheiveRate ?: "없음"
+                            val text =
+                                "$statistcsDay \n공부시간 : $studyTime \n공부시간 달성률 : $timeAcheive \n계획 달성률 : $todoAcheive"
+                            markerStrings.add(text)
+
+                            x++
+
+                            Log.d(TAG, x.toString())
+                        }
+                        barChart()
+                    } else if (statisticsResponse.monthTimeAcheive != null) {
+                        viewDataBinding.timeAVG =
+                            it.body()!!.monthTimeAVG.hour + "시간 " + it.body()!!.monthTimeAVG.min + "분"
+                        viewDataBinding.todoAVG = if(it.body()!!.monthTodoAVG==null) "없음" else it.body()!!.monthTodoAVG+"%"
+
+                        var x = 0
+                        Log.d(TAG, statisticsResponse.monthTimeAcheive.size.toString())
+                        statisticsResponse.monthTimeAcheive.forEach { i ->
+                            var hour = if (i.hour != null) i.hour else 0
+
+                            barEntries.add(BarEntry(x.toFloat(), hour.toFloat()))
+
+                            val statistcsDay = statisticsResponse.monthTimeAcheive.get(x).date
+                            val studyTime =
+                                if (statisticsResponse.monthTimeAcheive.get(x).time == null) "없음" else statisticsResponse.monthTimeAcheive.get(
+                                    x
+                                ).time
+                            val timeAcheive = i.timeRate ?: "없음"
+                            val todoAcheive =
+                                statisticsResponse.monthTodoAcheive.get(x).acheiveRate ?: "없음"
+                            val text =
+                                statistcsDay + " \n" + "공부시간 : " + studyTime + " \n" + "공부시간 달성률 : " + timeAcheive + " \n" + "계획 달성률 : " + todoAcheive
+                            markerStrings.add(text)
+
+                            x++
+
+                            Log.d(TAG, x.toString())
+                        }
+                        barChart()
+                    }
                 }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
 
-                var pro_studyTime =
-                    if (it.body()!!.theDayAcheiveTimeRate == null) 0 else it.body()!!.theDayAcheiveTimeRate
-                var pro_plan =
-                    if (it.body()!!.theDayAcheiveRate == null) 0 else it.body()!!.theDayAcheiveRate
+                    //400번대 에러로 통계페이지 데이터 get 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"통계 데이터를 가져오는 것을 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 404 -> {
+                    //존재하지 않은 회원일 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
 
-                viewDataBinding.statisticsProgressTodayStudyTime.progress = pro_studyTime!!
-                viewDataBinding.statisticsProgressPlan.progress = pro_plan!!
-
-                val studyTime = statisticsResponse.studyRate ?: 0
-                val restTime = statisticsResponse.restRate ?: 0
-
-                pieEntries.clear()
-                pieEntries.add(PieEntry(studyTime.toFloat(), "공부"))
-                pieEntries.add(PieEntry(restTime.toFloat(), "휴식"))
-                pieChart()
-
-                barEntries.clear()
-                markerStrings.clear()
-
-                if (statisticsResponse.weekTimeAcheive != null) {
-                    viewDataBinding.timeAVG =
-                        it.body()!!.weekTimeAVG.hour + "시간 " + it.body()!!.weekTimeAVG.min + "분"
-                    viewDataBinding.todoAVG = if(it.body()!!.weekTodoAVG==null) "없음" else it.body()!!.weekTodoAVG+"%"
-
-                    Log.d(TAG, statisticsResponse.weekTimeAcheive.size.toString())
-                    var x = 0
-                    statisticsResponse.weekTimeAcheive.forEach { i ->
-                        var hour = if (i.hour != null) i.hour else 0
-
-                        barEntries.add(BarEntry(x.toFloat(), hour.toFloat()))
-
-                        val statistcsDay = statisticsResponse.weekTimeAcheive.get(x).date
-                        Log.d(TAG, "weekTimeAcheive 사이즈 : "+ x.toString())
-                        val studyTime =
-                            if (statisticsResponse.weekTimeAcheive.get(x).time == null) "없음" else statisticsResponse.weekTimeAcheive.get(
-                                x
-                            ).time
-                        val timeAcheive = i.timeRate ?: "없음"
-                        val todoAcheive =
-                            statisticsResponse.weekTodoAcheive.get(x).acheiveRate ?: "없음"
-                        val text =
-                            "$statistcsDay \n공부시간 : $studyTime \n공부시간 달성률 : $timeAcheive \n계획 달성률 : $todoAcheive"
-                        markerStrings.add(text)
-
-                        x++
-
-                        Log.d(TAG, x.toString())
-                    }
-                    barChart()
-                } else if (statisticsResponse.monthTimeAcheive != null) {
-                    viewDataBinding.timeAVG =
-                        it.body()!!.monthTimeAVG.hour + "시간 " + it.body()!!.monthTimeAVG.min + "분"
-                    viewDataBinding.todoAVG = if(it.body()!!.monthTodoAVG==null) "없음" else it.body()!!.monthTodoAVG+"%"
-
-                    var x = 0
-                    Log.d(TAG, statisticsResponse.monthTimeAcheive.size.toString())
-                    statisticsResponse.monthTimeAcheive.forEach { i ->
-                        var hour = if (i.hour != null) i.hour else 0
-
-                        barEntries.add(BarEntry(x.toFloat(), hour.toFloat()))
-
-                        val statistcsDay = statisticsResponse.monthTimeAcheive.get(x).date
-                        val studyTime =
-                            if (statisticsResponse.monthTimeAcheive.get(x).time == null) "없음" else statisticsResponse.monthTimeAcheive.get(
-                                x
-                            ).time
-                        val timeAcheive = i.timeRate ?: "없음"
-                        val todoAcheive =
-                            statisticsResponse.monthTodoAcheive.get(x).acheiveRate ?: "없음"
-                        val text =
-                            statistcsDay + " \n" + "공부시간 : " + studyTime + " \n" + "공부시간 달성률 : " + timeAcheive + " \n" + "계획 달성률 : " + todoAcheive
-                        markerStrings.add(text)
-
-                        x++
-
-                        Log.d(TAG, x.toString())
-                    }
-                    barChart()
+                    moveLogin()
                 }
             }
         })

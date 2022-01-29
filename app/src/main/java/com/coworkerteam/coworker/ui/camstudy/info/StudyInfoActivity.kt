@@ -1,13 +1,16 @@
 package com.coworkerteam.coworker.ui.camstudy.info
 
+import android.util.Log
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
 import com.coworkerteam.coworker.databinding.ActivityStudyInfoBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.camstudy.CamStudyCategotyAdapter
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class StudyInfoActivity : BaseActivity<ActivityStudyInfoBinding, StudyInfoViewModel>() {
@@ -34,9 +37,34 @@ class StudyInfoActivity : BaseActivity<ActivityStudyInfoBinding, StudyInfoViewMo
 
     override fun initDataBinding() {
         viewModel.StudyInfoResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            if(it.isSuccessful){
-                viewDataBinding.studyInfo = it.body()
-                initRV(it.body()!!.result.studyInfo.get(0).category)
+            when {
+                it.isSuccessful -> {
+                    viewDataBinding.studyInfo = it.body()
+                    initRV(it.body()!!.result.studyInfo.get(0).category)
+                }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //400번대 에러로 스터디 정보 데이터 가져오기 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"스터디 정보 데이터를 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 404 -> {
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when(errorMessage.getInt("code")){
+                        -2 ->{
+                            //존재하지 않는 회원인 경우
+                            moveLogin()
+                        }
+                        -3 ->{
+                            //존재하지 않는 스터디일 경우
+                            Toast.makeText(this,"더이상 존재하지 않는 스터디입니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             }
         })
     }

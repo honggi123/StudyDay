@@ -71,10 +71,7 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
         }
 
     override fun initStartView() {
-        var main_toolbar: androidx.appcompat.widget.Toolbar =
-            findViewById(R.id.my_profile_edit_toolbar)
-
-        setSupportActionBar(main_toolbar) // 툴바를 액티비티의 앱바로 지정
+        setSupportActionBar(viewDataBinding.myProfileEditToolbar) // 툴바를 액티비티의 앱바로 지정
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_new_24) // 홈버튼 이미지 변경
         supportActionBar?.title = "프로필 수정"
@@ -90,45 +87,84 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
 
     override fun initDataBinding() {
         viewModel.ProfileEditResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            if (it.isSuccessful) {
-                finish()
-            }else if(it.code() >= 500){
-                //Api서버에 문제가 있을 경우
-                showServerErrorDialog()
+            when {
+                it.isSuccessful -> {
+                    finish()
+                }
+                it.code() == 400 -> {
+                    //API 요청값을 제대로 다 전달하지 않은 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //400번대 에러로 스터디 수정이 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"입력을 다시 확인해주세요.", Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 403 -> {
+                    //이미 참여중인 스터디가 있을 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //403번대 에러로 스터디 수정이 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"현재 공부중인 스터디가 존재해서 변경할 수 없습니다. 나중에 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 404 -> {
+                    //존재하지 않은 회원일 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    moveLogin()
+                }
             }
         })
 
         viewModel.NicknameCheckResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            if (it.isSuccessful) {
-                is_edit = true
+            when {
+                it.isSuccessful -> {
+                    is_edit = true
 
-                //사용할 수 있는 닉네임 이므로 EditText가 Error처리 되어있었다면 해제
-                viewDataBinding.myProfileEditNickname.error = null
-                viewDataBinding.myProfileEditNickname.isErrorEnabled = false
+                    //사용할 수 있는 닉네임 이므로 EditText가 Error처리 되어있었다면 해제
+                    viewDataBinding.myProfileEditNickname.error = null
+                    viewDataBinding.myProfileEditNickname.isErrorEnabled = false
 
-                //닉네임 사용 가능하다는 설명 셋팅
-                viewDataBinding.myProfileEditNickname.helperText = it.body()!!.message
+                    //닉네임 사용 가능하다는 설명 셋팅
+                    viewDataBinding.myProfileEditNickname.helperText = it.body()!!.message
 
-                //닉네임 사용 가능하다는 판별 전역변수에 값 수정
-                nickname_check = it.body()!!.isUse
+                    //닉네임 사용 가능하다는 판별 전역변수에 값 수정
+                    nickname_check = it.body()!!.isUse
 
-            }else if(it.code() == 400){
-                val errorResult = JSONObject(it.errorBody()!!.string())
-
-                when(errorResult.getInt("code")){
-                    -1 -> {
-                        //클라이언트에서 값을 다 보내지 않았을 경우
-                        Log.d(TAG,"닉네임 변경 API 호출 시, 클라이언트에서 값을 다 보내지 않음")
-                    }
-                    -10 -> {
-                        //닉네임이 중복되어 사용할 수 없는 경우
-                        viewDataBinding.myProfileEditNickname.error = errorResult.getString("message")
-                        nickname_check = errorResult.getString("isUse")
-                    }
                 }
-            }else if(it.code() >= 500){
-                //Api서버에 문제가 있을 경우
-                showServerErrorDialog()
+                it.code() == 400 -> {
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when(errorMessage.getInt("code")){
+                        -1 -> {
+                            //API 요청값을 제대로 다 전달하지 않은 경우
+                            Toast.makeText(this,"입력을 다시 확인해주세요.", Toast.LENGTH_SHORT).show()
+                        }
+                        -10 -> {
+                            //닉네임이 중복되어 사용할 수 없는 경우
+                            viewDataBinding.myProfileEditNickname.error = errorMessage.getString("message")
+                            nickname_check = errorMessage.getString("isUse")
+                        }
+                    }
+
+                }
+                it.code() == 403 -> {
+                    //이미 참여중인 스터디가 있을 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //403번대 에러로 스터디 수정이 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"현재 공부중인 스터디가 존재해서 변경할 수 없습니다. 나중에 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 404 -> {
+                    //존재하지 않은 회원일 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    moveLogin()
+                }
             }
         })
     }
@@ -216,18 +252,24 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_modify_ok -> {
-                if(is_edit){
-                    if(nickname_check == "true" || nickname_check == ""){
-                        if(fileName!=null) {
-                            uploadWithTransferUtilty(fileName!!, File(realpath), this)
-                        }else{
-                            viewModel.setProfileEditData(viewDataBinding.myProfileEditNickname.editText?.text.toString(),categorys.joinToString("|"),profileManageResponse.img)
+                when {
+                    is_edit -> {
+                        when (nickname_check) {
+                            "true", "" -> {
+                                if(fileName!=null) {
+                                    uploadWithTransferUtilty(fileName!!, File(realpath), this)
+                                }else{
+                                    viewModel.setProfileEditData(viewDataBinding.myProfileEditNickname.editText?.text.toString(),categorys.joinToString("|"),profileManageResponse.img)
+                                }
+                            }
+                            else -> {
+                                Toast.makeText(this, "닉네임 중복 검사를 해주세요.", Toast.LENGTH_SHORT).show()
+                            }
                         }
-                    }else{
-                        Toast.makeText(getApplicationContext(), "닉네임 중복 검사를 해주세요.", Toast.LENGTH_SHORT).show()
                     }
-                }else{
-                    Toast.makeText(getApplicationContext(), "변경된 정보가 없습니다.", Toast.LENGTH_SHORT).show()
+                    else -> {
+                        Toast.makeText(this, "변경된 정보가 없습니다.", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }

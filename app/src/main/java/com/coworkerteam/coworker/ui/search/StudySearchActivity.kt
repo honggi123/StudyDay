@@ -87,32 +87,86 @@ class StudySearchActivity :
 
     override fun initDataBinding() {
         viewModel.StudySearchStartLiveData.observe(this, androidx.lifecycle.Observer {
-            if (it.isSuccessful) {
-                //네비게이션 정보 세팅
-                setNavigaionProfileImage(it.body()!!.result.profile.img)
-                setNavigaionLoginImage(it.body()!!.result.profile.loginType)
-                setNavigaionNickname(it.body()!!.result.profile.nickname)
+            when {
+                it.isSuccessful -> {
+                    //네비게이션 정보 세팅
+                    setNavigaionProfileImage(it.body()!!.result.profile.img)
+                    setNavigaionLoginImage(it.body()!!.result.profile.loginType)
+                    setNavigaionNickname(it.body()!!.result.profile.nickname)
 
-                viewDataBinding.draworInfo = DrawerBottomInfo(it.body()!!.result.achieveTimeRate,it.body()!!.result.achieveTodoRate,it.body()!!.result.dream.dday,it.body()!!.result.dream.ddayName)
+                    viewDataBinding.draworInfo = DrawerBottomInfo(it.body()!!.result.achieveTimeRate,it.body()!!.result.achieveTodoRate,it.body()!!.result.dream.dday,it.body()!!.result.dream.ddayName)
+                }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //400번대 에러로 검색 데이터 가져오기가 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"검색 데이터를 가져오지 못했습니다. 나중 다시 시도해주세요.",Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 404 -> {
+                    //존재하지 않은 회원일 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    moveLogin()
+                }
             }
         })
 
         viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            if (it.isSuccessful) {
-                var intent = Intent(this, EnterCamstudyActivity::class.java)
-                intent.putExtra("studyInfo", it.body()!!)
+            when {
+                it.isSuccessful -> {
+                    var intent = Intent(this, EnterCamstudyActivity::class.java)
+                    intent.putExtra("studyInfo", it.body()!!)
 
-                passwordDialog.dismissDialog()
-                startActivity(intent)
-            } else if (it.code() == 403) {
-                val errorMessage = JSONObject(it.errorBody()?.string())
+                    passwordDialog.dismissDialog()
+                    startActivity(intent)
+                }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
 
-                when(errorMessage.getInt("code")){
-                    -12 -> {
-                        //비밀번호를 틀린 경우
-                        passwordDialog.setErrorMessage(errorMessage.getString("message"))
+                    //400번대 에러로 스터디 입장페이지 진입 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"스터디에 입장할 수 없습니다. 나중 다시 시도해주세요.",Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 403 -> {
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when(errorMessage.getInt("code")){
+                        -4 ->{
+                            //해당 스터디에 강제 탈퇴 당해 더 이상 입장할 수 없는 경우
+                            Toast.makeText(this,"강제 퇴장당한 스터디입니다. 입장할 수 없습니다.",Toast.LENGTH_SHORT).show()
+                        }
+                        -5 ->{
+                            //참여중인 스터디가 있을 경우
+                            Toast.makeText(this,"이미 공부중인 스터디가 있습니다. 바로 참여할 수 없습니다.",Toast.LENGTH_SHORT).show()
+                        }
+                        -12 ->{
+                            //비밀번호를 틀린 경우
+                            passwordDialog.setErrorMessage(errorMessage.getString("message"))
+                        }
                     }
                 }
+                it.code() == 404 -> {
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when(errorMessage.getInt("code")){
+                        -2 ->{
+                            //존재하지 않는 회원인 경우
+                            moveLogin()
+                        }
+                        -3 ->{
+                            //존재하지 않는 스터디일 경우
+                            Toast.makeText(this,"더이상 존재하지 않는 스터디입니다.",Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                    }
+                }
+
             }
         })
     }

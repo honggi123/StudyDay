@@ -1,55 +1,36 @@
 package com.coworkerteam.coworker.ui.setting.account
 
-import android.content.Context
 import android.widget.Toast
 
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 
-import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
-import com.coworkerteam.coworker.data.model.api.ApiRequest
-import com.coworkerteam.coworker.data.remote.StudydayService
-import com.coworkerteam.coworker.databinding.ActivityCategoryBinding
 import com.coworkerteam.coworker.databinding.ActivityWithdrawalBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
-import com.coworkerteam.coworker.ui.category.CategoryViewModel
 import com.coworkerteam.coworker.ui.login.LoginActivity
 import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
 import com.google.android.material.textfield.TextInputLayout
 import com.kakao.sdk.user.UserApiClient
 import com.nhn.android.naverlogin.OAuthLogin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import okhttp3.OkHttpClient
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
 
 
 class WithdrawalActivity : BaseActivity<ActivityWithdrawalBinding, WithdrawalViewModel>() {
+    private val TAG = "WithdrawalActivity"
 
-    val TAG = "WithdrawalActivity"
     override val layoutResourceID: Int
         get() = R.layout.activity_withdrawal
     override val viewModel: WithdrawalViewModel by viewModel()
@@ -60,15 +41,39 @@ class WithdrawalActivity : BaseActivity<ActivityWithdrawalBinding, WithdrawalVie
 
     override fun initStartView() {
         viewDataBinding.activity = this
-        init()
     }
 
     override fun initDataBinding() {
         viewModel.WithdrawalResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            if (it.isSuccessful) {
-                Toast.makeText(getApplicationContext(), "회원탈퇴가 안전하게 완료되었습니다.", Toast.LENGTH_SHORT)
-                    .show()
-                removeLogin()
+            when {
+                it.isSuccessful -> {
+                    Toast.makeText(getApplicationContext(), "회원탈퇴가 안전하게 완료되었습니다.", Toast.LENGTH_SHORT)
+                        .show()
+                    moveLogin()
+                }
+                it.code() == 400 -> {
+                    //회원탈퇴에 실패한 원인이 클라이언트 측의 값 입력, 전송에 문제가 있을 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //400번대 에러로 로그인이 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"탈퇴사유를 올바르게 선택 또는 입력해주세요.",Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 403 ->{
+                    //회원탈퇴에 실패한 원인이 운영중인 스터디가 존재하는 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //403번대 에러로 로그인이 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"현재 운영중인 스터디가 존재합니다. 정리 후 다시 시도해주세요.",Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 404 -> {
+                    //존재하지 않는 회원, 리프레시 토큰 실종 시 로그인 화면으로 이동
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    moveLogin()
+                }
             }
         })
     }
@@ -76,12 +81,7 @@ class WithdrawalActivity : BaseActivity<ActivityWithdrawalBinding, WithdrawalVie
     override fun initAfterBinding() {
     }
 
-    fun init() {
-        val txt_reason = findViewById<TextView>(R.id.withdrawal_txt_reason)
-        val btn_withdrawal = findViewById<Button>(R.id.withdrawal_btn_withdrawal)
-        val edt_reasonOther = findViewById<TextInputLayout>(R.id.withdrawal_edt_reason_other)
-
-        txt_reason.setOnClickListener(View.OnClickListener {
+    fun onClickWithdrawal() {
             val mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_withdrawal, null)
             val mBuilder = AlertDialog.Builder(this).setView(mDialogView)
             val builder = mBuilder.show()
@@ -93,21 +93,20 @@ class WithdrawalActivity : BaseActivity<ActivityWithdrawalBinding, WithdrawalVie
             radiogroup.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { group, checkedId ->
                 val rb = mDialogView.findViewById<RadioButton>(checkedId)
                 reason = rb.text.toString()
-                txt_reason.text = reason
+                viewDataBinding.withdrawalTxtReason.text = reason
 
                 if (reason == "기타") {
-                    edt_reasonOther.visibility = View.VISIBLE
+                    viewDataBinding.withdrawalEdtReasonOther.visibility = View.VISIBLE
                     is_other = true
                     viewDataBinding.withdrawalBtnWithdrawal.isEnabled = viewDataBinding.withdrawalEdtReasonOther.isErrorEnabled
                 }else{
-                    edt_reasonOther.visibility = View.GONE
+                    viewDataBinding.withdrawalEdtReasonOther.visibility = View.GONE
                     is_other = false
                     viewDataBinding.withdrawalBtnWithdrawal.isEnabled = true
                 }
 
                 builder.dismiss()
             })
-        })
     }
 
     fun changTextOther(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -190,12 +189,5 @@ class WithdrawalActivity : BaseActivity<ActivityWithdrawalBinding, WithdrawalVie
             }
         }
     }
-
-    fun removeLogin() {
-        val intent = Intent(content, LoginActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
-
 
 }

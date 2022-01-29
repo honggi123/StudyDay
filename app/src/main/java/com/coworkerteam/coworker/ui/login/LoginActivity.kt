@@ -49,26 +49,22 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
 
     override fun initDataBinding() {
         viewModel.LoginResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            if (it.isSuccessful) {
-                //로그인에 성공했을 경우
-                val isCategory = it.body()!!.result[0].isInterest
-                moveActivity(isCategory)
+            when {
+                it.isSuccessful -> {
+                    //로그인에 성공했을 경우
+                    val isCategory = it.body()!!.result[0].isInterest
+                    moveActivity(isCategory)
 
-            } else if (it.code() == 400) {
-                //로그인에 실패한 원인이 클라이언트 측에 있을 경우
-                val errorMessage = JSONObject(it.errorBody()?.string())
-                Log.e(TAG, errorMessage.getString("message"))
+                }
+                else -> {
+                    //로그인에 실패한 원인이 클라이언트 측에 있을 경우(400번대 에러)
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
 
-                //400번대 에러로 로그인이 실패했을 경우, 사용자에게 알려준다.
-                Toast.makeText(this,"로그인에 실패했습니다. 나중에 다시 시도해주세요.",Toast.LENGTH_SHORT).show()
+                    //400번대 에러로 로그인이 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"로그인에 실패했습니다. 나중에 다시 시도해주세요.",Toast.LENGTH_SHORT).show()
 
-            } else if (it.code() >= 500) {
-                //서비스 서버에 문제가 있을 경우
-                showServerErrorDialog()
-            } else {
-                //그외 기타적인 사유가 있을 경우 로그 출력
-                val errorMessage = JSONObject(it.errorBody()?.string())
-                Log.e(TAG, errorMessage.getString("message"))
+                }
             }
         })
     }

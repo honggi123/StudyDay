@@ -1,12 +1,16 @@
 package com.coworkerteam.coworker.ui.base
 
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import com.coworkerteam.coworker.ui.login.LoginActivity
 import com.coworkerteam.coworker.utils.NetworkUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.android.ext.android.get
@@ -19,7 +23,6 @@ import org.koin.android.ext.android.get
  * 3. 이름 확인 : sbs_main_activity => ActivitySbsMainBinding
  */
 open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCompatActivity() {
-
     lateinit var viewDataBinding: T
     abstract val layoutResourceID: Int
 
@@ -47,10 +50,24 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
         //데이터 바인딩 초기화
         viewDataBinding = DataBindingUtil.setContentView(this, layoutResourceID)
 
-        //선언한 추상메서드 순서대로 실행
+        //선언한 추상메서드 순서대로 실행 및 서비스 에러 데이터바인딩
         initStartView()
         initDataBinding()
+        getErrorDataBinding()
         initAfterBinding()
+    }
+
+    private fun getErrorDataBinding() {
+        //스테이터스 코드 500번대가 뜰 경우 및 리프레쉬 토큰 만료
+        viewModel.ServerErrorResponseLiveData.observe(this, androidx.lifecycle.Observer {
+            Log.e(it.TAG, it.message)
+
+            if(it.message == viewModel.ERROR_REFRESH_TOKEN){
+                moveLogin()
+            }
+
+            showServerErrorDialog()
+        })
     }
 
     //네트워크 상태 체크
@@ -85,5 +102,14 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
                 finishAndRemoveTask(); // 액티비티 종료 + 태스크 리스트에서 지우기
                 android.os.Process.killProcess(android.os.Process.myPid()); // 앱 프로세스 종료
             }).show()
+    }
+
+    fun moveLogin(){
+        Toast.makeText(this,"다시 로그인 해주세요.",Toast.LENGTH_SHORT).show()
+
+        val loginIntent = Intent(this,LoginActivity::class.java)
+        loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
     }
 }

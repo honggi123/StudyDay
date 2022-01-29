@@ -50,18 +50,15 @@ class MyStudyActivity : NavigationAcitivity<ActivityMyStudyBinding, MyStudyViewM
         init()
 
         pagingGroupAdapter = MyStudyGroupPagingAdapter(passwordDialog)
-        val rv_group = findViewById<RecyclerView>(R.id.my_study_rv_group_study)
-        rv_group.adapter = pagingGroupAdapter
-        RecyclerViewUtils().setHorizonSpaceDecration(rv_group,10)
+
+        viewDataBinding.myStudyRvGroupStudy.adapter = pagingGroupAdapter
+        RecyclerViewUtils().setHorizonSpaceDecration(viewDataBinding.myStudyRvGroupStudy,10)
 
         pagingDailyAdapter = MyStudyDailyPagingAdapter(passwordDialog)
-        val rv_daily = findViewById<RecyclerView>(R.id.my_study_rv_open_study)
-        rv_daily.adapter = pagingDailyAdapter
-        RecyclerViewUtils().setHorizonSpaceDecration(rv_daily,10)
+        viewDataBinding.myStudyRvOpenStudy.adapter = pagingDailyAdapter
+        RecyclerViewUtils().setHorizonSpaceDecration( viewDataBinding.myStudyRvOpenStudy,10)
 
-        var main_toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.my_study_toolbar)
-
-        setSupportActionBar(main_toolbar) // 툴바를 액티비티의 앱바로 지정
+        setSupportActionBar(viewDataBinding.myStudyToolbar) // 툴바를 액티비티의 앱바로 지정
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24_write) // 홈버튼 이미지 변경
         supportActionBar?.title = "내 스터디"
@@ -74,17 +71,34 @@ class MyStudyActivity : NavigationAcitivity<ActivityMyStudyBinding, MyStudyViewM
 
     override fun initDataBinding() {
         viewModel.MyStudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            if (it.isSuccessful) {
-                val myStudyResponse = it.body()!!
+            when {
+                it.isSuccessful -> {
+                    val myStudyResponse = it.body()!!
 
-                //네비게이션 정보 셋팅
-                setNavigaionLoginImage(myStudyResponse.result.profile.loginType)
-                setNavigaionProfileImage(myStudyResponse.result.profile.img)
-                setNavigaionNickname(myStudyResponse.result.profile.nickname)
+                    //네비게이션 정보 셋팅
+                    setNavigaionLoginImage(myStudyResponse.result.profile.loginType)
+                    setNavigaionProfileImage(myStudyResponse.result.profile.img)
+                    setNavigaionNickname(myStudyResponse.result.profile.nickname)
 
-                viewDataBinding.draworInfo = DrawerBottomInfo(it.body()!!.result.achieveTimeRate,it.body()!!.result.achieveTodoRate,it.body()!!.result.dream.dday,it.body()!!.result.dream.ddayName)
+                    viewDataBinding.draworInfo = DrawerBottomInfo(it.body()!!.result.achieveTimeRate,it.body()!!.result.achieveTodoRate,it.body()!!.result.dream.dday,it.body()!!.result.dream.ddayName)
 
-                viewDataBinding.mystudyResponse = it.body()!!
+                    viewDataBinding.mystudyResponse = it.body()!!
+                }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //400번대 에러로 내스터디 데이터 가져오기가 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"내스터디 데이터를 가져오지 못했습니다. 나중 다시 시도해주세요.",Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 404 -> {
+                    //존재하지 않은 회원일 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    moveLogin()
+                }
             }
         })
 
@@ -97,21 +111,58 @@ class MyStudyActivity : NavigationAcitivity<ActivityMyStudyBinding, MyStudyViewM
         })
 
         viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            if (it.isSuccessful) {
-                var intent = Intent(this, EnterCamstudyActivity::class.java)
-                intent.putExtra("studyInfo", it.body()!!)
+            when {
+                it.isSuccessful -> {
+                    var intent = Intent(this, EnterCamstudyActivity::class.java)
+                    intent.putExtra("studyInfo", it.body()!!)
 
-                passwordDialog.dismissDialog()
-                startActivity(intent)
-            } else if (it.code() == 403) {
-                val errorMessage = JSONObject(it.errorBody()?.string())
+                    passwordDialog.dismissDialog()
+                    startActivity(intent)
+                }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
 
-                when(errorMessage.getInt("code")){
-                    -12 -> {
-                        //비밀번호를 틀린 경우
-                        passwordDialog.setErrorMessage(errorMessage.getString("message"))
+                    //400번대 에러로 스터디 입장페이지 진입 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"스터디에 입장할 수 없습니다. 나중 다시 시도해주세요.",Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 403 -> {
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when(errorMessage.getInt("code")){
+                        -4 ->{
+                            //해당 스터디에 강제 탈퇴 당해 더 이상 입장할 수 없는 경우
+                            Toast.makeText(this,"강제 퇴장당한 스터디입니다. 입장할 수 없습니다.",Toast.LENGTH_SHORT).show()
+                        }
+                        -5 ->{
+                            //참여중인 스터디가 있을 경우
+                            Toast.makeText(this,"이미 공부중인 스터디가 있습니다. 바로 참여할 수 없습니다.",Toast.LENGTH_SHORT).show()
+                        }
+                        -12 ->{
+                            //비밀번호를 틀린 경우
+                            passwordDialog.setErrorMessage(errorMessage.getString("message"))
+                        }
                     }
                 }
+                it.code() == 404 -> {
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when(errorMessage.getInt("code")){
+                        -2 ->{
+                            //존재하지 않는 회원인 경우
+                            moveLogin()
+                        }
+                        -3 ->{
+                            //존재하지 않는 스터디일 경우
+                            Toast.makeText(this,"더이상 존재하지 않는 스터디입니다.",Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                    }
+                }
+
             }
         })
     }

@@ -85,64 +85,163 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
 
     override fun initDataBinding() {
         viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            if (it.isSuccessful) {
-                var intent = Intent(this, EnterCamstudyActivity::class.java)
-                intent.putExtra("studyInfo", it.body()!!)
+            when {
+                it.isSuccessful -> {
+                    var intent = Intent(this, EnterCamstudyActivity::class.java)
+                    intent.putExtra("studyInfo", it.body()!!)
 
-                passwordDialog.dismissDialog()
-                startActivity(intent)
-            } else if (it.code() == 403) {
-                val errorMessage = JSONObject(it.errorBody()?.string())
+                    passwordDialog.dismissDialog()
+                    startActivity(intent)
+                }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
 
-                when(errorMessage.getInt("code")){
-                    -12 -> {
-                        //비밀번호를 틀린 경우
-                        passwordDialog.setErrorMessage(errorMessage.getString("message"))
+                    //400번대 에러로 스터디 입장페이지 진입 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"스터디에 입장할 수 없습니다. 나중 다시 시도해주세요.",Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 403 -> {
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when(errorMessage.getInt("code")){
+                        -4 ->{
+                            //해당 스터디에 강제 탈퇴 당해 더 이상 입장할 수 없는 경우
+                            Toast.makeText(this,"강제 퇴장당한 스터디입니다. 입장할 수 없습니다.",Toast.LENGTH_SHORT).show()
+                        }
+                        -5 ->{
+                            //참여중인 스터디가 있을 경우
+                            Toast.makeText(this,"이미 공부중인 스터디가 있습니다. 바로 참여할 수 없습니다.",Toast.LENGTH_SHORT).show()
+                        }
+                        -12 ->{
+                            //비밀번호를 틀린 경우
+                            passwordDialog.setErrorMessage(errorMessage.getString("message"))
+                        }
                     }
                 }
+                it.code() == 404 -> {
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when(errorMessage.getInt("code")){
+                        -2 ->{
+                            //존재하지 않는 회원인 경우
+                            moveLogin()
+                        }
+                        -3 ->{
+                            //존재하지 않는 스터디일 경우
+                            Toast.makeText(this,"더이상 존재하지 않는 스터디입니다.",Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                    }
+                }
+
             }
         })
 
         viewModel.MainResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            if (it.isSuccessful) {
-                viewDataBinding.mainResponse = it.body()!!
+            when {
+                it.isSuccessful -> {
+                    viewDataBinding.mainResponse = it.body()!!
 
-                //네비게이션 정보 세팅
-                setNavigaionProfileImage(it.body()!!.result[0].profile.img)
-                setNavigaionLoginImage(it.body()!!.result[0].profile.loginType)
-                setNavigaionNickname(it.body()!!.result[0].profile.nickname)
+                    //네비게이션 정보 세팅
+                    setNavigaionProfileImage(it.body()!!.result[0].profile.img)
+                    setNavigaionLoginImage(it.body()!!.result[0].profile.loginType)
+                    setNavigaionNickname(it.body()!!.result[0].profile.nickname)
 
-                viewDataBinding.draworInfo = DrawerBottomInfo(it.body()!!.result[0].achieveTimeRate,it.body()!!.result[0].achieveTodoRate,it.body()!!.result[0].dream.dday,it.body()!!.result[0].dream.ddayName)
+                    viewDataBinding.draworInfo = DrawerBottomInfo(it.body()!!.result[0].achieveTimeRate,it.body()!!.result[0].achieveTodoRate,it.body()!!.result[0].dream.dday,it.body()!!.result[0].dream.ddayName)
 
-                Log.d("디버그태그", it.body()!!.result[0].achieveTodoRate.toString())
-                //내스터디
-                var recyclerMyStudy: RecyclerView =
-                    findViewById(R.id.main_todolist_recylerView)
-                var myStudyAdepter: MainTodolistAdapter =
-                    MainTodolistAdapter(this, viewModel)
-                myStudyAdepter.datas = it.body()!!.result[0].todo.toMutableList()
-                recyclerMyStudy.adapter = myStudyAdepter
+                    Log.d("디버그태그", it.body()!!.result[0].achieveTodoRate.toString())
+                    //내스터디
+                    var recyclerMyStudy: RecyclerView =
+                        findViewById(R.id.main_todolist_recylerView)
+                    var myStudyAdepter: MainTodolistAdapter =
+                        MainTodolistAdapter(this, viewModel)
+                    myStudyAdepter.datas = it.body()!!.result[0].todo.toMutableList()
+                    recyclerMyStudy.adapter = myStudyAdepter
 
-                setData = true
-                NewStudy_init()
-                Recommend_init()
+                    setData = true
+                    NewStudy_init()
+                    Recommend_init()
+                }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //400번대 에러로 메인 데이터 가져오기가 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"메인 데이터를 가져오지 못했습니다. 나중 다시 시도해주세요.",Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 404 -> {
+                    //존재하지 않은 회원일 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    moveLogin()
+
+                }
             }
         })
 
         viewModel.EditGoalResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            if (it.isSuccessful) {
-                Log.d("확인", it.body().toString())
-                viewDataBinding.mainResponse!!.result[0].dream = it.body()!!.result.dream
-                viewDataBinding.mainResponse!!.result[0].achieveTimeRate = it.body()!!.result.achieveTimeRate
-                viewDataBinding.mainResponse = viewDataBinding.mainResponse
+            when {
+                it.isSuccessful -> {
+                    Log.d("확인", it.body().toString())
+                    viewDataBinding.mainResponse!!.result[0].dream = it.body()!!.result.dream
+                    viewDataBinding.mainResponse!!.result[0].achieveTimeRate = it.body()!!.result.achieveTimeRate
+                    viewDataBinding.mainResponse = viewDataBinding.mainResponse
+                }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //400번대 에러로 목표 수정이 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"목표 수정에 실패했습니다. 나중에 다시 시도해주세요.",Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 404 -> {
+                    //존재하지 않은 회원일 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    moveLogin()
+
+                }
             }
         })
 
         viewModel.CheckTodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            if (it.isSuccessful) {
-                //네비게이션 드로어 오늘 할일 달성률 갱신
-                viewDataBinding.draworInfo!!.achieveTodoRate = it.body()!!.result.achieveTodoRate
-                viewDataBinding.draworInfo = viewDataBinding.draworInfo
+            when {
+                it.isSuccessful -> {
+                    //네비게이션 드로어 오늘 할일 달성률 갱신
+                    viewDataBinding.draworInfo!!.achieveTodoRate = it.body()!!.result.achieveTodoRate
+                    viewDataBinding.draworInfo = viewDataBinding.draworInfo
+                }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //400번대 에러로 투두리스트 체크 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this,"투두리스트 체크에 실패했습니다. 나중 다시 시도해주세요.",Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 404 -> {
+                    //존재하지 않은 회원일 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when(errorMessage.getInt("code")){
+                        -2 ->{
+                            //존재하지 않는 회원인 경우
+                            moveLogin()
+                        }
+                        -7 ->{
+                            //수정하고자 하는 할 일이 실제로 존재하지 않은 경우
+                            Toast.makeText(this,"해당 할일이 존재하지 않습니다.",Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             }
         })
 

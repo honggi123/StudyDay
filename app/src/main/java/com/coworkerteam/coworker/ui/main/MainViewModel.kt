@@ -54,8 +54,26 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         it.run {
-                            _MainResponseLiveData.postValue(this)
-                            Log.d(TAG, "meta : " + it.toString())
+                            Log.d(TAG, "meta : $it")
+
+                            when {
+                                it.code() == 401 -> {
+                                    //액세스토큰이 만료된 경우
+                                    Log.d(TAG, "액세스토큰이 만료된 경우")
+
+                                    //액세스 토큰 재발급
+                                    getReissuanceToken(TAG,model,getMainData())
+                                }
+                                it.code() > 500 -> {
+                                    //서비스 서버에 문제가 있을 경우
+                                    setServiceError(TAG, it.errorBody())
+                                }
+                                else -> {
+                                    //그 외에는 값 Activity에 전달 ( 200, 400번대의 경우 )
+                                    _MainResponseLiveData.postValue(this)
+                                }
+                            }
+
                         }
                     }, {
                         Log.d(TAG, "response error, message : ${it.message}")
@@ -76,13 +94,30 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         it.run {
+                            Log.d(TAG, "meta : $it")
+
                             if (isSuccessful) {
                                 it.body()!!.result.studyInfo.idx = studyIdx
-                                _EnterCamstudyResponseLiveData.postValue(it)
-                            } else if (it.code() == 403) {
-                                _EnterCamstudyResponseLiveData.postValue(it)
                             }
-                            Log.d(TAG, "meta : " + it.toString())
+
+                            when {
+                                it.code() == 401 -> {
+                                    //액세스토큰이 만료된 경우
+                                    Log.d(TAG, "액세스토큰이 만료된 경우")
+
+                                    //액세스 토큰 재발급
+                                    getReissuanceToken(TAG,model,getEnterCamstduyData(studyIdx,password))
+                                }
+                                it.code() > 500 -> {
+                                    //서비스 서버에 문제가 있을 경우
+                                    setServiceError(TAG, it.errorBody())
+                                }
+                                else -> {
+                                    //그 외에는 값 Activity에 전달 ( 200, 400번대의 경우 )
+                                    _EnterCamstudyResponseLiveData.postValue(it)
+                                }
+                            }
+
                         }
                     }, {
                         Log.d(TAG, "response error, message : ${it.message}")
@@ -104,10 +139,25 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         it.run {
-                            if (isSuccessful) {
-                                _EditGoalResponseLiveData.postValue(it)
+                            Log.d(TAG, "meta : $it")
+
+                            when {
+                                it.code() == 401 -> {
+                                    //액세스토큰이 만료된 경우
+                                    Log.d(TAG, "액세스토큰이 만료된 경우")
+
+                                    //액세스 토큰 재발급
+                                    getReissuanceToken(TAG,model,setGoalCamstduyData(aimTime, goal, ddayDate, ddayName))
+                                }
+                                it.code() > 500 -> {
+                                    //서비스 서버에 문제가 있을 경우
+                                    setServiceError(TAG, it.errorBody())
+                                }
+                                else -> {
+                                    //그 외에는 값 Activity에 전달 ( 200, 400번대의 경우 )
+                                    _EditGoalResponseLiveData.postValue(it)
+                                }
                             }
-                            Log.d(TAG, "meta : " + it.toString())
                         }
                     }, {
                         Log.d(TAG, "response error, message : ${it.message}")
@@ -128,8 +178,26 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         it.run {
-                            _CheckTodoListResponseLiveData.postValue(this)
-                            Log.d(TAG, "meta : " + it.toString())
+                            Log.d(TAG, "meta : $it")
+
+                            when {
+                                it.code() == 401 -> {
+                                    //액세스토큰이 만료된 경우
+                                    Log.d(TAG, "액세스토큰이 만료된 경우")
+
+                                    //액세스 토큰 재발급
+                                    getReissuanceToken(TAG,model,setCheckTodoListData(todoIdx, selectDate))
+                                }
+                                it.code() > 500 -> {
+                                    //서비스 서버에 문제가 있을 경우
+                                    setServiceError(TAG, it.errorBody())
+                                }
+                                else -> {
+                                    //그 외에는 값 Activity에 전달 ( 200, 400번대의 경우 )
+                                    _CheckTodoListResponseLiveData.postValue(this)
+                                }
+                            }
+
                         }
                     }, {
                         Log.d(TAG, "response error, message : ${it.message}")
