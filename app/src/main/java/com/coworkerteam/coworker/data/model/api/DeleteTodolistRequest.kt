@@ -16,19 +16,8 @@ data class DeleteTodolistRequest(
         @SerializedName("theDayAcheiveRate")
         val theDayAcheiveRate: Int,
         @SerializedName("theDayTodo")
-        val theDayTodo: List<TheDayTodo>,
+        val theDayTodo: List<TodolistResponse.Result.TheDayTodo>,
         @SerializedName("todoDate")
         val todoDate: List<String>
-    ){
-        data class TheDayTodo(
-            @SerializedName("idx")
-            val idx: Int,
-            @SerializedName("is_complete")
-            val isComplete: String,
-            @SerializedName("todo")
-            val todo: String,
-            @SerializedName("todo_date")
-            val todoDate: String
-        )
-    }
+    )
 }

@@ -11,9 +11,11 @@ import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.TodolistResponse
+import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.material.textfield.TextInputLayout
 
 class TodoListAdapter(private val context: Context, private val viewModel: TodoListViewModel) :
@@ -49,7 +51,7 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
             if (item.isComplete) {
                 checkbox.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
                 checkbox.setTextColor(Color.GRAY)
-            }else{
+            } else {
                 checkbox.paintFlags = 0
                 checkbox.setTextColor(Color.BLACK)
             }
@@ -64,20 +66,34 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
                         checkbox.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
                         checkbox.setTextColor(Color.GRAY)
 
-                        var theDayTodo = TodolistResponse.Result.TheDayTodo(items.createDate, index, isChecked, item.todo)
+                        var theDayTodo = TodolistResponse.Result.TheDayTodo(
+                            items.createDate,
+                            items.idx,
+                            isChecked,
+                            item.todo
+                        )
 
-                        datas.removeAt(index)
-                        datas.add(index, theDayTodo)
+                        items.isComplete = false
+
+//                        datas.removeAt(index)
+//                        datas.add(index, theDayTodo)
 
                     } else {
                         viewModel.setCheckTodoListData(item.idx, item.createDate)
                         checkbox.paintFlags = 0
                         checkbox.setTextColor(Color.BLACK)
 
-                        var theDayTodo = TodolistResponse.Result.TheDayTodo(items.createDate, index, isChecked, item.todo)
+                        var theDayTodo = TodolistResponse.Result.TheDayTodo(
+                            items.createDate,
+                            items.idx,
+                            isChecked,
+                            item.todo
+                        )
 
-                        datas.removeAt(index)
-                        datas.add(index, theDayTodo)
+                        items.isComplete = true
+
+//                        datas.removeAt(index)
+//                        datas.add(index, theDayTodo)
 
                     }
                 }
@@ -106,33 +122,55 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
                                 mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_cancle)
                             val btn_remove =
                                 mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_remove)
+                            var todoCheck = false
 
                             txt_day.editText?.setText(items.createDate)
                             edt_todo.editText?.setText(items.todo)
+
+                            val changTextTodo: (CharSequence?, Int, Int, Int) -> Unit =
+                                { charSequence: CharSequence?, i: Int, i1: Int, i2: Int ->
+                                    val result = PatternUtils.matcheTodo(charSequence.toString())
+                                    Log.d(TAG, charSequence.toString())
+
+                                    if (result.isNotError) {
+                                        edt_todo.isErrorEnabled = false
+                                        edt_todo.error = null
+                                        todoCheck = true
+                                    } else {
+                                        edt_todo.error = result.ErrorMessge
+                                        todoCheck = false
+                                    }
+                                }
+
+                            edt_todo.editText?.addTextChangedListener(onTextChanged = changTextTodo)
 
                             btn_cancle.setOnClickListener(View.OnClickListener {
                                 builder.dismiss()
                             })
 
                             btn_remove.setOnClickListener(View.OnClickListener {
-                                editTodolist(
-                                    items.createDate,
-                                    edt_todo.editText?.text.toString(),
-                                    items.idx,
-                                    index,
-                                    checkbox.isChecked
-                                )
-                                viewModel.setEditTodoListData(
-                                    items.createDate,
-                                    edt_todo.editText?.text.toString(),
-                                    items.idx
-                                )
-                                builder.dismiss()
+                                if (todoCheck) {
+                                    editTodolist(
+                                        items.createDate,
+                                        edt_todo.editText?.text.toString(),
+                                        items.idx,
+                                        index,
+                                        checkbox.isChecked
+                                    )
+                                    viewModel.setEditTodoListData(
+                                        items.createDate,
+                                        edt_todo.editText?.text.toString(),
+                                        items.idx
+                                    )
+                                    builder.dismiss()
+                                } else {
+                                    Toast.makeText(context, "투두리스트 입력을 확인해주세요.", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
                             })
                         }
 
                         R.id.menu_delete -> {
-                            removeTodolist(index)
                             viewModel.deleteTodoListData(items.idx, items.createDate)
                         }
                     }
@@ -158,12 +196,6 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
 
     // (4) setItemClickListener로 설정한 함수 실행
     private lateinit var itemClickListener: OnItemClickListener
-
-    fun removeTodolist(position: Int) {
-        datas.removeAt(position)
-        notifyDataSetChanged()
-
-    }
 
     fun editTodolist(selectDay: String, todo: String, idx: Int, position: Int, ischeck: Boolean) {
         var theDayTodo = TodolistResponse.Result.TheDayTodo(selectDay, idx, ischeck, todo)

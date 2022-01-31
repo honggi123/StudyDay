@@ -7,11 +7,14 @@ import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doOnTextChanged
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
@@ -20,6 +23,7 @@ import com.coworkerteam.coworker.data.model.custom.EventDecorator
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityTodoListBinding
 import com.coworkerteam.coworker.ui.base.NavigationAcitivity
+import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textfield.TextInputLayout
@@ -92,7 +96,8 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                     //프로그레스바, 투두리스트 항목이 있을 경우
                     if (it.body()!!.result.theDayTodo != null) {
                         rv_init()
-                        viewDataBinding.todoListProgress.progress = it.body()!!.result.theDayAcheiveRate
+                        viewDataBinding.todoListProgress.progress =
+                            it.body()!!.result.theDayAcheiveRate
                     }
 
                     //데코레이터 추가할 날짜가 있을 경우
@@ -133,10 +138,7 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
             when {
                 it.isSuccessful -> {
                     //새로 추가한 투두리스트
-                    val rv = findViewById<RecyclerView>(R.id.rv_todolist)
-
                     var todolistAdepter = TodoListAdapter(this, viewModel)
-
                     todolistAdepter.datas = it.body()!!.result.theDayTodo.toMutableList()
 
                     //네비게이션 드로어 오늘 할일 달성률 갱신
@@ -150,10 +152,11 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                     viewDataBinding.todolistResponse = viewDataBinding.todolistResponse
 
                     //리사이클러뷰 갱신
-                    rv.adapter = todolistAdepter
+                    viewDataBinding.rvTodolist.adapter = todolistAdepter
 
                     //진행률 업데이트
-                    viewDataBinding.todolistResponse?.result?.theDayAcheiveRate = it.body()!!.result.theDayAcheiveRate
+                    viewDataBinding.todolistResponse?.result?.theDayAcheiveRate =
+                        it.body()!!.result.theDayAcheiveRate
                     viewDataBinding.todolistResponse = viewDataBinding.todolistResponse
                     viewDataBinding.todoListProgress.progress = it.body()!!.result.theDayAcheiveRate
                 }
@@ -184,7 +187,8 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                     viewDataBinding.draworInfo = viewDataBinding.draworInfo
 
                     //프로그래스바
-                    viewDataBinding.todolistResponse?.result?.theDayAcheiveRate = it.body()!!.result.theDayAcheiveRate
+                    viewDataBinding.todolistResponse?.result?.theDayAcheiveRate =
+                        it.body()!!.result.theDayAcheiveRate
                     viewDataBinding.todolistResponse = viewDataBinding.todolistResponse
                     viewDataBinding.todoListProgress.progress = it.body()!!.result.theDayAcheiveRate
                 }
@@ -218,10 +222,12 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
         viewModel.DeleteTodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
-                    myStudyAdepter!!.notifyDataSetChanged()
-                    viewDataBinding.todolistResponse!!.result.theDayTodo =
-                        myStudyAdepter!!.datas.toList()
+                    viewDataBinding.todolistResponse!!.result.theDayTodo = it.body()!!.result.theDayTodo
                     viewDataBinding.todolistResponse = viewDataBinding.todolistResponse
+
+                    var todolistAdepter = TodoListAdapter(this, viewModel)
+                    todolistAdepter.datas = it.body()!!.result.theDayTodo.toMutableList()
+                    viewDataBinding.rvTodolist.adapter = todolistAdepter
 
                     //달력 데코레이터 다시 세팅
                     viewDataBinding.calendarView.removeDecorators()
@@ -244,7 +250,8 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                     viewDataBinding.draworInfo = viewDataBinding.draworInfo
 
                     //프로그래스바
-                    viewDataBinding.todolistResponse?.result?.theDayAcheiveRate = it.body()!!.result.theDayAcheiveRate
+                    viewDataBinding.todolistResponse?.result?.theDayAcheiveRate =
+                        it.body()!!.result.theDayAcheiveRate
                     viewDataBinding.todolistResponse = viewDataBinding.todolistResponse
                     viewDataBinding.todoListProgress.progress = it.body()!!.result.theDayAcheiveRate
                 }
@@ -419,11 +426,13 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
             // Custom Dialog 배경 설정 (다음과 같이 진행해야 좌우 여백 없이 그려짐)
             builder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-            val txt_calendar = mDialogView.findViewById<TextInputLayout>(R.id.dialog_todolist_edt__txt_day)
+            val txt_calendar =
+                mDialogView.findViewById<TextInputLayout>(R.id.dialog_todolist_edt__txt_day)
             val txt_todo = mDialogView.findViewById<TextInputLayout>(R.id.dialog_todolist_edt_edit)
             val btn_cancle =
                 mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_cancle)
             val btn_add = mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_remove)
+            var todoCheck = false
 
             if (selectData.equals(getToday())) {
                 txt_calendar.editText?.setText("오늘")
@@ -431,13 +440,36 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                 txt_calendar.editText?.setText(selectData)
             }
 
+            val changTextTodo: (CharSequence?, Int, Int, Int) -> Unit =
+                { charSequence: CharSequence?, i: Int, i1: Int, i2: Int ->
+                    val result = PatternUtils.matcheTodo(charSequence.toString())
+                    Log.d(TAG, charSequence.toString())
+
+                    if (result.isNotError) {
+                        txt_todo.isErrorEnabled = false
+                        txt_todo.error = null
+                        todoCheck = true
+//                    viewDataBinding.myProfileEditBtnNicknameCheck.isEnabled = true
+                    } else {
+                        txt_todo.error = result.ErrorMessge
+                        todoCheck = false
+//                    viewDataBinding.myProfileEditBtnNicknameCheck.isEnabled = false
+                    }
+                }
+
+            txt_todo.editText?.addTextChangedListener(onTextChanged = changTextTodo)
+
             btn_cancle.setOnClickListener(View.OnClickListener {
                 builder.dismiss()
             })
 
             btn_add.setOnClickListener(View.OnClickListener {
-                viewModel.setAddTodoListData(selectData, txt_todo.editText?.text.toString())
-                builder.dismiss()
+                if (todoCheck) {
+                    viewModel.setAddTodoListData(selectData, txt_todo.editText?.text.toString())
+                    builder.dismiss()
+                } else {
+                    Toast.makeText(this, "투두리스트 입력을 확인해주세요.", Toast.LENGTH_SHORT).show()
+                }
             })
         })
 
