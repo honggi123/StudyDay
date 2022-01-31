@@ -202,11 +202,10 @@ class TodoListViewModel(private val model: UserRepository) : BaseViewModel() {
 
     fun setEditTodoListData(selectDate: String, todo: String, todoIdx: Int) {
         val accessToken = model.getAccessToken()
-        val nickname = model.getCurrentUserName()
 
-        if (!accessToken.isNullOrEmpty() && !nickname.isNullOrEmpty()) {
+        if (!accessToken.isNullOrEmpty()) {
             addDisposable(
-                model.setEditTodolist(accessToken, nickname, selectDate, todo, todoIdx)
+                model.setEditTodolist(accessToken, todoIdx, selectDate, todo)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
@@ -241,16 +240,5 @@ class TodoListViewModel(private val model: UserRepository) : BaseViewModel() {
         }
     }
 
-    fun getLoginType():String?{
-        return model.getCurrentUserLoggedInMode()
-    }
-
-    fun getUserProfile():String?{
-        return model.getCurrentUserProfilePicUrl()
-    }
-
-    fun getUserNickname():String?{
-        return model.getCurrentUserName()
-    }
 
 }

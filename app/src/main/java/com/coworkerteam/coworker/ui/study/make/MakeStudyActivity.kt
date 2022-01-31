@@ -1,13 +1,11 @@
 package com.coworkerteam.coworker.ui.study.make
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,8 +13,6 @@ import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isNotEmpty
 import com.amazonaws.auth.AWSCredentials
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
@@ -28,31 +24,13 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3Client
 import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
-import com.coworkerteam.coworker.data.model.api.StudyRequest
-import com.coworkerteam.coworker.data.remote.StudydayService
-import com.coworkerteam.coworker.databinding.ActivityCategoryBinding
 import com.coworkerteam.coworker.databinding.ActivityMakeStudyBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
-import com.coworkerteam.coworker.ui.category.CategoryViewModel
 import com.coworkerteam.coworker.utils.PatternUtils
-import com.google.android.gms.common.api.ApiException
-import okhttp3.OkHttpClient
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
-
 
 class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewModel>() {
 

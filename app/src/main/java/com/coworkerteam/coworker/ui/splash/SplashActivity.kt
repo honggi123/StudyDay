@@ -52,7 +52,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
                     Log.e(TAG, errorMessage.getString("message"))
 
                     //400번대 에러 시 로그인 페이지로 이동
-                    moveLogin()
+                    var intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 }
             }
         })
@@ -64,15 +66,10 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             viewModel.getAutoLoginData()
         } else {
             //없다면 어플을 다시 깔거나, 신규회원이므로 로그인 화면
-            moveLogin()
+            var intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
         }
-    }
-
-    //로그인 페이지로 이동하는 메소드
-    private fun moveLogin() {
-        var intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-        finish()
     }
 
     //메인페이지로 이동하는 메소드

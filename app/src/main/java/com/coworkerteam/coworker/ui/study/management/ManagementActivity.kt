@@ -21,7 +21,7 @@ class ManagementActivity : BaseActivity<ActivityManagementBinding, ManagementVie
     lateinit var pagingManagementAdapter: ManagementPagingAdapter
 
     override fun initStartView() {
-        setSupportActionBar(viewDataBinding.managementToolbar) // 툴바를 액티비티의 앱바로 지정
+        setSupportActionBar(viewDataBinding.managementToolbar as androidx.appcompat.widget.Toolbar) // 툴바를 액티비티의 앱바로 지정
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_new_24) // 홈버튼 이미지 변경
         supportActionBar?.title = "내 스터디 관리"

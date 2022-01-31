@@ -6,6 +6,7 @@ import androidx.paging.PagingState
 import com.coworkerteam.coworker.data.local.prefs.PreferencesHelper
 import com.coworkerteam.coworker.data.model.api.MainMyStudyPagingResponse
 import com.coworkerteam.coworker.data.remote.StudydayService
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -21,18 +22,19 @@ class MainMyStudyPagingSource(
         return try {
             val position = params.key ?: 1
 
-            var response = withContext(Dispatchers.IO) {
+            var response =
                 service.mainMyStudyPaging(
                     pref.getAccessToken()!!,
                     pref.getCurrentUserName()!!,
                     position
-                ).execute()
-            }
+                ).subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .blockingGet()
 
-            Log.d("액세스토큰 : ",pref.getAccessToken().toString())
+            Log.d("액세스토큰 : ", pref.getAccessToken().toString())
 
             val next = if (position >= response.body()!!.result.totalPage) null else position + 1
-            Log.d("디버그태그",next.toString())
+            Log.d("디버그태그", next.toString())
 
             LoadResult.Page(
                 data = response.body()!!.result.myStudy,

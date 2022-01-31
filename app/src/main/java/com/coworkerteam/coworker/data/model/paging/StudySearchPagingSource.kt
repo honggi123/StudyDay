@@ -6,6 +6,7 @@ import com.coworkerteam.coworker.data.local.prefs.PreferencesHelper
 import com.coworkerteam.coworker.data.model.api.StudySearchResponse
 import com.coworkerteam.coworker.data.remote.StudydayService
 import com.coworkerteam.coworker.ui.search.StudySearchActivity
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -22,7 +23,7 @@ class StudySearchPagingSource(
         return try {
             val position = params.key ?: 1
 
-            var response = withContext(Dispatchers.IO) {
+            var response =
                 service.studySerch(
                     pref.getAccessToken()!!,
                     "search",
@@ -32,8 +33,9 @@ class StudySearchPagingSource(
                     StudySearchActivity.viewType,
                     StudySearchActivity.keword,
                     position
-                ).execute()
-            }
+                ).subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .blockingGet()
 
             val next = if (position >= response.body()!!.result.totalPage) null else position + 1
 

@@ -70,31 +70,42 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
             when {
                 it.isSuccessful -> {
                     //데코레이터용 날짜 받아올때는 DataBinding에 넣지 않음
-                    if(!it.body()!!.message.equals("선택한 달에서, 할 일이 있는 날짜입니다.")){
+                    if (!it.body()!!.message.equals("선택한 달에서, 할 일이 있는 날짜입니다.")) {
                         viewDataBinding.todolistResponse = it.body()!!
                     }
 
                     //네비게이션 바에 넣을 정보가 있을 경우
-                    if(it.body()!!.result.profile != null) {
+                    if (it.body()!!.result.profile != null) {
                         setNavigaionLoginImage(viewDataBinding.todolistResponse!!.result.profile.loginType)
                         setNavigaionProfileImage(viewDataBinding.todolistResponse!!.result.profile.img)
                         setNavigaionNickname(viewDataBinding.todolistResponse!!.result.profile.nickname)
 
-                        viewDataBinding.draworInfo = DrawerBottomInfo(it.body()!!.result.achieveTimeRate,it.body()!!.result.achieveTodoRate,it.body()!!.result.dream.dday,it.body()!!.result.dream.ddayName)
+                        viewDataBinding.draworInfo = DrawerBottomInfo(
+                            it.body()!!.result.achieveTimeRate,
+                            it.body()!!.result.achieveTodoRate,
+                            it.body()!!.result.dream.dday,
+                            it.body()!!.result.dream.ddayName
+                        )
                     }
 
                     //프로그레스바, 투두리스트 항목이 있을 경우
-                    if(it.body()!!.result.theDayTodo != null){
+                    if (it.body()!!.result.theDayTodo != null) {
                         rv_init()
-                        progress_init()
+                        viewDataBinding.todoListProgress.progress = it.body()!!.result.theDayAcheiveRate
                     }
 
                     //데코레이터 추가할 날짜가 있을 경우
-                    if(it.body()!!.result.todoDate != null) {
+                    if (it.body()!!.result.todoDate != null) {
                         var decorators = ArrayList<CalendarDay>()
                         it.body()!!.result.todoDate.forEach {
                             val date = it.split("-")
-                            decorators.add(CalendarDay.from(date[0].toInt(), date[1].toInt(), date[2].toInt()))
+                            decorators.add(
+                                CalendarDay.from(
+                                    date[0].toInt(),
+                                    date[1].toInt(),
+                                    date[2].toInt()
+                                )
+                            )
                         }
                         viewDataBinding.calendarView.addDecorator(EventDecorator(decorators))
                     }
@@ -105,7 +116,7 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                     Log.e(TAG, errorMessage.getString("message"))
 
                     //400번대 에러로 투두리스트 데이터를 가져오는 것이 실패했을 경우, 사용자에게 알려준다.
-                    Toast.makeText(this,"투두리스트 데이터를 가져오는 것을 실패했습니다.",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "투두리스트 데이터를 가져오는 것을 실패했습니다.", Toast.LENGTH_SHORT).show()
                 }
                 it.code() == 404 -> {
                     //존재하지 않은 회원일 경우
@@ -127,7 +138,8 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
 
                     var myStudyAdepter: TodoListAdapter = TodoListAdapter(this, viewModel)
 
-                    myStudyAdepter.datas = viewDataBinding.todolistResponse!!.result.theDayTodo.toMutableList()
+                    myStudyAdepter.datas =
+                        viewDataBinding.todolistResponse!!.result.theDayTodo.toMutableList()
                     myStudyAdepter.datas.add(
                         TodolistResponse.Result.TheDayTodo(
                             day.todoDate,
@@ -137,11 +149,13 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                         )
                     )
                     //네비게이션 드로어 오늘 할일 달성률 갱신
-                    viewDataBinding.draworInfo!!.achieveTodoRate = it.body()!!.result.achieveTodoRate
+                    viewDataBinding.draworInfo!!.achieveTodoRate =
+                        it.body()!!.result.achieveTodoRate
                     viewDataBinding.draworInfo = viewDataBinding.draworInfo
 
                     //추가된 새로 받아온 투두리스트로 DataBinding 정보 갱신
-                    viewDataBinding.todolistResponse!!.result.theDayTodo = myStudyAdepter.datas.toList()
+                    viewDataBinding.todolistResponse!!.result.theDayTodo =
+                        myStudyAdepter.datas.toList()
                     viewDataBinding.todolistResponse = viewDataBinding.todolistResponse
 
                     //리사이클러뷰 갱신
@@ -157,7 +171,7 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                     Log.e(TAG, errorMessage.getString("message"))
 
                     //400번대 에러로 투두리스트 추가 실패했을 경우, 사용자에게 알려준다.
-                    Toast.makeText(this,"투두리스트 추가하는 것을 실패했습니다.",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "투두리스트 추가하는 것을 실패했습니다.", Toast.LENGTH_SHORT).show()
                 }
                 it.code() == 404 -> {
                     //존재하지 않은 회원일 경우
@@ -173,8 +187,12 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
             when {
                 it.isSuccessful -> {
                     //네비게이션 드로어 오늘 할일 달성률 갱신
-                    viewDataBinding.draworInfo!!.achieveTodoRate = it.body()!!.result.achieveTodoRate
+                    viewDataBinding.draworInfo!!.achieveTodoRate =
+                        it.body()!!.result.achieveTodoRate
                     viewDataBinding.draworInfo = viewDataBinding.draworInfo
+
+                    //프로그래스바
+                    viewDataBinding.todoListProgress.progress = it.body()!!.result.theDayAcheiveRate
                 }
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
@@ -182,21 +200,22 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                     Log.e(TAG, errorMessage.getString("message"))
 
                     //400번대 에러로 투두리스트 체크 실패했을 경우, 사용자에게 알려준다.
-                    Toast.makeText(this,"투두리스트 체크에 실패했습니다. 나중 다시 시도해주세요.",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "투두리스트 체크에 실패했습니다. 나중 다시 시도해주세요.", Toast.LENGTH_SHORT)
+                        .show()
                 }
                 it.code() == 404 -> {
                     //존재하지 않은 회원일 경우
                     val errorMessage = JSONObject(it.errorBody()?.string())
                     Log.e(TAG, errorMessage.getString("message"))
 
-                    when(errorMessage.getInt("code")){
-                        -2 ->{
+                    when (errorMessage.getInt("code")) {
+                        -2 -> {
                             //존재하지 않는 회원인 경우
                             moveLogin()
                         }
-                        -7 ->{
+                        -7 -> {
                             //수정하고자 하는 할 일이 실제로 존재하지 않은 경우
-                            Toast.makeText(this,"해당 할일이 존재하지 않습니다.",Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "해당 할일이 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -206,7 +225,8 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
             when {
                 it.isSuccessful -> {
                     myStudyAdepter!!.notifyDataSetChanged()
-                    viewDataBinding.todolistResponse!!.result.theDayTodo = myStudyAdepter!!.datas.toList()
+                    viewDataBinding.todolistResponse!!.result.theDayTodo =
+                        myStudyAdepter!!.datas.toList()
                     viewDataBinding.todolistResponse = viewDataBinding.todolistResponse
 
                     //달력 데코레이터 다시 세팅
@@ -214,13 +234,23 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                     var decorators = ArrayList<CalendarDay>()
                     it.body()!!.result.todoDate.forEach {
                         val date = it.split("-")
-                        decorators.add(CalendarDay.from(date[0].toInt(), date[1].toInt(), date[2].toInt()))
+                        decorators.add(
+                            CalendarDay.from(
+                                date[0].toInt(),
+                                date[1].toInt(),
+                                date[2].toInt()
+                            )
+                        )
                     }
                     viewDataBinding.calendarView.addDecorator(EventDecorator(decorators))
 
                     //네비게이션 드로어 오늘 할일 달성률 갱신
-                    viewDataBinding.draworInfo!!.achieveTodoRate = it.body()!!.result.achieveTodoRate
+                    viewDataBinding.draworInfo!!.achieveTodoRate =
+                        it.body()!!.result.achieveTodoRate
                     viewDataBinding.draworInfo = viewDataBinding.draworInfo
+
+                    //프로그래스바
+                    viewDataBinding.todoListProgress.progress = it.body()!!.result.theDayAcheiveRate
                 }
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
@@ -228,21 +258,22 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                     Log.e(TAG, errorMessage.getString("message"))
 
                     //400번대 에러로 투두리스트 삭제 실패했을 경우, 사용자에게 알려준다.
-                    Toast.makeText(this,"투두리스트 삭제에 실패했습니다. 나중 다시 시도해주세요.",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "투두리스트 삭제에 실패했습니다. 나중 다시 시도해주세요.", Toast.LENGTH_SHORT)
+                        .show()
                 }
                 it.code() == 404 -> {
                     //존재하지 않은 회원일 경우
                     val errorMessage = JSONObject(it.errorBody()?.string())
                     Log.e(TAG, errorMessage.getString("message"))
 
-                    when(errorMessage.getInt("code")){
-                        -2 ->{
+                    when (errorMessage.getInt("code")) {
+                        -2 -> {
                             //존재하지 않는 회원인 경우
                             moveLogin()
                         }
-                        -7 ->{
+                        -7 -> {
                             //수정하고자 하는 할 일이 실제로 존재하지 않은 경우
-                            Toast.makeText(this,"해당 할일이 존재하지 않습니다.",Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "해당 할일이 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -259,23 +290,24 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                     Log.e(TAG, errorMessage.getString("message"))
 
                     //400번대 에러로 수정이 실패했을 경우, 사용자에게 알려준다.
-                    Toast.makeText(this,"투두리스트 입력을 다시 확인해주세요.",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "투두리스트 입력을 다시 확인해주세요.", Toast.LENGTH_SHORT).show()
                 }
                 it.code() == 404 -> {
                     //존재하지 않은 회원일 경우
                     val errorMessage = JSONObject(it.errorBody()?.string())
                     Log.e(TAG, errorMessage.getString("message"))
 
-                    when(errorMessage.getInt("code")){
-                        -2 ->{
+                    when (errorMessage.getInt("code")) {
+                        -2 -> {
                             //존재하지 않는 회원인 경우
                             moveLogin()
                         }
-                        -7 ->{
+                        -7 -> {
                             //수정하고자 하는 할 일이 실제로 존재하지 않은 경우
-                            Toast.makeText(this,"해당 할일이 존재하지 않습니다.",Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "해당 할일이 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
                         }
                     }
+
                 }
             }
         })
@@ -297,7 +329,7 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
         //캘린터 타이틀의 표기되는 이름을 설정하는 함수 ex) 2020년 02월
         calender.setTitleFormatter(TitleFormatter { day ->
             var cal = Calendar.getInstance()
-            cal.set(day.year, day.month-1, day.day)
+            cal.set(day.year, day.month - 1, day.day)
 
             var simpleDateFormat = SimpleDateFormat("yyyy년 MM월")
             var result = simpleDateFormat.format(cal.time)
@@ -307,23 +339,23 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
 
         //캘린더의 월이 바뀔대마다 발생하는 이벤트
         calender.setOnMonthChangedListener(OnMonthChangedListener { widget, date ->
-            val month = if(date.month<10)"0${date.month}" else date.month.toString()
-            val day = if(date.day<10)"0${date.day}" else date.day.toString()
+            val month = if (date.month < 10) "0${date.month}" else date.month.toString()
+            val day = if (date.day < 10) "0${date.day}" else date.day.toString()
 
-            val showDate = date.year.toString()+"-"+month+"-"+day
-            viewModel.getTodoListData("getTodoDate",showDate)
+            val showDate = date.year.toString() + "-" + month + "-" + day
+            viewModel.getTodoListData("getTodoDate", showDate)
         })
 
         //캘린더 다이얼로그(월간)의 이벤트
         val listener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
-            var local = CalendarDay.from(year,month+1,dayOfMonth)
+            var local = CalendarDay.from(year, month + 1, dayOfMonth)
             calender.setCurrentDate(local)
             calender.currentDate = local
             calender.clearSelection()
             calender.setDateSelected(
                 CalendarDay.from(
                     year,
-                    month+1,
+                    month + 1,
                     dayOfMonth
                 ), true
             )
@@ -335,16 +367,22 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
 
             selectData = dates
             viewDataBinding.selectDate = dateFormat.format(cal.time)
-            viewDataBinding.isAddButton = compareDate(selectData,getToday())
+            viewDataBinding.isAddButton = compareDate(selectData, getToday())
 
             viewModel.getTodoListData("old", dates)
-            viewModel.getTodoListData("getTodoDate",dates)
+            viewModel.getTodoListData("getTodoDate", dates)
         }
 
         //캘린더의 2020년 03월 이라고 적힌 타이틀을 누르면 캘린더 다이얼로그(월간)이 나온다.
         calender.setOnTitleClickListener(View.OnClickListener {
             val today = selectData.split("-")
-            var dialog = DatePickerDialog(this, listener, today[0].toInt(),  today[1].toInt()-1,  today[2].toInt())
+            var dialog = DatePickerDialog(
+                this,
+                listener,
+                today[0].toInt(),
+                today[1].toInt() - 1,
+                today[2].toInt()
+            )
             dialog.show()
         })
 
@@ -352,13 +390,13 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
         calender.setOnDateChangedListener(OnDateSelectedListener { widget, date, selected ->
             if (selected) {
                 var cal = Calendar.getInstance()
-                cal.set(date.year, date.month-1, date.day)
+                cal.set(date.year, date.month - 1, date.day)
                 var simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
                 var dates = simpleDateFormat.format(cal.time)
 
                 selectData = dates
                 viewDataBinding.selectDate = dateFormat.format(cal.time)
-                viewDataBinding.isAddButton = compareDate(selectData,getToday())
+                viewDataBinding.isAddButton = compareDate(selectData, getToday())
 
                 viewModel.getTodoListData("old", dates)
             }
@@ -401,9 +439,9 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                 mDialogView.findViewById<EditText>(R.id.dialog_todo_list_edt_todolist)
             val btn_add = mDialogView.findViewById<ImageView>(R.id.dialog_todo_list_add)
 
-            if(selectData.equals(getToday())){
+            if (selectData.equals(getToday())) {
                 txt_calendar.setText("오늘")
-            }else{
+            } else {
                 txt_calendar.setText(selectData)
             }
 
@@ -434,7 +472,8 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
         val rv = findViewById<RecyclerView>(R.id.rv_todolist)
 
         myStudyAdepter = TodoListAdapter(this, viewModel)
-        myStudyAdepter!!.datas = viewDataBinding.todolistResponse!!.result.theDayTodo.toMutableList()
+        myStudyAdepter!!.datas =
+            viewDataBinding.todolistResponse!!.result.theDayTodo.toMutableList()
         if (myStudyAdepter!!.datas.size > 0) {
             val notext = findViewById<TextView>(R.id.todo_list_txt_no_todolist)
             notext.visibility = View.GONE
@@ -449,18 +488,12 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
         rv.adapter = myStudyAdepter
     }
 
-    private fun progress_init() {
-        val todoProgress = findViewById<ProgressBar>(R.id.todo_list_progress)
-
-        todoProgress.progress = viewDataBinding.todolistResponse!!.result.theDayAcheiveRate
-    }
-
     private fun getToday(): String {
         val now = System.currentTimeMillis()
         return SimpleDateFormat("yyyy-MM-dd", Locale.KOREAN).format(now)
     }
 
-    private fun compareDate(selectDay:String, today:String): Boolean {
+    private fun compareDate(selectDay: String, today: String): Boolean {
         var simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
         val compareSelectDay = simpleDateFormat.parse(selectDay).time
         val compareToday = simpleDateFormat.parse(today).time

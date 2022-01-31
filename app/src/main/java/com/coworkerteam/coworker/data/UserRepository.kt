@@ -204,10 +204,9 @@ interface UserRepository {
 
     fun setEditTodolist(
         accessToken: String,
-        nickname: String,
+        todoIdx: Int,
         selectDate: String,
         todo: String,
-        todoIdx: Int
     ): Single<Response<EditTodolistResponse>>
 
     fun setRemoveTodolist(

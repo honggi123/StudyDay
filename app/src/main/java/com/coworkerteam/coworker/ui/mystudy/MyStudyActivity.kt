@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
@@ -58,7 +59,7 @@ class MyStudyActivity : NavigationAcitivity<ActivityMyStudyBinding, MyStudyViewM
         viewDataBinding.myStudyRvOpenStudy.adapter = pagingDailyAdapter
         RecyclerViewUtils().setHorizonSpaceDecration( viewDataBinding.myStudyRvOpenStudy,10)
 
-        setSupportActionBar(viewDataBinding.myStudyToolbar) // 툴바를 액티비티의 앱바로 지정
+        setSupportActionBar(viewDataBinding.myStudyToolbar as androidx.appcompat.widget.Toolbar) // 툴바를 액티비티의 앱바로 지정
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24_write) // 홈버튼 이미지 변경
         supportActionBar?.title = "내 스터디"

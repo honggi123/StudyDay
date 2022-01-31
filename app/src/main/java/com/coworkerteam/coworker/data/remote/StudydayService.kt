@@ -3,7 +3,6 @@ package com.coworkerteam.coworker.data.remote
 import com.coworkerteam.coworker.data.model.api.*
 import com.coworkerteam.coworker.data.model.api.MyStudyInfoResponse
 import io.reactivex.Single
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -75,7 +74,7 @@ interface StudydayService {
         @Header("Authorization") accessToken: String,
         @Path("nickname") nickname: String,
         @Query("page") page: Int
-    ): Call<MainMyStudyPagingResponse>
+    ): Single<Response<MainMyStudyPagingResponse>>
 
     @FormUrlEncoded
     @POST("token/{nickname}")
@@ -97,14 +96,14 @@ interface StudydayService {
         @Header("Authorization") accessToken: String,
         @Path("nickname") nickname: String,
         @Query("page") page: Int
-    ): Call<MyStudyGroupPagingResponse>
+    ): Single<Response<MyStudyGroupPagingResponse>>
 
     @GET("my-study/open/{nickname}")
     fun myStudyDailyPaging(
         @Header("Authorization") accessToken: String,
         @Path("nickname") nickname: String,
         @Query("page") page: Int
-    ): Call<MyStudyDailyPagingResponse>
+    ): Single<Response<MyStudyDailyPagingResponse>>
 
     @GET("my-study/manage/{nickname}")
     fun myStudyManage(
@@ -117,7 +116,7 @@ interface StudydayService {
         @Header("Authorization") accessToken: String,
         @Path("nickname") nickname: String,
         @Query("page") page: Int
-    ): Call<MyStudyManagePagingResponse>
+    ): Single<Response<MyStudyManagePagingResponse>>
 
     @DELETE("my-study/manage/study/{index}")
     fun delteStudy(
@@ -181,7 +180,7 @@ interface StudydayService {
         @Query("viewType") viewType: String,
         @Query("keyword") keyword: String?,
         @Query("page") page: Int
-    ): Call<StudySearchResponse>
+    ): Single<Response<StudySearchResponse>>
 
     @GET("study/search")
     fun studySerchStart(
@@ -257,13 +256,12 @@ interface StudydayService {
     ): Single<Response<CheckTodolistRequest>>
 
     @FormUrlEncoded
-    @PUT("todo-list/todo/{nickname}")
+    @PUT("todo-list/todo/{todoIdx}")
     fun editTodolist(
         @Header("Authorization") accessToken: String,
-        @Path("nickname") nickname: String,
+        @Path("todoIdx") todoIdx: Int,
         @Field("selectDate") selectDate: String,
         @Field("todo") todo: String,
-        @Field("todoIdx") todoIdx: Int
     ): Single<Response<EditTodolistResponse>>
 
     @FormUrlEncoded

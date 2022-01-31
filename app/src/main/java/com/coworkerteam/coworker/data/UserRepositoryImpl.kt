@@ -372,12 +372,11 @@ class UserRepositoryImpl(
 
     override fun setEditTodolist(
         accessToken: String,
-        nickname: String,
+        todoIdx: Int,
         selectDate: String,
         todo: String,
-        todoIdx: Int
     ): Single<Response<EditTodolistResponse>> {
-        return service.editTodolist(accessToken, nickname, selectDate, todo, todoIdx)
+        return service.editTodolist(accessToken, todoIdx, selectDate, todo)
     }
 
     override fun setRemoveTodolist(

@@ -26,6 +26,7 @@ import android.view.*
 import androidx.annotation.RequiresApi
 import com.coworkerteam.coworker.data.model.custom.EventDecorator
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
+import com.coworkerteam.coworker.ui.main.MainActivity
 import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.prolificinteractive.materialcalendarview.CalendarDay
@@ -82,6 +83,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     //퇴장처리 성공
                     unbindService(mConnection)
                     stopService(Intent(this, CamStudyService::class.java))
+                    startActivity(Intent(this,MainActivity::class.java))
                     finish()
                 }
                 it.code() == 400 -> {

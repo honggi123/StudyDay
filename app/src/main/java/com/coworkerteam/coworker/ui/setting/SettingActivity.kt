@@ -6,24 +6,16 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
-import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import com.coworkerteam.coworker.BuildConfig
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
-import com.coworkerteam.coworker.data.model.api.ApiRequest
-import com.coworkerteam.coworker.data.remote.StudydayService
-import com.coworkerteam.coworker.databinding.ActivityCategoryBinding
 import com.coworkerteam.coworker.databinding.ActivitySettingBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
-import com.coworkerteam.coworker.ui.category.CategoryViewModel
 import com.coworkerteam.coworker.ui.login.LoginActivity
 import com.coworkerteam.coworker.ui.setting.account.WithdrawalActivity
 import com.coworkerteam.coworker.ui.setting.info.NoticeActivity
@@ -33,29 +25,11 @@ import com.coworkerteam.coworker.ui.setting.info.TermsOfServiceActivity
 import com.coworkerteam.coworker.ui.setting.profile.MyProfileActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
 import com.kakao.sdk.user.UserApiClient
 import com.nhn.android.naverlogin.OAuthLogin
-import okhttp3.OkHttpClient
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
 import android.content.pm.PackageManager
-
-import android.content.pm.PackageInfo
-
-
-
-
 
 class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>() {
     val TAG = "SettingActivity"
@@ -82,7 +56,9 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
             when {
                 it.isSuccessful -> {
                     //로그인으로 이동
-                    moveLogin()
+                    val intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 }
                 it.code() == 400 -> {
                     //로그인에 실패한 원인이 클라이언트 측에 있을 경우
@@ -99,7 +75,9 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
                     Log.e(TAG, errorMessage.getString("message"))
 
                     //회원이 아니거나, 존재하지 않는 리프레시 토큰, 만료된 리프레시 토큰 일경우 어차피 다시 로그인 시켜야함
-                    moveLogin()
+                    val intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 }
             }
         })
@@ -208,13 +186,6 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
             e.printStackTrace()
         }
         return versionName
-    }
-
-    fun moveLogin() {
-        //로그인으로 이동
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-        finish()
     }
 
     fun moveProfile(){

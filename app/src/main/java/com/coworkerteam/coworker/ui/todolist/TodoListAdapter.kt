@@ -87,60 +87,58 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
                 var popup = PopupMenu(context, it)
                 var con = context as Activity
                 con.menuInflater?.inflate(R.menu.todolist_popup_menu, popup.menu)
-                popup.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
-                    override fun onMenuItemClick(item: MenuItem?): Boolean {
-                        when (item?.itemId) {
-                            R.id.menu_modify -> {
-                                val mDialogView =
-                                    LayoutInflater.from(context)
-                                        .inflate(R.layout.dialog_todo_list_edit, null)
-                                val mBuilder = AlertDialog.Builder(context).setView(mDialogView)
-                                val builder = mBuilder.show()
+                popup.setOnMenuItemClickListener { item ->
+                    when (item?.itemId) {
+                        R.id.menu_modify -> {
+                            val mDialogView =
+                                LayoutInflater.from(context)
+                                    .inflate(R.layout.dialog_todo_list_edit, null)
+                            val mBuilder = AlertDialog.Builder(context).setView(mDialogView)
+                            val builder = mBuilder.show()
 
-                                builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                            builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-                                val txt_day =
-                                    mDialogView.findViewById<TextInputLayout>(R.id.dialog_todolist_edt__txt_day)
-                                val edt_todo =
-                                    mDialogView.findViewById<TextInputLayout>(R.id.dialog_todolist_edt_edit)
-                                val btn_cancle =
-                                    mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_cancle)
-                                val btn_remove =
-                                    mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_remove)
+                            val txt_day =
+                                mDialogView.findViewById<TextInputLayout>(R.id.dialog_todolist_edt__txt_day)
+                            val edt_todo =
+                                mDialogView.findViewById<TextInputLayout>(R.id.dialog_todolist_edt_edit)
+                            val btn_cancle =
+                                mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_cancle)
+                            val btn_remove =
+                                mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_remove)
 
-                                txt_day.editText?.setText(items.createDate)
-                                edt_todo.editText?.setText(items.todo)
+                            txt_day.editText?.setText(items.createDate)
+                            edt_todo.editText?.setText(items.todo)
 
-                                btn_cancle.setOnClickListener(View.OnClickListener {
-                                    builder.dismiss()
-                                })
+                            btn_cancle.setOnClickListener(View.OnClickListener {
+                                builder.dismiss()
+                            })
 
-                                btn_remove.setOnClickListener(View.OnClickListener {
-                                    editTodolist(
-                                        items.createDate,
-                                        edt_todo.editText?.text.toString(),
-                                        items.idx,
-                                        index,
-                                        checkbox.isChecked
-                                    )
-                                    viewModel.setEditTodoListData(
-                                        items.createDate,
-                                        edt_todo.editText?.text.toString(),
-                                        items.idx
-                                    )
-                                    builder.dismiss()
-                                })
-                            }
-
-                            R.id.menu_delete -> {
-                                removeTodolist(index)
-                                viewModel.deleteTodoListData(items.idx, items.createDate)
-                            }
+                            btn_remove.setOnClickListener(View.OnClickListener {
+                                editTodolist(
+                                    items.createDate,
+                                    edt_todo.editText?.text.toString(),
+                                    items.idx,
+                                    index,
+                                    checkbox.isChecked
+                                )
+                                viewModel.setEditTodoListData(
+                                    items.createDate,
+                                    edt_todo.editText?.text.toString(),
+                                    items.idx
+                                )
+                                builder.dismiss()
+                            })
                         }
 
-                        return false
+                        R.id.menu_delete -> {
+                            removeTodolist(index)
+                            viewModel.deleteTodoListData(items.idx, items.createDate)
+                        }
                     }
-                })
+
+                    false
+                }
                 popup.show()
             })
 
