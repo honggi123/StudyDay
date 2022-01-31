@@ -31,6 +31,7 @@ import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.ProfileManageResponse
 import com.coworkerteam.coworker.databinding.ActivityProfileEditBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
+import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.material.textfield.TextInputLayout
 import de.hdodenhof.circleimageview.CircleImageView
 import org.json.JSONObject
@@ -230,6 +231,20 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
             categorys.add("기타")
         }
 
+    }
+
+    fun changTextNickname(s: CharSequence, start: Int, before: Int, count: Int) {
+        val result = PatternUtils.matcheNickName(s.toString(),viewModel.getNickName())
+        Log.d(TAG,s.toString())
+
+        if (result.isNotError) {
+            viewDataBinding.myProfileEditNickname.isErrorEnabled = false
+            viewDataBinding.myProfileEditNickname.error = null
+            viewDataBinding.myProfileEditBtnNicknameCheck.isEnabled = true
+        } else {
+            viewDataBinding.myProfileEditNickname.error = result.ErrorMessge
+            viewDataBinding.myProfileEditBtnNicknameCheck.isEnabled = false
+        }
     }
 
     fun setLoginImage(v: View, loginType: String) {

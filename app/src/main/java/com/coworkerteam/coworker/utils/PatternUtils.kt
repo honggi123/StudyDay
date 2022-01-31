@@ -196,26 +196,31 @@ object PatternUtils {
      2. user+숫자 형식의 입력값일 경우
      3. 30자 이상일 경우
     */
-    fun matcheNickName(text: String): PatternResult {
+    fun matcheNickName(text: String, nickname: String?): PatternResult {
+
+        //Null, 공백만 입력이 되어있을 경우
+        if (text == nickname) {
+            return PatternResult(false, "현재 내 닉네임")
+        }
 
         //Null, 공백만 입력이 되어있을 경우
         if (text.isNullOrBlank()) {
-            return PatternResult(false, "미입력 또는 공백문자만 입력할 수 없습니다.")
+            return PatternResult(false, "입력해주세요.")
         }
 
         //한글, 숫자, 영어 대소문자, 특수문자 `~!@#$%^&*()_+[]{};':",./<>?|*-+. 외의 문자, 공백 외 입력시
         if (!text.matches(Regex("^[ㄱ-힣0-9a-zA-Z]*$"))) {
-            return PatternResult(false, "한글, 영문 대소문자, 숫자만 입력 가능합니다.")
+            return PatternResult(false, "입력불가능한 문자")
         }
 
         //user+숫자 형식의 입력값일 경우
-        if (text.matches(Regex(""))) {
-            return PatternResult(false, "user+숫자 형식의 닉네임은 사용할 수 없습니다.")
+        if (text.matches(Regex("user\\d{1,}"))) {
+            return PatternResult(false, "user+숫자 형식 사용불가")
         }
 
         //글자수 30자가 초과했을 경우
         if (text.length > 30) {
-            return PatternResult(false, "스터디 이름은 30자를 초과할 수 없습니다.")
+            return PatternResult(false, "닉네임이 30자를 초과")
         }
 
         return PatternResult(true, null)

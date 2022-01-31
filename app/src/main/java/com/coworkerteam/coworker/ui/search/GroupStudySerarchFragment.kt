@@ -37,9 +37,9 @@ class GroupStudySerarchFragment :
         pagingStudySearchAdapter = StudySearchPagingAdapter()
         pagingStudySearchAdapter.addLoadStateListener { loadState ->
             if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && pagingStudySearchAdapter.itemCount < 1) {
-                viewDataBinding.groupSearchEmptyView.visibility = View.VISIBLE
+                requireView().findViewById<TextView>(R.id.group_search_empty_view).visibility = View.VISIBLE
             } else {
-                viewDataBinding.groupSearchEmptyView.visibility = View.GONE
+                requireView().findViewById<TextView>(R.id.group_search_empty_view).visibility = View.GONE
             }
         }
         val rv_Search = view?.findViewById<RecyclerView>(R.id.fragment_group_study_rv)

@@ -16,7 +16,7 @@ open abstract class BaseFragment<T : ViewDataBinding, R : BaseViewModel> : Fragm
     // viewModel로 쓰일 변수
     abstract val viewModel: R
 
-    //    lateinit var mActivity: BaseActivity
+    //lateinit var mActivity: BaseActivity
     lateinit var mRootView: View
 
     //레이아웃을 띄운 직후 호출 - 뷰나 액티비티의 속성등을 초기화

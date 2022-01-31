@@ -19,8 +19,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_horizontal|center_vertical"
-                android:text="검색된 그룹스터디가 없습니다."
-                android:visibility="gone" />
+                android:text="검색된 그룹스터디가 없습니다."/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/fragment_group_study_rv"

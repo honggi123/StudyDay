@@ -114,4 +114,8 @@ class ProfileEditViewModel(private val model: UserRepository) : BaseViewModel() 
             Log.d(TAG, "getNicknameCheckData:: accessToken 또는 nickname 값이 없습니다.")
         }
     }
+
+    fun getNickName():String?{
+        return model.getCurrentUserName()
+    }
 }

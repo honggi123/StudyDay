@@ -2,7 +2,10 @@ package com.coworkerteam.coworker.ui.study.management
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
+import androidx.paging.LoadState
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.MyStudyManageResponse
 import com.coworkerteam.coworker.databinding.ActivityManagementBinding
@@ -28,6 +31,15 @@ class ManagementActivity : BaseActivity<ActivityManagementBinding, ManagementVie
 
         pagingManagementAdapter = ManagementPagingAdapter(viewModel)
         viewDataBinding.managementRv.adapter = pagingManagementAdapter
+        pagingManagementAdapter.addLoadStateListener { loadState ->
+            if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && pagingManagementAdapter.itemCount < 1) {
+                viewDataBinding.managementEmptyView.visibility = View.VISIBLE
+//                findViewById<TextView>(R.id.open_search_empty_view).visibility = View.VISIBLE
+            } else {
+                viewDataBinding.managementEmptyView.visibility = View.GONE
+//                findViewById<TextView>(R.id.open_search_empty_view).visibility = View.GONE
+            }
+        }
     }
 
     override fun initDataBinding() {

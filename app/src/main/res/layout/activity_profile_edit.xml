@@ -124,7 +124,8 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:onTextChanged="@{activitiy.changTextNickname}"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -134,10 +135,11 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="10dp"
                     android:layout_marginBottom="14dp"
+                    android:enabled="false"
+                    android:onClick="@{()->activitiy.clickNicknameCheck()}"
                     android:text="중복확인"
                     android:textColor="@color/white"
                     android:textSize="12sp"
-                    android:onClick="@{()->activitiy.clickNicknameCheck()}"
                     app:cornerRadius="20dp" />
 
             </LinearLayout>

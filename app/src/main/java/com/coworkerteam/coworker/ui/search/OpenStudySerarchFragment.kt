@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
@@ -36,11 +37,9 @@ class OpenStudySerarchFragment :
         pagingStudySearchAdapter = StudySearchPagingAdapter()
         pagingStudySearchAdapter.addLoadStateListener { loadState ->
             if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && pagingStudySearchAdapter.itemCount < 1) {
-                Log.d("아이템","아이템이 있어")
-                viewDataBinding.openSearchEmptyView.visibility = View.VISIBLE
+                requireView().findViewById<TextView>(R.id.open_search_empty_view).visibility = View.VISIBLE
             } else {
-                Log.d("아이템","아이템이 있어?")
-                viewDataBinding.openSearchEmptyView.visibility = View.GONE
+                requireView().findViewById<TextView>(R.id.open_search_empty_view).visibility = View.GONE
             }
         }
         val rv_Search = view?.findViewById<RecyclerView>(R.id.fragment_open_study_rv)
