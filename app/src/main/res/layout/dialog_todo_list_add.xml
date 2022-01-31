@@ -29,7 +29,8 @@
         android:layout_marginTop="10dp"
         android:layout_marginRight="30dp"
         android:layout_marginBottom="10dp"
-        android:hint="할일 날짜"
+        android:enabled="false"
+        android:hint="할일 추가하는 날짜"
         app:endIconMode="clear_text"
         app:expandedHintEnabled="false">
 

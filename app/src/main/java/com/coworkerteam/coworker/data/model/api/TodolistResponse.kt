@@ -24,7 +24,7 @@ data class TodolistResponse(
         @SerializedName("studyTime")
         val studyTime: String,
         @SerializedName("theDayAcheiveRate")
-        val theDayAcheiveRate: Int,
+        var theDayAcheiveRate: Int,
         @SerializedName("theDayTodo")
         var theDayTodo: List<TheDayTodo>,
         @SerializedName("todoDate")

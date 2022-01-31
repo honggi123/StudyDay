@@ -22,6 +22,7 @@ import com.coworkerteam.coworker.databinding.ActivityTodoListBinding
 import com.coworkerteam.coworker.ui.base.NavigationAcitivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.textfield.TextInputLayout
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.CalendarMode
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
@@ -132,22 +133,12 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
             when {
                 it.isSuccessful -> {
                     //새로 추가한 투두리스트
-                    val day = it.body()!!.result.theDayTodo[0]
-
                     val rv = findViewById<RecyclerView>(R.id.rv_todolist)
 
-                    var myStudyAdepter: TodoListAdapter = TodoListAdapter(this, viewModel)
+                    var todolistAdepter = TodoListAdapter(this, viewModel)
 
-                    myStudyAdepter.datas =
-                        viewDataBinding.todolistResponse!!.result.theDayTodo.toMutableList()
-                    myStudyAdepter.datas.add(
-                        TodolistResponse.Result.TheDayTodo(
-                            day.todoDate,
-                            day.idx,
-                            day.isComplete,
-                            day.todo
-                        )
-                    )
+                    todolistAdepter.datas = it.body()!!.result.theDayTodo.toMutableList()
+
                     //네비게이션 드로어 오늘 할일 달성률 갱신
                     viewDataBinding.draworInfo!!.achieveTodoRate =
                         it.body()!!.result.achieveTodoRate
@@ -155,15 +146,16 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
 
                     //추가된 새로 받아온 투두리스트로 DataBinding 정보 갱신
                     viewDataBinding.todolistResponse!!.result.theDayTodo =
-                        myStudyAdepter.datas.toList()
+                        todolistAdepter.datas.toList()
                     viewDataBinding.todolistResponse = viewDataBinding.todolistResponse
 
                     //리사이클러뷰 갱신
-                    rv.adapter = myStudyAdepter
+                    rv.adapter = todolistAdepter
 
-                    val todoProgress = findViewById<ProgressBar>(R.id.todo_list_progress)
-
-                    todoProgress.progress = it.body()!!.result.theDayAcheiveRate
+                    //진행률 업데이트
+                    viewDataBinding.todolistResponse?.result?.theDayAcheiveRate = it.body()!!.result.theDayAcheiveRate
+                    viewDataBinding.todolistResponse = viewDataBinding.todolistResponse
+                    viewDataBinding.todoListProgress.progress = it.body()!!.result.theDayAcheiveRate
                 }
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
@@ -192,6 +184,8 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                     viewDataBinding.draworInfo = viewDataBinding.draworInfo
 
                     //프로그래스바
+                    viewDataBinding.todolistResponse?.result?.theDayAcheiveRate = it.body()!!.result.theDayAcheiveRate
+                    viewDataBinding.todolistResponse = viewDataBinding.todolistResponse
                     viewDataBinding.todoListProgress.progress = it.body()!!.result.theDayAcheiveRate
                 }
                 it.code() == 400 -> {
@@ -250,6 +244,8 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                     viewDataBinding.draworInfo = viewDataBinding.draworInfo
 
                     //프로그래스바
+                    viewDataBinding.todolistResponse?.result?.theDayAcheiveRate = it.body()!!.result.theDayAcheiveRate
+                    viewDataBinding.todolistResponse = viewDataBinding.todolistResponse
                     viewDataBinding.todoListProgress.progress = it.body()!!.result.theDayAcheiveRate
                 }
                 it.code() == 400 -> {
@@ -414,55 +410,34 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
             ), true
         )
 
-        val btn_addTodolist =
-            findViewById<FloatingActionButton>(R.id.todo_list_floatingbtn_add_todolist)
-
-        btn_addTodolist.setOnClickListener(View.OnClickListener {
-            val mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_todo_list, null)
+        viewDataBinding.todoListFloatingbtnAddTodolist.setOnClickListener(View.OnClickListener {
+            val mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_todo_list_add, null)
             val mBuilder = AlertDialog.Builder(this).setView(mDialogView)
 
             val builder = mBuilder.show()
 
-            // Custom Dialog 크기 설정
-            builder.window?.setLayout(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-
-            // Custom Dialog 위치 조절
-            builder.window?.setGravity(Gravity.BOTTOM)
             // Custom Dialog 배경 설정 (다음과 같이 진행해야 좌우 여백 없이 그려짐)
             builder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-            val txt_calendar = mDialogView.findViewById<TextView>(R.id.dialog_todo_list_txt_add_day)
-            val edt_todolist =
-                mDialogView.findViewById<EditText>(R.id.dialog_todo_list_edt_todolist)
-            val btn_add = mDialogView.findViewById<ImageView>(R.id.dialog_todo_list_add)
+            val txt_calendar = mDialogView.findViewById<TextInputLayout>(R.id.dialog_todolist_edt__txt_day)
+            val txt_todo = mDialogView.findViewById<TextInputLayout>(R.id.dialog_todolist_edt_edit)
+            val btn_cancle =
+                mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_cancle)
+            val btn_add = mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_remove)
 
             if (selectData.equals(getToday())) {
-                txt_calendar.setText("오늘")
+                txt_calendar.editText?.setText("오늘")
             } else {
-                txt_calendar.setText(selectData)
+                txt_calendar.editText?.setText(selectData)
             }
 
-            edt_todolist.requestFocus()
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-
-            imm.toggleSoftInput(
-                InputMethodManager.SHOW_FORCED,
-                InputMethodManager.HIDE_IMPLICIT_ONLY
-            )
-
-
-            btn_add.setOnClickListener(View.OnClickListener {
-                viewModel.setAddTodoListData(selectData, edt_todolist.text.toString())
+            btn_cancle.setOnClickListener(View.OnClickListener {
                 builder.dismiss()
             })
 
-            builder.setOnDismissListener(DialogInterface.OnDismissListener {
-                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-
-                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
+            btn_add.setOnClickListener(View.OnClickListener {
+                viewModel.setAddTodoListData(selectData, txt_todo.editText?.text.toString())
+                builder.dismiss()
             })
         })
 

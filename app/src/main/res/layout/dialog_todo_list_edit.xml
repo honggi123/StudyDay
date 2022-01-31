@@ -29,7 +29,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginRight="30dp"
         android:layout_marginBottom="10dp"
-        android:hint="할일 날짜"
+        android:hint="해당 할일의 날짜"
         app:endIconMode="clear_text"
         app:expandedHintEnabled="false">
 
