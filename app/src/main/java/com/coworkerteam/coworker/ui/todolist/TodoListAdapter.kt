@@ -66,35 +66,13 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
                         checkbox.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
                         checkbox.setTextColor(Color.GRAY)
 
-                        var theDayTodo = TodolistResponse.Result.TheDayTodo(
-                            items.createDate,
-                            items.idx,
-                            isChecked,
-                            item.todo
-                        )
-
                         items.isComplete = false
-
-//                        datas.removeAt(index)
-//                        datas.add(index, theDayTodo)
-
                     } else {
                         viewModel.setCheckTodoListData(item.idx, item.createDate)
                         checkbox.paintFlags = 0
                         checkbox.setTextColor(Color.BLACK)
 
-                        var theDayTodo = TodolistResponse.Result.TheDayTodo(
-                            items.createDate,
-                            items.idx,
-                            isChecked,
-                            item.todo
-                        )
-
                         items.isComplete = true
-
-//                        datas.removeAt(index)
-//                        datas.add(index, theDayTodo)
-
                     }
                 }
             )

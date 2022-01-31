@@ -359,11 +359,10 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
             override fun onStateChanged(id: Int, state: TransferState) {
                 if (state === TransferState.COMPLETED) {
                     // Handle a completed upload
-                    var nickname = findViewById<EditText>(R.id.my_profile_edit_nickname)
                     if(fileName != null){
                         profileManageResponse.img = getString(R.string.s3_coworker_study_url) + fileName
                     }
-                    viewModel.setProfileEditData(nickname.text.toString(),categorys.joinToString("|"),profileManageResponse.img)
+                    viewModel.setProfileEditData(viewDataBinding.myProfileEditNickname.editText?.text.toString(),categorys.joinToString("|"),profileManageResponse.img)
                 }
             }
 

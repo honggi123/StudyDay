@@ -208,10 +208,10 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             sendHandlerMessage(msg)
         })
 
-        btn_play.isSelected = CamStudyService.isPlay!!
+        btn_play.isSelected = CamStudyService.isPlay
 
         btn_play.setOnClickListener(View.OnClickListener {
-            if (CamStudyService.isPlay!!) {
+            if (CamStudyService.isPlay) {
                 //일시정지
                 CamStudyService.isPlay = false
                 it.isSelected = false
@@ -373,7 +373,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        getMenuInflater().inflate(R.menu.camstudy_menu, menu);
+        menuInflater.inflate(R.menu.camstudy_menu, menu)
         return true
     }
 

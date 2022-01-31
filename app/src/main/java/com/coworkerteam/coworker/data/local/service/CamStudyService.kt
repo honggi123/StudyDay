@@ -534,7 +534,7 @@ class CamStudyService : Service() {
         videoCapturer = createVideoCapturer()
 
         val videoSource: VideoSource = factory.createVideoSource(videoCapturer)
-        videoCapturer!!.startCapture(
+        videoCapturer?.startCapture(
             VIDEO_RESOLUTION_WIDTH,
             VIDEO_RESOLUTION_HEIGHT,
             FPS
@@ -911,8 +911,7 @@ object notification {
         notificationIntent.putExtra("video", CamStudyService.isVideo)
         notificationIntent.putExtra("studyInfo", CamStudyActivity.studyInfo)
         notificationIntent.putExtra("timer", CamStudyService.timer)
-        notificationIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
-                Intent.FLAG_ACTIVITY_CLEAR_TASK
+//        notificationIntent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
 
         val pendingIntent = PendingIntent
             .getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
