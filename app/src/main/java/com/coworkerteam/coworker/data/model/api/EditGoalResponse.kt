@@ -13,7 +13,7 @@ data class EditGoalResponse(
         @SerializedName("achieveTimeRate")
         val achieveTimeRate: Int,
         @SerializedName("aimTime")
-        val aimTime: String,
+        val aimTime: String?,
         @SerializedName("dream")
         val dream: MainResponse.Result.Dream
     )

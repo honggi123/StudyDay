@@ -100,7 +100,7 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
                                 mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_cancle)
                             val btn_remove =
                                 mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_remove)
-                            var todoCheck = false
+                            var todoCheck = true
 
                             txt_day.editText?.setText(items.createDate)
                             edt_todo.editText?.setText(items.todo)

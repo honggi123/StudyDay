@@ -22,6 +22,25 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:gravity="right"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/dialog_dday_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/ic_baseline_delete_24"
+            android:gravity="center_vertical"
+            android:text="디데이 삭제"
+            android:textColor="@color/ssub_color"
+            android:visibility="gone" />
+    </LinearLayout>
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/dialog_dday_edit_day"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"

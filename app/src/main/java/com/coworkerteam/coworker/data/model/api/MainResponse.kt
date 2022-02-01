@@ -15,7 +15,7 @@ data class MainResponse(
         @SerializedName("achieveTodoRate")
         var achieveTodoRate: Int?,
         @SerializedName("aimTime")
-        var aimTime: String,
+        var aimTime: String?,
         @SerializedName("dream")
         var dream: Dream,
         @SerializedName("groupRecommend")

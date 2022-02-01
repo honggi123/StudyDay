@@ -77,6 +77,7 @@ class CamStudyService : Service() {
 
         var isVideo: Boolean? = null
         var isAudio: Boolean? = null
+        var isPermissions = false
         var isPlay = false
         var timer: Int? = null
 
@@ -91,7 +92,7 @@ class CamStudyService : Service() {
     val mMessenger = Messenger(CallbackHandler(Looper.getMainLooper()))
 
     lateinit var factory: PeerConnectionFactory
-    lateinit var videoTrackFromCamera: VideoTrack
+    var videoTrackFromCamera: VideoTrack? = null
 
     //서비스가 시작될 때 호출
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -132,9 +133,15 @@ class CamStudyService : Service() {
     private fun startCamStudy() {
         connectToSignallingServer()
         initializePeerConnectionFactory()
-        createVideoTrackFromCameraAndShowIt()
+        if(isPermissions) {
+            createVideoTrackFromCameraAndShowIt()
+        }else{
+            getParticipant(hostname)
+        }
         initializePeerConnections(hostname)
-        startStreamingVideo(hostname)
+        if(isPermissions) {
+            startStreamingVideo(hostname)
+        }
         socket!!.connect()
     }
 
@@ -317,7 +324,7 @@ class CamStudyService : Service() {
                                     val refreshParticipantsResponses =
                                         participantsResponses!!.participants.toMutableList()
 
-                                    var item:ParticipantsResponse.Participant? = null
+                                    var item: ParticipantsResponse.Participant? = null
 
                                     refreshParticipantsResponses.forEach {
                                         if (it.nickname.equals(message.getString("name"))) {
@@ -551,8 +558,8 @@ class CamStudyService : Service() {
         var participant = getParticipant(hostname)
         participant.remoteVideoTrack = videoTrackFromCamera
         participant.remoteAudioTrack = localAudioTrack
-        
-        participant.startRender(videoTrackFromCamera,localAudioTrack)
+
+        participant.startRender(videoTrackFromCamera, localAudioTrack)
     }
 
     private fun makeMe(): Participant {
@@ -597,8 +604,10 @@ class CamStudyService : Service() {
     private fun startStreamingVideo(name: String) {
         Log.d(TAG, "startStreamingVideo()")
         val mediaStream: MediaStream = factory.createLocalMediaStream("ARDAMS")
-        mediaStream.addTrack(videoTrackFromCamera)
-        mediaStream.addTrack(localAudioTrack)
+        if(isPermissions) {
+            mediaStream.addTrack(videoTrackFromCamera)
+            mediaStream.addTrack(localAudioTrack)
+        }
         peerConnection[name]?.peer?.addStream(mediaStream)
     }
 
@@ -782,7 +791,10 @@ class CamStudyService : Service() {
                 MSG_CLIENT_CONNECT -> {
                     Log.d(TAG, "Received MSG_CLIENT_CONNECT message from client");
                     mClientCallbacks.add(msg.replyTo);
-                    Log.d(TAG, "Received MSG_CLIENT_CONNECT message from client"+mClientCallbacks.size);
+                    Log.d(
+                        TAG,
+                        "Received MSG_CLIENT_CONNECT message from client" + mClientCallbacks.size
+                    );
                     if (socket == null) {
                         startCamStudy()
                     }
@@ -863,7 +875,8 @@ class CamStudyService : Service() {
                     //퇴장처리
                     val handlerMessage = Message.obtain(null, MSG_COMSTUDY_LEFT)
 
-                    var timerResult = peerConnection[hostname]!!.timer.timerStudyTime - peerConnection[hostname]!!.timer.timerStratTime
+                    var timerResult =
+                        peerConnection[hostname]!!.timer.timerStudyTime - peerConnection[hostname]!!.timer.timerStratTime
                     handlerMessage.arg1 = timerResult.toInt()
                     handlerMessage.arg2 = peerConnection[hostname]!!.timer.timerRestTime.toInt()
 
