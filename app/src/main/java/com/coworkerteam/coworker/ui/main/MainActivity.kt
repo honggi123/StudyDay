@@ -167,7 +167,6 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
                         it.body()!!.result[0].dream.ddayName
                     )
 
-                    Log.d("디버그태그", it.body()!!.result[0].achieveTodoRate.toString())
                     //내스터디
                     var recyclerMyStudy: RecyclerView =
                         findViewById(R.id.main_todolist_recylerView)

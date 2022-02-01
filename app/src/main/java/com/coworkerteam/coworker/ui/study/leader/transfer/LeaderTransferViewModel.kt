@@ -87,7 +87,7 @@ class LeaderTransferViewModel(private val model: UserRepository) : BaseViewModel
                                     Log.d(TAG, "액세스토큰이 만료된 경우")
 
                                     //액세스 토큰 재발급
-                                    getReissuanceToken(TAG,model,getStudyMemberData(studyIdx))
+                                    getReissuanceToken(TAG,model,setLeaderTransferData(newLeaderIdx,studyIdx))
                                 }
                                 it.code() > 500 -> {
                                     //서비스 서버에 문제가 있을 경우
@@ -126,7 +126,7 @@ class LeaderTransferViewModel(private val model: UserRepository) : BaseViewModel
                                     Log.d(TAG, "액세스토큰이 만료된 경우")
 
                                     //액세스 토큰 재발급
-                                    getReissuanceToken(TAG,model,getStudyMemberData(studyIdx))
+                                    getReissuanceToken(TAG,model,setForcedExitData(userIdx,studyIdx))
                                 }
                                 it.code() > 500 -> {
                                     //서비스 서버에 문제가 있을 경우

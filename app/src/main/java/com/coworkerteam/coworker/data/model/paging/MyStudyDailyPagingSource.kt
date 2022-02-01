@@ -33,7 +33,6 @@ class MyStudyDailyPagingSource(
 
 
             val next = if (position >= response.body()!!.result.totalPage) null else position + 1
-            Log.d("디버그태그",next.toString())
 
             LoadResult.Page(
                 data = response.body()!!.result.open,

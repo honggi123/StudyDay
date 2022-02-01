@@ -173,42 +173,52 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         })
 
         btn_mic.isSelected = !CamStudyService.isAudio!!
-
-        btn_mic.setOnClickListener(View.OnClickListener {
-            val msg: Message = Message.obtain(null, CamStudyService.MSG_HOST_AUDIO_ON_OFF)
-
-            if (CamStudyService.isAudio!!) {
-                CamStudyService.isAudio = false
-                msg.obj = "off"
-                it.isSelected = true
-            } else {
-                CamStudyService.isAudio = true
-                msg.obj = "on"
-                it.isSelected = false
-            }
-
-            sendHandlerMessage(msg)
-        })
-
         btn_camera.isSelected = !CamStudyService.isVideo!!
-
-        btn_camera.setOnClickListener(View.OnClickListener {
-            val msg: Message = Message.obtain(null, CamStudyService.MSG_HOST_VIDEO_ON_OFF)
-
-            if (CamStudyService.isVideo!!) {
-                CamStudyService.isVideo = false
-                msg.obj = "off"
-                it.isSelected = true
-            } else {
-                CamStudyService.isVideo = true
-                msg.obj = "on"
-                it.isSelected = false
-            }
-
-            sendHandlerMessage(msg)
-        })
-
         btn_play.isSelected = CamStudyService.isPlay
+
+        if(CamStudyService.isPermissions) {
+
+            btn_mic.setOnClickListener(View.OnClickListener {
+                val msg: Message = Message.obtain(null, CamStudyService.MSG_HOST_AUDIO_ON_OFF)
+
+                if (CamStudyService.isAudio!!) {
+                    CamStudyService.isAudio = false
+                    msg.obj = "off"
+                    it.isSelected = true
+                } else {
+                    CamStudyService.isAudio = true
+                    msg.obj = "on"
+                    it.isSelected = false
+                }
+
+                sendHandlerMessage(msg)
+            })
+
+            btn_camera.setOnClickListener(View.OnClickListener {
+                val msg: Message = Message.obtain(null, CamStudyService.MSG_HOST_VIDEO_ON_OFF)
+
+                if (CamStudyService.isVideo!!) {
+                    CamStudyService.isVideo = false
+                    msg.obj = "off"
+                    it.isSelected = true
+                } else {
+                    CamStudyService.isVideo = true
+                    msg.obj = "on"
+                    it.isSelected = false
+                }
+
+                sendHandlerMessage(msg)
+            })
+
+        }else{
+            btn_mic.setOnClickListener(View.OnClickListener {
+                Toast.makeText(this,"카메라,마이크 권한이 없습니다.",Toast.LENGTH_SHORT).show()
+            })
+
+            btn_camera.setOnClickListener(View.OnClickListener {
+                Toast.makeText(this,"카메라,마이크 권한이 없습니다.",Toast.LENGTH_SHORT).show()
+            })
+        }
 
         btn_play.setOnClickListener(View.OnClickListener {
             if (CamStudyService.isPlay) {
@@ -420,10 +430,26 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     }
 
     private fun getLayoutParams(size: Int): FlexboxLayout.LayoutParams {
+
+        var height = viewDataBinding.camStudyFelxboxLayout.height
+
+        val item_height = when{
+            CamStudyService.peerConnection.keys.size < 2 -> {
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            }
+            CamStudyService.peerConnection.keys.size == 2 -> {
+                height/2
+            }
+            else -> {
+                height/3
+            }
+        }
+
         val lp = FlexboxLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            item_height
         )
+
         lp.order = 1
 
         if (size == 0) {
@@ -453,7 +479,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     inner class CallbackHandler(looper: Looper) : Handler(looper) {
         override fun handleMessage(msg: Message) {
-            Log.d(TAG, "Activity에 메세지 도착" + msg.toString())
+            Log.d(TAG, "Activity에 메세지 도착 : $msg")
             when (msg.what) {
                 CamStudyService.MSG_EXISTINGPARTICIPANNTS -> {
                     //내가 방에 맨 먼저 참여했을 경우

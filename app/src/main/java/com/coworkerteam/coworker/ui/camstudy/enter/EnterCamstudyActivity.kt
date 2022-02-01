@@ -72,23 +72,28 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_new_24_black) // 홈버튼 이미지 변경
         supportActionBar?.title = data.result.studyInfo.name
-        initView()
+
         val perms = arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
         if (EasyPermissions.hasPermissions(this, *perms)) {
-            Log.d(TAG, "권한 성공")
+            CamStudyService.isPermissions = true
+
             surface = viewDataBinding.surfaceView
             initializeSurfaceViews()
             initializePeerConnectionFactory()
             createVideoTrackFromCameraAndShowIt()
             initView()
         } else {
+            EasyPermissions.requestPermissions(this, "마이크/카메라 권한이 거부되었습니다.", 114, *perms)
+
+            CamStudyService.isPermissions = false
             isAudio = false
             isVideo = false
+            viewDataBinding.imageButton2.isSelected = true
+            viewDataBinding.imageButton3.isSelected = true
 
-            EasyPermissions.requestPermissions(this, "Need some permissions", 114, *perms)
-//            viewDataBinding.enterCamstudyBtnEnter.setOnClickListener(View.OnClickListener {
-//                Toast.makeText(this,"죄송합니다. 권한이 없는 경우 캠스터디 사용 불가능합니다.",Toast.LENGTH_SHORT).show()
-//            })
+            viewDataBinding.enterCamstudyBtnEnter.setOnClickListener(View.OnClickListener {
+                viewModel.getCamstduyJoinData(studyIndex!!)
+            })
         }
 
     }
@@ -166,7 +171,6 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
         viewDataBinding.enterCamstudyBtnEnter.setOnClickListener(View.OnClickListener {
             viewModel.getCamstduyJoinData(studyIndex!!)
         })
-
     }
 
     private fun initRV(category: String) {

@@ -78,7 +78,7 @@ class CamStudyService : Service() {
         var isVideo: Boolean? = null
         var isAudio: Boolean? = null
         var isPermissions = false
-        var isPlay = false
+        var isPlay = true
         var timer: Int? = null
 
         var rootEglBase: EglBase = EglBase.create()
@@ -567,6 +567,7 @@ class CamStudyService : Service() {
 
         participantMe.settingDevice(isVideo!!, isAudio!!)
         participantMe.timer.init(timer!!.toDouble())
+        participantMe.timer.startStudyTimer()
         participantMe.timer.setTextTime(timer!!.toDouble())
 
         return participantMe

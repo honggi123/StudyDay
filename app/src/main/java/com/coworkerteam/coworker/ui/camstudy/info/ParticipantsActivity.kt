@@ -85,7 +85,7 @@ class ParticipantsActivity : BaseActivity<ActivityParticipantsBinding, Participa
     fun setting(it: ParticipantsResponse) {
         var newAdapter = ParticipantsAdapter(this, mServiceCallback)
         newAdapter.datas = it.participants.toMutableList()
-        newAdapter.isLeader = it.participants[0].nickname == viewModel.getUserNickName()
+        newAdapter.isLeader = (it.participants[0].nickname == viewModel.getUserNickName()) && it.participants[0].isLeader
         viewDataBinding.participantsRv.adapter = newAdapter
 
         val txt_peple = findViewById<TextView>(R.id.camstudy_info_toolbar_peple)
