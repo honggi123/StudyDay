@@ -49,6 +49,7 @@ class CamStudyService : Service() {
 
     lateinit var hostname: String
     lateinit var room: String
+    var instance: String? = null
 
     lateinit var audioConstraints: MediaConstraints
     var videoCapturer: VideoCapturer? = null
@@ -133,13 +134,13 @@ class CamStudyService : Service() {
     private fun startCamStudy() {
         connectToSignallingServer()
         initializePeerConnectionFactory()
-        if(isPermissions) {
+        if (isPermissions) {
             createVideoTrackFromCameraAndShowIt()
-        }else{
+        } else {
             getParticipant(hostname)
         }
         initializePeerConnections(hostname)
-        if(isPermissions) {
+        if (isPermissions) {
             startStreamingVideo(hostname)
         }
         socket!!.connect()
@@ -152,6 +153,7 @@ class CamStudyService : Service() {
         var pref: PreferencesHelper = AppPreferencesHelper(this, "studyday")
         hostname = pref.getCurrentUserName()!!
         room = enterCamstudyResponse.result.studyInfo.link
+        instance = intent.getStringExtra("instance")
     }
 
     private fun connectToSignallingServer() {
@@ -193,7 +195,12 @@ class CamStudyService : Service() {
             opts.webSocketFactory = okHttpClient
 
             // $ hostname -I
-            val URL = getString(R.string.midea_url)
+            var URL = getString(R.string.midea_url)
+
+            if(instance != null){
+                URL += "?id=$instance"
+            }
+
             Log.e(TAG, "REPLACE ME: IO Socket:$URL")
 
             socket = IO.socket(URL, opts)
@@ -605,7 +612,7 @@ class CamStudyService : Service() {
     private fun startStreamingVideo(name: String) {
         Log.d(TAG, "startStreamingVideo()")
         val mediaStream: MediaStream = factory.createLocalMediaStream("ARDAMS")
-        if(isPermissions) {
+        if (isPermissions) {
             mediaStream.addTrack(videoTrackFromCamera)
             mediaStream.addTrack(localAudioTrack)
         }

@@ -84,8 +84,9 @@ open abstract class NavigationAcitivity<T : ViewDataBinding, R : BaseViewModel> 
                 moveIntent = Intent(this, TodoListActivity::class.java)
             }
         }
-        moveIntent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        moveIntent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        moveIntent?.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        moveIntent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        drawerLayout.closeDrawers()
         startActivity(moveIntent)
         return false
     }

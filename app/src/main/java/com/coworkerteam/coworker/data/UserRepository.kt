@@ -230,6 +230,11 @@ interface UserRepository {
         password: String?
     ): Single<Response<EnterCamstudyResponse>>
 
+    fun getCamStudystudyInstanceData(
+        accessToken: String,
+        link:String
+    ): Single<Response<InstanceIDResponse>>
+
     fun getCamStudyJoinData(
         accessToken: String,
         studyIdx: Int

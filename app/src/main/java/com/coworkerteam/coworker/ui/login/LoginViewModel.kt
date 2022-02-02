@@ -36,7 +36,6 @@ class LoginViewModel(private val model: UserRepository) : BaseViewModel() {
                         if (this.isSuccessful) {
                             //로그인이 성공적으로 되었으면, User정보를 로컬에 저장한다.
                             val user = this.body()!!.result[0]
-
                             model.setPreferencesData(user.accessToken, user.refreshToken, user.nickname, email, loginType, imgUri)
                         }
 
@@ -114,10 +113,10 @@ class LoginViewModel(private val model: UserRepository) : BaseViewModel() {
                 .subscribe({
                     it.run {
                         if (this.isSuccessful) {
-                            Log.d(TAG, "meta : " + it.toString())
+                            Log.d(TAG, "meta : $it")
                             val user = this.body()!!.response
 
-                            getLoginData(user.email,"naver",user.profile_image)
+                            getLoginData(user.email,"naver",user.profileImage)
                         }
                     }
                 }, {

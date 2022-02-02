@@ -3,6 +3,9 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=android,androidstudio,kotlin
 
 ### Android ###
+#keystore
+keytrore.properties
+
 # API key
 strings.xml
 

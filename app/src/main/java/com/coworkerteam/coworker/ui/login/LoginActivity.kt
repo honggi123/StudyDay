@@ -2,6 +2,7 @@ package com.coworkerteam.coworker.ui.login
 
 import android.app.Activity
 import android.content.Intent
+import android.text.util.Linkify
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -21,6 +22,7 @@ import com.nhn.android.naverlogin.OAuthLogin
 import com.nhn.android.naverlogin.OAuthLoginHandler
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.regex.Pattern
 
 
 class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
@@ -45,6 +47,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
 
     override fun initStartView() {
         viewDataBinding.activitiy = this
+
+        setLink()
     }
 
     override fun initDataBinding() {
@@ -70,6 +74,19 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
     }
 
     override fun initAfterBinding() {
+    }
+
+    //이용약관, 개인정보 처리방침 클릭시 이동하는 기능
+    fun setLink(){
+        val mTransform = Linkify.TransformFilter{match, url ->
+            ""
+        }
+
+        val pattern1 = Pattern.compile("이용약관")
+        val pattern2 = Pattern.compile("개인정보 처리방침")
+
+        Linkify.addLinks(viewDataBinding.textView51,pattern1,"https://www.studyday.co.kr/terms",null,mTransform)
+        Linkify.addLinks(viewDataBinding.textView51,pattern2,"https://www.studyday.co.kr/privacy",null,mTransform)
     }
 
     fun googleLogin() {

@@ -398,13 +398,19 @@ class UserRepositoryImpl(
         return service.editgoal(accessToken, nickname, aimTime, goal, ddayDate, ddayName)
     }
 
-
     override fun getEnterCamStudyData(
         accessToken: String,
         studyIdx: Int,
         password: String?
     ): Single<Response<EnterCamstudyResponse>> {
         return service.enterCamStudy(accessToken, studyIdx, password)
+    }
+
+    override fun getCamStudystudyInstanceData(
+        accessToken: String,
+        link: String
+    ): Single<Response<InstanceIDResponse>> {
+        return service.camStudyInstanceID(accessToken, link)
     }
 
     override fun getCamStudyJoinData(

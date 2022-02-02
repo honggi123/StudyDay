@@ -48,6 +48,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     companion object {
         var studyInfo: EnterCamstudyResponse? = null
+        var instance: String? = null
     }
 
     var receiver: String? = null
@@ -67,6 +68,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         //받아온값 세팅
         var intent = Intent(this, CamStudyService::class.java)
         intent.putExtra("studyInfo", studyInfo)
+        intent.putExtra("instance", instance)
         startForegroundService(intent)
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
 
@@ -133,6 +135,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     fun initData() {
         studyInfo = intent.getSerializableExtra("studyInfo") as EnterCamstudyResponse?
+        instance = intent.getStringExtra("instance")
     }
 
     fun stopCamstudy(studyTime: Int, restTime: Int) {
@@ -483,6 +486,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             when (msg.what) {
                 CamStudyService.MSG_EXISTINGPARTICIPANNTS -> {
                     //내가 방에 맨 먼저 참여했을 경우
+                    viewDataBinding.camStudyFelxboxLayout.removeAllViews()
+
                     addCamStudyItemView()
 
                 }

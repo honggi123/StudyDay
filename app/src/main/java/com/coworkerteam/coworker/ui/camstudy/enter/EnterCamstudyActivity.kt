@@ -42,8 +42,11 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
 
     var studyIndex: Int? = null
 
-    var isVideo:Boolean? = true
-    var isAudio:Boolean? = true
+    var isVideo: Boolean? = true
+    var isAudio: Boolean? = true
+
+    var timerSec: Int = 0
+    var instanceID: String? = null
 
     var dataIntent: EnterCamstudyResponse? = null
 
@@ -92,7 +95,7 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
             viewDataBinding.imageButton3.isSelected = true
 
             viewDataBinding.enterCamstudyBtnEnter.setOnClickListener(View.OnClickListener {
-                viewModel.getCamstduyJoinData(studyIndex!!)
+                viewModel.getCamstduyInstanceData(dataIntent!!.result.studyInfo.link)
             })
         }
 
@@ -103,10 +106,10 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
             when {
                 it.isSuccessful -> {
                     var intent = Intent(this, CamStudyActivity::class.java)
+                    intent.putExtra("instance",instanceID)
                     intent.putExtra("studyInfo", dataIntent)
                     CamStudyService.isVideo = isVideo
                     CamStudyService.isAudio = isAudio
-                    CamStudyService.isPlay = false
                     CamStudyService.timer = it.body()!!.result.studyTimeSec
                     startActivity(intent)
                     finish()
@@ -117,24 +120,30 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
                     Log.e(TAG, errorMessage.getString("message"))
 
                     //400번대 에러로 스터디 입장페이지 진입 실패했을 경우, 사용자에게 알려준다.
-                    Toast.makeText(this,"스터디에 입장할 수 없습니다. 나중 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "스터디에 입장할 수 없습니다. 나중 다시 시도해주세요.", Toast.LENGTH_SHORT)
+                        .show()
                 }
                 it.code() == 403 -> {
                     val errorMessage = JSONObject(it.errorBody()?.string())
                     Log.e(TAG, errorMessage.getString("message"))
 
-                    when(errorMessage.getInt("code")){
-                        -3 ->{
+                    when (errorMessage.getInt("code")) {
+                        -3 -> {
                             //참여 가능 인원을 초과하여 입장할 수 없는 경우
-                            Toast.makeText(this,"현재 참여가능한 인원이 가득 찼습니다.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "현재 참여가능한 인원이 가득 찼습니다.", Toast.LENGTH_SHORT).show()
                         }
-                        -4 ->{
+                        -4 -> {
                             //해당 스터디에 강제 탈퇴 당해 더 이상 입장할 수 없는 경우
-                            Toast.makeText(this,"강제 퇴장당한 스터디입니다. 입장할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "강제 퇴장당한 스터디입니다. 입장할 수 없습니다.", Toast.LENGTH_SHORT)
+                                .show()
                         }
-                        -5 ->{
+                        -5 -> {
                             //참여중인 스터디가 있을 경우
-                            Toast.makeText(this,"이미 공부중인 스터디가 있습니다. 바로 참여할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this,
+                                "이미 공부중인 스터디가 있습니다. 바로 참여할 수 없습니다.",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }
@@ -142,17 +151,79 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
                     val errorMessage = JSONObject(it.errorBody()?.string())
                     Log.e(TAG, errorMessage.getString("message"))
 
-                    when(errorMessage.getInt("code")){
-                        -2 ->{
+                    when (errorMessage.getInt("code")) {
+                        -2 -> {
                             //존재하지 않는 회원인 경우
                             moveLogin()
                         }
-                        -3 ->{
+                        -3 -> {
                             //존재하지 않는 스터디일 경우
-                            Toast.makeText(this,"더이상 존재하지 않는 스터디입니다.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "더이상 존재하지 않는 스터디입니다.", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
+            }
+        })
+
+        viewModel.CamstduyInstanceResponseLiveData.observe(this, Observer {
+            when {
+                it.isSuccessful -> {
+                    instanceID = it.body()!!.instanceId
+                    viewModel.getCamstduyJoinData(studyIndex!!)
+                }
+                it.code() == 400 -> {
+                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    //400번대 에러로 스터디 입장페이지 진입 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this, "스터디에 입장할 수 없습니다. 나중 다시 시도해주세요.", Toast.LENGTH_SHORT)
+                        .show()
+                }
+                it.code() == 403 -> {
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when (errorMessage.getInt("code")) {
+                        -3 -> {
+                            //참여 가능 인원을 초과하여 입장할 수 없는 경우
+                            Toast.makeText(this, "현재 참여가능한 인원이 가득 찼습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                        -4 -> {
+                            //해당 스터디에 강제 탈퇴 당해 더 이상 입장할 수 없는 경우
+                            Toast.makeText(this, "강제 퇴장당한 스터디입니다. 입장할 수 없습니다.", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                        -5 -> {
+                            //참여중인 스터디가 있을 경우
+                            Toast.makeText(
+                                this,
+                                "이미 공부중인 스터디가 있습니다. 바로 참여할 수 없습니다.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                }
+                it.code() == 404 -> {
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when (errorMessage.getInt("code")) {
+                        -2 -> {
+                            //존재하지 않는 회원인 경우
+                            moveLogin()
+                        }
+                        -3 -> {
+                            //존재하지 않는 스터디일 경우
+                            Toast.makeText(this, "더이상 존재하지 않는 스터디입니다.", Toast.LENGTH_SHORT).show()
+                        }
+                        -8 -> {
+                            //인스턴스 아이디가 존재하지 않는 경우
+                            viewModel.getCamstduyJoinData(studyIndex!!)
+                        }
+                    }
+                }
+
             }
         })
     }
@@ -169,7 +240,7 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
             switchDevice(it, "camera")
         })
         viewDataBinding.enterCamstudyBtnEnter.setOnClickListener(View.OnClickListener {
-            viewModel.getCamstduyJoinData(studyIndex!!)
+            viewModel.getCamstduyInstanceData(dataIntent!!.result.studyInfo.link)
         })
     }
 

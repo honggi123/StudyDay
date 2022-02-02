@@ -16,8 +16,9 @@ import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.data.local.service.CamStudyService
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.ParticipantsResponse
+import com.coworkerteam.coworker.ui.camstudy.cam.CamStudyActivity
 
-class ParticipantsAdapter(private val context: Context,private val mServiceCallback: Messenger?) :
+class ParticipantsAdapter(private val context: Context,private val mServiceCallback: Messenger?,private val viewModel: ParticipantsViewModel) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val TAG = "ParticipantsAdapter"
@@ -110,6 +111,8 @@ class ParticipantsAdapter(private val context: Context,private val mServiceCallb
                                     )
                                     handlerMessage.obj = par.nickname
                                     sendHandlerMessage(handlerMessage)
+
+                                    viewModel.setForcedExitData(par.userIdx,CamStudyActivity.studyInfo!!.result.studyInfo.idx!!)
                                 }
 
                                 R.id.menu_forced_audio ->{

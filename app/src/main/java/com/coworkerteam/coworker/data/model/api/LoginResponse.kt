@@ -1,13 +1,21 @@
 package com.coworkerteam.coworker.data.model.api
 
+import com.google.gson.annotations.SerializedName
+
 data class LoginResponse(
-    var message:String,
-    var result:List<LoginResult>
-) {
-    data class LoginResult(
-        var isInterest:Boolean,
-        var accessToken:String,
-        var refreshToken:String,
-        var nickname:String
+    @SerializedName("message")
+    val message: String,
+    @SerializedName("result")
+    val result: List<Result>
+){
+    data class Result(
+        @SerializedName("accessToken")
+        val accessToken: String,
+        @SerializedName("isInterest")
+        val isInterest: Boolean,
+        @SerializedName("nickname")
+        val nickname: String,
+        @SerializedName("refreshToken")
+        val refreshToken: String
     )
 }

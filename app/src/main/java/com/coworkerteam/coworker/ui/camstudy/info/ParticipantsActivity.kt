@@ -83,7 +83,7 @@ class ParticipantsActivity : BaseActivity<ActivityParticipantsBinding, Participa
     }
 
     fun setting(it: ParticipantsResponse) {
-        var newAdapter = ParticipantsAdapter(this, mServiceCallback)
+        var newAdapter = ParticipantsAdapter(this, mServiceCallback,viewModel)
         newAdapter.datas = it.participants.toMutableList()
         newAdapter.isLeader = (it.participants[0].nickname == viewModel.getUserNickName()) && it.participants[0].isLeader
         viewDataBinding.participantsRv.adapter = newAdapter

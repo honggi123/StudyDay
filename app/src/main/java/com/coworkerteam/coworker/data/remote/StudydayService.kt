@@ -290,6 +290,12 @@ interface StudydayService {
         @Query("studyPw") reqType: String?
     ): Single<Response<EnterCamstudyResponse>>
 
+    @GET("study/cam/instance-id")
+    fun camStudyInstanceID(
+        @Header("Authorization") accessToken: String,
+        @Query("link") link: String
+    ): Single<Response<InstanceIDResponse>>
+
     @FormUrlEncoded
     @POST("study/cam/{studyIdx}")
     fun camStudyJoin(
