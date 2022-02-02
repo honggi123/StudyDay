@@ -54,6 +54,8 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
 
     override fun initStartView() {
         super.initStartView()
+        loding.showDialog(this)
+
         viewDataBinding.activitiy = this
 
         //툴바 세팅
@@ -151,6 +153,8 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
         })
 
         viewModel.MainResponseLiveData.observe(this, androidx.lifecycle.Observer {
+            loding.dismissDialog()
+
             when {
                 it.isSuccessful -> {
                     viewDataBinding.mainResponse = it.body()!!
@@ -270,11 +274,6 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
     }
 
     override fun initAfterBinding() {
-        viewModel.getMainData()
-    }
-
-    override fun onPostResume() {
-        super.onPostResume()
         viewModel.getMainData()
     }
 

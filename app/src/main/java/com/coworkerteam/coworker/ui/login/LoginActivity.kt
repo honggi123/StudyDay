@@ -31,11 +31,9 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
         get() = R.layout.activity_login
     override val viewModel: LoginViewModel by viewModel()
 
-    val GOOGLE_SIGN_IN = 1004
+    private val TAG = "LoginActivity"
 
-    val TAG = "LoginActivity"
-
-    val googleForResult =
+    private val googleForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
@@ -102,7 +100,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
 
         val signInIntent: Intent = mGoogleSignInClient.getSignInIntent()
         googleForResult.launch(signInIntent)
-//        startActivityForResult(signInIntent, GOOGLE_SIGN_IN)
     }
 
     fun kakaoLogin() {

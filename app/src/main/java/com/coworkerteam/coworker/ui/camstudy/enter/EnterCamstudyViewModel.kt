@@ -12,6 +12,7 @@ import io.reactivex.schedulers.Schedulers
 import retrofit2.Response
 
 class EnterCamstudyViewModel(private val model: UserRepository) : BaseViewModel() {
+
     private val TAG = "EnterCamstudyViewModel"
 
     private val _EnterCamstudyResponseLiveData = MutableLiveData<Response<CamStudyJoinResponse>>()

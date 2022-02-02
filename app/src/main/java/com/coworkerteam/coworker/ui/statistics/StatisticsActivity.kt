@@ -134,7 +134,6 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
 
         init()
         setRangeTime(getToday())
-        viewModel.getStatisticsData("start", getToday(), period)
     }
 
     override fun initDataBinding() {
@@ -258,6 +257,7 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
     }
 
     override fun initAfterBinding() {
+        viewModel.getStatisticsData("start", getToday(), period)
     }
 
     fun init() {

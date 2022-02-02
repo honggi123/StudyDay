@@ -26,6 +26,8 @@ class MemberListActivity : BaseActivity<ActivityMemberListBinding, MemberListVie
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_new_24) // 홈버튼 이미지 변경
         supportActionBar?.title = "가입 멤버"
+
+        studyIdx = intent.getIntExtra("study_idx", -1)
     }
 
     override fun initDataBinding() {
@@ -63,7 +65,6 @@ class MemberListActivity : BaseActivity<ActivityMemberListBinding, MemberListVie
     }
 
     override fun initAfterBinding() {
-        studyIdx = intent.getIntExtra("study_idx", -1)
         viewModel.getStudyMemberData(studyIdx)
     }
 

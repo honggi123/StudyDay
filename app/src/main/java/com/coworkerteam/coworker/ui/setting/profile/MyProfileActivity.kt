@@ -62,10 +62,6 @@ class MyProfileActivity : BaseActivity<ActivityMyProfileBinding, MyProfileViewMo
     }
 
     override fun initAfterBinding() {
-    }
-
-    override fun onStart() {
-        super.onStart()
         viewModel.getMyProfileData()
     }
 

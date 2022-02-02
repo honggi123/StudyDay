@@ -2,35 +2,15 @@ package com.coworkerteam.coworker.ui.study.leader.transfer
 
 import android.widget.Toast
 
-import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
 import com.coworkerteam.coworker.data.model.api.StudyMemberResponse
-import com.coworkerteam.coworker.data.remote.StudydayService
-import com.coworkerteam.coworker.databinding.ActivityCategoryBinding
 import com.coworkerteam.coworker.databinding.ActivityLeaderTransferBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
-import com.coworkerteam.coworker.ui.category.CategoryViewModel
-import com.google.android.gms.common.api.ApiException
 import com.google.android.material.button.MaterialButtonToggleGroup
-import okhttp3.OkHttpClient
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
 
 class LeaderTransferActivity :
     BaseActivity<ActivityLeaderTransferBinding, LeaderTransferViewModel>() {
@@ -50,6 +30,8 @@ class LeaderTransferActivity :
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_new_24) // 홈버튼 이미지 변경
         supportActionBar?.title = "가입 멤버"
+
+        studyIdx = intent.getIntExtra("study_idx", -1)
 
         viewDataBinding.toggleButton.check(R.id.member_check_toogle_member)
         viewDataBinding.toggleButton.addOnButtonCheckedListener(MaterialButtonToggleGroup.OnButtonCheckedListener { group, checkedId, isChecked ->
@@ -172,7 +154,6 @@ class LeaderTransferActivity :
     }
 
     override fun initAfterBinding() {
-        studyIdx = intent.getIntExtra("study_idx", -1)
         viewModel.getStudyMemberData(studyIdx)
     }
 

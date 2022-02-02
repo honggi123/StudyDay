@@ -93,6 +93,8 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
                     val errorMessage = JSONObject(it.errorBody()?.string())
                     Log.e(TAG, errorMessage.getString("message"))
 
+                    loding.dismissDialog()
+
                     //400번대 에러로 스터디 만들기 실패했을 경우, 사용자에게 알려준다.
                     Toast.makeText(this,errorMessage.getString("message"),Toast.LENGTH_SHORT).show()
                 }
@@ -101,12 +103,16 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
                     val errorMessage = JSONObject(it.errorBody()?.string())
                     Log.e(TAG, errorMessage.getString("message"))
 
+                    loding.dismissDialog()
+
                     moveLogin()
                 }
             }
         })
 
         viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
+            loding.dismissDialog()
+
             when {
                 it.isSuccessful -> {
                     var intent = Intent(this, EnterCamstudyActivity::class.java)
@@ -169,7 +175,6 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
 
     override fun initAfterBinding() {
     }
-
 
     fun checkStudyTypeRadio() {
         val checkedId = viewDataBinding.makeStudyType.checkedRadioButtonId
@@ -349,11 +354,12 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
             Toast.makeText(this, "스터디 설명을 확인해주세요.", Toast.LENGTH_SHORT).show()
         } else {
 
+            loding.showDialog(this)
+
             if (fileName != null) {
                 uploadWithTransferUtilty(fileName!!, File(realpath))
                 imageUrl = getString(R.string.s3_coworker_study_url) + fileName
             }
-
 
             var categorys = categorys.joinToString("|")
             var password =

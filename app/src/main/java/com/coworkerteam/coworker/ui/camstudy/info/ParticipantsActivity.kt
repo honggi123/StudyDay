@@ -19,7 +19,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ParticipantsActivity : BaseActivity<ActivityParticipantsBinding, ParticipantsViewModel>() {
 
-    val TAG = "ParticipantsActivity"
+    private val TAG = "ParticipantsActivity"
 
     override val layoutResourceID: Int
         get() = R.layout.activity_participants
@@ -75,7 +75,7 @@ class ParticipantsActivity : BaseActivity<ActivityParticipantsBinding, Participa
         txt_peple.text = setTextColor(text)
     }
 
-    fun setTextColor(text: String): SpannableStringBuilder {
+    private fun setTextColor(text: String): SpannableStringBuilder {
         val builder = SpannableStringBuilder(text)
         val colorBlueSpan = ForegroundColorSpan(Color.BLUE)
         builder.setSpan(colorBlueSpan, 0, 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)

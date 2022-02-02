@@ -45,7 +45,6 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
     var isVideo: Boolean? = true
     var isAudio: Boolean? = true
 
-    var timerSec: Int = 0
     var instanceID: String? = null
 
     var dataIntent: EnterCamstudyResponse? = null

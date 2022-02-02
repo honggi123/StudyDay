@@ -65,12 +65,6 @@ class MyStudyInfoActivity : BaseActivity<ActivityMyStudyInfoBinding, MyStudyInfo
     }
 
     override fun initAfterBinding() {
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-
         viewModel.getMyStudyInfoData()
     }
 

@@ -10,6 +10,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import com.coworkerteam.coworker.ui.dialog.ProgressDialog
 import com.coworkerteam.coworker.ui.login.LoginActivity
 import com.coworkerteam.coworker.utils.NetworkUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -31,6 +32,9 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
 
     //네트워크 상태 반환해주는 Utils 클래스
     val network: NetworkUtils = get()
+
+    //로딩창
+    val loding = ProgressDialog()
 
     //레이아웃을 띄운 직후 호출 - 뷰나 액티비티의 속성등을 초기화
     abstract fun initStartView()

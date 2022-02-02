@@ -15,6 +15,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class StudyInfoActivity : BaseActivity<ActivityStudyInfoBinding, StudyInfoViewModel>() {
     private val TAG = "StudyInfoActivity"
+
     override val layoutResourceID: Int
         get() = R.layout.activity_study_info
     override val viewModel: StudyInfoViewModel by viewModel()
@@ -70,11 +71,6 @@ class StudyInfoActivity : BaseActivity<ActivityStudyInfoBinding, StudyInfoViewMo
     }
 
     override fun initAfterBinding() {
-
-    }
-
-    override fun onStart() {
-        super.onStart()
         viewModel.getStudyInfoData(intent.getIntExtra("studyIdx",-1))
     }
 

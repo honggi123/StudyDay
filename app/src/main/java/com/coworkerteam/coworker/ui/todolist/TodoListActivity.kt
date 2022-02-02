@@ -318,7 +318,6 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
 
     override fun initAfterBinding() {
         viewModel.getTodoListData("start", getToday())
-        viewDataBinding.isAddButton = true
     }
 
     fun init() {
@@ -416,6 +415,8 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
                 todays[2].toInt()
             ), true
         )
+
+        viewDataBinding.isAddButton = true
 
         viewDataBinding.todoListFloatingbtnAddTodolist.setOnClickListener(View.OnClickListener {
             val mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_todo_list_add, null)
