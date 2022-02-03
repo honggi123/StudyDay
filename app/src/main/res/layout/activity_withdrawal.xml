@@ -15,6 +15,13 @@
         android:layout_height="match_parent"
         tools:context=".ui.setting.to.developer.ToDeveloperActivity">
 
+        <include
+            android:id="@+id/main_toolber"
+            layout="@layout/toolbar_main"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/textView46"
             android:layout_width="wrap_content"
@@ -25,7 +32,7 @@
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/guideline27"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/main_toolber" />
 
         <TextView
             android:id="@+id/textView59"

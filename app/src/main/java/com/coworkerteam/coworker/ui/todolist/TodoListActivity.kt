@@ -152,6 +152,21 @@ class TodoListActivity : NavigationActivity<ActivityTodoListBinding, TodoListVie
                         it.body()!!.result.theDayAcheiveRate
                     viewDataBinding.todolistResponse = viewDataBinding.todolistResponse
                     viewDataBinding.todoListProgress.progress = it.body()!!.result.theDayAcheiveRate
+
+                    //달력 데코레이터 다시 세팅
+                    viewDataBinding.calendarView.removeDecorators()
+                    var decorators = ArrayList<CalendarDay>()
+                    it.body()!!.result.todoDate.forEach {
+                        val date = it.split("-")
+                        decorators.add(
+                            CalendarDay.from(
+                                date[0].toInt(),
+                                date[1].toInt(),
+                                date[2].toInt()
+                            )
+                        )
+                    }
+                    viewDataBinding.calendarView.addDecorator(EventDecorator(decorators))
                 }
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
