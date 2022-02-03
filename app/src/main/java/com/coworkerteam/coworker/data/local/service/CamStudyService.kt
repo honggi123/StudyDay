@@ -59,6 +59,7 @@ class CamStudyService : Service() {
     companion object {
         const val MSG_CLIENT_CONNECT = 0
         const val MSG_CLIENT_DISCNNECT = 1
+        const val MSG_SERVICE_CONNECT = 2
         const val MSG_TOTAL_MESSAGE = 3
         const val MSG_WHISPER_MESSAGE = 4
         const val MSG_HOST_VIDEO_ON_OFF = 5
@@ -801,13 +802,14 @@ class CamStudyService : Service() {
                 MSG_CLIENT_CONNECT -> {
                     Log.d(TAG, "Received MSG_CLIENT_CONNECT message from client");
                     mClientCallbacks.add(msg.replyTo);
-                    Log.d(
-                        TAG,
-                        "Received MSG_CLIENT_CONNECT message from client" + mClientCallbacks.size
-                    );
+
                     if (socket == null) {
                         startCamStudy()
                     }
+
+                    val handlerMessage =
+                        Message.obtain(null, MSG_SERVICE_CONNECT)
+                    sendHandlerMessage(handlerMessage)
                 }
                 MSG_CLIENT_DISCNNECT -> {
                     Log.d(TAG, "Received MSG_CLIENT_DISCONNECT message from client");

@@ -78,7 +78,7 @@ class StudyInfoActivity : BaseActivity<ActivityStudyInfoBinding, StudyInfoViewMo
         val rv = findViewById<RecyclerView>(R.id.study_info_rv)
         val categorys = category.split("|")
 
-        var myStudyAdepter: CamStudyCategotyAdapter = CamStudyCategotyAdapter(this)
+        var myStudyAdepter = CamStudyCategotyAdapter(this)
         myStudyAdepter.datas = categorys.toMutableList()
         rv.adapter = myStudyAdepter
     }

@@ -1,6 +1,5 @@
 package com.coworkerteam.coworker.ui.camstudy.cam
 
-import android.annotation.SuppressLint
 import android.content.*
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -25,16 +24,11 @@ import kotlin.collections.ArrayList
 import android.content.ClipData
 import android.view.*
 import androidx.annotation.RequiresApi
-import androidx.core.view.size
-import com.coworkerteam.coworker.data.model.custom.EventDecorator
-import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.ui.main.MainActivity
 import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.prolificinteractive.materialcalendarview.CalendarDay
 import org.json.JSONObject
 import kotlin.math.ceil
-import kotlin.math.max
 
 
 class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel>() {
@@ -48,7 +42,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     private var mServiceCallback: Messenger? = null
     private var mClientCallback = Messenger(CallbackHandler(Looper.getMainLooper()))
 
-    var chat_rv: RecyclerView? = null
+    private var chat_rv: RecyclerView? = null
 
     companion object {
         var studyInfo: EnterCamstudyResponse? = null
@@ -79,10 +73,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
 
         init()
-
-        //레이아웃 다시 설정
-        setPage()
-        addCamStudyItemView()
     }
 
     override fun initDataBinding() {
@@ -254,9 +244,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             dialog.setContentView(chatDialogView!!)
             dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-            chat_rv = chatDialogView!!.findViewById<RecyclerView>(R.id.camstudy_chat_recycler)
-            val spinner_sender =
-                chatDialogView!!.findViewById<Spinner>(R.id.camstudy_chat_spinner_sender)
+            chat_rv = chatDialogView!!.findViewById(R.id.camstudy_chat_recycler)
+            chatDialogView!!.findViewById<Spinner>(R.id.camstudy_chat_spinner_sender)
             val edt_chat = chatDialogView!!.findViewById<EditText>(R.id.camstudy_chat_edt_message)
             val btn_chat = chatDialogView!!.findViewById<ImageView>(R.id.camstudy_chat_btn_send)
 
@@ -421,32 +410,11 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.camera_chang -> {
-                Log.d(TAG, "카메라 체인지")
                 val msg: Message = Message.obtain(null, CamStudyService.MSG_SWITCH_CAMERA)
                 sendHandlerMessage(msg)
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private var mConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            mServiceCallback = Messenger(service)
-
-            //서비스랑 연결
-            val connectMsg = Message.obtain(null, CamStudyService.MSG_CLIENT_CONNECT)
-            connectMsg.replyTo = mClientCallback
-
-            try {
-                mServiceCallback!!.send(connectMsg)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            mServiceCallback = null
-        }
     }
 
     private fun sendHandlerMessage(msg: Message) {
@@ -466,12 +434,15 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
         val item_height = when{
             CamStudyService.peerConnection.keys.size < 2 -> {
+                Log.d(TAG, "getLayoutParams: peerConnection.keys.size < 2")
                 ViewGroup.LayoutParams.WRAP_CONTENT
             }
             CamStudyService.peerConnection.keys.size == 2 -> {
+                Log.d(TAG, "getLayoutParams: peerConnection.keys.size  == 2 ")
                 height/2
             }
             else -> {
+                Log.d(TAG, "getLayoutParams: else ")
                 height/3
             }
         }
@@ -484,8 +455,10 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         lp.order = 1
 
         if (size == 0) {
+            Log.d(TAG, "getLayoutParams: size 0")
             lp.flexGrow = 1.0F
         } else if (size == 1 && CamStudyService.peerConnection.keys.size == 2) {
+            Log.d(TAG, "getLayoutParams: size == 1 && CamStudyService.peerConnection.keys.size == 2")
             lp.flexGrow = 1.0F
             lp.isWrapBefore = true
         }
@@ -547,21 +520,40 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 )
             }
         }
-//        CamStudyService.peerConnection.keys.forEach {
-//            val item = CamStudyService.peerConnection.get(it)?.itemView
-//            item?.layoutParams =
-//                getLayoutParams(viewDataBinding.camStudyFelxboxLayout.flexItemCount)
-//
-//            viewDataBinding.camStudyFelxboxLayout.addView(
-//                CamStudyService.peerConnection[it]?.itemView
-//            )
-//        }
+    }
+
+    private var mConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            mServiceCallback = Messenger(service)
+
+            //서비스랑 연결
+            val connectMsg = Message.obtain(null, CamStudyService.MSG_CLIENT_CONNECT)
+            connectMsg.replyTo = mClientCallback
+
+            try {
+                mServiceCallback!!.send(connectMsg)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            mServiceCallback = null
+        }
     }
 
     inner class CallbackHandler(looper: Looper) : Handler(looper) {
         override fun handleMessage(msg: Message) {
             Log.d(TAG, "Activity에 메세지 도착 : $msg")
             when (msg.what) {
+                CamStudyService.MSG_SERVICE_CONNECT -> {
+                    //연결 성공했을 경우
+                    viewDataBinding.camStudyFelxboxLayout.removeAllViews()
+
+                    //레이아웃 설정
+                    setPage()
+                    addCamStudyItemView()
+                }
                 CamStudyService.MSG_EXISTINGPARTICIPANNTS -> {
                     //내가 방에 맨 먼저 참여했을 경우
                     viewDataBinding.camStudyFelxboxLayout.removeAllViews()

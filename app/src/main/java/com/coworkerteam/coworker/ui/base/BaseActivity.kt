@@ -49,8 +49,6 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        //네트워크 체크
-        checkNetwork()
 
         //데이터 바인딩 초기화
         viewDataBinding = DataBindingUtil.setContentView(this, layoutResourceID)
@@ -60,6 +58,9 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
         initDataBinding()
         getErrorDataBinding()
         initAfterBinding()
+
+        //네트워크 체크
+        checkNetwork()
     }
 
     private fun getErrorDataBinding() {
