@@ -19,7 +19,7 @@ import com.coworkerteam.coworker.ui.todolist.TodoListActivity
 import com.google.android.material.navigation.NavigationView
 import de.hdodenhof.circleimageview.CircleImageView
 
-open abstract class NavigationAcitivity<T : ViewDataBinding, R : BaseViewModel> :
+open abstract class NavigationActivity<T : ViewDataBinding, R : BaseViewModel> :
     BaseActivity<T, R>(),
     NavigationView.OnNavigationItemSelectedListener {
 
@@ -101,7 +101,7 @@ open abstract class NavigationAcitivity<T : ViewDataBinding, R : BaseViewModel> 
                 drawerLayout.openDrawer(GravityCompat.START)
             }
         }
-        return super.onOptionsItemSelected(item)
+        return true
     }
 
     override fun onBackPressed() {

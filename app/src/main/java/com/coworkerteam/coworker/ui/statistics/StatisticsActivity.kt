@@ -19,7 +19,7 @@ import com.coworkerteam.coworker.data.model.custom.CustBarChart
 import com.coworkerteam.coworker.data.model.custom.StatisticsMarkerView
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityStatisticsBinding
-import com.coworkerteam.coworker.ui.base.NavigationAcitivity
+import com.coworkerteam.coworker.ui.base.NavigationActivity
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
@@ -39,7 +39,7 @@ import org.json.JSONObject
 import java.text.DecimalFormat
 
 
-class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, StatisticsViewModel>() {
+class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, StatisticsViewModel>() {
 
     var TAG = "StatisticsActivity"
     override val layoutResourceID: Int

@@ -8,17 +8,15 @@ import android.widget.*
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.StudySearchResponse
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.data.model.other.SearchStudy
 import com.coworkerteam.coworker.databinding.ActivityStudySearchBinding
-import com.coworkerteam.coworker.ui.base.NavigationAcitivity
+import com.coworkerteam.coworker.ui.base.NavigationActivity
 import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.ui.dialog.PasswordDialog
-import com.coworkerteam.coworker.ui.main.MainTodolistAdapter
 import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
@@ -26,7 +24,7 @@ import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class StudySearchActivity :
-    NavigationAcitivity<ActivityStudySearchBinding, StudySearchViewModel>() {
+    NavigationActivity<ActivityStudySearchBinding, StudySearchViewModel>() {
     val TAG = "StudySearchActivity"
     override val layoutResourceID: Int
         get() = R.layout.activity_study_search

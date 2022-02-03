@@ -2,6 +2,7 @@ package com.coworkerteam.coworker.ui.setting.info
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.coworkerteam.coworker.R
@@ -29,5 +30,18 @@ class TermsOfServiceActivity : AppCompatActivity() {
 
         webView.webViewClient = WebViewClient()
         webView.loadUrl("https://www.studyday.co.kr/terms")
+    }
+
+    // 툴바 메뉴 버튼이 클릭 됐을 때 실행하는 함수
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        // 클릭한 툴바 메뉴 아이템 id 마다 다르게 실행하도록 설정
+        when (item!!.itemId) {
+            android.R.id.home -> {
+                //뒤로가기 버튼 클릭시 액티비티 닫기
+                finish()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

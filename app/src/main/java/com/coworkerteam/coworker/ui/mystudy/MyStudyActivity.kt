@@ -1,34 +1,25 @@
 package com.coworkerteam.coworker.ui.mystudy
 
-import android.content.Context
 import android.content.Intent
 import android.util.Log
-import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.Toolbar
-import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.MyStudyResponse
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityMyStudyBinding
-import com.coworkerteam.coworker.ui.base.BaseActivity
-import com.coworkerteam.coworker.ui.base.NavigationAcitivity
+import com.coworkerteam.coworker.ui.base.NavigationActivity
 import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.ui.dialog.PasswordDialog
-import com.coworkerteam.coworker.ui.search.StudySearchActivity
-import com.coworkerteam.coworker.ui.statistics.StatisticsActivity
 import com.coworkerteam.coworker.ui.study.management.ManagementActivity
-import com.coworkerteam.coworker.ui.todolist.TodoListActivity
 import com.coworkerteam.coworker.utils.RecyclerViewUtils
 import com.google.android.material.navigation.NavigationView
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MyStudyActivity : NavigationAcitivity<ActivityMyStudyBinding, MyStudyViewModel>() , NavigationView.OnNavigationItemSelectedListener  {
+class MyStudyActivity : NavigationActivity<ActivityMyStudyBinding, MyStudyViewModel>() , NavigationView.OnNavigationItemSelectedListener  {
     val TAG = "MyStudyActivity"
     override val layoutResourceID: Int
         get() = R.layout.activity_my_study

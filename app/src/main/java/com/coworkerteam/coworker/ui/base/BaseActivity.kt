@@ -1,11 +1,11 @@
 package com.coworkerteam.coworker.ui.base
 
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -17,13 +17,6 @@ import com.coworkerteam.coworker.utils.NetworkUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.android.ext.android.get
 
-/**
- * BaseActivity<ActivitySbsMainBinding>
- * 와 같이 상속 받을 때, ActivitySbsMainBinding 과 같은 파일이 자동생성되지 않는다면
- * 1. 해당 엑티비티의 레이아웃이 <layout></layout> 으로 감싸져 있는지 확인
- * 2. 다시 빌드 수행 or 클린 빌드 후 다시 빌드 수행
- * 3. 이름 확인 : sbs_main_activity => ActivitySbsMainBinding
- */
 open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCompatActivity() {
     lateinit var viewDataBinding: T
     abstract val layoutResourceID: Int
@@ -108,6 +101,19 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
                 finishAndRemoveTask(); // 액티비티 종료 + 태스크 리스트에서 지우기
                 android.os.Process.killProcess(android.os.Process.myPid()); // 앱 프로세스 종료
             }).show()
+    }
+
+    // 툴바 메뉴 버튼이 클릭 됐을 때 실행하는 함수
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        // 클릭한 툴바 메뉴 아이템 id 마다 다르게 실행하도록 설정
+        when (item!!.itemId) {
+            android.R.id.home -> {
+                //뒤로가기 버튼 클릭시 액티비티 닫기
+                finish()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     fun moveLogin(){

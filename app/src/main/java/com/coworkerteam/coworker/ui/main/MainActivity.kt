@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityMainBinding
-import com.coworkerteam.coworker.ui.base.NavigationAcitivity
+import com.coworkerteam.coworker.ui.base.NavigationActivity
 import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.ui.dialog.PasswordDialog
 import com.coworkerteam.coworker.ui.study.make.MakeStudyActivity
@@ -29,10 +29,9 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.w3c.dom.Text
 import java.text.SimpleDateFormat
 
-class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
+class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
 
     val TAG = "MainActivity"
     override val layoutResourceID: Int

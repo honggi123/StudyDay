@@ -3,28 +3,21 @@ package com.coworkerteam.coworker.ui.todolist
 import android.app.DatePickerDialog
 import android.widget.Toast
 
-import android.content.Context
-import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.*
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
-import androidx.core.widget.doOnTextChanged
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.model.api.TodolistResponse
 import com.coworkerteam.coworker.data.model.custom.EventDecorator
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityTodoListBinding
-import com.coworkerteam.coworker.ui.base.NavigationAcitivity
+import com.coworkerteam.coworker.ui.base.NavigationActivity
 import com.coworkerteam.coworker.utils.PatternUtils
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textfield.TextInputLayout
 import com.prolificinteractive.materialcalendarview.CalendarDay
@@ -40,7 +33,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListViewModel>() {
+class TodoListActivity : NavigationActivity<ActivityTodoListBinding, TodoListViewModel>() {
     private val TAG = "TodoListActivity"
 
     override val layoutResourceID: Int
