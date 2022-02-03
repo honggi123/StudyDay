@@ -4,6 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
+        <import type="android.view.View" />
+
         <variable
             name="studyInfo"
             type="com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse" />
@@ -149,7 +152,8 @@
                         android:text="스터디 가입 인원"
                         android:textColor="@color/black"
                         android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:visibility='@{studyInfo.result.studyInfo.type.equals("group")?View.VISIBLE:View.GONE}'/>
 
                     <TextView
                         android:id="@+id/enter_camstudy_join_personnel"
@@ -158,7 +162,8 @@
                         android:layout_marginTop="10dp"
                         android:text="@{String.valueOf(studyInfo.Result.StudyInfo.joinNum) +'/'+ String.valueOf(studyInfo.Result.studyInfo.maxNum)}"
                         android:textColor="@color/black"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        android:visibility='@{studyInfo.result.studyInfo.type.equals("group")?View.VISIBLE:View.GONE}'/>
 
                     <TextView
                         android:id="@+id/textView65"

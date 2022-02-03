@@ -24,7 +24,7 @@ class MemberListViewModel(private val model: UserRepository) : BaseViewModel() {
 
         if (!accessToken.isNullOrEmpty()) {
             addDisposable(
-                model.getStudyMemberData(accessToken, studyIdx, "manageMember")
+                model.getStudyMemberData(accessToken, studyIdx, "viewMember")
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({

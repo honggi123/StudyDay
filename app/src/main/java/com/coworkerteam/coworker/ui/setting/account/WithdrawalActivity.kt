@@ -47,8 +47,7 @@ class WithdrawalActivity : BaseActivity<ActivityWithdrawalBinding, WithdrawalVie
         viewModel.WithdrawalResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
-                    Toast.makeText(getApplicationContext(), "회원탈퇴가 안전하게 완료되었습니다.", Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(this, "회원탈퇴가 안전하게 완료되었습니다.", Toast.LENGTH_SHORT).show()
                     moveLogin()
                 }
                 it.code() == 400 -> {

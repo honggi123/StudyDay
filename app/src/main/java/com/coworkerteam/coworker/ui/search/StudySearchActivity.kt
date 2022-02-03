@@ -175,6 +175,11 @@ class StudySearchActivity :
         viewModel.getStudySearchStartData()
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        initAfterBinding()
+    }
+
     fun init() {
         val searchView = findViewById<SearchView>(R.id.study_search_searchview)
 

@@ -277,6 +277,11 @@ class MainActivity : NavigationAcitivity<ActivityMainBinding, MainViewModel>() {
         viewModel.getMainData()
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        initAfterBinding()
+    }
+
     fun init() {
         //스피너
         val data = arrayOf("일일스터디", "그룹스터디")

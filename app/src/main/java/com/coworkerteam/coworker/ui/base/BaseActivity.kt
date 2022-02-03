@@ -1,5 +1,6 @@
 package com.coworkerteam.coworker.ui.base
 
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
@@ -114,6 +115,6 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
         val loginIntent = Intent(this,LoginActivity::class.java)
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        startActivity(intent)
+        startActivity(loginIntent)
     }
 }

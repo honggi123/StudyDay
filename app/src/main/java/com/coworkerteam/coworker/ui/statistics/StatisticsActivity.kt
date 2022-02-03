@@ -260,6 +260,11 @@ class StatisticsActivity : NavigationAcitivity<ActivityStatisticsBinding, Statis
         viewModel.getStatisticsData("start", getToday(), period)
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        viewModel.getStatisticsData("start", selectDate, period)
+    }
+
     fun init() {
         val sortWeekly = findViewById<TextView>(R.id.statistics_txt_weekly)
         sortWeekly.setSelected(true)

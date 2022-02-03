@@ -320,6 +320,11 @@ class TodoListActivity : NavigationAcitivity<ActivityTodoListBinding, TodoListVi
         viewModel.getTodoListData("start", getToday())
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        viewModel.getTodoListData("start", selectData)
+    }
+
     fun init() {
 
         val calender = findViewById<MaterialCalendarView>(R.id.calendarView)

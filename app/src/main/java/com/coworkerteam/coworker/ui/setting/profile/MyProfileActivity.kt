@@ -65,6 +65,11 @@ class MyProfileActivity : BaseActivity<ActivityMyProfileBinding, MyProfileViewMo
         viewModel.getMyProfileData()
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        initAfterBinding()
+    }
+
     fun init() {
         Glide.with(this) //해당 환경의 Context나 객체 입력
             .load(profileManageResponse.img) //URL, URI 등등 이미지를 받아올 경로

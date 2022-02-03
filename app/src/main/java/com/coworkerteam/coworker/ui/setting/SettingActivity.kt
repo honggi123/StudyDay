@@ -56,9 +56,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
             when {
                 it.isSuccessful -> {
                     //로그인으로 이동
-                    val intent = Intent(this, LoginActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                    moveLogin()
                 }
                 it.code() == 400 -> {
                     //로그인에 실패한 원인이 클라이언트 측에 있을 경우
@@ -75,9 +73,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
                     Log.e(TAG, errorMessage.getString("message"))
 
                     //회원이 아니거나, 존재하지 않는 리프레시 토큰, 만료된 리프레시 토큰 일경우 어차피 다시 로그인 시켜야함
-                    val intent = Intent(this, LoginActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                    moveLogin()
                 }
             }
         })

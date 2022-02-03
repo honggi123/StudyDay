@@ -96,4 +96,9 @@ class ManagementActivity : BaseActivity<ActivityManagementBinding, ManagementVie
     override fun initAfterBinding() {
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        pagingManagementAdapter.refresh()
+    }
+
 }

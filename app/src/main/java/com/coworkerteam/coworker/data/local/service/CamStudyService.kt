@@ -403,6 +403,8 @@ class CamStudyService : Service() {
                                     par.timer.init(message.getInt("stopwatchTime").toDouble())
                                     par.toggleAudio(message.getString("audioStatus"))
                                     par.toggleVideo(message.getString("videoStatus"))
+
+                                    par.timer.setOtherTimer("run")
                                 }
                                 "receiveStopwatchTime" -> {
                                     //새로운 참여자가 캠스터디에 참여하고 있는 모든 참여자들의 타이머 시간/ 스탑워치 상태를 받는다

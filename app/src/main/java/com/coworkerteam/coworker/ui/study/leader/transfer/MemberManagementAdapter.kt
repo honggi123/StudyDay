@@ -78,6 +78,7 @@ class MemberManagementAdapter(private val context: Context, private val viewMode
                     datas.remove(item)
 
                     notifyDataSetChanged()
+                    builder.dismiss()
                 })
             })
         }

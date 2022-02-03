@@ -1,5 +1,6 @@
 package com.coworkerteam.coworker.ui.camstudy.cam
 
+import android.annotation.SuppressLint
 import android.content.*
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -24,6 +25,7 @@ import kotlin.collections.ArrayList
 import android.content.ClipData
 import android.view.*
 import androidx.annotation.RequiresApi
+import androidx.core.view.size
 import com.coworkerteam.coworker.data.model.custom.EventDecorator
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.ui.main.MainActivity
@@ -31,6 +33,8 @@ import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import org.json.JSONObject
+import kotlin.math.ceil
+import kotlin.math.max
 
 
 class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel>() {
@@ -55,6 +59,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     var chatDialogView: View? = null
 
+    var page = 1
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun initStartView() {
         initData()
@@ -75,6 +81,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         init()
 
         //레이아웃 다시 설정
+        setPage()
         addCamStudyItemView()
     }
 
@@ -322,26 +329,47 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 val clip = ClipData.newPlainText("label", studyInfo!!.result.studyInfo.link)
                 clipboard.setPrimaryClip(clip)
+
+                Toast.makeText(this,"클립보드에 복사되었습니다.",Toast.LENGTH_SHORT).show()
             })
 
             btn_participants.setOnClickListener(View.OnClickListener {
                 val intent = Intent(this, ParticipantsActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 startActivity(intent)
                 dialog.dismiss()
             })
             btn_study_info.setOnClickListener(View.OnClickListener {
                 val intent = Intent(this, StudyInfoActivity::class.java)
                 intent.putExtra("studyIdx", studyInfo!!.result.studyInfo.idx)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 startActivity(intent)
                 dialog.dismiss()
             })
             btn_mystudy_info.setOnClickListener(View.OnClickListener {
                 val intent = Intent(this, MyStudyInfoActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 startActivity(intent)
                 dialog.dismiss()
             })
 
             dialog.show()
+        })
+
+        viewDataBinding.camstudyPre.setOnClickListener(View.OnClickListener {
+            page -= 1
+
+            viewDataBinding.camStudyFelxboxLayout.removeAllViews()
+            setPage()
+            addCamStudyItemView()
+        })
+
+        viewDataBinding.camstudyNext.setOnClickListener(View.OnClickListener {
+            page += 1
+
+            viewDataBinding.camStudyFelxboxLayout.removeAllViews()
+            setPage()
+            addCamStudyItemView()
         })
     }
 
@@ -468,16 +496,66 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         return lp
     }
 
-    fun addCamStudyItemView() {
-        CamStudyService.peerConnection.keys.forEach {
-            val item = CamStudyService.peerConnection.get(it)?.itemView
-            item?.layoutParams =
-                getLayoutParams(viewDataBinding.camStudyFelxboxLayout.flexItemCount)
+    fun setPage(){
+        val maxPage = ceil(CamStudyService.peerConnection.keys.size / 6.0).toInt()
 
-            viewDataBinding.camStudyFelxboxLayout.addView(
-                CamStudyService.peerConnection[it]?.itemView
-            )
+        if(page > maxPage && maxPage > 0){
+            page = maxPage
         }
+        //페이지 정보 설정
+        viewDataBinding.textView55.text = "$page / $maxPage"
+
+        //이전 페이지 버튼 활성화
+        if(page-1 <= 0){
+            viewDataBinding.camstudyPre.visibility = View.INVISIBLE
+        }else{
+            viewDataBinding.camstudyPre.visibility = View.VISIBLE
+        }
+
+        //다음페이지 버튼 활성화
+        if(page >= maxPage){
+            viewDataBinding.camstudyNext.visibility = View.INVISIBLE
+        }else{
+            viewDataBinding.camstudyNext.visibility = View.VISIBLE
+        }
+
+    }
+
+    fun addCamStudyItemView() {
+
+        val startIndex = 6 * ( page-1 )
+        var endIndex = startIndex + 5
+        val maxIndex = CamStudyService.peerConnection.keys.size -1
+
+        if(endIndex > maxIndex){
+            endIndex = maxIndex
+        }
+        
+        Log.d(TAG, "addCamStudyItemView: $startIndex, $endIndex, $maxIndex")
+
+        if(maxIndex >= 0) {
+            for (i in startIndex..endIndex) {
+                Log.d(TAG, "addCamStudyItemView: $i")
+                val key = CamStudyService.peerConnection.keys.toList()[i]
+                val item = CamStudyService.peerConnection[key]?.itemView
+
+                item?.layoutParams =
+                    getLayoutParams(viewDataBinding.camStudyFelxboxLayout.flexItemCount)
+
+                viewDataBinding.camStudyFelxboxLayout.addView(
+                    CamStudyService.peerConnection[key]?.itemView
+                )
+            }
+        }
+//        CamStudyService.peerConnection.keys.forEach {
+//            val item = CamStudyService.peerConnection.get(it)?.itemView
+//            item?.layoutParams =
+//                getLayoutParams(viewDataBinding.camStudyFelxboxLayout.flexItemCount)
+//
+//            viewDataBinding.camStudyFelxboxLayout.addView(
+//                CamStudyService.peerConnection[it]?.itemView
+//            )
+//        }
     }
 
     inner class CallbackHandler(looper: Looper) : Handler(looper) {
@@ -488,6 +566,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     //내가 방에 맨 먼저 참여했을 경우
                     viewDataBinding.camStudyFelxboxLayout.removeAllViews()
 
+                    //레이아웃 설정
+                    setPage()
                     addCamStudyItemView()
 
                 }
@@ -498,12 +578,16 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     viewDataBinding.camStudyFelxboxLayout.removeAllViews()
 
                     //레이아웃 다시 설정
+                    setPage()
                     addCamStudyItemView()
                 }
                 CamStudyService.MSG_PARTICIPANTLEFT -> {
                     //누군가 스터디를 떠났을 경우
 
                     viewDataBinding.camStudyFelxboxLayout.removeAllViews()
+
+                    //레이아웃 다시 설정
+                    setPage()
                     addCamStudyItemView()
 
                 }

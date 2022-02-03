@@ -170,11 +170,13 @@ class MyStudyActivity : NavigationAcitivity<ActivityMyStudyBinding, MyStudyViewM
     }
 
     override fun initAfterBinding() {
+        viewModel.getMyStudyData()
     }
 
-    override fun onPostResume() {
-        super.onPostResume()
-        viewModel.getMyStudyData()
+    override fun onRestart() {
+        super.onRestart()
+        pagingGroupAdapter.refresh()
+        pagingDailyAdapter.refresh()
     }
 
     fun init() {

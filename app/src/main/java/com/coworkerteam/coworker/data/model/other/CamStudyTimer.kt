@@ -108,10 +108,10 @@ class CamStudyTimer(private var textView: TextView, private var statusImage: Ima
 
     //현재 타이머 상태 반환해주는 함수
     fun getTimerStatus(): String {
-        if (isStudyTimer == true) {
-            return "run"
-        } else {
+        if (isStudyTimer == false) {
             return "pause"
+        } else {
+            return "run"
         }
     }
 
