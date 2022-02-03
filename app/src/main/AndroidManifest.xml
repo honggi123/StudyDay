@@ -2,15 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.coworkerteam.coworker">
 
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-feature
@@ -69,9 +68,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.setting.profile.MyProfileActivity" />
-        <activity
-            android:name=".ui.camstudy.enter.EnterCamstudyActivity"
-            android:launchMode="singleInstance" />
+        <activity android:name=".ui.camstudy.enter.EnterCamstudyActivity"/>
         <activity android:name=".ui.setting.SettingActivity" />
         <activity android:name=".ui.splash.SplashActivity">
             <intent-filter>

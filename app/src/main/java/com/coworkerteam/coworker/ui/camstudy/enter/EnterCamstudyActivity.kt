@@ -16,12 +16,14 @@ import com.coworkerteam.coworker.databinding.ActivityEnterCamstudyBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.camstudy.CamStudyCategotyAdapter
 import com.coworkerteam.coworker.ui.camstudy.cam.CamStudyActivity
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.normal.TedPermission
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.webrtc.*
-import pub.devrel.easypermissions.EasyPermissions
 
 class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCamstudyViewModel>() {
+
     val TAG = "EnterCamstudyActivity"
 
     override val layoutResourceID: Int
@@ -49,16 +51,7 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
 
     var dataIntent: EnterCamstudyResponse? = null
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
     override fun initStartView() {
-
         dataIntent = intent.getSerializableExtra("studyInfo") as EnterCamstudyResponse?
         var data = dataIntent
 
@@ -75,28 +68,39 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_new_24_black) // 홈버튼 이미지 변경
         supportActionBar?.title = data.result.studyInfo.name
 
-        val perms = arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
-        if (EasyPermissions.hasPermissions(this, *perms)) {
-            CamStudyService.isPermissions = true
+        val permissionListener: PermissionListener = object: PermissionListener {
+            override fun onPermissionGranted() {
+                //권한 허가시 실행할 내용
+                CamStudyService.isPermissions = true
 
-            surface = viewDataBinding.surfaceView
-            initializeSurfaceViews()
-            initializePeerConnectionFactory()
-            createVideoTrackFromCameraAndShowIt()
-            initView()
-        } else {
-            EasyPermissions.requestPermissions(this, "마이크/카메라 권한이 거부되었습니다.", 114, *perms)
+                surface = viewDataBinding.surfaceView
+                initializeSurfaceViews()
+                initializePeerConnectionFactory()
+                createVideoTrackFromCameraAndShowIt()
+                initView()
+            }
 
-            CamStudyService.isPermissions = false
-            isAudio = false
-            isVideo = false
-            viewDataBinding.imageButton2.isSelected = true
-            viewDataBinding.imageButton3.isSelected = true
+            override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+                // 권한 거부시 실행  할 내용
+                Toast.makeText(this@EnterCamstudyActivity,"권한을 허용하지 캠스터디에서 카메라와 마이크를 사용할 수 없습니다.",Toast.LENGTH_SHORT).show()
 
-            viewDataBinding.enterCamstudyBtnEnter.setOnClickListener(View.OnClickListener {
-                viewModel.getCamstduyInstanceData(dataIntent!!.result.studyInfo.link)
-            })
+                CamStudyService.isPermissions = false
+                isAudio = false
+                isVideo = false
+                viewDataBinding.imageButton2.isSelected = true
+                viewDataBinding.imageButton3.isSelected = true
+
+                viewDataBinding.enterCamstudyBtnEnter.setOnClickListener(View.OnClickListener {
+                    viewModel.getCamstduyInstanceData(dataIntent!!.result.studyInfo.link)
+                })
+            }
         }
+
+        TedPermission.create()
+            .setPermissionListener(permissionListener)
+            .setDeniedMessage("앱의 카메라, 마이크 권한을 허용해야 정상적으로 캠스터디를 이용할 수 있습니다. 해당 권한을 [설정] > [권한] 에서 허용해주세요.")
+            .setPermissions(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+            .check()
 
     }
 

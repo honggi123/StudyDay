@@ -177,7 +177,7 @@ dependencies {
     }
 
     //권한 라이브러리
-    implementation 'pub.devrel:easypermissions:1.1.3'
+    implementation 'io.github.ParkSangGwon:tedpermission-normal:3.3.0'
 
     //자바 백포트
     implementation 'com.jakewharton.threetenabp:threetenabp:1.3.1'

@@ -1,5 +1,6 @@
 package com.coworkerteam.coworker.ui.study.make
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.database.Cursor
@@ -28,8 +29,11 @@ import com.coworkerteam.coworker.databinding.ActivityMakeStudyBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.utils.PatternUtils
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.normal.TedPermission
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import pub.devrel.easypermissions.EasyPermissions
 import java.io.File
 
 class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewModel>() {
@@ -319,12 +323,26 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
         })
 
         btn_import.setOnClickListener(View.OnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = MediaStore.Images.Media.CONTENT_TYPE
+                val permissionListener:PermissionListener = object:PermissionListener{
+                    override fun onPermissionGranted() {
+                        //권한 허가시 실행할 내용
+                        val intent = Intent(Intent.ACTION_PICK)
+                        intent.type = MediaStore.Images.Media.CONTENT_TYPE
+                        intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                        startForResult.launch(intent)
+                    }
 
-            intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                    override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+                        // 권한 거부시 실행  할 내용
+                        Toast.makeText(this@MakeStudyActivity,"권한을 허용하지 않으면 사진을 불러올 수 없습니다.",Toast.LENGTH_SHORT).show()
+                    }
+                }
 
-            startForResult.launch(intent)
+                TedPermission.create()
+                .setPermissionListener(permissionListener)
+                .setDeniedMessage("앱의 저장소 접근 권한을 허용해야 이미지를 불러올 수 있습니다. 해당 권한을 [설정] > [권한] 에서 허용해주세요.")
+                .setPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .check()
         })
 
         btn_pick.setOnClickListener(View.OnClickListener {
