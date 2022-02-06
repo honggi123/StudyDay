@@ -20,6 +20,7 @@ import com.coworkerteam.coworker.ui.dialog.PasswordDialog
 import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
+import com.google.firebase.analytics.FirebaseAnalytics
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -77,6 +78,7 @@ class StudySearchActivity :
         //패스워드 다이얼로그 ok버튼 함수 세팅
         passwordDialog.onClickOKButton = {i: Int, s: String? ->
             viewModel.getEnterCamstduyData(i, s)
+            firebaseLog.addLog(TAG,"check_study_password")
         }
 
         init()
@@ -212,9 +214,13 @@ class StudySearchActivity :
             if (isChecked) {
                 isJoin = true
                 searchEvent()
+
+                firebaseLog.addLog(TAG,"select_option_join")
             } else {
                 isJoin = false
                 searchEvent()
+
+                firebaseLog.addLog(TAG,"select_option_join")
             }
         })
     }
@@ -245,6 +251,8 @@ class StudySearchActivity :
     }
 
     fun searchEvent() {
+        firebaseLog.addLog(TAG,FirebaseAnalytics.Event.SEARCH)
+
         var categorys: String? = category.joinToString("|")
         if (categorys.isNullOrBlank()) {
             categorys = null
@@ -254,6 +262,8 @@ class StudySearchActivity :
     }
 
     fun sortEvent(view: View, otherView: View, sort: String) {
+        firebaseLog.addLog(TAG,"select_sort")
+
         if (view.isSelected) {
         } else {
             view.isSelected = true
@@ -264,6 +274,8 @@ class StudySearchActivity :
     }
 
     fun clickCategoryButton(v: View) {
+        firebaseLog.addLog(TAG,"select_category")
+
         val view = v as TextView
         val categoryName = v.text.toString()
 

@@ -31,6 +31,8 @@ class CategoryActivity : BaseActivity<ActivityCategoryBinding, CategoryViewModel
             //카테고리가 성공적으로 선택
             when {
                 it.isSuccessful -> {
+                    firebaseLog.addLog(TAG,"add_category")
+
                     //메인으로 이동
                     moveMain()
                 }
@@ -58,8 +60,11 @@ class CategoryActivity : BaseActivity<ActivityCategoryBinding, CategoryViewModel
 
     fun clickCategoryButton(v: View) {
         val view = v as TextView
+
         //카테고리 이름
         val categoryName = view.text.toString()
+
+        firebaseLog.addLog(TAG,"select_category")
 
         if (view.isSelected) {
             //선택되어있던 카테고리라면 선택해제

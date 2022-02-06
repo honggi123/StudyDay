@@ -130,6 +130,8 @@ class TodoListActivity : NavigationActivity<ActivityTodoListBinding, TodoListVie
         viewModel.AddTodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
+                    firebaseLog.addLog(TAG,"add_todolist")
+
                     //새로 추가한 투두리스트
                     var todolistAdepter = TodoListAdapter(this, viewModel)
                     todolistAdepter.datas = it.body()!!.result.theDayTodo.toMutableList()
@@ -189,6 +191,8 @@ class TodoListActivity : NavigationActivity<ActivityTodoListBinding, TodoListVie
         viewModel.CheckTodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
+                    firebaseLog.addLog(TAG,"check_todolist")
+
                     //네비게이션 드로어 오늘 할일 달성률 갱신
                     viewDataBinding.draworInfo!!.achieveTodoRate =
                         it.body()!!.result.achieveTodoRate
@@ -230,6 +234,8 @@ class TodoListActivity : NavigationActivity<ActivityTodoListBinding, TodoListVie
         viewModel.DeleteTodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
+                    firebaseLog.addLog(TAG,"delete_todolist")
+
                     viewDataBinding.todolistResponse!!.result.theDayTodo = it.body()!!.result.theDayTodo
                     viewDataBinding.todolistResponse = viewDataBinding.todolistResponse
 
@@ -293,6 +299,8 @@ class TodoListActivity : NavigationActivity<ActivityTodoListBinding, TodoListVie
         viewModel.EditTodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
+                    firebaseLog.addLog(TAG,"edit_todolist")
+
                     myStudyAdepter!!.notifyDataSetChanged()
                 }
                 it.code() == 400 -> {
@@ -352,13 +360,15 @@ class TodoListActivity : NavigationActivity<ActivityTodoListBinding, TodoListVie
             return@TitleFormatter result
         })
 
-        //캘린더의 월이 바뀔대마다 발생하는 이벤트
+        //캘린더의 월이 바뀔대마다 발생하는 이벤트 -> 주간달력은 주가 바뀔때마다 일어남
         calender.setOnMonthChangedListener(OnMonthChangedListener { widget, date ->
             val month = if (date.month < 10) "0${date.month}" else date.month.toString()
             val day = if (date.day < 10) "0${date.day}" else date.day.toString()
 
             val showDate = date.year.toString() + "-" + month + "-" + day
             viewModel.getTodoListData("getTodoDate", showDate)
+
+            firebaseLog.addLog(TAG,"scroll_weekly")
         })
 
         //캘린더 다이얼로그(월간)의 이벤트
@@ -386,6 +396,8 @@ class TodoListActivity : NavigationActivity<ActivityTodoListBinding, TodoListVie
 
             viewModel.getTodoListData("old", dates)
             viewModel.getTodoListData("getTodoDate", dates)
+
+            firebaseLog.addLog(TAG,"select_dialog_date")
         }
 
         //캘린더의 2020년 03월 이라고 적힌 타이틀을 누르면 캘린더 다이얼로그(월간)이 나온다.
@@ -414,6 +426,8 @@ class TodoListActivity : NavigationActivity<ActivityTodoListBinding, TodoListVie
                 viewDataBinding.isAddButton = compareDate(selectData, getToday())
 
                 viewModel.getTodoListData("old", dates)
+
+                firebaseLog.addLog(TAG,"select_date")
             }
         })
 

@@ -8,12 +8,14 @@ import com.coworkerteam.coworker.data.UserRepository
 import com.coworkerteam.coworker.data.model.api.ApiRequest
 import com.coworkerteam.coworker.data.model.api.TokenResponse
 import com.coworkerteam.coworker.data.model.other.ServiceError
+import com.coworkerteam.coworker.utils.FirebaseAnalyticsUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import okhttp3.ResponseBody
 import org.json.JSONObject
+import org.koin.android.ext.android.get
 import retrofit2.Response
 
 open class BaseViewModel() : ViewModel() {

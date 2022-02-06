@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.coworkerteam.coworker.ui.dialog.ProgressDialog
 import com.coworkerteam.coworker.ui.login.LoginActivity
+import com.coworkerteam.coworker.utils.FirebaseAnalyticsUtils
 import com.coworkerteam.coworker.utils.NetworkUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.android.ext.android.get
@@ -27,8 +28,14 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
     //네트워크 상태 반환해주는 Utils 클래스
     val network: NetworkUtils = get()
 
+    //로그를 심는 Utils 클래스
+    val firebaseLog: FirebaseAnalyticsUtils = get()
+
     //로딩창
     val loding = ProgressDialog()
+
+    //네트워크가 한번 끊겼다가 돌아온건지 판단을 위한 함수
+    var isNetwork = true
 
     //레이아웃을 띄운 직후 호출 - 뷰나 액티비티의 속성등을 초기화
     abstract fun initStartView()
@@ -74,8 +81,12 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
     fun checkNetwork() {
         network.observe(this, androidx.lifecycle.Observer {
             if (it) {
-
+                if(!isNetwork){
+                    initAfterBinding()
+                }
             } else {
+                isNetwork = false
+
                 MaterialAlertDialogBuilder(this)
                     .setTitle("네트워크 연결 안됨")
                     .setMessage("네크워크에 연결되어 있지않습니다. Wi-Fi를 통해 연결하시거나, 무선네트워크 차단 상태인지 확인해주세요.")
@@ -92,7 +103,7 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
     }
 
     //API 서버 에러시 띄우는 다이얼로그 ( Status 코드 500번대 )
-    fun showServerErrorDialog() {
+    private fun showServerErrorDialog() {
         MaterialAlertDialogBuilder(this)
             .setTitle("시스템 에러")
             .setMessage("죄송합니다. 현재 시스템 오류가 발생했습니다. 나중에 다시 시도해주세요.")

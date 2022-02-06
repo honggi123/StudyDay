@@ -5,6 +5,7 @@ import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
 import com.coworkerteam.coworker.data.local.prefs.PreferencesHelper
 import com.coworkerteam.coworker.data.remote.NaverService
 import com.coworkerteam.coworker.data.remote.StudydayService
+import com.coworkerteam.coworker.utils.FirebaseAnalyticsUtils
 import com.coworkerteam.coworker.utils.NetworkUtils
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
@@ -37,10 +38,16 @@ var preferencesModule = module {
     }
 }
 
+var logModule = module {
+    single<FirebaseAnalyticsUtils>{
+        FirebaseAnalyticsUtils(get())
+    }
+}
+
 var networkModule = module {
     single<NetworkUtils>{
         NetworkUtils(androidApplication())
     }
 }
 
-var myAppModule = listOf(retrofitModule,preferencesModule,networkModule)
+var myAppModule = listOf(retrofitModule,preferencesModule, logModule,networkModule)

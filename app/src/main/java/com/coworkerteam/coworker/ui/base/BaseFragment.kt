@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import com.coworkerteam.coworker.utils.FirebaseAnalyticsUtils
+import org.koin.android.ext.android.get
 
 open abstract class BaseFragment<T : ViewDataBinding, R : BaseViewModel> : Fragment() {
 
@@ -18,6 +20,9 @@ open abstract class BaseFragment<T : ViewDataBinding, R : BaseViewModel> : Fragm
 
     //lateinit var mActivity: BaseActivity
     lateinit var mRootView: View
+
+    //로그를 심는 Utils 클래스
+    val firebaseLog: FirebaseAnalyticsUtils = get()
 
     //레이아웃을 띄운 직후 호출 - 뷰나 액티비티의 속성등을 초기화
     abstract fun initStartView()

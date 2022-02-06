@@ -185,10 +185,14 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     CamStudyService.isAudio = false
                     msg.obj = "off"
                     it.isSelected = true
+
+                    firebaseLog.addLog(TAG,"audio_off")
                 } else {
                     CamStudyService.isAudio = true
                     msg.obj = "on"
                     it.isSelected = false
+
+                    firebaseLog.addLog(TAG,"audio_on")
                 }
 
                 sendHandlerMessage(msg)
@@ -201,10 +205,14 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     CamStudyService.isVideo = false
                     msg.obj = "off"
                     it.isSelected = true
+
+                    firebaseLog.addLog(TAG,"video_off")
                 } else {
                     CamStudyService.isVideo = true
                     msg.obj = "on"
                     it.isSelected = false
+
+                    firebaseLog.addLog(TAG,"video_on")
                 }
 
                 sendHandlerMessage(msg)
@@ -228,6 +236,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
                 val msg: Message = Message.obtain(null, CamStudyService.MSG_HOST_TIMER_PAUSE)
                 sendHandlerMessage(msg)
+
+                firebaseLog.addLog(TAG,"stop_timer")
             } else {
                 //타이머 재생
                 CamStudyService.isPlay = true
@@ -235,6 +245,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
                 val msg: Message = Message.obtain(null, CamStudyService.MSG_HOST_TIMER_RUN)
                 sendHandlerMessage(msg)
+
+                firebaseLog.addLog(TAG,"run_timer")
             }
         })
 
@@ -268,6 +280,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     CamStudyService.chatDate.add(ChatData("total", "나", null, chat, time))
 
                     chat_recyclerview_init(CamStudyService.chatDate)
+
+                    firebaseLog.addLog(TAG,"send_total_chat")
                 } else {
                     val bundle = Bundle()
                     bundle.putString("msg", chat)
@@ -279,6 +293,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     CamStudyService.chatDate.add(ChatData("total", "나", receiver, chat, time))
 
                     chat_recyclerview_init(CamStudyService.chatDate)
+
+                    firebaseLog.addLog(TAG,"send_whisper_chat")
                 }
             })
 
@@ -320,6 +336,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 clipboard.setPrimaryClip(clip)
 
                 Toast.makeText(this,"클립보드에 복사되었습니다.",Toast.LENGTH_SHORT).show()
+
+                firebaseLog.addLog(TAG, "copy_link")
             })
 
             btn_participants.setOnClickListener(View.OnClickListener {

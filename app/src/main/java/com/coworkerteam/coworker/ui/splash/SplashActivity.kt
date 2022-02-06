@@ -37,6 +37,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             //자동로그인 성공적으로 되었는지 판단
             when {
                 it.isSuccessful -> {
+                    firebaseLog.addLog(TAG,"auto_login")
+
                     //카테고리를 선택했었는지에 대한 여부
                     if (it.body()!!.result.isInterest) {
                         //메인으로 이동

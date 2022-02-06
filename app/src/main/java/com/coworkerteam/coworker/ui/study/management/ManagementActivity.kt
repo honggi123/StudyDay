@@ -44,6 +44,7 @@ class ManagementActivity : BaseActivity<ActivityManagementBinding, ManagementVie
         viewModel.StudyDeleteResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
+                    firebaseLog.addLog(TAG,"delete_study")
                     pagingManagementAdapter.refresh()
                 }
                 it.code() == 400 -> {

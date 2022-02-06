@@ -30,6 +30,7 @@ import com.nhn.android.naverlogin.OAuthLogin
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import android.content.pm.PackageManager
+import com.google.firebase.analytics.FirebaseAnalytics
 
 class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>() {
     val TAG = "SettingActivity"
@@ -52,9 +53,10 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
 
     override fun initDataBinding() {
         viewModel.SettingResponseLiveData.observe(this, androidx.lifecycle.Observer {
-            //로그아웃이 성공적으로 이뤄짐
             when {
                 it.isSuccessful -> {
+                    //로그아웃이 성공적으로 이뤄짐
+
                     //로그인으로 이동
                     moveLogin()
                 }
@@ -103,6 +105,8 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
     }
 
     fun LogOut() {
+        firebaseLog.addLog(TAG,"logout")
+
         var loginType = viewModel.getLoginType()
 
         if (loginType == "google") {
@@ -158,6 +162,8 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
     }
 
     fun sendToDeveloper(){
+        firebaseLog.addLog(TAG,"sned_developer_email")
+
         val intent = Intent(Intent.ACTION_SENDTO)
         val emailTitle = "[" + getString(R.string.app_name) + "] 서비스에 대한 문의"
         val emailContent = String.format(

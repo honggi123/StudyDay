@@ -143,6 +143,7 @@ class WithdrawalActivity : BaseActivity<ActivityWithdrawalBinding, WithdrawalVie
             withdrawalNaver()
         }
 
+        firebaseLog.addLog(TAG,"withdrawal")
         viewModel.setWithdrawalData(reason)
     }
 

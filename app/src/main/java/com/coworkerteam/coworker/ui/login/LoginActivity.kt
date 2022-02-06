@@ -17,6 +17,7 @@ import com.coworkerteam.coworker.ui.main.MainActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.kakao.sdk.user.UserApiClient
 import com.nhn.android.naverlogin.OAuthLogin
 import com.nhn.android.naverlogin.OAuthLoginHandler
@@ -54,9 +55,10 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
             when {
                 it.isSuccessful -> {
                     //로그인에 성공했을 경우
+                    firebaseLog.addLog(TAG,FirebaseAnalytics.Event.LOGIN)
+
                     val isCategory = it.body()!!.result[0].isInterest
                     moveActivity(isCategory)
-
                 }
                 else -> {
                     //로그인에 실패한 원인이 클라이언트 측에 있을 경우(400번대 에러)

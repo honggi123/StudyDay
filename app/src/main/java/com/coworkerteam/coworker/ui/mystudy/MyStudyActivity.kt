@@ -59,6 +59,7 @@ class MyStudyActivity : NavigationActivity<ActivityMyStudyBinding, MyStudyViewMo
         //패스워드 다이얼로그 ok버튼 함수 세팅
         passwordDialog.onClickOKButton = {i: Int, s: String? ->
             viewModel.getEnterCamstduyData(i, s)
+            firebaseLog.addLog(TAG,"check_study_password")
         }
     }
 

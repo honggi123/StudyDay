@@ -33,7 +33,6 @@ import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import pub.devrel.easypermissions.EasyPermissions
 import java.io.File
 
 class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewModel>() {
@@ -119,6 +118,8 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
 
             when {
                 it.isSuccessful -> {
+                    firebaseLog.addLog(TAG,"make_study")
+
                     var intent = Intent(this, EnterCamstudyActivity::class.java)
                     intent.putExtra("studyInfo", it.body()!!)
 
@@ -196,8 +197,11 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
 
     fun clickCategoryButton(v: View) {
         val view = v as TextView
+
         //카테고리 이름
         val categoryName = view.text.toString()
+
+        firebaseLog.addLog(TAG,"select_category")
 
         if (view.isSelected) {
             //선택되어있던 카테고리라면 선택해제
@@ -213,6 +217,7 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
                 //카테고리가 3개 이하라면
                 view.setSelected(true)
                 categorys.add(categoryName)
+
             }
         }
     }
@@ -310,16 +315,22 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
         baseImage1.setOnClickListener(View.OnClickListener {
             Glide.with(this).load(baseImages[0]).into(selectImage)
             imageUrl = baseImages[0]
+
+            firebaseLog.addLog(TAG,"select_base_image")
         })
 
         baseImage2.setOnClickListener(View.OnClickListener {
             Glide.with(this).load(baseImages[1]).into(selectImage)
             imageUrl = baseImages[1]
+
+            firebaseLog.addLog(TAG,"select_base_image")
         })
 
         baseImage3.setOnClickListener(View.OnClickListener {
             Glide.with(this).load(baseImages[2]).into(selectImage)
             imageUrl = baseImages[2]
+
+            firebaseLog.addLog(TAG,"select_base_image")
         })
 
         btn_import.setOnClickListener(View.OnClickListener {
@@ -330,6 +341,8 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
                         intent.type = MediaStore.Images.Media.CONTENT_TYPE
                         intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                         startForResult.launch(intent)
+
+                        firebaseLog.addLog(TAG,"select_image")
                     }
 
                     override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {

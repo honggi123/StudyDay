@@ -274,6 +274,7 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
                     is_edit -> {
                         when (nickname_check) {
                             "true", "" -> {
+                                firebaseLog.addLog(TAG,"edit_profile")
                                 if(fileName!=null) {
                                     uploadWithTransferUtilty(fileName!!, File(realpath), this)
                                 }else{
@@ -296,7 +297,8 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
 
     fun clickCategoryButton(v: View) {
         //카테고리 관련 클릭 이벤트
-        
+        firebaseLog.addLog(TAG,"select_category")
+
         val view = v as TextView
         //카테고리 이름
         val categoryName = view.text.toString()
@@ -321,6 +323,7 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
 
                 //카테고리가 변경되었다는 확인용 전역변수 값 설정
                 is_edit = true
+
             }
         }
     }
@@ -328,6 +331,8 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
     fun clickNicknameCheck(){
         //닉네임 중복 체크
         viewModel.getNicknameCheckData(viewDataBinding.myProfileEditNickname.editText?.text.toString())
+
+        firebaseLog.addLog(TAG,"check_nickname")
     }
 
     fun startImagePick(){
@@ -339,6 +344,8 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
                 intent.type = MediaStore.Images.Media.CONTENT_TYPE
                 intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                 startForResult.launch(intent)
+
+                firebaseLog.addLog(TAG,"select_image")
             }
 
             override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {

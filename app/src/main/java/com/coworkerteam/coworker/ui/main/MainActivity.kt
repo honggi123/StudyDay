@@ -83,6 +83,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
         //패스워드 다이얼로그 ok버튼 함수 세팅
         passwordDialog.onClickOKButton = { i: Int, s: String? ->
             viewModel.getEnterCamstduyData(i, s)
+            firebaseLog.addLog(TAG,"check_study_password")
         }
 
         init()
@@ -205,7 +206,8 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
         viewModel.EditGoalResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
-                    Log.d("확인", it.body().toString())
+                    firebaseLog.addLog(TAG,"edit_goal")
+
                     viewDataBinding.mainResponse!!.result[0].dream = it.body()!!.result.dream
                     viewDataBinding.mainResponse!!.result[0].achieveTimeRate =
                         it.body()!!.result.achieveTimeRate
@@ -234,6 +236,8 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
         viewModel.CheckTodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
+                    firebaseLog.addLog(TAG,"check_todolist")
+
                     //네비게이션 드로어 오늘 할일 달성률 갱신
                     viewDataBinding.draworInfo!!.achieveTodoRate =
                         it.body()!!.result.achieveTodoRate

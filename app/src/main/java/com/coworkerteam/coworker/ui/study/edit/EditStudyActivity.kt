@@ -152,6 +152,8 @@ class EditStudyActivity : BaseActivity<ActivityEditStudyBinding, EditStudyViewMo
             //스터디 정보 수정 완료
             when {
                 it.isSuccessful -> {
+                    firebaseLog.addLog(TAG,"edit_study")
+
                     //이전화면으로 이동
                     finish()
                 }
@@ -230,8 +232,11 @@ class EditStudyActivity : BaseActivity<ActivityEditStudyBinding, EditStudyViewMo
 
     fun clickCategoryButton(v: View) {
         val view = v as TextView
+
         //카테고리 이름
         val categoryName = view.text.toString()
+
+        firebaseLog.addLog(TAG,"select_category")
 
         if (view.isSelected) {
             //선택되어있던 카테고리라면 선택해제
@@ -247,6 +252,7 @@ class EditStudyActivity : BaseActivity<ActivityEditStudyBinding, EditStudyViewMo
                 //카테고리가 3개 이하라면
                 view.setSelected(true)
                 categorys.add(categoryName)
+
             }
         }
     }
@@ -381,16 +387,22 @@ class EditStudyActivity : BaseActivity<ActivityEditStudyBinding, EditStudyViewMo
         baseImage1.setOnClickListener(View.OnClickListener {
             Glide.with(this).load(baseImages[0]).into(selectImage)
             imageUrl = baseImages[0]
+
+            firebaseLog.addLog(TAG,"select_base_image")
         })
 
         baseImage2.setOnClickListener(View.OnClickListener {
             Glide.with(this).load(baseImages[1]).into(selectImage)
             imageUrl = baseImages[1]
+
+            firebaseLog.addLog(TAG,"select_base_image")
         })
 
         baseImage3.setOnClickListener(View.OnClickListener {
             Glide.with(this).load(baseImages[2]).into(selectImage)
             imageUrl = baseImages[2]
+
+            firebaseLog.addLog(TAG,"select_base_image")
         })
 
         btn_import.setOnClickListener(View.OnClickListener {
@@ -401,6 +413,8 @@ class EditStudyActivity : BaseActivity<ActivityEditStudyBinding, EditStudyViewMo
                     intent.type = MediaStore.Images.Media.CONTENT_TYPE
                     intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                     startForResult.launch(intent)
+
+                    firebaseLog.addLog(TAG,"select_image")
                 }
 
                 override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {

@@ -16,6 +16,7 @@ import com.coworkerteam.coworker.databinding.ActivityEnterCamstudyBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.camstudy.CamStudyCategotyAdapter
 import com.coworkerteam.coworker.ui.camstudy.cam.CamStudyActivity
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import org.json.JSONObject
@@ -108,6 +109,8 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
         viewModel.EnterCamstudyResponseLiveData.observe(this, Observer {
             when {
                 it.isSuccessful -> {
+                    firebaseLog.addLog(TAG,FirebaseAnalytics.Event.JOIN_GROUP)
+
                     var intent = Intent(this, CamStudyActivity::class.java)
                     intent.putExtra("instance",instanceID)
                     intent.putExtra("studyInfo", dataIntent)

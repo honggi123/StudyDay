@@ -75,6 +75,8 @@ class LeaderTransferActivity :
         viewModel.ForcedExitResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
+                    firebaseLog.addLog(TAG,"forced_exit")
+
                     Toast.makeText(this, "성공적으로 추방했습니다.", Toast.LENGTH_SHORT).show()
                 }
                 it.code() == 400 -> {
@@ -115,6 +117,8 @@ class LeaderTransferActivity :
         viewModel.LeaderTransferResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
+                    firebaseLog.addLog(TAG,"transfer_leader")
+
                     finish()
                 }
                 it.code() == 400 -> {

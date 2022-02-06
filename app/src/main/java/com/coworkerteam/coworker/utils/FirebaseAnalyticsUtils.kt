@@ -14,6 +14,6 @@ class FirebaseAnalyticsUtils(private val pref: PreferencesHelper) {
         params.putString("login_type", pref.getCurrentUserLoggedInMode())
         params.putString("email", pref.getCurrentUserEmail())
         params.putString(FirebaseAnalytics.Param.SCREEN_NAME, screen)
-        firebaseAnalytics.logEvent(event,params)
+        firebaseAnalytics.logEvent(event, params)
     }
 }

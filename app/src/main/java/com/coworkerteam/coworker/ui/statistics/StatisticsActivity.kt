@@ -106,6 +106,8 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
                 selectDate = apiDateFormat.format(dateClicked)
                 viewModel.getStatisticsData("old", selectDate, period)
                 setRangeTime(selectDate)
+
+                firebaseLog.addLog(TAG,"select_date")
             }
 
             override fun onMonthScroll(firstDayOfNewMonth: Date?) {
@@ -114,6 +116,8 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
                 selectDate = apiDateFormat.format(firstDayOfNewMonth)
                 viewModel.getStatisticsData("old", selectDate, period)
                 setRangeTime(selectDate)
+
+                firebaseLog.addLog(TAG,"scroll_month")
             }
         })
         viewDataBinding.compactcalendarView.hideCalendar()
@@ -418,12 +422,16 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
             viewDataBinding.statisticsMenthly.isSelected = false
             viewModel.getStatisticsData("old", selectDate, period)
             setRangeTime(selectDate)
+
+            firebaseLog.addLog(TAG,"show_weekly")
         } else if (name.equals("월간")) {
             period = "month"
             view.isSelected = true
             viewDataBinding.statisticsTxtWeekly.isSelected = false
             viewModel.getStatisticsData("old", selectDate, period)
             setRangeTime(selectDate)
+
+            firebaseLog.addLog(TAG,"show_monthly")
         }
 
     }
