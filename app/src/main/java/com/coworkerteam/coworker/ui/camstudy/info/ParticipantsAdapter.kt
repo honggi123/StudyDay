@@ -80,7 +80,7 @@ class ParticipantsAdapter(private val context: Context,private val mServiceCallb
 
         fun bind(item: ParticipantsResponse.Participant) {
             Glide.with(context).load(item.img).into(img)
-
+            nickname.text = item.nickname
         }
     }
 
