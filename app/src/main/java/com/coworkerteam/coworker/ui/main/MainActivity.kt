@@ -11,6 +11,7 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
@@ -67,6 +68,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
 
         //툴바의 + 아이콘에 대한 세팅
         val mainToolbarMakeStudy = findViewById<ImageView>(R.id.main_toolbar_makeStudy)
+
         mainToolbarMakeStudy.visibility = View.VISIBLE
         mainToolbarMakeStudy.setOnClickListener(
             View.OnClickListener {
@@ -77,13 +79,20 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
 
         //내스터디 페이징 Adapter 적용
         pagingMainMyStudyAdapter = MainMyStudyPagingAdapter(viewModel)
-        val rv_MyStudy = findViewById<RecyclerView>(R.id.main_mystudy_recylerView)
-        rv_MyStudy.adapter = pagingMainMyStudyAdapter
+        viewDataBinding.mainMystudyRecylerView.adapter = pagingMainMyStudyAdapter
+
+        pagingMainMyStudyAdapter.addLoadStateListener { loadState ->
+            if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && pagingMainMyStudyAdapter.itemCount < 1) {
+                viewDataBinding.textView37.visibility = View.VISIBLE
+            } else {
+                viewDataBinding.textView37.visibility = View.GONE
+            }
+        }
 
         //패스워드 다이얼로그 ok버튼 함수 세팅
         passwordDialog.onClickOKButton = { i: Int, s: String? ->
             viewModel.getEnterCamstduyData(i, s)
-            firebaseLog.addLog(TAG,"check_study_password")
+            firebaseLog.addLog(TAG, "check_study_password")
         }
 
         init()
@@ -172,12 +181,9 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                     )
 
                     //내스터디
-                    var recyclerMyStudy: RecyclerView =
-                        findViewById(R.id.main_todolist_recylerView)
-                    var myStudyAdepter: MainTodolistAdapter =
-                        MainTodolistAdapter(this, viewModel)
+                    var myStudyAdepter = MainTodolistAdapter(this, viewModel)
                     myStudyAdepter.datas = it.body()!!.result[0].todo.toMutableList()
-                    recyclerMyStudy.adapter = myStudyAdepter
+                    viewDataBinding.mainTodolistRecylerView.adapter = myStudyAdepter
 
                     setData = true
                     NewStudy_init()
@@ -206,7 +212,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
         viewModel.EditGoalResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
-                    firebaseLog.addLog(TAG,"edit_goal")
+                    firebaseLog.addLog(TAG, "edit_goal")
 
                     viewDataBinding.mainResponse!!.result[0].dream = it.body()!!.result.dream
                     viewDataBinding.mainResponse!!.result[0].achieveTimeRate =
@@ -236,7 +242,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
         viewModel.CheckTodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
-                    firebaseLog.addLog(TAG,"check_todolist")
+                    firebaseLog.addLog(TAG, "check_todolist")
 
                     //네비게이션 드로어 오늘 할일 달성률 갱신
                     viewDataBinding.draworInfo!!.achieveTodoRate =

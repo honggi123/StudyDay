@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.paging.LoadState
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.MyStudyResponse
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
@@ -52,9 +53,26 @@ class MyStudyActivity : NavigationActivity<ActivityMyStudyBinding, MyStudyViewMo
         viewDataBinding.myStudyRvGroupStudy.adapter = pagingGroupAdapter
         RecyclerViewUtils().setHorizonSpaceDecration(viewDataBinding.myStudyRvGroupStudy,10)
 
+        pagingGroupAdapter.addLoadStateListener { loadState ->
+            if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && pagingGroupAdapter.itemCount < 1) {
+                viewDataBinding.textView25.visibility = View.VISIBLE
+            } else {
+                viewDataBinding.textView25.visibility = View.GONE
+            }
+        }
+
         pagingDailyAdapter = MyStudyDailyPagingAdapter(passwordDialog)
         viewDataBinding.myStudyRvOpenStudy.adapter = pagingDailyAdapter
         RecyclerViewUtils().setHorizonSpaceDecration( viewDataBinding.myStudyRvOpenStudy,10)
+
+        pagingDailyAdapter.addLoadStateListener { loadState ->
+            if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && pagingDailyAdapter.itemCount < 1) {
+                viewDataBinding.textView23.visibility = View.VISIBLE
+            } else {
+                viewDataBinding.textView23.visibility = View.GONE
+            }
+        }
+
 
         //패스워드 다이얼로그 ok버튼 함수 세팅
         passwordDialog.onClickOKButton = {i: Int, s: String? ->
