@@ -23,7 +23,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_studyday_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Coworker">
+        android:theme="@style/Theme.Coworker"
+        android:usesCleartextTraffic="true">
+
         <activity
             android:name=".ui.setting.info.NoticeActivity"
             android:exported="false" />
