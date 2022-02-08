@@ -37,6 +37,7 @@
             android:id="@+id/dialog_dday_input_day"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:enabled="false"
             android:focusable="false"
             android:hint="YYYY-MM-DD" />
 
