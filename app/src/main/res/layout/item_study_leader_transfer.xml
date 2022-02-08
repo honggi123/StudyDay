@@ -19,13 +19,16 @@
 
     <TextView
         android:id="@+id/item_leader_transfer_nickname"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
+        android:ellipsize="end"
+        android:singleLine="true"
         android:text="닉네임"
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/item_leader_transfer_profile"
+        app:layout_constraintEnd_toStartOf="@+id/item_leader_transfer_btn"
         app:layout_constraintStart_toEndOf="@+id/item_leader_transfer_profile"
         app:layout_constraintTop_toTopOf="@+id/item_leader_transfer_profile" />
 

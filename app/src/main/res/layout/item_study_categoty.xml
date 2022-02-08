@@ -7,15 +7,16 @@
 
     <TextView
         android:id="@+id/item_study_category"
-        android:layout_width="46dp"
+        android:layout_width="wrap_content"
         android:layout_height="20dp"
         android:layout_marginEnd="5dp"
         android:background="@drawable/category"
-        android:textStyle="bold"
         android:gravity="center"
+        android:minWidth="46dp"
         android:text="고시/공시"
         android:textColor="@color/black"
         android:textSize="8.5sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
