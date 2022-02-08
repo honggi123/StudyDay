@@ -289,6 +289,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
     override fun onRestart() {
         super.onRestart()
         initAfterBinding()
+        pagingMainMyStudyAdapter.refresh()
     }
 
     fun init() {
