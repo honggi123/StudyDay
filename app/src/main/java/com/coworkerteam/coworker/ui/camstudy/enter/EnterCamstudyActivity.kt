@@ -259,10 +259,16 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
         rv.adapter = myStudyAdepter
     }
 
+
+
     override fun onDestroy() {
         super.onDestroy()
         if (videoTrackFromCamera != null) {
+            videoTrackFromCamera!!.setEnabled(false)
             videoTrackFromCamera!!.removeRenderer(VideoRenderer(surface))
+        }
+        if(videoCapturer != null){
+            videoCapturer!!.stopCapture()
         }
     }
 
@@ -320,6 +326,7 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
             VIDEO_RESOLUTION_HEIGHT,
             FPS
         )
+
         videoTrackFromCamera = factory!!.createVideoTrack(
             VIDEO_TRACK_ID,
             videoSource
@@ -329,7 +336,13 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
         videoTrackFromCamera!!.setEnabled(true)
         videoTrackFromCamera!!.addRenderer(VideoRenderer(surface))
 
+
+
+
     }
+
+
+
 
     private fun createVideoCapturer(): VideoCapturer? {
         val videoCapturer: VideoCapturer?

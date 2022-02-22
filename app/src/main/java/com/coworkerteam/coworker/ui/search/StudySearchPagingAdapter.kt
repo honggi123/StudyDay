@@ -2,6 +2,7 @@ package com.coworkerteam.coworker.ui.search
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -73,9 +74,12 @@ class StudySearchPagingAdapter() :
 
         fun bind(item: StudySearchResponse.Result.Study?) {
             Glide.with(context).load(item!!.img).into(img)
-
+            Log.e("StudySearchPagingAdapter"+item.idx,item.isLeader.toString())
             if (!item.isLeader) {
                 leader.visibility = View.GONE
+                Log.e("StudySearchPagingAdapter"+item.idx,"isLeader")
+            }else{
+                leader.visibility = View.VISIBLE
             }
 
             if(!item.isPw){

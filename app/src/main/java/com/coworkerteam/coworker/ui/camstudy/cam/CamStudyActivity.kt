@@ -383,11 +383,10 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     fun spinnerInit(view: View?, members: MutableList<String>) {
         if (view != null) {
             //스피너
-
             //선택목록에 나는 제외
             members.remove(viewModel.getNickName())
 
-            if (members.isEmpty()) {
+            if (members.isEmpty()){
                 members.add("모두에게")
             } else {
                 members.add(0, "모두에게")
@@ -410,11 +409,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     } else {
                         receiver = parent.getItemAtPosition(position).toString()
                     }
-
                 }
-
                 override fun onNothingSelected(parent: AdapterView<*>) {
-
                 }
             }
         }

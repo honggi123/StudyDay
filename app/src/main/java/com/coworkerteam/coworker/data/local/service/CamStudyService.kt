@@ -19,7 +19,9 @@ import com.google.gson.Gson
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
+import io.socket.engineio.client.transports.Polling
 import okhttp3.OkHttpClient
+import okhttp3.WebSocket
 import org.json.JSONException
 import org.json.JSONObject
 import org.webrtc.*
@@ -98,6 +100,8 @@ class CamStudyService : Service() {
 
     //서비스가 시작될 때 호출
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
+        Log.e("CamstudyService","start~~")
         if (socket == null) {
             val notification = notification.createNotification(this)
             startForeground(NOTIFICATION_ID, notification)
@@ -107,6 +111,8 @@ class CamStudyService : Service() {
 
     //bindService()로 바인딩을 실행할 때 호출
     override fun onBind(intent: Intent): IBinder {
+        Log.e("CamstudyService","onbind~~")
+
         if (socket == null) {
             getData(intent)
         }
@@ -135,13 +141,13 @@ class CamStudyService : Service() {
     private fun startCamStudy() {
         connectToSignallingServer()
         initializePeerConnectionFactory()
-        if (isPermissions) {
+        if(isPermissions){
             createVideoTrackFromCameraAndShowIt()
-        } else {
+        }else{
             getParticipant(hostname)
         }
         initializePeerConnections(hostname)
-        if (isPermissions) {
+        if (isPermissions){
             startStreamingVideo(hostname)
         }
         socket!!.connect()
@@ -192,6 +198,7 @@ class CamStudyService : Service() {
 
             // set as an option
             val opts = IO.Options()
+            opts.transports = arrayOf(io.socket.engineio.client.transports.WebSocket.NAME)
             opts.callFactory = okHttpClient
             opts.webSocketFactory = okHttpClient
 
@@ -428,7 +435,7 @@ class CamStudyService : Service() {
                                     Log.d(TAG, "receive forcedexit")
                                     val handlerMessage: Message =
                                         Message.obtain(null, CamStudyService.MSG_LEADER_FORCED_EXIT)
-                                    sendHandlerMessage(handlerMessage)
+                                    sendHandlerMessage(handlerMessage)   
                                 }
                                 "receiveForcedDeviceOff" -> {
                                     //리더가 내 미디어 장치 강제로 OFF 시킴
@@ -556,6 +563,8 @@ class CamStudyService : Service() {
             VIDEO_RESOLUTION_HEIGHT,
             FPS
         )
+
+
         videoTrackFromCamera = factory.createVideoTrack(
             VIDEO_TRACK_ID,
             videoSource
@@ -564,6 +573,7 @@ class CamStudyService : Service() {
         //create an AudioSource instance
         audioSource = factory.createAudioSource(audioConstraints)
         localAudioTrack = factory.createAudioTrack("101", audioSource)
+
 
         var participant = getParticipant(hostname)
         participant.remoteVideoTrack = videoTrackFromCamera
@@ -588,11 +598,11 @@ class CamStudyService : Service() {
 
         if (participant != null) {
             return participant
-        } else if (name == hostname) {
+        }else if (name == hostname){
             participant = makeMe()
             peerConnection[name] = participant
             return participant
-        } else {
+        }else {
             participant = Participant(this, name)
             peerConnection[name] = participant
             return participant

@@ -23,41 +23,66 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_studyday_round"
         android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true"
         android:theme="@style/Theme.Coworker"
         android:usesCleartextTraffic="true">
 
         <activity
             android:name=".ui.setting.info.NoticeActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.setting.info.OpenLicenseActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.setting.info.PrivacyPolicyActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.setting.info.TermsOfServiceActivity"
-            android:exported="false" />
-        <activity android:name=".ui.study.memberlist.MemberListActivity" />
-        <activity android:name=".ui.camstudy.info.MyStudyInfoActivity" />
-        <activity android:name=".ui.camstudy.info.StudyInfoActivity" />
-        <activity android:name=".ui.camstudy.info.ParticipantsActivity" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.study.memberlist.MemberListActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.camstudy.info.MyStudyInfoActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.camstudy.info.StudyInfoActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.camstudy.info.ParticipantsActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".ui.camstudy.cam.CamStudyActivity"
-            android:launchMode="singleTask"/>
-        <activity android:name=".ui.study.edit.EditStudyActivity" />
-        <activity android:name=".ui.search.StudySearchActivity" />
-        <activity android:name=".ui.todolist.TodoListActivity" />
-        <activity android:name=".ui.statistics.StatisticsActivity" />
-        <activity android:name=".ui.setting.account.WithdrawalActivity" />
-        <activity android:name=".ui.study.make.MakeStudyActivity" />
-        <activity android:name=".ui.study.management.ManagementActivity" />
-        <activity android:name=".ui.study.leader.transfer.LeaderTransferActivity" />
-        <activity android:name=".ui.setting.to.developer.ToDeveloperActivity" />
-        <activity android:name=".ui.mystudy.MyStudyActivity" />
-        <activity android:name=".ui.category.CategoryActivity" />
-        <activity android:name=".ui.setting.profile.edit.ProfileEditActivity" />
-        <activity android:name=".ui.login.LoginActivity" />
-        <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity">
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.study.edit.EditStudyActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.search.StudySearchActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.todolist.TodoListActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.statistics.StatisticsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.setting.account.WithdrawalActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.study.make.MakeStudyActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.study.management.ManagementActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.study.leader.transfer.LeaderTransferActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.setting.to.developer.ToDeveloperActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.mystudy.MyStudyActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.category.CategoryActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.setting.profile.edit.ProfileEditActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.login.LoginActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -69,17 +94,23 @@
                     android:scheme="kakao8017cd7866917e1c96fbb041dba3a4ab" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.setting.profile.MyProfileActivity" />
-        <activity android:name=".ui.camstudy.enter.EnterCamstudyActivity"/>
-        <activity android:name=".ui.setting.SettingActivity" />
-        <activity android:name=".ui.splash.SplashActivity">
+        <activity android:name=".ui.setting.profile.MyProfileActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.camstudy.enter.EnterCamstudyActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.setting.SettingActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.splash.SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.main.MainActivity" />
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".data.local.service.CamStudyService"

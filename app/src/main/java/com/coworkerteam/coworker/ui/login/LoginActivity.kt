@@ -46,7 +46,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
 
     override fun initStartView() {
         viewDataBinding.activitiy = this
-
         setLink()
     }
 
@@ -67,7 +66,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
 
                     //400번대 에러로 로그인이 실패했을 경우, 사용자에게 알려준다.
                     Toast.makeText(this,"로그인에 실패했습니다. 나중에 다시 시도해주세요.",Toast.LENGTH_SHORT).show()
-
                 }
             }
         })
