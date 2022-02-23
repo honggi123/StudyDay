@@ -12,10 +12,13 @@ import com.coworkerteam.coworker.data.local.service.CamStudyService
 
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
+import com.coworkerteam.coworker.data.model.other.SingleObject.SinglePeerConnectionFactory
 import com.coworkerteam.coworker.databinding.ActivityEnterCamstudyBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.camstudy.CamStudyCategotyAdapter
 import com.coworkerteam.coworker.ui.camstudy.cam.CamStudyActivity
+import com.coworkerteam.coworker.ui.camstudy.info.ParticipantsActivity
+import com.coworkerteam.coworker.ui.main.MainActivity
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
@@ -37,6 +40,8 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
     private val VIDEO_RESOLUTION_WIDTH = 1280
     private val VIDEO_RESOLUTION_HEIGHT = 720
     private val FPS = 30
+
+    lateinit var renderer : VideoRenderer
 
     var videoCapturer: VideoCapturer? = null
 
@@ -119,7 +124,6 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
                     CamStudyService.isAudio = isAudio
                     CamStudyService.timer = it.body()!!.result.studyTimeSec
                     startActivity(intent)
-                    finish()
                 }
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
@@ -262,19 +266,16 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
 
     override fun onDestroy() {
         super.onDestroy()
-
         if (videoTrackFromCamera != null) {
             videoTrackFromCamera!!.setEnabled(false)
-            videoTrackFromCamera!!.removeRenderer(VideoRenderer(surface))
+            videoTrackFromCamera!!.removeRenderer(renderer)
             videoTrackFromCamera!!.dispose()
-
         }
         if(videoCapturer != null){
             videoCapturer!!.dispose()
+            surface.release()
+            videoSource.dispose()
         }
-        videoSource.dispose()
-
-
     }
 
     private fun switchDevice(view: View, device: String) {
@@ -315,11 +316,14 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
 
     private fun initializePeerConnectionFactory() {
         PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true)
-        factory = PeerConnectionFactory(null)
+
+       factory = SinglePeerConnectionFactory.getfactory()
+        //factory = PeerConnectionFactory(null)
         factory!!.setVideoHwAccelerationOptions(
             CamStudyService.rootEglBase.eglBaseContext,
             CamStudyService.rootEglBase.eglBaseContext
         )
+
     }
 
     private fun createVideoTrackFromCameraAndShowIt() {
@@ -339,7 +343,8 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
 
         viewDataBinding.enterCamstudyProfile.visibility = View.GONE
         videoTrackFromCamera!!.setEnabled(true)
-        videoTrackFromCamera!!.addRenderer(VideoRenderer(surface))
+        renderer = VideoRenderer(surface)
+        videoTrackFromCamera!!.addRenderer(renderer)
     }
 
 
@@ -379,6 +384,7 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
     private fun useCamera2(): Boolean {
         return Camera2Enumerator.isSupported(this)
     }
+
 
 
 }

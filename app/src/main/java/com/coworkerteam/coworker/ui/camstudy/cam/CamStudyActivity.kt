@@ -1,14 +1,20 @@
 package com.coworkerteam.coworker.ui.camstudy.cam
 
+import android.Manifest
 import android.content.*
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.*
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
-import com.coworkerteam.coworker.data.local.service.CamStudyService
 import com.coworkerteam.coworker.R
+import com.coworkerteam.coworker.data.local.service.CamStudyService
 import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
 import com.coworkerteam.coworker.data.model.other.ChatData
 import com.coworkerteam.coworker.databinding.ActivityCamStudyBinding
@@ -16,18 +22,15 @@ import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.camstudy.info.MyStudyInfoActivity
 import com.coworkerteam.coworker.ui.camstudy.info.ParticipantsActivity
 import com.coworkerteam.coworker.ui.camstudy.info.StudyInfoActivity
+import com.coworkerteam.coworker.ui.main.MainActivity
+import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.normal.TedPermission
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
-import android.content.ClipData
-import android.view.*
-import androidx.annotation.RequiresApi
-import com.coworkerteam.coworker.ui.main.MainActivity
-import com.google.android.flexbox.FlexboxLayout
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import org.json.JSONObject
 import kotlin.math.ceil
 
 
@@ -86,6 +89,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     stopService(Intent(this, CamStudyService::class.java))
                     var intent = Intent(this,MainActivity::class.java)
                     intent.putExtra("KickFromLeader",kick)
+                    //액티비티 스택제거
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK )
                     startActivity(intent)
                     finish()
                 }

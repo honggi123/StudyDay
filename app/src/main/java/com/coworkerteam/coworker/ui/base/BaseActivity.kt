@@ -100,7 +100,11 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
                     }).show()
             }
         })
+
     }
+
+
+
 
     //API 서버 에러시 띄우는 다이얼로그 ( Status 코드 500번대 )
     private fun showServerErrorDialog() {

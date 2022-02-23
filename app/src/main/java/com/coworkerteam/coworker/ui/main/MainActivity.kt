@@ -52,6 +52,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
 
     val passwordDialog = PasswordDialog()
 
+
     override fun initStartView() {
         super.initStartView()
         loding.showDialog(this)
@@ -96,6 +97,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
         }
 
         //강퇴 후 메인 액티비티에 돌아왔을때
+
         var kick = intent.getBooleanExtra("KickFromLeader",false)
         if(kick){
             MaterialAlertDialogBuilder(this@MainActivity)
@@ -103,7 +105,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                 .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
                 }).show()
         }
-
         init()
     }
 
@@ -116,8 +117,10 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                     var intent = Intent(this, EnterCamstudyActivity::class.java)
                     intent.putExtra("studyInfo", it.body()!!)
 
-                    passwordDialog.dismissDialog()
-                    startActivity(intent)
+
+                        passwordDialog.dismissDialog()
+                        startActivity(intent)
+
                 }
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
@@ -331,11 +334,9 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                         NewStudy_init()
                     }
                 }
-
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
-
             }
         }
 

@@ -14,14 +14,14 @@ import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
 import com.coworkerteam.coworker.data.model.api.ParticipantsResponse
 import com.coworkerteam.coworker.data.model.other.ChatData
 import com.coworkerteam.coworker.data.model.other.Participant
+import com.coworkerteam.coworker.data.model.other.SingleObject.OkHttpBuilder
+import com.coworkerteam.coworker.data.model.other.SingleObject.SinglePeerConnectionFactory
 import com.coworkerteam.coworker.ui.camstudy.cam.CamStudyActivity
 import com.google.gson.Gson
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
-import io.socket.engineio.client.transports.Polling
 import okhttp3.OkHttpClient
-import okhttp3.WebSocket
 import org.json.JSONException
 import org.json.JSONObject
 import org.webrtc.*
@@ -59,6 +59,7 @@ class CamStudyService : Service() {
     var videoCapturer: VideoCapturer? = null
     lateinit var audioSource: AudioSource
     lateinit var localAudioTrack: AudioTrack
+    lateinit var okHttpClient : OkHttpClient
 
     companion object {
         const val MSG_CLIENT_CONNECT = 0
@@ -130,22 +131,27 @@ class CamStudyService : Service() {
     //서비스가 소멸될 때 호출
     override fun onDestroy() {
         super.onDestroy()
+
         socket?.disconnect()
 
-        peerConnection.keys.forEach{
-            peerConnection.get(it)?.stopCamStduy()
-        }
 
+        // webrtc 관련
         videoTrackFromCamera?.dispose()
         videosource.dispose()
         videoCapturer?.dispose()
         localAudioTrack.dispose()
         audioSource.dispose()
-        factory.dispose()
         peerConnection.clear()
 
         chatDate.clear()
+
+        peerConnection.keys.forEach{
+            peerConnection.get(it)?.stopCamStduy()
+        }
         Log.d(TAG, "service 끝")
+
+
+
     }
 
     private fun startCamStudy() {
@@ -198,10 +204,9 @@ class CamStudyService : Service() {
                 e.printStackTrace()
             }
             val okHttpClient =
-                OkHttpClient.Builder().hostnameVerifier(myHostnameVerifier).sslSocketFactory(
+                OkHttpBuilder.getbuilder().hostnameVerifier(myHostnameVerifier).sslSocketFactory(
                     mySSLContext!!.socketFactory
                 ).build()
-
 
             // default settings for all sockets
             IO.setDefaultOkHttpWebSocketFactory(okHttpClient)
@@ -221,7 +226,6 @@ class CamStudyService : Service() {
             }
 
             Log.e(TAG, "REPLACE ME: IO Socket:$URL")
-
             socket = IO.socket(URL, opts)
             socket!!.on(
                 Socket.EVENT_CONNECT,
@@ -556,7 +560,8 @@ class CamStudyService : Service() {
 
     private fun initializePeerConnectionFactory() {
         PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true)
-        factory = PeerConnectionFactory(null)
+        factory = SinglePeerConnectionFactory.getfactory()
+       // factory = PeerConnectionFactory(null)
         factory.setVideoHwAccelerationOptions(
             rootEglBase?.eglBaseContext,
             rootEglBase?.eglBaseContext
@@ -574,7 +579,6 @@ class CamStudyService : Service() {
             VIDEO_RESOLUTION_HEIGHT,
             FPS
         )
-
 
         videoTrackFromCamera = factory.createVideoTrack(
             VIDEO_TRACK_ID,
@@ -653,6 +657,7 @@ class CamStudyService : Service() {
         iceServers.add(PeerConnection.IceServer(turnURL, "kurento", "kurento"))
         val rtcConfig = PeerConnection.RTCConfiguration(iceServers)
         val pcConstraints = MediaConstraints()
+
         val pcObserver: PeerConnection.Observer = object : PeerConnection.Observer {
             override fun onSignalingChange(signalingState: PeerConnection.SignalingState) {
                 Log.d(TAG, "onSignalingChange: ")
@@ -767,12 +772,7 @@ class CamStudyService : Service() {
     }
 
     private fun createVideoCapturer(): VideoCapturer? {
-        return if (useCamera2()) {
-            createCameraCapturer(Camera2Enumerator(this))
-        } else {
-            createCameraCapturer(Camera1Enumerator(true))
-        }
-
+        return createCameraCapturer(Camera1Enumerator(true))
     }
 
     private fun createCameraCapturer(enumerator: CameraEnumerator): VideoCapturer? {
@@ -796,6 +796,7 @@ class CamStudyService : Service() {
         return null
     }
 
+    // 갤럭시 특정 기기 카메라 전환 시 camera2 api에서 오류 이슈 발생으로 인해 사용 하지 않음
     private fun useCamera2(): Boolean {
         return Camera2Enumerator.isSupported(this)
     }
@@ -962,7 +963,7 @@ object notification {
         val pendingIntent = PendingIntent
             .getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        // Oreo 부터는 Notification Channel을 만들어야 함
+        // Oreo 부터는 Notification Chan3nel을 만들어야 함
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val serviceChannel = NotificationChannel(
                 CHANNEL_ID,

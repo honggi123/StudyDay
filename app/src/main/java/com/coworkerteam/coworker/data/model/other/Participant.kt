@@ -20,6 +20,8 @@ class Participant(context: Context, name: String) {
     var isAudio: Boolean = true
     var isVideo: Boolean = true
 
+    lateinit var videorender : VideoRenderer
+
     init {
         itemView.userNameView.text = name
         timer = CamStudyTimer(itemView.timerTextView, itemView.timerImageView)
@@ -43,7 +45,8 @@ class Participant(context: Context, name: String) {
 
         remoteAudioTrack?.setEnabled(isAudio)
         remoteVideoTrack?.setEnabled(isVideo)
-        remoteVideoTrack?.addRenderer(VideoRenderer(itemView.surfaceView))
+        videorender = VideoRenderer(itemView.surfaceView)
+        remoteVideoTrack?.addRenderer(videorender)
     }
 
 
@@ -90,16 +93,18 @@ class Participant(context: Context, name: String) {
     fun stopCamStduy() {
         timer.endTimer()
 
+        itemView.surfaceView.release()
+        if (remoteVideoTrack != null) {
+            remoteVideoTrack!!.setEnabled(false)
+            remoteVideoTrack!!.removeRenderer(videorender)
+        }
+        remoteAudioTrack?.setEnabled(false)
+
         remoteVideoTrack?.dispose()
         remoteAudioTrack?.dispose()
 
+        videorender?.dispose()
         peer?.close()
         peer?.dispose()
-        if (remoteVideoTrack != null) {
-            remoteVideoTrack!!.removeRenderer(VideoRenderer(itemView.surfaceView))
-        }
     }
-
-
-
 }
