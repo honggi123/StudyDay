@@ -95,8 +95,19 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
             firebaseLog.addLog(TAG, "check_study_password")
         }
 
+        //강퇴 후 메인 액티비티에 돌아왔을때
+        var kick = intent.getBooleanExtra("KickFromLeader",false)
+        if(kick){
+            MaterialAlertDialogBuilder(this@MainActivity)
+                .setMessage("스터디에서 추방되었습니다.")
+                .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
+                }).show()
+        }
+
         init()
     }
+
+
 
     override fun initDataBinding() {
         viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
@@ -234,7 +245,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                     Log.e(TAG, errorMessage.getString("message"))
 
                     moveLogin()
-
                 }
             }
         })

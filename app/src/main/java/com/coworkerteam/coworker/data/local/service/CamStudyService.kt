@@ -53,6 +53,8 @@ class CamStudyService : Service() {
     lateinit var room: String
     var instance: String? = null
 
+    lateinit var videosource :VideoSource
+
     lateinit var audioConstraints: MediaConstraints
     var videoCapturer: VideoCapturer? = null
     lateinit var audioSource: AudioSource
@@ -100,8 +102,6 @@ class CamStudyService : Service() {
 
     //서비스가 시작될 때 호출
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
-        Log.e("CamstudyService","start~~")
         if (socket == null) {
             val notification = notification.createNotification(this)
             startForeground(NOTIFICATION_ID, notification)
@@ -111,8 +111,6 @@ class CamStudyService : Service() {
 
     //bindService()로 바인딩을 실행할 때 호출
     override fun onBind(intent: Intent): IBinder {
-        Log.e("CamstudyService","onbind~~")
-
         if (socket == null) {
             getData(intent)
         }
@@ -132,8 +130,20 @@ class CamStudyService : Service() {
     //서비스가 소멸될 때 호출
     override fun onDestroy() {
         super.onDestroy()
-        socket!!.disconnect()
+        socket?.disconnect()
+
+        peerConnection.keys.forEach{
+            peerConnection.get(it)?.stopCamStduy()
+        }
+
+        videoTrackFromCamera?.dispose()
+        videosource.dispose()
+        videoCapturer?.dispose()
+        localAudioTrack.dispose()
+        audioSource.dispose()
+        factory.dispose()
         peerConnection.clear()
+
         chatDate.clear()
         Log.d(TAG, "service 끝")
     }
@@ -191,6 +201,7 @@ class CamStudyService : Service() {
                 OkHttpClient.Builder().hostnameVerifier(myHostnameVerifier).sslSocketFactory(
                     mySSLContext!!.socketFactory
                 ).build()
+
 
             // default settings for all sockets
             IO.setDefaultOkHttpWebSocketFactory(okHttpClient)
@@ -557,7 +568,7 @@ class CamStudyService : Service() {
         audioConstraints = MediaConstraints()
         videoCapturer = createVideoCapturer()
 
-        val videoSource: VideoSource = factory.createVideoSource(videoCapturer)
+        videosource = factory.createVideoSource(videoCapturer)
         videoCapturer?.startCapture(
             VIDEO_RESOLUTION_WIDTH,
             VIDEO_RESOLUTION_HEIGHT,
@@ -567,13 +578,12 @@ class CamStudyService : Service() {
 
         videoTrackFromCamera = factory.createVideoTrack(
             VIDEO_TRACK_ID,
-            videoSource
+            videosource
         )
 
         //create an AudioSource instance
         audioSource = factory.createAudioSource(audioConstraints)
         localAudioTrack = factory.createAudioTrack("101", audioSource)
-
 
         var participant = getParticipant(hostname)
         participant.remoteVideoTrack = videoTrackFromCamera
@@ -762,6 +772,7 @@ class CamStudyService : Service() {
         } else {
             createCameraCapturer(Camera1Enumerator(true))
         }
+
     }
 
     private fun createCameraCapturer(enumerator: CameraEnumerator): VideoCapturer? {

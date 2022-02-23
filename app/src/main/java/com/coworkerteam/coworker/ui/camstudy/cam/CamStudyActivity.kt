@@ -51,6 +51,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     var receiver: String? = null
 
+    var kick : Boolean = false
+
     var chatDialogView: View? = null
 
     var page = 1
@@ -82,7 +84,9 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     //퇴장처리 성공
                     unbindService(mConnection)
                     stopService(Intent(this, CamStudyService::class.java))
-                    startActivity(Intent(this,MainActivity::class.java))
+                    var intent = Intent(this,MainActivity::class.java)
+                    intent.putExtra("KickFromLeader",kick)
+                    startActivity(intent)
                     finish()
                 }
                 it.code() == 400 -> {
@@ -607,13 +611,10 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 }
                 CamStudyService.MSG_LEADER_FORCED_EXIT -> {
                     //리더에게 추방
-                    MaterialAlertDialogBuilder(this@CamStudyActivity)
-                        .setMessage("스터디에서 추방되었습니다.")
-                        .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
-                            val msg: Message =
-                                Message.obtain(null, CamStudyService.MSG_COMSTUDY_LEFT)
-                            sendHandlerMessage(msg)
-                        }).show()
+                    val msg: Message =
+                        Message.obtain(null, CamStudyService.MSG_COMSTUDY_LEFT)
+                    sendHandlerMessage(msg)
+                    kick = true
                 }
                 CamStudyService.MSG_LEADER_FORCED_AUDIO_OFF -> {
                     //리더에게 마이크 off

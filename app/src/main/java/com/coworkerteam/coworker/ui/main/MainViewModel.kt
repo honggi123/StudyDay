@@ -55,7 +55,6 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
                     .subscribe({
                         it.run {
                             Log.d(TAG, "meta : $it")
-
                             when {
                                 it.code() == 401 -> {
                                     //액세스토큰이 만료된 경우
@@ -73,7 +72,6 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
                                     _MainResponseLiveData.postValue(this)
                                 }
                             }
-
                         }
                     }, {
                         Log.d(TAG, "response error, message : ${it.message}")

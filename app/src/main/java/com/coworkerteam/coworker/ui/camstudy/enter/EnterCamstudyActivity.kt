@@ -43,6 +43,8 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
     var factory: PeerConnectionFactory? = null
     var videoTrackFromCamera: VideoTrack? = null
 
+    lateinit var videoSource : VideoSource
+
     var studyIndex: Int? = null
 
     var isVideo: Boolean? = true
@@ -102,7 +104,6 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
             .setDeniedMessage("앱의 카메라, 마이크 권한을 허용해야 정상적으로 캠스터디를 이용할 수 있습니다. 해당 권한을 [설정] > [권한] 에서 허용해주세요.")
             .setPermissions(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
             .check()
-
     }
 
     override fun initDataBinding() {
@@ -229,13 +230,11 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
                         }
                     }
                 }
-
             }
         })
     }
 
     override fun initAfterBinding() {
-
     }
 
     private fun initView() {
@@ -263,13 +262,19 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
 
     override fun onDestroy() {
         super.onDestroy()
+
         if (videoTrackFromCamera != null) {
             videoTrackFromCamera!!.setEnabled(false)
             videoTrackFromCamera!!.removeRenderer(VideoRenderer(surface))
+            videoTrackFromCamera!!.dispose()
+
         }
         if(videoCapturer != null){
-            videoCapturer!!.stopCapture()
+            videoCapturer!!.dispose()
         }
+        videoSource.dispose()
+
+
     }
 
     private fun switchDevice(view: View, device: String) {
@@ -318,9 +323,9 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
     }
 
     private fun createVideoTrackFromCameraAndShowIt() {
-        Log.d("디버그태그", "실행테스트 createVideoTrackFromCameraAndShowIt")
+        Log.d(TAG, "실행테스트 createVideoTrackFromCameraAndShowIt")
         videoCapturer = createVideoCapturer()
-        val videoSource: VideoSource = factory!!.createVideoSource(videoCapturer)
+         videoSource = factory!!.createVideoSource(videoCapturer)
         videoCapturer!!.startCapture(
             VIDEO_RESOLUTION_WIDTH,
             VIDEO_RESOLUTION_HEIGHT,
@@ -335,17 +340,13 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
         viewDataBinding.enterCamstudyProfile.visibility = View.GONE
         videoTrackFromCamera!!.setEnabled(true)
         videoTrackFromCamera!!.addRenderer(VideoRenderer(surface))
-
-
-
-
     }
 
 
 
 
     private fun createVideoCapturer(): VideoCapturer? {
-        val videoCapturer: VideoCapturer?
+
         videoCapturer = if (useCamera2()) {
             createCameraCapturer(Camera2Enumerator(this))
         } else {

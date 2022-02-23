@@ -46,6 +46,9 @@ class Participant(context: Context, name: String) {
         remoteVideoTrack?.addRenderer(VideoRenderer(itemView.surfaceView))
     }
 
+
+
+
     //Audio를 on/off 하는 함수
     fun toggleAudio(status: String) {
         if (status == "off") {
@@ -80,7 +83,6 @@ class Participant(context: Context, name: String) {
                 remoteVideoTrack!!.setEnabled(true)
             }
         }
-
         itemView.showProfileImage(status)
     }
 
@@ -88,8 +90,16 @@ class Participant(context: Context, name: String) {
     fun stopCamStduy() {
         timer.endTimer()
 
+        remoteVideoTrack?.dispose()
+        remoteAudioTrack?.dispose()
+
+        peer?.close()
+        peer?.dispose()
         if (remoteVideoTrack != null) {
             remoteVideoTrack!!.removeRenderer(VideoRenderer(itemView.surfaceView))
         }
     }
+
+
+
 }
