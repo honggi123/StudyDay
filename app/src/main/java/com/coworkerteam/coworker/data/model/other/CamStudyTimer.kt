@@ -101,8 +101,10 @@ class CamStudyTimer(private var textView: TextView, private var statusImage: Ima
 
     fun endTimer() {
         //실행중이던 타이머가 있을 경우, 그 타이머 종료
-        if (::timer.isInitialized) {
+        if(timer != null){
+            Log.d(TAG,"ENDTIMER")
             timer.cancel()
+            timer.purge()
         }
     }
 

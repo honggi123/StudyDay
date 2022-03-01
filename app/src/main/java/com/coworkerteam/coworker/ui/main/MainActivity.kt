@@ -99,6 +99,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
         //강퇴 후 메인 액티비티에 돌아왔을때
 
         var kick = intent.getBooleanExtra("KickFromLeader",false)
+        Log.d(TAG,"강퇴 여부 : " +kick )
         if(kick){
             MaterialAlertDialogBuilder(this@MainActivity)
                 .setMessage("스터디에서 추방되었습니다.")

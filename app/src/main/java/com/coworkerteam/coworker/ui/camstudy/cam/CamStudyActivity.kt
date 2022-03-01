@@ -1,6 +1,7 @@
 package com.coworkerteam.coworker.ui.camstudy.cam
 
-import android.Manifest
+import android.app.Activity
+import android.app.ActivityManager
 import android.content.*
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -25,8 +26,6 @@ import com.coworkerteam.coworker.ui.camstudy.info.StudyInfoActivity
 import com.coworkerteam.coworker.ui.main.MainActivity
 import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.gun0912.tedpermission.PermissionListener
-import com.gun0912.tedpermission.normal.TedPermission
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
@@ -47,6 +46,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     private var chat_rv: RecyclerView? = null
 
+    lateinit var mainMoveIntent : Intent
+
     companion object {
         var studyInfo: EnterCamstudyResponse? = null
         var instance: String? = null
@@ -60,8 +61,11 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     var page = 1
 
+    var context : Context = this
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun initStartView() {
+        Log.d(TAG,"initStartView")
         initData()
 
         var main_toolbar: androidx.appcompat.widget.Toolbar =
@@ -69,6 +73,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
         setSupportActionBar(main_toolbar) // 툴바를 액티비티의 앱바로 지정
         supportActionBar?.setDisplayShowTitleEnabled(false) // 툴바에 타이틀 안보이게
+
+        mainMoveIntent = Intent(this,MainActivity::class.java)
 
         //받아온값 세팅
         var intent = Intent(this, CamStudyService::class.java)
@@ -80,6 +86,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         init()
     }
 
+
+
     override fun initDataBinding() {
         viewModel.CamstduyLeaveResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
@@ -87,12 +95,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     //퇴장처리 성공
                     unbindService(mConnection)
                     stopService(Intent(this, CamStudyService::class.java))
-                    var intent = Intent(this,MainActivity::class.java)
-                    intent.putExtra("KickFromLeader",kick)
-                    //액티비티 스택제거
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK )
-                    startActivity(intent)
-                    finish()
                 }
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
@@ -127,6 +129,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         super.onDestroy()
         //FelxboxLayout 초기화
         viewDataBinding.camStudyFelxboxLayout.removeAllViews()
+        viewDataBinding.unbind()
 
         //서비스랑 메신저 연결 해제
         val connectMsg = Message.obtain(null, CamStudyService.MSG_CLIENT_DISCNNECT)
@@ -196,6 +199,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     it.isSelected = true
 
                     firebaseLog.addLog(TAG,"audio_off")
+
                 } else {
                     CamStudyService.isAudio = true
                     msg.obj = "on"
@@ -374,7 +378,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
         viewDataBinding.camstudyPre.setOnClickListener(View.OnClickListener {
             page -= 1
-
             viewDataBinding.camStudyFelxboxLayout.removeAllViews()
             setPage()
             addCamStudyItemView()
@@ -548,7 +551,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     private var mConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             mServiceCallback = Messenger(service)
-
             //서비스랑 연결
             val connectMsg = Message.obtain(null, CamStudyService.MSG_CLIENT_CONNECT)
             connectMsg.replyTo = mClientCallback
@@ -564,6 +566,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             mServiceCallback = null
         }
     }
+
 
     inner class CallbackHandler(looper: Looper) : Handler(looper) {
         override fun handleMessage(msg: Message) {
@@ -635,6 +638,15 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     CamStudyService.isVideo = false
                     btn_camera.isSelected = true
                 }
+                CamStudyService.MSG_SERVICE_FINISH -> {
+                    mainMoveIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    mainMoveIntent.putExtra("KickFromLeader",kick)
+                    Log.d(TAG,"강퇴 여부 : "+kick)
+                    startActivity(mainMoveIntent)
+                    finish()
+                }
+
+
             }
         }
     }

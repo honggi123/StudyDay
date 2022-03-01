@@ -43,7 +43,7 @@ class CamStudyItemView : ConstraintLayout {
 
         //surfaceView에 관련한 설정
         CoroutineScope(Dispatchers.Main).async {
-            surfaceView.init(CamStudyService.rootEglBase.eglBaseContext, null)
+            surfaceView.init(CamStudyService.rootEglBase?.eglBaseContext, null)
             surfaceView.setEnableHardwareScaler(true)
             surfaceView.setMirror(true)
         }
@@ -107,4 +107,6 @@ class CamStudyItemView : ConstraintLayout {
             audioView.isSelected = false
         }
     }
+
+
 }

@@ -48,9 +48,11 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
     var factory: PeerConnectionFactory? = null
     var videoTrackFromCamera: VideoTrack? = null
 
-    lateinit var videoSource : VideoSource
+    var videoSource : VideoSource? = null
 
     var studyIndex: Int? = null
+
+    var enterCamstudy : Boolean = false
 
     var isVideo: Boolean? = true
     var isAudio: Boolean? = true
@@ -123,7 +125,9 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
                     CamStudyService.isVideo = isVideo
                     CamStudyService.isAudio = isAudio
                     CamStudyService.timer = it.body()!!.result.studyTimeSec
+                    enterCamstudy = true
                     startActivity(intent)
+                    finish()
                 }
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
@@ -266,16 +270,27 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
 
     override fun onDestroy() {
         super.onDestroy()
+
+        viewDataBinding.unbind()
+
         if (videoTrackFromCamera != null) {
             videoTrackFromCamera!!.setEnabled(false)
             videoTrackFromCamera!!.removeRenderer(renderer)
             videoTrackFromCamera!!.dispose()
         }
+
         if(videoCapturer != null){
             videoCapturer!!.dispose()
-            surface.release()
-            videoSource.dispose()
+            videoCapturer = null
         }
+        if(videoSource != null){
+            videoSource!!.dispose()
+            videoSource = null
+        }
+
+
+
+        surface.release()
     }
 
     private fun switchDevice(view: View, device: String) {
@@ -316,20 +331,18 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
 
     private fun initializePeerConnectionFactory() {
         PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true)
-
-       factory = SinglePeerConnectionFactory.getfactory()
+        factory = SinglePeerConnectionFactory.getfactory()
         //factory = PeerConnectionFactory(null)
         factory!!.setVideoHwAccelerationOptions(
             CamStudyService.rootEglBase.eglBaseContext,
             CamStudyService.rootEglBase.eglBaseContext
         )
-
     }
 
     private fun createVideoTrackFromCameraAndShowIt() {
         Log.d(TAG, "실행테스트 createVideoTrackFromCameraAndShowIt")
         videoCapturer = createVideoCapturer()
-         videoSource = factory!!.createVideoSource(videoCapturer)
+        videoSource = factory!!.createVideoSource(videoCapturer)
         videoCapturer!!.startCapture(
             VIDEO_RESOLUTION_WIDTH,
             VIDEO_RESOLUTION_HEIGHT,
@@ -351,12 +364,8 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
 
 
     private fun createVideoCapturer(): VideoCapturer? {
-
-        videoCapturer = if (useCamera2()) {
-            createCameraCapturer(Camera2Enumerator(this))
-        } else {
+        videoCapturer =
             createCameraCapturer(Camera1Enumerator(true))
-        }
         return videoCapturer
     }
 

@@ -3,6 +3,7 @@ package com.coworkerteam.coworker.data.local.service
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.*
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -17,6 +18,7 @@ import com.coworkerteam.coworker.data.model.other.Participant
 import com.coworkerteam.coworker.data.model.other.SingleObject.OkHttpBuilder
 import com.coworkerteam.coworker.data.model.other.SingleObject.SinglePeerConnectionFactory
 import com.coworkerteam.coworker.ui.camstudy.cam.CamStudyActivity
+import com.coworkerteam.coworker.ui.main.MainActivity
 import com.google.gson.Gson
 import io.socket.client.IO
 import io.socket.client.Socket
@@ -53,14 +55,14 @@ class CamStudyService : Service() {
     lateinit var room: String
     var instance: String? = null
 
-    lateinit var videosource :VideoSource
+    var videosource :VideoSource? = null
 
     lateinit var audioConstraints: MediaConstraints
     var videoCapturer: VideoCapturer? = null
-    lateinit var audioSource: AudioSource
-    lateinit var localAudioTrack: AudioTrack
-    lateinit var okHttpClient : OkHttpClient
-
+     var audioSource: AudioSource? = null
+     var localAudioTrack: AudioTrack? = null
+     var okHttpClient : OkHttpClient? = null
+    var factory : PeerConnectionFactory? = null
     companion object {
         const val MSG_CLIENT_CONNECT = 0
         const val MSG_CLIENT_DISCNNECT = 1
@@ -81,6 +83,7 @@ class CamStudyService : Service() {
         const val MSG_EXISTINGPARTICIPANNTS = 16
         const val MSG_NEWPARTICIPANTARRIVED = 17
         const val MSG_PARTICIPANTLEFT = 18
+        const val MSG_SERVICE_FINISH = 19
 
         var isVideo: Boolean? = null
         var isAudio: Boolean? = null
@@ -88,7 +91,7 @@ class CamStudyService : Service() {
         var isPlay = true
         var timer: Int? = null
 
-        var rootEglBase: EglBase = EglBase.create()
+        lateinit var rootEglBase: EglBase
         var chatDate = ArrayList<ChatData>()
 
         var participantsResponses: ParticipantsResponse? = null
@@ -98,11 +101,12 @@ class CamStudyService : Service() {
     private var mClientCallbacks = ArrayList<Messenger>()
     val mMessenger = Messenger(CallbackHandler(Looper.getMainLooper()))
 
-    lateinit var factory: PeerConnectionFactory
     var videoTrackFromCamera: VideoTrack? = null
+
 
     //서비스가 시작될 때 호출
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d(TAG,"service 시작")
         if (socket == null) {
             val notification = notification.createNotification(this)
             startForeground(NOTIFICATION_ID, notification)
@@ -131,28 +135,51 @@ class CamStudyService : Service() {
     //서비스가 소멸될 때 호출
     override fun onDestroy() {
         super.onDestroy()
-
-        socket?.disconnect()
-
-
+        rootEglBase.release()
         // webrtc 관련
-        videoTrackFromCamera?.dispose()
-        videosource.dispose()
-        videoCapturer?.dispose()
-        localAudioTrack.dispose()
-        audioSource.dispose()
-        peerConnection.clear()
+        if(videoTrackFromCamera != null){
+            videoTrackFromCamera = null
+        }
 
-        chatDate.clear()
+        if(localAudioTrack != null){
+            localAudioTrack = null
+        }
+
+        if(videoCapturer != null){
+            videoCapturer!!.dispose()
+            videoCapturer = null
+        }
+
+        if(videosource != null){
+            videosource!!.dispose()
+            videosource = null
+        }
+
+        if(audioSource != null){
+            audioSource!!.dispose()
+            audioSource = null
+        }
+
 
         peerConnection.keys.forEach{
             peerConnection.get(it)?.stopCamStduy()
+            Log.d(TAG,"peerconnection.stopcamstudy")
         }
-        Log.d(TAG, "service 끝")
 
 
+        val handlerMessage = Message.obtain(null, MSG_SERVICE_FINISH)
+        sendHandlerMessage(handlerMessage)
+
+        peerConnection.clear()
+        mClientCallbacks.clear()
+
+        chatDate.clear()
+
+        socket?.disconnect()
+        socket = null
 
     }
+
 
     private fun startCamStudy() {
         connectToSignallingServer()
@@ -234,277 +261,279 @@ class CamStudyService : Service() {
                     Log.d(TAG, "connectToSignallingServer: connect")
                     sendMessage(getSendMessage("joinRoom"))
 
-                }).on(Socket.EVENT_RECONNECT,
-                Emitter.Listener { args: Array<Any> ->
-                    //재연결 처리
-                    Log.d(TAG, "reconnectToSignallingServer: reconnect")
-                    sendMessage(getSendMessage("reconnectJoinRoom"))
+                })
+                .on(Socket.EVENT_RECONNECT,
+                    Emitter.Listener { args: Array<Any> ->
+                        //재연결 처리
+                        Log.d(TAG, "reconnectToSignallingServer: reconnect")
+                        sendMessage(getSendMessage("reconnectJoinRoom"))
+                    })
 
-                }).on(Socket.EVENT_CONNECT_ERROR,
-                Emitter.Listener { args: Array<Any> ->
-                    Log.d(TAG, "소켓연결 에러")
+                .on(Socket.EVENT_CONNECT_ERROR,
+                    Emitter.Listener { args: Array<Any> ->
+                        Log.d(TAG, "소켓연결 에러")
 
-                }).on("message",
-                Emitter.Listener { args: Array<Any> ->
-                    try {
-                        if (args[0] is String) {
-                        } else {
-                            val message = args[0] as JSONObject
-                            Log.d(TAG, "connectToSignallingServer: got message $message")
+                    }).on("message",
+                    Emitter.Listener { args: Array<Any> ->
+                        try {
+                            if (args[0] is String) {
+                            } else {
+                                val message = args[0] as JSONObject
+                                Log.d(TAG, "connectToSignallingServer: got message $message")
 
-                            when (message.getString("id")) {
-                                "reconnect failed" -> {
-                                    //재연결 처리 실패
-                                    Log.d(TAG, "reconnect failed")
-                                    val handlerMessage = Message.obtain(null, MSG_COMSTUDY_LEFT)
-                                    mMessenger.send(handlerMessage)
-                                }
-                                "existingParticipants" -> {
-                                    //맨 처음 방에 들어갔을때
-                                    Log.d(TAG, "existingParticipants")
-
-                                    //미디어 서버에서 넘겨준 스터디 참가자 '전원'의 정보가 담긴 객체로 매핑
-                                    var participantsResponse =
-                                        Gson().fromJson(
-                                            message.getString("entry"),
-                                            ParticipantsResponse::class.java
-                                        )
-
-                                    //매핑된 참여자리스트 전역변수에 저장
-                                    participantsResponses = participantsResponse
-
-                                    //참여자 프로필 사진을 세팅
-                                    participantsResponse.participants.forEach {
-                                        foreach(it.nickname)
-                                        peerConnection.get(it.nickname)?.itemView?.setProfileImage(
-                                            it.img
-                                        )
+                                when (message.getString("id")) {
+                                    "reconnect failed" -> {
+                                        //재연결 처리 실패
+                                        Log.d(TAG, "reconnect failed")
+                                        val handlerMessage = Message.obtain(null, MSG_COMSTUDY_LEFT)
+                                        mMessenger.send(handlerMessage)
                                     }
+                                    "existingParticipants" -> {
+                                        //맨 처음 방에 들어갔을때
+                                        Log.d(TAG, "existingParticipants")
 
-                                    val handlerMessage =
-                                        Message.obtain(null, MSG_EXISTINGPARTICIPANNTS)
-                                    sendHandlerMessage(handlerMessage)
-                                }
-                                "newParticipantArrived" -> {
-                                    //새로운 참가자가 들어왔을때
-                                    Log.d(TAG, "newParticipantArrived")
-                                    val name = message.getString("name")
-                                    foreach(name)
+                                        //미디어 서버에서 넘겨준 스터디 참가자 '전원'의 정보가 담긴 객체로 매핑
+                                        var participantsResponse =
+                                            Gson().fromJson(
+                                                message.getString("entry"),
+                                                ParticipantsResponse::class.java
+                                            )
 
-                                    //CamStudyActivity의 비디오 Item을 그려주는 리사이클러뷰 다시 그리기
-                                    val handlerMessage =
-                                        Message.obtain(null, MSG_NEWPARTICIPANTARRIVED)
-                                    sendHandlerMessage(handlerMessage)
+                                        //매핑된 참여자리스트 전역변수에 저장
+                                        participantsResponses = participantsResponse
 
-                                    //미디어 서버에서 넘겨준 스터디 참가자 '전원'의 정보가 담긴 객체로 매핑
-                                    var participantsResponse =
-                                        Gson().fromJson(
-                                            message.getString("entry"),
-                                            ParticipantsResponse::class.java
-                                        )
-
-                                    participantsResponses = participantsResponse
-
-                                    //참여자 정보를 확인하고 있었다면, 다시 그려주기 -> ParticipantsActivity
-                                    val handlerMessageParticipants =
-                                        Message.obtain(null, MSG_PARTICIPANTS_ITEM)
-                                    sendHandlerMessage(handlerMessageParticipants)
-
-                                    //새로운 참여자의 프로필을 참여자 전원의 정보가 있는 객체에서 찾아서 넣는다.
-                                    participantsResponse.participants.forEach {
-                                        if (it.nickname.equals(name)) {
-                                            getParticipant(message.getString("name")).itemView.setProfileImage(
+                                        //참여자 프로필 사진을 세팅
+                                        participantsResponse.participants.forEach {
+                                            foreach(it.nickname)
+                                            peerConnection.get(it.nickname)?.itemView?.setProfileImage(
                                                 it.img
                                             )
-                                            return@forEach
                                         }
+                                        val handlerMessage =
+                                            Message.obtain(null, MSG_EXISTINGPARTICIPANNTS)
+                                        sendHandlerMessage(handlerMessage)
                                     }
+                                    "newParticipantArrived" -> {
+                                        //새로운 참가자가 들어왔을때
+                                        Log.d(TAG, "newParticipantArrived")
+                                        val name = message.getString("name")
+                                        foreach(name)
 
-                                    //안드로이드에서 참여자의 정보를 저장한 객체를 불러옴
-                                    val par = getParticipant(hostname)
+                                        //CamStudyActivity의 비디오 Item을 그려주는 리사이클러뷰 다시 그리기
+                                        val handlerMessage =
+                                            Message.obtain(null, MSG_NEWPARTICIPANTARRIVED)
+                                        sendHandlerMessage(handlerMessage)
 
-                                    //새로운 참여자가 오면 기존참여자인 '나'는 그 사람에게 스탑워치에 대한 정보를 넘겨준다.
-                                    val message_send = JSONObject()
+                                        //미디어 서버에서 넘겨준 스터디 참가자 '전원'의 정보가 담긴 객체로 매핑
+                                        var participantsResponse =
+                                            Gson().fromJson(
+                                                message.getString("entry"),
+                                                ParticipantsResponse::class.java
+                                            )
 
-                                    message_send.put("id", "sendStopwatchTime")
-                                    message_send.put("stopwatchTime", par.timer.timerStudyTime)
-                                    message_send.put("stopwatchStatus", par.timer.getTimerStatus())
-                                    message_send.put("sender", hostname)
-                                    message_send.put("receiver", message.getString("name"))
-                                    message_send.put(
-                                        "videoStatus",
-                                        if (isVideo == true) "on" else "off"
-                                    )
-                                    message_send.put(
-                                        "audioStatus",
-                                        if (isAudio == true) "on" else "off"
-                                    )
-                                    sendMessage(message_send)
-                                }
-                                "participantLeft" -> {
-                                    //참여자가 방을 떠났을 경우
-                                    Log.d(TAG, "participantLeft")
-                                    getParticipant(message.getString("name")).stopCamStduy()
-                                    peerConnection.remove(message.getString("name"))
+                                        participantsResponses = participantsResponse
 
-                                    val handlerMessage = Message.obtain(null, MSG_PARTICIPANTLEFT)
-                                    sendHandlerMessage(handlerMessage)
+                                        //참여자 정보를 확인하고 있었다면, 다시 그려주기 -> ParticipantsActivity
+                                        val handlerMessageParticipants =
+                                            Message.obtain(null, MSG_PARTICIPANTS_ITEM)
+                                        sendHandlerMessage(handlerMessageParticipants)
 
-                                    //참여자 목록에 대한 정보에서 나간사람 빼기
-                                    val refreshParticipantsResponses =
-                                        participantsResponses!!.participants.toMutableList()
-
-                                    var item: ParticipantsResponse.Participant? = null
-
-                                    refreshParticipantsResponses.forEach {
-                                        if (it.nickname.equals(message.getString("name"))) {
-                                            item = it
-                                            return@forEach
+                                        //새로운 참여자의 프로필을 참여자 전원의 정보가 있는 객체에서 찾아서 넣는다.
+                                        participantsResponse.participants.forEach {
+                                            if (it.nickname.equals(name)) {
+                                                getParticipant(message.getString("name")).itemView.setProfileImage(
+                                                    it.img
+                                                )
+                                                return@forEach
+                                            }
                                         }
+
+                                        //안드로이드에서 참여자의 정보를 저장한 객체를 불러옴
+                                        val par = getParticipant(hostname)
+
+                                        //새로운 참여자가 오면 기존참여자인 '나'는 그 사람에게 스탑워치에 대한 정보를 넘겨준다.
+                                        val message_send = JSONObject()
+
+                                        message_send.put("id", "sendStopwatchTime")
+                                        message_send.put("stopwatchTime", par.timer.timerStudyTime)
+                                        message_send.put("stopwatchStatus", par.timer.getTimerStatus())
+                                        message_send.put("sender", hostname)
+                                        message_send.put("receiver", message.getString("name"))
+                                        message_send.put(
+                                            "videoStatus",
+                                            if (isVideo == true) "on" else "off"
+                                        )
+                                        message_send.put(
+                                            "audioStatus",
+                                            if (isAudio == true) "on" else "off"
+                                        )
+                                        sendMessage(message_send)
                                     }
+                                    "participantLeft" -> {
+                                        //참여자가 방을 떠났을 경우
+                                        getParticipant(message.getString("name")).stopCamStduy()
+                                        peerConnection.remove(message.getString("name"))
 
-                                    refreshParticipantsResponses.remove(item)
+                                        val handlerMessage = Message.obtain(null, MSG_PARTICIPANTLEFT)
+                                        sendHandlerMessage(handlerMessage)
+                                        Log.d(TAG, "participantLeft3")
 
-                                    participantsResponses!!.participants =
-                                        refreshParticipantsResponses
+                                        //참여자 목록에 대한 정보에서 나간사람 빼기
+                                        val refreshParticipantsResponses =
+                                            participantsResponses!!.participants.toMutableList()
 
-                                    //참여자 정보를 확인하고 있었다면, 다시 그려주기
-                                    val handlerMessageParticipants =
-                                        Message.obtain(null, MSG_PARTICIPANTS_ITEM)
-                                    sendHandlerMessage(handlerMessageParticipants)
-                                }
-                                "receiveVideoAnswer" -> {
-                                    //Answer을 받았을 경우
-                                    Log.d(TAG, "receiveVideoAnswer")
-                                    peerConnection.get(message.getString("name"))?.peer
-                                        ?.setRemoteDescription(
-                                            SimpleSdpObserver(),
-                                            SessionDescription(
-                                                SessionDescription.Type.ANSWER,
-                                                message.getString("sdpAnswer")
+                                        var item: ParticipantsResponse.Participant? = null
+
+                                        refreshParticipantsResponses.forEach {
+                                            if (it.nickname.equals(message.getString("name"))) {
+                                                item = it
+                                                return@forEach
+                                            }
+                                        }
+
+                                        refreshParticipantsResponses.remove(item)
+
+                                        participantsResponses!!.participants =
+                                            refreshParticipantsResponses
+
+                                        //참여자 정보를 확인하고 있었다면, 다시 그려주기
+                                        val handlerMessageParticipants =
+                                            Message.obtain(null, MSG_PARTICIPANTS_ITEM)
+                                        sendHandlerMessage(handlerMessageParticipants)
+
+                                    }
+                                    "receiveVideoAnswer" -> {
+                                        //Answer을 받았을 경우
+                                        Log.d(TAG, "receiveVideoAnswer")
+                                        peerConnection.get(message.getString("name"))?.peer
+                                            ?.setRemoteDescription(
+                                                SimpleSdpObserver(),
+                                                SessionDescription(
+                                                    SessionDescription.Type.ANSWER,
+                                                    message.getString("sdpAnswer")
+                                                )
+                                            )
+                                    }
+                                    "iceCandidate" -> {
+                                        //iceCandidate를 받았을 경우
+                                        Log.d(TAG, "iceCandidate")
+                                        val candidatedate =
+                                            JSONObject(message.getString("candidate"))
+
+                                        val candidate = IceCandidate(
+                                            candidatedate.getString("sdpMid"),
+                                            candidatedate.getInt("sdpMLineIndex"),
+                                            candidatedate.getString("candidate")
+                                        )
+                                        peerConnection.get(message.getString("name"))?.peer
+                                            ?.addIceCandidate(candidate)
+                                    }
+                                    "receivedMessage" -> {
+                                        //채팅 받는 이벤트
+                                        Log.d(TAG, "receivedMessage")
+                                        val receiver =
+                                            if (message.getString("type").equals("total")) null else "나"
+
+                                        chatDate.add(
+                                            ChatData(
+                                                message.getString("type"),
+                                                message.getString("sender"),
+                                                receiver,
+                                                message.getString("msg"),
+                                                message.getString("time")
                                             )
                                         )
-                                }
-                                "iceCandidate" -> {
-                                    //iceCandidate를 받았을 경우
-                                    Log.d(TAG, "iceCandidate")
-                                    val candidatedate =
-                                        JSONObject(message.getString("candidate"))
 
-                                    val candidate = IceCandidate(
-                                        candidatedate.getString("sdpMid"),
-                                        candidatedate.getInt("sdpMLineIndex"),
-                                        candidatedate.getString("candidate")
-                                    )
-                                    peerConnection.get(message.getString("name"))?.peer
-                                        ?.addIceCandidate(candidate)
-                                }
-                                "receivedMessage" -> {
-                                    //채팅 받는 이벤트
-                                    Log.d(TAG, "receivedMessage")
-                                    val receiver =
-                                        if (message.getString("type").equals("total")) null else "나"
+                                        val handlerMessage: Message =
+                                            Message.obtain(null, CamStudyService.MSG_RECEIVED_MESSAGE)
+                                        sendHandlerMessage(handlerMessage)
+                                    }
+                                    "requestStopwatchTime" -> {
+                                        //기존 참여자가 새로운 참여자의 타이머 시간 받기
+                                        Log.d(TAG, "requestStopwatchTime")
+                                        var par = getParticipant(message.getString("receiver"))
+                                        par.timer.init(message.getInt("stopwatchTime").toDouble())
+                                        par.toggleAudio(message.getString("audioStatus"))
+                                        par.toggleVideo(message.getString("videoStatus"))
 
-                                    chatDate.add(
-                                        ChatData(
-                                            message.getString("type"),
-                                            message.getString("sender"),
-                                            receiver,
-                                            message.getString("msg"),
-                                            message.getString("time")
+                                        par.timer.setOtherTimer("run")
+                                    }
+                                    "receiveStopwatchTime" -> {
+                                        //새로운 참여자가 캠스터디에 참여하고 있는 모든 참여자들의 타이머 시간/ 스탑워치 상태를 받는다
+                                        Log.d(TAG, "receiveStopwatchTime")
+                                        var par = getParticipant(message.getString("sender"))
+                                        par.timer.init(message.getInt("stopwatchTime").toDouble())
+                                        par.timer.setOtherTimer(message.getString("stopwatchStatus"))
+                                        par.toggleAudio(message.getString("audioStatus"))
+                                        par.toggleVideo(message.getString("videoStatus"))
+                                    }
+                                    "receiveStopwatchStatus" -> {
+                                        //다른 참여자 타이머 상태 받기
+                                        Log.d(TAG, "receiveStopwatchStatus")
+                                        getParticipant(message.getString("sender")).timer.setOtherTimer(
+                                            message.getString("stopwatchStatus")
                                         )
-                                    )
+                                    }
+                                    "receiveForcedexit" -> {
+                                        //강퇴 당하기
+                                        Log.d(TAG, "receive forcedexit")
+                                        val handlerMessage: Message =
+                                            Message.obtain(null, CamStudyService.MSG_LEADER_FORCED_EXIT)
+                                        sendHandlerMessage(handlerMessage)
+                                    }
+                                    "receiveForcedDeviceOff" -> {
+                                        //리더가 내 미디어 장치 강제로 OFF 시킴
+                                        Log.d(TAG, "receiveForcedDeviceOff")
+                                        var par = getParticipant(message.getString("receiver"))
 
-                                    val handlerMessage: Message =
-                                        Message.obtain(null, CamStudyService.MSG_RECEIVED_MESSAGE)
-                                    sendHandlerMessage(handlerMessage)
-                                }
-                                "requestStopwatchTime" -> {
-                                    //기존 참여자가 새로운 참여자의 타이머 시간 받기
-                                    Log.d(TAG, "requestStopwatchTime")
-                                    var par = getParticipant(message.getString("receiver"))
-                                    par.timer.init(message.getInt("stopwatchTime").toDouble())
-                                    par.toggleAudio(message.getString("audioStatus"))
-                                    par.toggleVideo(message.getString("videoStatus"))
-
-                                    par.timer.setOtherTimer("run")
-                                }
-                                "receiveStopwatchTime" -> {
-                                    //새로운 참여자가 캠스터디에 참여하고 있는 모든 참여자들의 타이머 시간/ 스탑워치 상태를 받는다
-                                    Log.d(TAG, "receiveStopwatchTime")
-                                    var par = getParticipant(message.getString("sender"))
-                                    par.timer.init(message.getInt("stopwatchTime").toDouble())
-                                    par.timer.setOtherTimer(message.getString("stopwatchStatus"))
-                                    par.toggleAudio(message.getString("audioStatus"))
-                                    par.toggleVideo(message.getString("videoStatus"))
-                                }
-                                "receiveStopwatchStatus" -> {
-                                    //다른 참여자 타이머 상태 받기
-                                    Log.d(TAG, "receiveStopwatchStatus")
-                                    getParticipant(message.getString("sender")).timer.setOtherTimer(
-                                        message.getString("stopwatchStatus")
-                                    )
-                                }
-                                "receiveForcedexit" -> {
-                                    //강퇴 당하기
-                                    Log.d(TAG, "receive forcedexit")
-                                    val handlerMessage: Message =
-                                        Message.obtain(null, CamStudyService.MSG_LEADER_FORCED_EXIT)
-                                    sendHandlerMessage(handlerMessage)   
-                                }
-                                "receiveForcedDeviceOff" -> {
-                                    //리더가 내 미디어 장치 강제로 OFF 시킴
-                                    Log.d(TAG, "receiveForcedDeviceOff")
-                                    var par = getParticipant(message.getString("receiver"))
-
-                                    if (message.getString("device").equals("video")) {
-                                        par.toggleVideo(message.getString("status"))
-                                        if (message.getString("receiver").equals(hostname)) {
-                                            val handlerMessage: Message = Message.obtain(
-                                                null,
-                                                CamStudyService.MSG_LEADER_FORCED_VIDEO_OFF
-                                            )
-                                            sendHandlerMessage(handlerMessage)
-                                        }
-                                    } else if (message.getString("device").equals("audio")) {
-                                        par.toggleAudio(message.getString("status"))
-                                        if (message.getString("receiver").equals(hostname)) {
-                                            val handlerMessage: Message = Message.obtain(
-                                                null,
-                                                CamStudyService.MSG_LEADER_FORCED_AUDIO_OFF
-                                            )
-                                            sendHandlerMessage(handlerMessage)
+                                        if (message.getString("device").equals("video")) {
+                                            par.toggleVideo(message.getString("status"))
+                                            if (message.getString("receiver").equals(hostname)) {
+                                                val handlerMessage: Message = Message.obtain(
+                                                    null,
+                                                    CamStudyService.MSG_LEADER_FORCED_VIDEO_OFF
+                                                )
+                                                sendHandlerMessage(handlerMessage)
+                                            }
+                                        } else if (message.getString("device").equals("audio")) {
+                                            par.toggleAudio(message.getString("status"))
+                                            if (message.getString("receiver").equals(hostname)) {
+                                                val handlerMessage: Message = Message.obtain(
+                                                    null,
+                                                    CamStudyService.MSG_LEADER_FORCED_AUDIO_OFF
+                                                )
+                                                sendHandlerMessage(handlerMessage)
+                                            }
                                         }
                                     }
-                                }
-                                "receiveDeviceSwitch" -> {
-                                    //다른 사람의 비디오 ON/OFF 상태값 수신
-                                    //(내가 비디오 상태값을 서버에 보내도 나도 데이터를 수신한다)
-                                    val message = args[0] as JSONObject
-                                    Log.d(
-                                        TAG,
-                                        "receive device switch::::::::::::::::::::::::" + message.toString()
-                                    )
-                                    var par = getParticipant(message.getString("sender"))
+                                    "receiveDeviceSwitch" -> {
+                                        //다른 사람의 비디오 ON/OFF 상태값 수신
+                                        //(내가 비디오 상태값을 서버에 보내도 나도 데이터를 수신한다)
+                                        val message = args[0] as JSONObject
+                                        Log.d(
+                                            TAG,
+                                            "receive device switch::::::::::::::::::::::::" + message.toString()
+                                        )
+                                        var par = getParticipant(message.getString("sender"))
 
-                                    if (message.getString("device").equals("video")) {
-                                        par.toggleVideo(message.getString("status"))
-                                    } else if (message.getString("device").equals("audio")) {
-                                        par.toggleAudio(message.getString("status"))
+                                        if (message.getString("device").equals("video")) {
+                                            par.toggleVideo(message.getString("status"))
+                                        } else if (message.getString("device").equals("audio")) {
+                                            par.toggleAudio(message.getString("status"))
+                                        }
                                     }
                                 }
                             }
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
                         }
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
-                    }
-                }).on(io.socket.client.Socket.EVENT_DISCONNECT,
-                Emitter.Listener { args: Array<Any?>? ->
-                    Log.d(
-                        TAG,
-                        "connectToSignallingServer: disconnect"
-                    )
-                })
+                    }).on(io.socket.client.Socket.EVENT_DISCONNECT,
+                    Emitter.Listener { args: Array<Any?>? ->
+                        Log.d(
+                            TAG,
+                            "connectToSignallingServer: disconnect"
+                        )
+                    })
         } catch (e: URISyntaxException) {
             Log.e(TAG, "연결이 안됨")
             e.printStackTrace()
@@ -543,7 +572,7 @@ class CamStudyService : Service() {
     }
 
     private fun foreach(name: String) {
-        initializePeerConnectionFactory()
+        //initializePeerConnectionFactory()
         initializePeerConnections(name)
         startStreamingVideo(name)
         existingParticipants(name)
@@ -560,9 +589,9 @@ class CamStudyService : Service() {
 
     private fun initializePeerConnectionFactory() {
         PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true)
+        //factory = PeerConnectionFactory(null)
         factory = SinglePeerConnectionFactory.getfactory()
-       // factory = PeerConnectionFactory(null)
-        factory.setVideoHwAccelerationOptions(
+        factory?.setVideoHwAccelerationOptions(
             rootEglBase?.eglBaseContext,
             rootEglBase?.eglBaseContext
         )
@@ -573,21 +602,21 @@ class CamStudyService : Service() {
         audioConstraints = MediaConstraints()
         videoCapturer = createVideoCapturer()
 
-        videosource = factory.createVideoSource(videoCapturer)
+        videosource = factory?.createVideoSource(videoCapturer)
         videoCapturer?.startCapture(
             VIDEO_RESOLUTION_WIDTH,
             VIDEO_RESOLUTION_HEIGHT,
             FPS
         )
 
-        videoTrackFromCamera = factory.createVideoTrack(
+        videoTrackFromCamera = factory?.createVideoTrack(
             VIDEO_TRACK_ID,
             videosource
         )
 
         //create an AudioSource instance
-        audioSource = factory.createAudioSource(audioConstraints)
-        localAudioTrack = factory.createAudioTrack("101", audioSource)
+        audioSource = factory?.createAudioSource(audioConstraints)
+        localAudioTrack = factory?.createAudioTrack("101", audioSource)
 
         var participant = getParticipant(hostname)
         participant.remoteVideoTrack = videoTrackFromCamera
@@ -597,6 +626,7 @@ class CamStudyService : Service() {
     }
 
     private fun makeMe(): Participant {
+        Log.e(TAG,": make me")
         var participantMe = Participant(this, hostname)
 
         participantMe.settingDevice(isVideo!!, isAudio!!)
@@ -609,10 +639,13 @@ class CamStudyService : Service() {
 
     private fun getParticipant(name: String): Participant {
         var participant = peerConnection.get(name)
+        Log.d(TAG," : getParticipant")
 
         if (participant != null) {
+            Log.d(TAG," paticipant : notnull")
             return participant
         }else if (name == hostname){
+            Log.d(TAG," name = hostname")
             participant = makeMe()
             peerConnection[name] = participant
             return participant
@@ -624,7 +657,7 @@ class CamStudyService : Service() {
     }
 
     private fun initializePeerConnections(name: String) {
-        var peer = createPeerConnection(factory, name)
+        var peer = factory?.let { createPeerConnection(it, name) }
 
         if (name != hostname) {
             var part = getParticipant(name)
@@ -638,7 +671,7 @@ class CamStudyService : Service() {
 
     private fun startStreamingVideo(name: String) {
         Log.d(TAG, "startStreamingVideo()")
-        val mediaStream: MediaStream = factory.createLocalMediaStream("ARDAMS")
+        val mediaStream: MediaStream = factory!!.createLocalMediaStream("ARDAMS")
         if (isPermissions) {
             mediaStream.addTrack(videoTrackFromCamera)
             mediaStream.addTrack(localAudioTrack)
@@ -773,6 +806,7 @@ class CamStudyService : Service() {
 
     private fun createVideoCapturer(): VideoCapturer? {
         return createCameraCapturer(Camera1Enumerator(true))
+
     }
 
     private fun createCameraCapturer(enumerator: CameraEnumerator): VideoCapturer? {
@@ -800,6 +834,8 @@ class CamStudyService : Service() {
     private fun useCamera2(): Boolean {
         return Camera2Enumerator.isSupported(this)
     }
+
+
 
     private fun sendHandlerMessage(msg: Message) {
         if (mClientCallbacks.size > 0) {
@@ -947,6 +983,7 @@ class CamStudyService : Service() {
 
 }
 
+
 object notification {
     const val CHANNEL_ID = "foreground_service_channel" // 임의의 채널 ID
     fun createNotification(
@@ -985,4 +1022,7 @@ object notification {
 
         return notification
     }
+
+
+
 }

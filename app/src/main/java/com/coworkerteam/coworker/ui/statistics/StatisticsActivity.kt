@@ -316,6 +316,7 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
         data.setValueTextColors(MATERIAL_WHITE_COLORS.toMutableList())
         piechart.run {
             this.data = data //차트의 데이터를 data로 설정해줌.
+            description.text = ""
             setUsePercentValues(true)
             invalidate()
         }
@@ -372,6 +373,7 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
             Log.d("디버그태그", "8보다 작음")
             barchart.xAxis.isEnabled = true
             barchart.xAxis.valueFormatter = MyXAxisFormatter()
+
         } else {
             Log.d("디버그태그", "8보다 큼")
             barchart.xAxis.isEnabled = false

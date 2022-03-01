@@ -1,6 +1,7 @@
 package com.coworkerteam.coworker.data.model.other
 
 import android.content.Context
+import android.util.Log
 import org.webrtc.*
 
 class Participant(context: Context, name: String) {
@@ -37,6 +38,8 @@ class Participant(context: Context, name: String) {
 
     //surfaceView에 받아온 비디오를 그리고, 받아온 오디오를 재생하는 함수
     fun startRender(remoteVideoTrack: VideoTrack?, remoteAudioTrack: AudioTrack?) {
+
+        Log.d(TAG, " isvideo : $isVideo/ isaudio : $isAudio")
         itemView.showProfileImage(isVideo)
         itemView.changAudioImage(isAudio)
 
@@ -45,10 +48,10 @@ class Participant(context: Context, name: String) {
 
         remoteAudioTrack?.setEnabled(isAudio)
         remoteVideoTrack?.setEnabled(isVideo)
+        itemView.surfaceView.disableFpsReduction()
         videorender = VideoRenderer(itemView.surfaceView)
         remoteVideoTrack?.addRenderer(videorender)
     }
-
 
 
 
@@ -89,22 +92,30 @@ class Participant(context: Context, name: String) {
         itemView.showProfileImage(status)
     }
 
+
     //캠스터디 종료할때, 진행중이던 타이머와 비디오를 멈추기 위한 함수
     fun stopCamStduy() {
+
         timer.endTimer()
 
+        itemView.surfaceView.pauseVideo()
         itemView.surfaceView.release()
+
         if (remoteVideoTrack != null) {
             remoteVideoTrack!!.setEnabled(false)
             remoteVideoTrack!!.removeRenderer(videorender)
+            remoteVideoTrack?.dispose()
+            remoteVideoTrack = null
         }
-        remoteAudioTrack?.setEnabled(false)
+        if(remoteAudioTrack != null){
+            remoteAudioTrack?.setEnabled(false)
+            remoteAudioTrack?.dispose()
+            remoteAudioTrack = null
+        }
 
-        remoteVideoTrack?.dispose()
-        remoteAudioTrack?.dispose()
-
-        videorender?.dispose()
         peer?.close()
-        peer?.dispose()
     }
+
+
+
 }
