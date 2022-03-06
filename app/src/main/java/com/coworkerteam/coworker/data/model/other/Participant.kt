@@ -48,9 +48,9 @@ class Participant(context: Context, name: String) {
 
         remoteAudioTrack?.setEnabled(isAudio)
         remoteVideoTrack?.setEnabled(isVideo)
-        itemView.surfaceView.disableFpsReduction()
         videorender = VideoRenderer(itemView.surfaceView)
         remoteVideoTrack?.addRenderer(videorender)
+
     }
 
 
@@ -97,7 +97,6 @@ class Participant(context: Context, name: String) {
     fun stopCamStduy() {
 
         timer.endTimer()
-
         itemView.surfaceView.pauseVideo()
         itemView.surfaceView.release()
 

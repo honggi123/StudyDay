@@ -207,7 +207,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
                     firebaseLog.addLog(TAG,"audio_on")
                 }
-
                 sendHandlerMessage(msg)
             })
 
@@ -227,7 +226,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
                     firebaseLog.addLog(TAG,"video_on")
                 }
-
                 sendHandlerMessage(msg)
             })
 
@@ -376,6 +374,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             dialog.show()
         })
 
+        /*
         viewDataBinding.camstudyPre.setOnClickListener(View.OnClickListener {
             page -= 1
             viewDataBinding.camStudyFelxboxLayout.removeAllViews()
@@ -390,6 +389,10 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             setPage()
             addCamStudyItemView()
         })
+
+         */
+
+
     }
 
     fun spinnerInit(view: View?, members: MutableList<String>) {
@@ -512,11 +515,12 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         }
 
         //다음페이지 버튼 활성화
+        /*
         if(page >= maxPage){
             viewDataBinding.camstudyNext.visibility = View.INVISIBLE
         }else{
             viewDataBinding.camstudyNext.visibility = View.VISIBLE
-        }
+        }*/
 
     }
 
@@ -645,6 +649,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     startActivity(mainMoveIntent)
                     finish()
                 }
+
 
 
             }

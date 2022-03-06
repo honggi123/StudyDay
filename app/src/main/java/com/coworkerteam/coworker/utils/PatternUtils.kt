@@ -133,8 +133,8 @@ object PatternUtils {
         }
 
         //1~16명 외일 경우
-        if (text.toInt() < 1 || text.toInt() > 16) {
-            return PatternResult(false, "1~16명까지 가능")
+        if (text.toInt() < 2 || text.toInt() > 6) {
+            return PatternResult(false, "2 ~ 6명까지 가능")
         }
 
         return PatternResult(true, null)

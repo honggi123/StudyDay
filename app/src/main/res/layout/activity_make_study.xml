@@ -163,14 +163,14 @@
                     app:boxCornerRadiusTopStart="20dp"
                     app:endIconMode="clear_text"
                     app:expandedHintEnabled="false"
-                    app:helperText="2~16명까지 가능"
+                    app:helperText="2 ~ 6명까지 가능"
                     app:helperTextEnabled="true"
                     app:suffixText="명">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="1"
+                        android:hint="2"
                         android:inputType="number"
                         android:onTextChanged="@{activity.changTextStudyNum}" />
 

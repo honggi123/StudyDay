@@ -173,7 +173,6 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
                         }
                     }
                 }
-
             }
         })
     }
@@ -207,7 +206,6 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
             //선택되어있던 카테고리라면 선택해제
             view.setSelected(false)
             categorys.remove(categoryName)
-
         } else {
             //선택되지 않았던 카테고리라면 선택추가
             if (categorys.size >= 3) {
@@ -217,7 +215,6 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
                 //카테고리가 3개 이하라면
                 view.setSelected(true)
                 categorys.add(categoryName)
-
             }
         }
     }
@@ -233,7 +230,7 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
     fun changTextStudyName(s: CharSequence, start: Int, before: Int, count: Int) {
         val result = PatternUtils.matcheStudyName(s.toString())
 
-        if (result.isNotError) {
+        if (result.isNotError){
             isStudyName = true
             viewDataBinding.makeStudyEdtName.isErrorEnabled = false
             viewDataBinding.makeStudyEdtName.error = null

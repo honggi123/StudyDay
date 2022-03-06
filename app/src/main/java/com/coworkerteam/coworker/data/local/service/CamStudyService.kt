@@ -63,6 +63,7 @@ class CamStudyService : Service() {
      var localAudioTrack: AudioTrack? = null
      var okHttpClient : OkHttpClient? = null
     var factory : PeerConnectionFactory? = null
+
     companion object {
         const val MSG_CLIENT_CONNECT = 0
         const val MSG_CLIENT_DISCNNECT = 1
@@ -84,7 +85,7 @@ class CamStudyService : Service() {
         const val MSG_NEWPARTICIPANTARRIVED = 17
         const val MSG_PARTICIPANTLEFT = 18
         const val MSG_SERVICE_FINISH = 19
-
+        const val  MSG_SERVICE_RESTART = 20
         var isVideo: Boolean? = null
         var isAudio: Boolean? = null
         var isPermissions = false
@@ -102,7 +103,9 @@ class CamStudyService : Service() {
     val mMessenger = Messenger(CallbackHandler(Looper.getMainLooper()))
 
     var videoTrackFromCamera: VideoTrack? = null
+    var localvideoTrack : VideoTrack? = null
 
+    var trackTrackingThread : Thread? = null
 
     //서비스가 시작될 때 호출
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -128,7 +131,7 @@ class CamStudyService : Service() {
     }
 
     //이미 onUnbind()가 호출된 후에 bindService()로 바인딩을 실행할 때 호출
-    override fun onRebind(intent: Intent?) {
+    override fun onRebind(intent: Intent?){
         super.onRebind(intent)
     }
 
@@ -166,7 +169,6 @@ class CamStudyService : Service() {
             Log.d(TAG,"peerconnection.stopcamstudy")
         }
 
-
         val handlerMessage = Message.obtain(null, MSG_SERVICE_FINISH)
         sendHandlerMessage(handlerMessage)
 
@@ -177,8 +179,8 @@ class CamStudyService : Service() {
 
         socket?.disconnect()
         socket = null
-
     }
+
 
 
     private fun startCamStudy() {
@@ -194,7 +196,10 @@ class CamStudyService : Service() {
             startStreamingVideo(hostname)
         }
         socket!!.connect()
+        localvideoTrack = videoTrackFromCamera
     }
+
+
 
     private fun getData(intent: Intent?) {
         var enterCamstudyResponse =
@@ -368,6 +373,11 @@ class CamStudyService : Service() {
                                             if (isAudio == true) "on" else "off"
                                         )
                                         sendMessage(message_send)
+
+                                        if(!localvideoTrack?.state().toString().equals("LIVE")){
+                                            Log.d(TAG,"localvideoTrack.state"+localvideoTrack?.state())
+                                            onDestroy()
+                                        }
                                     }
                                     "participantLeft" -> {
                                         //참여자가 방을 떠났을 경우
@@ -401,6 +411,10 @@ class CamStudyService : Service() {
                                             Message.obtain(null, MSG_PARTICIPANTS_ITEM)
                                         sendHandlerMessage(handlerMessageParticipants)
 
+                                        if(!localvideoTrack?.state().toString().equals("LIVE")){
+                                            Log.d(TAG,"localvideoTrack.state"+localvideoTrack?.state())
+                                            onDestroy()
+                                        }
                                     }
                                     "receiveVideoAnswer" -> {
                                         //Answer을 받았을 경우
@@ -578,7 +592,7 @@ class CamStudyService : Service() {
         existingParticipants(name)
     }
 
-    private fun sendMessage(message: JSONObject) {
+    private fun sendMessage(message: JSONObject){
         try {
             Log.d(TAG, "sendMessage: $message")
             socket!!.emit("message", message)
@@ -591,6 +605,7 @@ class CamStudyService : Service() {
         PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true)
         //factory = PeerConnectionFactory(null)
         factory = SinglePeerConnectionFactory.getfactory()
+
         factory?.setVideoHwAccelerationOptions(
             rootEglBase?.eglBaseContext,
             rootEglBase?.eglBaseContext
@@ -630,7 +645,7 @@ class CamStudyService : Service() {
         var participantMe = Participant(this, hostname)
 
         participantMe.settingDevice(isVideo!!, isAudio!!)
-        participantMe.timer.init(timer!!.toDouble())
+        participantMe.timer.init(timer!!.toDouble());
         participantMe.timer.startStudyTimer()
         participantMe.timer.setTextTime(timer!!.toDouble())
 

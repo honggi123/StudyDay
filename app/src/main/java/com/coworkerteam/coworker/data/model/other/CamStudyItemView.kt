@@ -13,6 +13,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import org.webrtc.EglRenderer
 import org.webrtc.SurfaceViewRenderer
 
 class CamStudyItemView : ConstraintLayout {
@@ -44,6 +45,7 @@ class CamStudyItemView : ConstraintLayout {
         //surfaceView에 관련한 설정
         CoroutineScope(Dispatchers.Main).async {
             surfaceView.init(CamStudyService.rootEglBase?.eglBaseContext, null)
+
             surfaceView.setEnableHardwareScaler(true)
             surfaceView.setMirror(true)
         }
@@ -56,6 +58,7 @@ class CamStudyItemView : ConstraintLayout {
         }
     }
 
+    //비디오 표시 여부에 따라 비디오가 off면 프로필을 보이고, on이면 프로필을 숨기는 함수
     //비디오 표시 여부에 따라 비디오가 off면 프로필을 보이고, on이면 프로필을 숨기는 함수
     fun showProfileImage(status: String) {
         if (status == "off") {
