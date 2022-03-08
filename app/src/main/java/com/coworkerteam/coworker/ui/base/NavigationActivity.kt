@@ -1,6 +1,10 @@
 package com.coworkerteam.coworker.ui.base
 
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -84,6 +88,7 @@ open abstract class NavigationActivity<T : ViewDataBinding, R : BaseViewModel> :
                 moveIntent = Intent(this, TodoListActivity::class.java)
             }
         }
+        moveIntent?.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
         moveIntent?.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         moveIntent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         drawerLayout.closeDrawers()
@@ -103,6 +108,7 @@ open abstract class NavigationActivity<T : ViewDataBinding, R : BaseViewModel> :
         }
         return true
     }
+
 
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {

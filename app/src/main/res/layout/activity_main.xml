@@ -196,7 +196,6 @@
                                 android:text="@{mainResponse.result.get(0).studyTime}"
                                 android:textColor="#787B85"
                                 android:textSize="12sp" />
-
                         </LinearLayout>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -217,18 +216,18 @@
 
                     <LinearLayout
                         android:id="@+id/linearLayout"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="24dp"
                         android:orientation="vertical"
-                        app:layout_constraintEnd_toStartOf="@+id/guideline8"
                         app:layout_constraintStart_toStartOf="@+id/guideline7"
                         app:layout_constraintTop_toBottomOf="@+id/textView37">
 
                         <LinearLayout
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
+                            android:visibility="gone"
                             android:paddingRight="10dp">
 
                             <TextView
@@ -237,55 +236,124 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginRight="5dp"
                                 android:fontFamily="@font/notosans_medium_hestia"
-                                android:text="오늘 할 일"
+                                android:text="공부 순위"
                                 android:textColor="@color/black"
                                 android:textSize="18sp"
                                 android:textStyle="normal" />
-
-                            <TextView
-                                android:id="@+id/textView4"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="@{String.valueOf(mainResponse.result.get(0).todoNum)+'개'}" />
-
-                            <TextView
-                                android:id="@+id/textView5"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:onClick="@{()->activitiy.moveTodolist()}"
-                                android:text="더보기" />
                         </LinearLayout>
 
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/linearLayout7"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/constraintLayout2"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/main_todolist_background"
-                        android:elevation="3dp"
-                        android:orientation="vertical"
-                        android:padding="10dp"
-                        app:layout_constraintEnd_toStartOf="@+id/guideline8"
-                        app:layout_constraintStart_toStartOf="@+id/guideline7"
-                        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="8dp"
+                        android:visibility="gone"
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/main_todolist_recylerView"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:layoutManager="LinearLayoutManager" />
+                        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="@+id/guideline7"
+                        app:layout_constraintTop_toBottomOf="@+id/main_spinner_ranking">
+
+                        <ImageView
+                            android:id="@+id/imageView4"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:layout_marginBottom="5dp"
+                            app:layout_constraintBottom_toTopOf="@+id/textView66"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/imageView7"
+                            bind:srcCompat="@drawable/bronze" />
+
+                        <ImageView
+                            android:id="@+id/imageView7"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_marginBottom="5dp"
+                            app:layout_constraintBottom_toTopOf="@+id/textView5"
+                            app:layout_constraintEnd_toStartOf="@+id/imageView4"
+                            app:layout_constraintStart_toEndOf="@+id/imageView8"
+                            bind:srcCompat="@drawable/gold" />
+
+                        <ImageView
+                            android:id="@+id/imageView8"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:layout_marginBottom="5dp"
+                            app:layout_constraintBottom_toTopOf="@+id/textView64"
+                            app:layout_constraintEnd_toStartOf="@+id/imageView7"
+                            app:layout_constraintStart_toStartOf="parent"
+                            bind:srcCompat="@drawable/silver" />
 
                         <TextView
-                            android:id="@+id/textView6"
-                            android:layout_width="match_parent"
+                            android:id="@+id/textView5"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="오늘의 할 일이 없습니다."
-                            android:visibility="@{mainResponse.result.get(0).todo.size()&lt;1?View.VISIBLE:View.GONE}" />
-                    </LinearLayout>
+                            android:text=""
+                            android:textColor="#4B4B4B"
+                            app:layout_constraintBottom_toTopOf="@+id/textView67"
+                            app:layout_constraintEnd_toEndOf="@+id/imageView7"
+                            app:layout_constraintStart_toStartOf="@+id/imageView7" />
+
+                        <TextView
+                            android:id="@+id/textView64"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="#4B4B4B"
+                            app:layout_constraintBottom_toTopOf="@+id/textView73"
+                            app:layout_constraintEnd_toEndOf="@+id/imageView8"
+                            app:layout_constraintStart_toStartOf="@+id/imageView8" />
+
+                        <TextView
+                            android:id="@+id/textView66"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="#4B4B4B"
+                            app:layout_constraintBottom_toTopOf="@+id/textView75"
+                            app:layout_constraintEnd_toEndOf="@+id/imageView4"
+                            app:layout_constraintStart_toStartOf="@+id/imageView4" />
+
+                        <TextView
+                            android:id="@+id/textView67"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="#A5A4A4"
+                            android:textColorHint="#FFFFFF"
+                            android:textColorLink="#00FFFFFF"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@+id/textView5"
+                            app:layout_constraintStart_toStartOf="@+id/textView5" />
+
+                        <TextView
+                            android:id="@+id/textView73"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="#A3A3A3"
+                            android:textColorHint="#FFFFFF"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@+id/textView64"
+                            app:layout_constraintStart_toStartOf="@+id/textView64" />
+
+                        <TextView
+                            android:id="@+id/textView75"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="#9C9C9C"
+                            android:textColorLink="#A2A2A2"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@+id/textView66"
+                            app:layout_constraintStart_toStartOf="@+id/textView66" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <LinearLayout
                         android:id="@+id/linearLayout2"
@@ -347,12 +415,12 @@
                         android:textSize="18sp"
                         android:textStyle="normal"
                         app:layout_constraintStart_toStartOf="@+id/guideline7"
-                        app:layout_constraintTop_toBottomOf="@+id/linearLayout7" />
+                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout5" />
 
                     <Spinner
                         android:id="@+id/main_spinner_new_study"
                         style="@style/Widget.AppCompat.Spinner"
-                        android:layout_width="120dp"
+                        android:layout_width="130dp"
                         android:layout_height="35dp"
                         android:background="@drawable/edit_text"
                         android:dropDownWidth="wrap_content"
@@ -389,7 +457,7 @@
                     <Spinner
                         android:id="@+id/main_spinner_dcommend"
                         style="@style/Widget.AppCompat.Spinner"
-                        android:layout_width="120dp"
+                        android:layout_width="130dp"
                         android:layout_height="35dp"
                         android:background="@drawable/edit_text"
                         android:dropDownWidth="wrap_content"
@@ -437,13 +505,102 @@
                         app:layout_constraintStart_toStartOf="@+id/guideline7"
                         app:layout_constraintTop_toBottomOf="@+id/main_mystudy_recylerView" />
 
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/constraintLayout5"
+                        android:layout_width="0dp"
+                        android:layout_height="35dp"
+                        android:layout_marginTop="8dp"
+                        android:visibility="gone"
+                        android:background="@drawable/main_myranking_background"
+                        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="@+id/guideline7"
+                        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
+
+                        <TextView
+                            android:id="@+id/textView76"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text="내 등수"
+                            android:textColor="#4B4B4B"
+                            android:textColorLink="#4B4B4B"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/textView77"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:text="내 공부시간"
+                            android:textColor="#4B4B4B"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/textView84"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/textView79"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text=""
+                            android:textColor="#4B4B4B"
+                            android:textColorLink="#4B4B4B"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/textView76"
+                            app:layout_constraintStart_toEndOf="@+id/textView76"
+                            app:layout_constraintTop_toTopOf="@+id/textView76" />
+
+                        <TextView
+                            android:id="@+id/textView83"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:text="(상위 0%)"
+                            android:textColorHighlight="#4B4B4B"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/textView79"
+                            app:layout_constraintStart_toEndOf="@+id/textView79"
+                            app:layout_constraintTop_toTopOf="@+id/textView79" />
+
+                        <TextView
+                            android:id="@+id/textView84"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:text="10시간 50분"
+                            android:textColor="#4B4B4B"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/textView77"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/textView77" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <Spinner
+                        android:id="@+id/main_spinner_ranking"
+                        style="@style/Widget.AppCompat.Spinner"
+                        android:layout_width="120dp"
+                        android:layout_height="35dp"
+                        android:background="@drawable/edit_text"
+                        android:dropDownWidth="wrap_content"
+                        android:visibility="gone"
+
+                        android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+                        android:popupBackground="@android:color/white"
+                        android:popupElevation="3dp"
+                        android:stateListAnimator="@animator/spinner_sla"
+                        app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+                        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+                        app:layout_constraintTop_toTopOf="@+id/linearLayout" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.core.widget.NestedScrollView>
-
         </LinearLayout>
 
         <!--자식 레이아웃. Navigation Drawer-->
-
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/navigationView"
             android:layout_width="wrap_content"

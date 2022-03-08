@@ -57,6 +57,7 @@ class CamStudyService : Service() {
 
     var videosource :VideoSource? = null
 
+
     lateinit var audioConstraints: MediaConstraints
     var videoCapturer: VideoCapturer? = null
      var audioSource: AudioSource? = null
@@ -99,6 +100,7 @@ class CamStudyService : Service() {
         var peerConnection = HashMap<String, Participant>()
     }
 
+
     private var mClientCallbacks = ArrayList<Messenger>()
     val mMessenger = Messenger(CallbackHandler(Looper.getMainLooper()))
 
@@ -128,6 +130,7 @@ class CamStudyService : Service() {
     //unbindService()로 바인딩을 해제할 때 호출
     override fun onUnbind(intent: Intent?): Boolean {
         return super.onUnbind(intent)
+        Log.d(TAG,"onUnbind")
     }
 
     //이미 onUnbind()가 호출된 후에 bindService()로 바인딩을 실행할 때 호출
@@ -138,6 +141,7 @@ class CamStudyService : Service() {
     //서비스가 소멸될 때 호출
     override fun onDestroy() {
         super.onDestroy()
+        Log.d(TAG,"onDestroy")
         rootEglBase.release()
         // webrtc 관련
         if(videoTrackFromCamera != null){
@@ -176,11 +180,11 @@ class CamStudyService : Service() {
         mClientCallbacks.clear()
 
         chatDate.clear()
-
-        socket?.disconnect()
-        socket = null
+        if(socket != null){
+           socket?.disconnect()
+           socket = null
+        }
     }
-
 
 
     private fun startCamStudy() {
@@ -413,7 +417,7 @@ class CamStudyService : Service() {
 
                                         if(!localvideoTrack?.state().toString().equals("LIVE")){
                                             Log.d(TAG,"localvideoTrack.state"+localvideoTrack?.state())
-                                            onDestroy()
+                                           onDestroy()
                                         }
                                     }
                                     "receiveVideoAnswer" -> {
@@ -457,7 +461,6 @@ class CamStudyService : Service() {
                                                 message.getString("time")
                                             )
                                         )
-
                                         val handlerMessage: Message =
                                             Message.obtain(null, CamStudyService.MSG_RECEIVED_MESSAGE)
                                         sendHandlerMessage(handlerMessage)
@@ -821,7 +824,6 @@ class CamStudyService : Service() {
 
     private fun createVideoCapturer(): VideoCapturer? {
         return createCameraCapturer(Camera1Enumerator(true))
-
     }
 
     private fun createCameraCapturer(enumerator: CameraEnumerator): VideoCapturer? {
@@ -845,11 +847,11 @@ class CamStudyService : Service() {
         return null
     }
 
+
     // 갤럭시 특정 기기 카메라 전환 시 camera2 api에서 오류 이슈 발생으로 인해 사용 하지 않음
     private fun useCamera2(): Boolean {
         return Camera2Enumerator.isSupported(this)
     }
-
 
 
     private fun sendHandlerMessage(msg: Message) {
@@ -864,7 +866,7 @@ class CamStudyService : Service() {
             } catch (e: RemoteException) {
                 e.printStackTrace()
             }
-            Log.d(TAG, "Send MSG_ADD_VALUE message to Service")
+            Log.d(TAG, "Send MSG_ADD_VALUE message to Service ")
         }
     }
 
@@ -958,6 +960,7 @@ class CamStudyService : Service() {
                 }
                 MSG_COMSTUDY_LEFT -> {
                     //퇴장처리
+                    Log.d(TAG,"MSG_COMSTUDY_LEFT")
                     val handlerMessage = Message.obtain(null, MSG_COMSTUDY_LEFT)
 
                     var timerResult =

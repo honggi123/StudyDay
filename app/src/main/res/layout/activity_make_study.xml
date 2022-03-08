@@ -265,7 +265,7 @@
 
                     <TextView
                         android:id="@+id/make_study_category_official"
-                        android:layout_width="83dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="4.5dp"
                         android:layout_weight="1"

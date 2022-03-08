@@ -173,8 +173,10 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
                     val restTime = statisticsResponse.restRate ?: 0
 
                     pieEntries.clear()
-                    pieEntries.add(PieEntry(studyTime.toFloat(), "공부"))
-                    pieEntries.add(PieEntry(restTime.toFloat(), "휴식"))
+                    pieEntries.add(PieEntry(studyTime.toFloat(),""))
+                    if(restTime.toFloat() > 0.0f){
+                        pieEntries.add(PieEntry(restTime.toFloat(),""))
+                    }
                     pieChart()
 
                     barEntries.clear()
@@ -303,7 +305,7 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
             setUsePercentValues(true)
         }
 
-        var set = PieDataSet(pieEntries, "공부/휴식 비율") // 데이터셋 초기화
+        var set = PieDataSet(pieEntries, "") // 데이터셋 초기화
 
         set.colors = MATERIAL_COLORS.toMutableList() // 바 그래프 색 설정
 
@@ -320,6 +322,9 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
             setUsePercentValues(true)
             invalidate()
         }
+        piechart.legend.isEnabled = false
+
+
     }
 
     fun barChart() {

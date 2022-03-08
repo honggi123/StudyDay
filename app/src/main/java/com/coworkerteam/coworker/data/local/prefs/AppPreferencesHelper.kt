@@ -21,6 +21,7 @@ class AppPreferencesHelper() : PreferencesHelper {
 
     private val PREF_KEY_USER_LOGGED_IN_MODE = "PREF_KEY_USER_LOGGED_IN_MODE"
 
+
     private var mPrefs: SharedPreferences? = null
 
     constructor(context: Context, @PreferenceInfo prefFileName: String) : this() {
@@ -77,6 +78,7 @@ class AppPreferencesHelper() : PreferencesHelper {
             .putString(PREF_KEY_CURRENT_USER_PROFILE_PIC_URL, profilePicUrl)
             .apply()
     }
+
 
     override fun setPreferencesData(
         accessToken: String,

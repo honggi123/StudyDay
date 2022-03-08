@@ -1,7 +1,9 @@
 package com.coworkerteam.coworker.ui.base
 
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -74,6 +76,10 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
 
             showServerErrorDialog()
         })
+    }
+
+    override fun onRestart() {
+        super.onRestart()
     }
 
     //네트워크 상태 체크

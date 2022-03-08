@@ -196,6 +196,7 @@ interface UserRepository {
         todo: String
     ): Single<Response<AddTodolistResponse>>
 
+
     fun setCheckTodolist(
         accessToken: String,
         todoIdx: Int,

@@ -2,6 +2,7 @@ package com.coworkerteam.coworker.ui.main
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_FORWARD_RESULT
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.util.Log
@@ -97,7 +98,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
         }
 
         //강퇴 후 메인 액티비티에 돌아왔을때
-
         var kick = intent.getBooleanExtra("KickFromLeader",false)
         Log.d(TAG,"강퇴 여부 : " +kick )
         if(kick){
@@ -117,11 +117,8 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                 it.isSuccessful -> {
                     var intent = Intent(this, EnterCamstudyActivity::class.java)
                     intent.putExtra("studyInfo", it.body()!!)
-
-
-                        passwordDialog.dismissDialog()
-                        startActivity(intent)
-
+                    passwordDialog.dismissDialog()
+                    startActivity(intent)
                 }
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
@@ -178,7 +175,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
 
         viewModel.MainResponseLiveData.observe(this, androidx.lifecycle.Observer {
             loding.dismissDialog()
-
             when {
                 it.isSuccessful -> {
                     viewDataBinding.mainResponse = it.body()!!
@@ -196,9 +192,9 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                     )
 
                     //내스터디
-                    var myStudyAdepter = MainTodolistAdapter(this, viewModel)
-                    myStudyAdepter.datas = it.body()!!.result[0].todo.toMutableList()
-                    viewDataBinding.mainTodolistRecylerView.adapter = myStudyAdepter
+                   // var myStudyAdepter = MainTodolistAdapter(this, viewModel)
+                   // myStudyAdepter.datas = it.body()!!.result[0].todo.toMutableList()
+                   // viewDataBinding.mainTodolistRecylerView.adapter = myStudyAdepter
 
                     setData = true
                     NewStudy_init()
@@ -219,7 +215,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                     Log.e(TAG, errorMessage.getString("message"))
 
                     moveLogin()
-
                 }
             }
         })
@@ -253,6 +248,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
             }
         })
 
+        /*
         viewModel.CheckTodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
@@ -290,6 +286,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                 }
             }
         })
+         */
 
         viewModel.MyStudyPagingData.observe(this, androidx.lifecycle.Observer {
             pagingMainMyStudyAdapter.submitData(lifecycle, it)
@@ -315,6 +312,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
 
         val spinner_new = findViewById<Spinner>(R.id.main_spinner_new_study)
         val spinner_dcommend = findViewById<Spinner>(R.id.main_spinner_dcommend)
+        val spinner_rankingcategory = findViewById<Spinner>(R.id.main_spinner_ranking)
 
         spinner_new.adapter = adapter
         spinner_new.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -363,7 +361,33 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
+            }
+        }
 
+        val rankingdata = arrayOf("어제", "최근 1주일","최근 1개월")
+
+        val rankingadapter = ArrayAdapter(this, R.layout.spinner_item_selected, rankingdata)
+        rankingadapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+
+        spinner_rankingcategory.adapter = rankingadapter
+        spinner_rankingcategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View,
+                position: Int,
+                id: Long
+            ) {
+                if (parent.getItemAtPosition(position).toString() == "어제") {
+
+                } else if(parent.getItemAtPosition(position).toString() == "최근 1주일"){
+
+                }else{
+
+                }
+
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
             }
         }
     }

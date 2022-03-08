@@ -34,10 +34,12 @@ data class MainResponse(
         val profile: Profile,
         @SerializedName("studyTime")
         val studyTime: String,
+
         @SerializedName("todo")
         val todo: List<Todo>,
         @SerializedName("todoNum")
         val todoNum: Int,
+
         @SerializedName("userNum")
         val userNum: Int
     ){
@@ -93,6 +95,7 @@ data class MainResponse(
             @SerializedName("nickname")
             val nickname: String
         )
+
         data class Todo(
             @SerializedName("idx")
             val idx: Int,
@@ -103,5 +106,6 @@ data class MainResponse(
             @SerializedName("todo_date")
             val todoDate: String
         )
+
     }
 }

@@ -4,9 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.text.util.Linkify
 import android.util.Log
-import android.view.View
-import android.widget.Button
-import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.coworkerteam.coworker.R
@@ -148,6 +145,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
     fun moveActivity(is_categoty: Boolean) {
         if (is_categoty) {
             var intent = Intent(this, MainActivity::class.java)
+
             startActivity(intent)
             finish()
         } else {

@@ -2,19 +2,18 @@ package com.coworkerteam.coworker.ui.camstudy.cam
 
 import android.app.Activity
 import android.app.ActivityManager
+import android.app.AlertDialog
 import android.content.*
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.*
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
+import com.coworkerteam.coworker.data.local.prefs.PreferencesHelper
 import com.coworkerteam.coworker.data.local.service.CamStudyService
 import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
 import com.coworkerteam.coworker.data.model.other.ChatData
@@ -93,6 +92,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             when {
                 it.isSuccessful -> {
                     //퇴장처리 성공
+                    Log.d(TAG,"퇴장 처리 성공")
                     unbindService(mConnection)
                     stopService(Intent(this, CamStudyService::class.java))
                 }
@@ -103,7 +103,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
                     //400번대 에러로 퇴장처리가 실패했을 경우, 사용자에게 알려준다.
                     Toast.makeText(this, "스터디 공부시간을 저장하는데 실패하였습니다.", Toast.LENGTH_SHORT).show()
-
                     unbindService(mConnection)
                     stopService(Intent(this, CamStudyService::class.java))
                     finish()
@@ -128,6 +127,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     override fun onDestroy() {
         super.onDestroy()
         //FelxboxLayout 초기화
+
         viewDataBinding.camStudyFelxboxLayout.removeAllViews()
         viewDataBinding.unbind()
 
@@ -140,6 +140,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         } catch (e: Exception) {
             e.printStackTrace()
         }
+
     }
 
     fun initData() {
@@ -554,6 +555,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     private var mConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            Log.e(TAG,"ServiceConnection")
             mServiceCallback = Messenger(service)
             //서비스랑 연결
             val connectMsg = Message.obtain(null, CamStudyService.MSG_CLIENT_CONNECT)
@@ -571,6 +573,31 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         }
     }
 
+
+    override fun onBackPressed() {
+
+        // 캠스터디 종료 확인 다이얼로그
+        val mDialogView =
+            LayoutInflater.from(context).inflate(R.layout.dialog_camstudyout, null)
+        val mBuilder = androidx.appcompat.app.AlertDialog.Builder(context).setView(mDialogView)
+        val builder = mBuilder.show()
+
+        builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val btn_cancle =
+            mDialogView.findViewById<Button>(R.id.dialog_camstudyout_btn_cancle)
+        val btn_out =
+            mDialogView.findViewById<Button>(R.id.dialog_camstudyout_btn_ok)
+
+        btn_cancle.setOnClickListener(View.OnClickListener {
+            builder.dismiss()
+        })
+        // 캠스터디 퇴장
+        btn_out.setOnClickListener(View.OnClickListener {
+            val msg: Message = Message.obtain(null, CamStudyService.MSG_COMSTUDY_LEFT)
+            sendHandlerMessage(msg)
+        })
+    }
 
     inner class CallbackHandler(looper: Looper) : Handler(looper) {
         override fun handleMessage(msg: Message) {
@@ -647,9 +674,9 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     mainMoveIntent.putExtra("KickFromLeader",kick)
                     Log.d(TAG,"강퇴 여부 : "+kick)
                     startActivity(mainMoveIntent)
-                    finish()
-                }
+                    if(!isFinishing) finish()
 
+                }
 
 
             }

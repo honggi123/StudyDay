@@ -166,10 +166,11 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
         }
     }
 
-    fun setCheckTodoListData(todoIdx: Int, selectDate: String) {
+    /*
+    fun setCheckTodoListData(todoIdx: Int, selectDate: String){
         val accessToken = model.getAccessToken()
 
-        if (!accessToken.isNullOrEmpty()) {
+        if (!accessToken.isNullOrEmpty()){
             addDisposable(
                 model.setCheckTodolist(accessToken, todoIdx, selectDate)
                     .subscribeOn(Schedulers.io())
@@ -177,7 +178,6 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
                     .subscribe({
                         it.run {
                             Log.d(TAG, "meta : $it")
-
                             when {
                                 it.code() == 401 -> {
                                     //액세스토큰이 만료된 경우
@@ -195,7 +195,6 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
                                     _CheckTodoListResponseLiveData.postValue(this)
                                 }
                             }
-
                         }
                     }, {
                         Log.d(TAG, "response error, message : ${it.message}")
@@ -205,6 +204,7 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
             Log.d(TAG, "setCheckTodoListData:: accessToken 값이 없습니다.")
         }
     }
+     */
 
 
 
