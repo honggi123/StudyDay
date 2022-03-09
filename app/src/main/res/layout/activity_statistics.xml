@@ -269,7 +269,7 @@
                             android:layout_height="match_parent"
                             android:layout_marginTop="10dp"
                             android:layout_marginBottom="20dp"
-                            android:visibility="@{statisticsResponse.theDayAcheiveRate==null?View.GONE:View.VISIBLE}"
+                            android:visibility='@{statisticsResponse.studyTime.equals("00:00:00")?View.GONE:View.VISIBLE}'
                             android:gravity="center"
                             android:orientation="horizontal">
 

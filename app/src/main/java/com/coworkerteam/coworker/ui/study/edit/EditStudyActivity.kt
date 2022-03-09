@@ -330,12 +330,13 @@ class EditStudyActivity : BaseActivity<ActivityEditStudyBinding, EditStudyViewMo
             Toast.makeText(this, "스터디 카테고리를 확인해주세요.", Toast.LENGTH_SHORT).show()
         } else if (!isIntroduce) {
             Toast.makeText(this, "스터디 설명을 확인해주세요.", Toast.LENGTH_SHORT).show()
+        } else if (fileName == null || realpath == null) {
+            Toast.makeText(this, "이미지 파일을 찾지 못했습니다. 이미지를 다시 등록해주세요.", Toast.LENGTH_SHORT).show()
         } else {
-
-            if (fileName != null) {
-                uploadWithTransferUtilty(fileName!!, File(realpath))
+            var file = File(realpath)
+            if (file != null) {
+                uploadWithTransferUtilty(fileName!!, file)
                 imageUrl = getString(R.string.s3_coworker_study_url) + fileName
-            }
 
             var categorys = categorys.joinToString("|")
             var password =
@@ -350,6 +351,10 @@ class EditStudyActivity : BaseActivity<ActivityEditStudyBinding, EditStudyViewMo
                 viewDataBinding.makeStudyEdtNum.editText?.text.toString().toInt(),
                 viewDataBinding.makeStudyEdtIntroduce.editText?.text.toString()
             )
+            }else{
+                Toast.makeText(this, "이미지 파일을 찾지 못했습니다. 이미지를 다시 등록해주세요.", Toast.LENGTH_SHORT).show()
+            }
+
         }
     }
 

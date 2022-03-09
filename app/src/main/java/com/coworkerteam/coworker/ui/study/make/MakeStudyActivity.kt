@@ -80,7 +80,6 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
         supportActionBar?.title = "스터디 만들기"
 
         viewDataBinding.activity = this
-
     }
 
     override fun initDataBinding() {
@@ -347,7 +346,6 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
                         Toast.makeText(this@MakeStudyActivity,"권한을 허용하지 않으면 사진을 불러올 수 없습니다.",Toast.LENGTH_SHORT).show()
                     }
                 }
-
                 TedPermission.create()
                 .setPermissionListener(permissionListener)
                 .setDeniedMessage("앱의 저장소 접근 권한을 허용해야 이미지를 불러올 수 있습니다. 해당 권한을 [설정] > [권한] 에서 허용해주세요.")
@@ -380,14 +378,16 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
             Toast.makeText(this, "스터디 카테고리를 확인해주세요.", Toast.LENGTH_SHORT).show()
         } else if (!isIntroduce) {
             Toast.makeText(this, "스터디 설명을 확인해주세요.", Toast.LENGTH_SHORT).show()
-        } else {
-
+        }  else if (fileName == null || realpath == null) {
+            Toast.makeText(this, "이미지 파일을 찾지 못했습니다. 이미지를 다시 등록해주세요.", Toast.LENGTH_SHORT).show()
+        }else {
+            var file = File(realpath)
             loding.showDialog(this)
-
-            if (fileName != null) {
+            if (file != null) {
+                Log.d(TAG,"filename : "+fileName + ", realpath : " + realpath)
                 uploadWithTransferUtilty(fileName!!, File(realpath))
                 imageUrl = getString(R.string.s3_coworker_study_url) + fileName
-            }
+
 
             var categorys = categorys.joinToString("|")
             var password =
@@ -402,6 +402,9 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
                 viewDataBinding.makeStudyEdtNum.editText?.text.toString().toInt(),
                 viewDataBinding.makeStudyEdtIntroduce.editText?.text.toString()
             )
+        }else{
+                Toast.makeText(this, "이미지 파일을 찾지 못했습니다. 이미지를 다시 등록해주세요.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
