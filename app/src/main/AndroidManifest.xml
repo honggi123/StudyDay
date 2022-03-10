@@ -52,7 +52,9 @@
         <activity android:name=".ui.camstudy.info.ParticipantsActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.camstudy.cam.CamStudyActivity"
-             />
+            android:configChanges="screenSize|orientation"
+         />
+
         <activity android:name=".ui.study.edit.EditStudyActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.search.StudySearchActivity"

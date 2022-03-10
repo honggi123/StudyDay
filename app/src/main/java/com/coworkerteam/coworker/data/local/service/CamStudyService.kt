@@ -57,7 +57,6 @@ class CamStudyService : Service() {
 
     var videosource :VideoSource? = null
 
-
     lateinit var audioConstraints: MediaConstraints
     var videoCapturer: VideoCapturer? = null
      var audioSource: AudioSource? = null
@@ -269,7 +268,6 @@ class CamStudyService : Service() {
                     //소켓이 연결 됨
                     Log.d(TAG, "connectToSignallingServer: connect")
                     sendMessage(getSendMessage("joinRoom"))
-
                 })
                 .on(Socket.EVENT_RECONNECT,
                     Emitter.Listener { args: Array<Any> ->
@@ -378,10 +376,6 @@ class CamStudyService : Service() {
                                         )
                                         sendMessage(message_send)
 
-                                        if(!localvideoTrack?.state().toString().equals("LIVE")){
-                                            Log.d(TAG,"localvideoTrack.state"+localvideoTrack?.state())
-                                            onDestroy()
-                                        }
                                     }
                                     "participantLeft" -> {
                                         //참여자가 방을 떠났을 경우
@@ -415,10 +409,6 @@ class CamStudyService : Service() {
                                             Message.obtain(null, MSG_PARTICIPANTS_ITEM)
                                         sendHandlerMessage(handlerMessageParticipants)
 
-                                        if(!localvideoTrack?.state().toString().equals("LIVE")){
-                                            Log.d(TAG,"localvideoTrack.state"+localvideoTrack?.state())
-                                           onDestroy()
-                                        }
                                     }
                                     "receiveVideoAnswer" -> {
                                         //Answer을 받았을 경우
@@ -1035,7 +1025,7 @@ object notification {
             .setContentText("캠스터디 진행중")
             .setSmallIcon(R.mipmap.ic_studyday)
             .setOngoing(true) // true 일경우 알림 리스트에서 클릭하거나 좌우로 드래그해도 사라지지 않음
-            .setContentIntent(pendingIntent)
+          //  .setContentIntent(pendingIntent)
             .build()
 
         return notification

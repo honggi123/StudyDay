@@ -78,8 +78,8 @@ class MyStudyGroupPagingAdapter(private val dialog: PasswordDialog) :
             }
 
             studyName.text = item.name
-//            studyNum.text = "참여인원 " + item.userNum.toString() + "/" + item.maxNum.toString()
-//
+            studyNum.text = "참여인원 " + item.userNum.toString() + "/" + item.maxNum.toString()
+
             var studyCategoryAdapter: StudyCategoryAdapter = StudyCategoryAdapter(context)
             studyCategoryAdapter.datas = item.category.split("|").toMutableList()
             rvCategory.adapter = studyCategoryAdapter

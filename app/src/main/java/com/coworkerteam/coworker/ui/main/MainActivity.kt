@@ -5,9 +5,12 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_FORWARD_RESULT
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
@@ -53,6 +56,11 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
 
     val passwordDialog = PasswordDialog()
 
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+    }
 
     override fun initStartView() {
         super.initStartView()

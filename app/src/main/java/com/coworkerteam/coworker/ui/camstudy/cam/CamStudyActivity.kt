@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.ActivityManager
 import android.app.AlertDialog
 import android.content.*
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.*
@@ -62,6 +63,11 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     var context : Context = this
 
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun initStartView() {
         Log.d(TAG,"initStartView")
@@ -86,6 +92,9 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     }
 
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+    }
 
     override fun initDataBinding() {
         viewModel.CamstduyLeaveResponseLiveData.observe(this, androidx.lifecycle.Observer {
@@ -140,7 +149,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
     }
 
     fun initData() {
