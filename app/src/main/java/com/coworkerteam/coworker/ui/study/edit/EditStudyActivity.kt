@@ -318,6 +318,7 @@ class EditStudyActivity : BaseActivity<ActivityEditStudyBinding, EditStudyViewMo
     }
 
     fun editStudy() {
+
         if (imageUrl == null) {
             Toast.makeText(this, "이미지를 설정해주세요.", Toast.LENGTH_SHORT).show()
         } else if (!isStudyName) {
@@ -330,31 +331,34 @@ class EditStudyActivity : BaseActivity<ActivityEditStudyBinding, EditStudyViewMo
             Toast.makeText(this, "스터디 카테고리를 확인해주세요.", Toast.LENGTH_SHORT).show()
         } else if (!isIntroduce) {
             Toast.makeText(this, "스터디 설명을 확인해주세요.", Toast.LENGTH_SHORT).show()
-        } else if (fileName == null || realpath == null) {
-            Toast.makeText(this, "이미지 파일을 찾지 못했습니다. 이미지를 다시 등록해주세요.", Toast.LENGTH_SHORT).show()
         } else {
-            var file = File(realpath)
-            if (file != null) {
-                uploadWithTransferUtilty(fileName!!, file)
-                imageUrl = getString(R.string.s3_coworker_study_url) + fileName
+            var haveimg = true
+            loding.showDialog(this)
 
-            var categorys = categorys.joinToString("|")
-            var password =
-                if (viewDataBinding.makeStudyCheckPw.isChecked) viewDataBinding.makeStudyEdtPw.editText?.text.toString() else null
-
-            viewModel.setEditStudyData(
-                studyIndex,
-                viewDataBinding.makeStudyEdtName.editText?.text.toString(),
-                categorys,
-                imageUrl!!,
-                password,
-                viewDataBinding.makeStudyEdtNum.editText?.text.toString().toInt(),
-                viewDataBinding.makeStudyEdtIntroduce.editText?.text.toString()
-            )
-            }else{
-                Toast.makeText(this, "이미지 파일을 찾지 못했습니다. 이미지를 다시 등록해주세요.", Toast.LENGTH_SHORT).show()
+            if (fileName != null ){
+                var file = File(realpath)
+                if(file != null){
+                    uploadWithTransferUtilty(fileName!!,file)
+                    imageUrl = getString(R.string.s3_coworker_study_url) + fileName
+                }else{
+                    Toast.makeText(this, "스터디 이미지를 가져오지 못했습니다. 다시 설정해주세요.", Toast.LENGTH_SHORT).show()
+                    haveimg = false
+                }
             }
+            if(haveimg){
+                var categorys = categorys.joinToString("|")
+                var password =
+                    if (viewDataBinding.makeStudyCheckPw.isChecked) viewDataBinding.makeStudyEdtPw.editText?.text.toString() else null
 
+                viewModel.setEditStudyData(
+                    studyIndex,
+                    viewDataBinding.makeStudyEdtName.editText?.text.toString(),
+                    categorys,
+                    imageUrl!!,
+                    password,
+                    viewDataBinding.makeStudyEdtNum.editText?.text.toString().toInt(),
+                    viewDataBinding.makeStudyEdtIntroduce.editText?.text.toString())
+            }
         }
     }
 
@@ -365,7 +369,6 @@ class EditStudyActivity : BaseActivity<ActivityEditStudyBinding, EditStudyViewMo
             "https://coworker-study.s3.ap-northeast-2.amazonaws.com/basicImage2.jpg",
             "https://coworker-study.s3.ap-northeast-2.amazonaws.com/basicImage3.jpg"
         )
-
 
         mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_select_image, null)
         val mBuilder = AlertDialog.Builder(this).setView(mDialogView)

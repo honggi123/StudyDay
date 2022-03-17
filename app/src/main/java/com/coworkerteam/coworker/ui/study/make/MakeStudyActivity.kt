@@ -407,7 +407,6 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
                     viewDataBinding.makeStudyEdtIntroduce.editText?.text.toString()
                 )
             }
-
         }
     }
 

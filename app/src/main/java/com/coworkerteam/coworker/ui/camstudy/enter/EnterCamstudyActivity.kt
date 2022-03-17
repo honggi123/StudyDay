@@ -101,6 +101,8 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
                 viewDataBinding.imageButton3.isSelected = true
 
                 viewDataBinding.enterCamstudyBtnEnter.setOnClickListener(View.OnClickListener {
+
+
                     viewModel.getCamstduyInstanceData(dataIntent!!.result.studyInfo.link)
                 })
             }

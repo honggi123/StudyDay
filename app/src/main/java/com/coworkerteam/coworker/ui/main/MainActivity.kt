@@ -59,12 +59,10 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
 
     val passwordDialog = PasswordDialog()
 
-
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
-
 
     override fun initStartView() {
         super.initStartView()
@@ -119,13 +117,11 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                 }).show()
         }
         init()
-
     }
 
     override fun onResume() {
         super.onResume()
         checkdate()
-
     }
 
 
@@ -210,9 +206,9 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                     )
 
                     //내스터디
-                   // var myStudyAdepter = MainTodolistAdapter(this, viewModel)
-                   // myStudyAdepter.datas = it.body()!!.result[0].todo.toMutableList()
-                   // viewDataBinding.mainTodolistRecylerView.adapter = myStudyAdepter
+                    // var myStudyAdepter = MainTodolistAdapter(this, viewModel)
+                    // myStudyAdepter.datas = it.body()!!.result[0].todo.toMutableList()
+                    // viewDataBinding.mainTodolistRecylerView.adapter = myStudyAdepter
 
                     setData = true
                     NewStudy_init()
@@ -323,7 +319,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
 
     fun init() {
         //스피너
-        val data = arrayOf("일일스터디", "그룹스터디")
+        val data = arrayOf("간편스터디", "그룹스터디")
 
         val adapter = ArrayAdapter(this, R.layout.spinner_item_selected, data)
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
@@ -340,7 +336,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                 position: Int,
                 id: Long
             ) {
-                if (parent.getItemAtPosition(position).toString() == "일일스터디") {
+                if (parent.getItemAtPosition(position).toString() == "간편스터디") {
                     NewStudyShowOpen = true
                     if (setData) {
                         NewStudy_init()
@@ -365,7 +361,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                 position: Int,
                 id: Long
             ) {
-                if (parent.getItemAtPosition(position).toString() == "일일스터디") {
+                if (parent.getItemAtPosition(position).toString() == "간편스터디") {
                     RecommendStudyShowOpen = true
                     if (setData) {
                         Recommend_init()
@@ -396,13 +392,9 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                 id: Long
             ) {
                 if (parent.getItemAtPosition(position).toString() == "어제") {
-
                 } else if(parent.getItemAtPosition(position).toString() == "최근 1주일"){
-
                 }else{
-
                 }
-
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {

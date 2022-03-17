@@ -73,7 +73,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
                             android:fontFamily="@font/notosans_medium_hestia"
-                            android:text="참여했던 일일스터디"
+                            android:text="참여했던 간편스터디"
                             android:textColor="@color/black"
                             android:textSize="18sp"
                             app:layout_constraintStart_toStartOf="@+id/guideline21"

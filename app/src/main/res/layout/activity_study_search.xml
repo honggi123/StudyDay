@@ -239,7 +239,7 @@
                         android:id="@+id/study_serarch_tab_daily"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="일일스터디" />
+                        android:text="간편스터디" />
 
                     <com.google.android.material.tabs.TabItem
                         android:id="@+id/study_serarch_tab_group"
