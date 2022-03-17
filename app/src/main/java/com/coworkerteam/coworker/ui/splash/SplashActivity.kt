@@ -3,7 +3,14 @@ package com.coworkerteam.coworker.ui.splash
 import android.widget.Toast
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.Button
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
 import com.coworkerteam.coworker.data.local.prefs.PreferencesHelper
@@ -28,9 +35,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     override val viewModel: SplashViewModel by viewModel()
 
     override fun initStartView() {
+
         //프로그래스바 로딩 이미지 세팅
         viewDataBinding.spinKit.setIndeterminateDrawable(Wave())
     }
+
+
 
     override fun initDataBinding() {
         viewModel.AutoLoginResponseLiveData.observe(this, androidx.lifecycle.Observer {

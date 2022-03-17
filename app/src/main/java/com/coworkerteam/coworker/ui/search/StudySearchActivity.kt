@@ -83,6 +83,7 @@ class StudySearchActivity :
 
         init()
         fragment_init()
+        checkdate()
     }
 
     override fun initDataBinding() {

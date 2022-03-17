@@ -1,24 +1,34 @@
 package com.coworkerteam.coworker.ui.base
 
+import android.app.AlarmManager
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.MenuItem
+import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import com.coworkerteam.coworker.data.local.notice.NoticeDialog
 import com.coworkerteam.coworker.ui.dialog.ProgressDialog
 import com.coworkerteam.coworker.ui.login.LoginActivity
 import com.coworkerteam.coworker.utils.FirebaseAnalyticsUtils
 import com.coworkerteam.coworker.utils.NetworkUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.android.ext.android.get
+import java.text.SimpleDateFormat
+import java.time.DayOfWeek
+import java.util.*
 
 open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCompatActivity() {
     lateinit var viewDataBinding: T
@@ -51,7 +61,6 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-
         //데이터 바인딩 초기화
         viewDataBinding = DataBindingUtil.setContentView(this, layoutResourceID)
 
@@ -145,4 +154,44 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(loginIntent)
     }
+
+
+    fun checkdate(){
+
+        var currentDate = Date();
+
+        var calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+
+        var dayOfWeekNumber = calendar.get(Calendar.DAY_OF_WEEK);
+        Log.d("CHECKTIME","dayOfWeekNumber" + dayOfWeekNumber)
+        if(dayOfWeekNumber == 5){
+            checktime(dayOfWeekNumber)
+        }else if(dayOfWeekNumber == 6){
+            checktime(dayOfWeekNumber)
+        }
+    }
+
+    fun checktime(dayOfWeek: Int){
+
+
+        var now = System.currentTimeMillis();
+        var currentTime = Date(now);
+        var dateFormat = SimpleDateFormat("HH:mm");
+        var nowTime = dateFormat.format(currentTime);
+
+        var splitTime = nowTime.split(":");
+
+        if(dayOfWeek == 5){
+            if(splitTime[0].toInt() >= 20){
+                NoticeDialog().showDialog(this)
+            }
+        }else{
+            if(splitTime[0].toInt() < 6){
+                NoticeDialog().showDialog(this)
+            }
+        }
+    }
+
+
 }

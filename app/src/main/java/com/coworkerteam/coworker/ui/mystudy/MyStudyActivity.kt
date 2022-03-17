@@ -83,6 +83,8 @@ class MyStudyActivity : NavigationActivity<ActivityMyStudyBinding, MyStudyViewMo
             viewModel.getEnterCamstduyData(i, s)
             firebaseLog.addLog(TAG,"check_study_password")
         }
+        checkdate()
+
     }
 
     override fun initDataBinding() {

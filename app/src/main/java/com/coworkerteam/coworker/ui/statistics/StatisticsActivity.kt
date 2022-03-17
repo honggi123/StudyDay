@@ -260,6 +260,7 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
                 }
             }
         })
+        checkdate()
     }
 
     override fun initAfterBinding() {

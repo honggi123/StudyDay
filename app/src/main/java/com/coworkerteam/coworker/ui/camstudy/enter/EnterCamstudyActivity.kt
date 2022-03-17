@@ -111,6 +111,8 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
             .setDeniedMessage("앱의 카메라, 마이크 권한을 허용해야 정상적으로 캠스터디를 이용할 수 있습니다. 해당 권한을 [설정] > [권한] 에서 허용해주세요.")
             .setPermissions(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
             .check()
+
+        checkdate()
     }
 
     override fun initDataBinding() {

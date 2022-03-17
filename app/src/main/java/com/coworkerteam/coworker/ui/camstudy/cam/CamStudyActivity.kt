@@ -406,6 +406,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     }
 
+
     fun spinnerInit(view: View?, members: MutableList<String>) {
         if (view != null) {
             //스피너

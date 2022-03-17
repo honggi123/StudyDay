@@ -17,6 +17,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
+import com.coworkerteam.coworker.data.local.notice.NoticeDialog
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityMainBinding
 import com.coworkerteam.coworker.ui.base.NavigationActivity
@@ -28,19 +29,11 @@ import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
-import com.google.android.material.snackbar.Snackbar
+
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
-import com.google.android.play.core.appupdate.AppUpdateInfo
-import com.google.android.play.core.appupdate.AppUpdateManager
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory
-import com.google.android.play.core.install.InstallState
-import com.google.android.play.core.install.InstallStateUpdatedListener
-import com.google.android.play.core.install.model.AppUpdateType
-import com.google.android.play.core.install.model.InstallStatus
-import com.google.android.play.core.install.model.UpdateAvailability
-import com.google.android.play.core.tasks.Task
+
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
@@ -78,7 +71,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
         loding.showDialog(this)
 
         viewDataBinding.activitiy = this
-
 
         //툴바 세팅
         var main_toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.main_toolber)
@@ -127,8 +119,14 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                 }).show()
         }
         init()
+
     }
 
+    override fun onResume() {
+        super.onResume()
+        checkdate()
+
+    }
 
 
     override fun initDataBinding() {

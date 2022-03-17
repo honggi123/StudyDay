@@ -61,6 +61,7 @@ class TodoListActivity : NavigationActivity<ActivityTodoListBinding, TodoListVie
         supportActionBar?.title = "투두리스트"
 
         init()
+        checkdate()
     }
 
     override fun initDataBinding() {
