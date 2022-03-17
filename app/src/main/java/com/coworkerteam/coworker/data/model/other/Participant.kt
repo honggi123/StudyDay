@@ -12,6 +12,8 @@ class Participant(context: Context, name: String) {
     var itemView: CamStudyItemView = CamStudyItemView(context)
     var timer: CamStudyTimer
 
+    var mirrormode = true
+
     var peer: PeerConnection? = null
 
     var remoteVideoTrack: VideoTrack? = null
@@ -50,7 +52,6 @@ class Participant(context: Context, name: String) {
         remoteVideoTrack?.setEnabled(isVideo)
         videorender = VideoRenderer(itemView.surfaceView)
         remoteVideoTrack?.addRenderer(videorender)
-
     }
 
 
@@ -113,6 +114,16 @@ class Participant(context: Context, name: String) {
         }
 
         peer?.close()
+    }
+
+    fun horizontalflipcamera(){
+        if(mirrormode){
+            itemView.surfaceView.setMirror(false)
+            mirrormode = false
+        }else{
+            itemView.surfaceView.setMirror(true)
+            mirrormode = true
+        }
     }
 
 

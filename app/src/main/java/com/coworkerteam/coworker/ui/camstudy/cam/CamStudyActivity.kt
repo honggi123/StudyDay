@@ -46,6 +46,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     private var chat_rv: RecyclerView? = null
 
+    private var ClickEndBackBtn = false    // 프로세스 종료로 캠스터디를 종료했을때와 종료, 뒤로가기 버튼을 클릭해서 종료했을때를 구분 false : 프로세스 종료 / true : 종료, 뒤로가기 버튼 클릭
     lateinit var mainMoveIntent : Intent
 
     companion object {
@@ -62,11 +63,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     var page = 1
 
     var context : Context = this
-
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-
-    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun initStartView() {
@@ -135,11 +131,13 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     override fun onDestroy() {
         super.onDestroy()
-        //FelxboxLayout 초기화
+        Log.d(TAG,"ondestroy")
 
         viewDataBinding.camStudyFelxboxLayout.removeAllViews()
         viewDataBinding.unbind()
 
+        //FelxboxLayout 초기화
+        /*
         //서비스랑 메신저 연결 해제
         val connectMsg = Message.obtain(null, CamStudyService.MSG_CLIENT_DISCNNECT)
         connectMsg.replyTo = mClientCallback
@@ -148,6 +146,12 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             mServiceCallback!!.send(connectMsg)
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+         */
+        // 프로세스 종료로 캠스터디를 종료 할 경우 서비스를 종료시켜준다.
+        if(!ClickEndBackBtn){
+            unbindService(mConnection)
+            stopService(Intent(this, CamStudyService::class.java))
         }
     }
 
@@ -189,6 +193,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
         btn_end.setOnClickListener(View.OnClickListener {
             //종료하기 캠스터디
+            ClickEndBackBtn = true
             val msg: Message = Message.obtain(null, CamStudyService.MSG_COMSTUDY_LEFT)
             sendHandlerMessage(msg)
         })
@@ -198,7 +203,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         btn_play.isSelected = CamStudyService.isPlay
 
         if(CamStudyService.isPermissions) {
-
             btn_mic.setOnClickListener(View.OnClickListener {
                 val msg: Message = Message.obtain(null, CamStudyService.MSG_HOST_AUDIO_ON_OFF)
 
@@ -208,7 +212,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     it.isSelected = true
 
                     firebaseLog.addLog(TAG,"audio_off")
-
                 } else {
                     CamStudyService.isAudio = true
                     msg.obj = "on"
@@ -401,7 +404,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
          */
 
-
     }
 
     fun spinnerInit(view: View?, members: MutableList<String>) {
@@ -584,6 +586,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     override fun onBackPressed() {
 
+        ClickEndBackBtn = true
         // 캠스터디 종료 확인 다이얼로그
         val mDialogView =
             LayoutInflater.from(context).inflate(R.layout.dialog_camstudyout, null)
@@ -678,15 +681,14 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     btn_camera.isSelected = true
                 }
                 CamStudyService.MSG_SERVICE_FINISH -> {
-                    mainMoveIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    mainMoveIntent.putExtra("KickFromLeader",kick)
-                    Log.d(TAG,"강퇴 여부 : "+kick)
-                    startActivity(mainMoveIntent)
+                    if(ClickEndBackBtn){
+                        mainMoveIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        mainMoveIntent.putExtra("KickFromLeader",kick)
+                        Log.d(TAG,"강퇴 여부 : "+kick)
+                        startActivity(mainMoveIntent)
+                    }
                     if(!isFinishing) finish()
-
                 }
-
-
             }
         }
     }

@@ -459,7 +459,7 @@ class TodoListActivity : NavigationActivity<ActivityTodoListBinding, TodoListVie
             val txt_todo = mDialogView.findViewById<TextInputLayout>(R.id.dialog_todolist_edt_edit)
             val btn_cancle =
                 mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_cancle)
-            val btn_add = mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_remove)
+            val btn_add = mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_add)
             var todoCheck = false
 
             if (selectData.equals(getToday())) {

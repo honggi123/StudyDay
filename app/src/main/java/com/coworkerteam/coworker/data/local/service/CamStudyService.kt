@@ -51,6 +51,8 @@ class CamStudyService : Service() {
 
     var socket: Socket? = null
 
+    var participantMe : Participant? = null
+
     lateinit var hostname: String
     lateinit var room: String
     var instance: String? = null
@@ -635,14 +637,14 @@ class CamStudyService : Service() {
 
     private fun makeMe(): Participant {
         Log.e(TAG,": make me")
-        var participantMe = Participant(this, hostname)
+         participantMe = Participant(this, hostname)
 
-        participantMe.settingDevice(isVideo!!, isAudio!!)
-        participantMe.timer.init(timer!!.toDouble());
-        participantMe.timer.startStudyTimer()
-        participantMe.timer.setTextTime(timer!!.toDouble())
+        participantMe!!.settingDevice(isVideo!!, isAudio!!)
+        participantMe!!.timer.init(timer!!.toDouble());
+        participantMe!!.timer.startStudyTimer()
+        participantMe!!.timer.setTextTime(timer!!.toDouble())
 
-        return participantMe
+        return participantMe as Participant
     }
 
     private fun getParticipant(name: String): Participant {
@@ -802,9 +804,11 @@ class CamStudyService : Service() {
     }
 
     private fun switchCamera() {
+        Log.d(TAG," : switchCamera")
         if (videoCapturer != null) {
             if (videoCapturer is CameraVideoCapturer) {
                 val cameraVideoCapturer = videoCapturer as CameraVideoCapturer
+                participantMe!!.horizontalflipcamera()
                 cameraVideoCapturer.switchCamera(null)
             } else {
                 // Will not switch camera, video capturer is not a camera
@@ -988,7 +992,6 @@ class CamStudyService : Service() {
             }
         }
     }
-
 }
 
 

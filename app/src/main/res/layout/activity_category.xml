@@ -44,7 +44,7 @@
             android:paddingTop="10dp"
             android:paddingRight="15dp"
             android:paddingBottom="10dp"
-            android:text="자기계발"
+            android:text="자기개발"
             android:textColor="@color/category_text"
             android:textSize="14sp"
             android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"

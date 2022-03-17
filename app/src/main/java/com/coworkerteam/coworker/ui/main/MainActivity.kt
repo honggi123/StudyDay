@@ -2,7 +2,6 @@ package com.coworkerteam.coworker.ui.main
 
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_FORWARD_RESULT
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -29,12 +28,23 @@ import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import com.google.android.play.core.appupdate.AppUpdateInfo
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallState
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
+import com.google.android.play.core.tasks.Task
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
+
 
 class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
 
@@ -56,17 +66,19 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
 
     val passwordDialog = PasswordDialog()
 
+
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
     }
+
 
     override fun initStartView() {
         super.initStartView()
         loding.showDialog(this)
 
         viewDataBinding.activitiy = this
+
 
         //툴바 세팅
         var main_toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.main_toolber)
@@ -710,5 +722,11 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
         startActivity(intent)
         finish()
     }
+
+
+
+
+
+
 
 }

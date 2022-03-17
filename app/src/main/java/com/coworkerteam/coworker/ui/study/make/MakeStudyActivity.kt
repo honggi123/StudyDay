@@ -330,23 +330,23 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
         })
 
         btn_import.setOnClickListener(View.OnClickListener {
-                val permissionListener:PermissionListener = object:PermissionListener{
-                    override fun onPermissionGranted() {
-                        //권한 허가시 실행할 내용
-                        val intent = Intent(Intent.ACTION_PICK)
-                        intent.type = MediaStore.Images.Media.CONTENT_TYPE
-                        intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                        startForResult.launch(intent)
+            val permissionListener:PermissionListener = object:PermissionListener{
+                override fun onPermissionGranted() {
+                    //권한 허가시 실행할 내용
+                    val intent = Intent(Intent.ACTION_PICK)
+                    intent.type = MediaStore.Images.Media.CONTENT_TYPE
+                    intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                    startForResult.launch(intent)
 
-                        firebaseLog.addLog(TAG,"select_image")
-                    }
-
-                    override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
-                        // 권한 거부시 실행  할 내용
-                        Toast.makeText(this@MakeStudyActivity,"권한을 허용하지 않으면 사진을 불러올 수 없습니다.",Toast.LENGTH_SHORT).show()
-                    }
+                    firebaseLog.addLog(TAG,"select_image")
                 }
-                TedPermission.create()
+
+                override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+                    // 권한 거부시 실행  할 내용
+                    Toast.makeText(this@MakeStudyActivity,"권한을 허용하지 않으면 사진을 불러올 수 없습니다.",Toast.LENGTH_SHORT).show()
+                }
+            }
+            TedPermission.create()
                 .setPermissionListener(permissionListener)
                 .setDeniedMessage("앱의 저장소 접근 권한을 허용해야 이미지를 불러올 수 있습니다. 해당 권한을 [설정] > [권한] 에서 허용해주세요.")
                 .setPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -378,33 +378,36 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
             Toast.makeText(this, "스터디 카테고리를 확인해주세요.", Toast.LENGTH_SHORT).show()
         } else if (!isIntroduce) {
             Toast.makeText(this, "스터디 설명을 확인해주세요.", Toast.LENGTH_SHORT).show()
-        }  else if (fileName == null || realpath == null) {
-            Toast.makeText(this, "이미지 파일을 찾지 못했습니다. 이미지를 다시 등록해주세요.", Toast.LENGTH_SHORT).show()
-        }else {
-            var file = File(realpath)
+        } else {
+            var haveimg = true
             loding.showDialog(this)
-            if (file != null) {
-                Log.d(TAG,"filename : "+fileName + ", realpath : " + realpath)
-                uploadWithTransferUtilty(fileName!!, File(realpath))
-                imageUrl = getString(R.string.s3_coworker_study_url) + fileName
 
-
-            var categorys = categorys.joinToString("|")
-            var password =
-                if (viewDataBinding.makeStudyCheckPw.isChecked) viewDataBinding.makeStudyEdtPw.editText?.text.toString() else null
-
-            viewModel.setMakeStudyData(
-                studyType!!,
-                viewDataBinding.makeStudyEdtName.editText?.text.toString(),
-                categorys,
-                imageUrl!!,
-                password,
-                viewDataBinding.makeStudyEdtNum.editText?.text.toString().toInt(),
-                viewDataBinding.makeStudyEdtIntroduce.editText?.text.toString()
-            )
-        }else{
-                Toast.makeText(this, "이미지 파일을 찾지 못했습니다. 이미지를 다시 등록해주세요.", Toast.LENGTH_SHORT).show()
+            if (fileName != null ) {
+                var file = File(realpath)
+                if(file != null){
+                    uploadWithTransferUtilty(fileName!!,file)
+                    imageUrl = getString(R.string.s3_coworker_study_url) + fileName
+                }else{
+                    Toast.makeText(this, "스터디 이미지를 가져오지 못했습니다. 다시 설정해주세요.", Toast.LENGTH_SHORT).show()
+                    haveimg = false
+                }
             }
+            if(haveimg){
+                var categorys = categorys.joinToString("|")
+                var password =
+                    if (viewDataBinding.makeStudyCheckPw.isChecked) viewDataBinding.makeStudyEdtPw.editText?.text.toString() else null
+
+                viewModel.setMakeStudyData(
+                    studyType!!,
+                    viewDataBinding.makeStudyEdtName.editText?.text.toString(),
+                    categorys,
+                    imageUrl!!,
+                    password,
+                    viewDataBinding.makeStudyEdtNum.editText?.text.toString().toInt(),
+                    viewDataBinding.makeStudyEdtIntroduce.editText?.text.toString()
+                )
+            }
+
         }
     }
 

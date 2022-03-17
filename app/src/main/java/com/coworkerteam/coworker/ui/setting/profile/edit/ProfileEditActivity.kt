@@ -60,17 +60,28 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 var uri = result.data!!.data
+                var haveimg = true
                 profileManageResponse.img = uri.toString()
                 is_edit = true
 
-                if (uri != null) {
+                if(uri != null){
                     realpath = getPathFromUri(uri)
                     Log.d(TAG, realpath.toString())
-
-                    fileName = getFileName(realpath!!)
+                }else{
+                    Toast.makeText(this,"사진을 가져오지 못했습니다. 다시 등록 해주세요.", Toast.LENGTH_SHORT).show()
+                    haveimg = false
                 }
-                Glide.with(this).load(uri)
-                    .into(findViewById(R.id.my_profile_edit_img))
+
+                if(haveimg == true){
+                    if (realpath != null) {
+                        Glide.with(this).load(uri)
+                            .into(findViewById(R.id.my_profile_edit_img))
+                        Log.d(TAG, realpath.toString())
+                        fileName = getFileName(realpath!!)
+                    }else{
+                        Toast.makeText(this,"사진을 가져오지 못했습니다. 다시 등록 해주세요.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
 
@@ -275,8 +286,13 @@ class ProfileEditActivity : BaseActivity<ActivityProfileEditBinding, ProfileEdit
                         when (nickname_check) {
                             "true", "" -> {
                                 firebaseLog.addLog(TAG,"edit_profile")
-                                if(fileName!=null) {
-                                    uploadWithTransferUtilty(fileName!!, File(realpath), this)
+                                if(fileName!=null ) {
+                                    var file = File(realpath)
+                                    if(file != null){
+                                        uploadWithTransferUtilty(fileName!!, file, this)
+                                    }else{
+                                        Toast.makeText(this,"프로필 사진을 다시 등록해주세요.", Toast.LENGTH_SHORT).show()
+                                    }
                                 }else{
                                     viewModel.setProfileEditData(viewDataBinding.myProfileEditNickname.editText?.text.toString(),categorys.joinToString("|"),profileManageResponse.img)
                                 }

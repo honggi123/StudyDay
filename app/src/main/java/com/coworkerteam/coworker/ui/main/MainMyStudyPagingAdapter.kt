@@ -72,6 +72,8 @@ class MainMyStudyPagingAdapter(private val viewModel: MainViewModel) :
 
             if (!item.isLeader) {
                 leader.visibility = View.GONE
+            }else{
+                leader.visibility = View.VISIBLE
             }
 
             studyName.text = item.name

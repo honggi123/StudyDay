@@ -429,7 +429,6 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
             viewDataBinding.statisticsMenthly.isSelected = false
             viewModel.getStatisticsData("old", selectDate, period)
             setRangeTime(selectDate)
-
             firebaseLog.addLog(TAG,"show_weekly")
         } else if (name.equals("월간")) {
             period = "month"
@@ -440,7 +439,6 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
 
             firebaseLog.addLog(TAG,"show_monthly")
         }
-
     }
 
     fun dateRangeComputer(today: String): String {
@@ -455,8 +453,9 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
 
         cal.firstDayOfWeek = Calendar.MONDAY
 
-        var dayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - cal.firstDayOfWeek
 
+        var dayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - cal.firstDayOfWeek
+        Log.d(TAG,"dayOfWeek : " + dayOfWeek)
 
         if (period.equals("month")) {
             cal.set(Calendar.DAY_OF_MONTH, 1)
@@ -465,6 +464,9 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
             val lastDay = dateFormat.format(cal.time)
             return firstDay + " ~ " + lastDay
         } else {
+            if(dayOfWeek == -1){
+                dayOfWeek = 6
+            }
             cal.add(Calendar.DAY_OF_MONTH, -dayOfWeek)
             val firstDay = dateFormat.format(cal.time)
             cal.add(Calendar.DAY_OF_MONTH, 6);

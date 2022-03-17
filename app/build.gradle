@@ -186,4 +186,8 @@ dependencies {
     implementation files('libs/autobanh.jar')
     implementation files('libs/base_java.jar')
     implementation files('libs/libjingle_peerconnection.jar')
+
+    //앱 업데이트 관련
+    implementation 'com.google.android.play:core:1.6.1'
+
 }

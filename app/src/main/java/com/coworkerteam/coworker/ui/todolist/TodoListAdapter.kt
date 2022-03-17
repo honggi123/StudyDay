@@ -51,9 +51,11 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
             if (item.isComplete) {
                 checkbox.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
                 checkbox.setTextColor(Color.GRAY)
+                checkbox.isChecked = true
             } else {
                 checkbox.paintFlags = 0
                 checkbox.setTextColor(Color.BLACK)
+                checkbox.isChecked = false
             }
 
             var items = item
@@ -98,8 +100,8 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
                                 mDialogView.findViewById<TextInputLayout>(R.id.dialog_todolist_edt_edit)
                             val btn_cancle =
                                 mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_cancle)
-                            val btn_remove =
-                                mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_remove)
+                            val btn_edit =
+                                mDialogView.findViewById<Button>(R.id.dialog_todolist_edt_btn_edit)
                             var todoCheck = true
 
                             txt_day.editText?.setText(items.createDate)
@@ -126,7 +128,7 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
                                 builder.dismiss()
                             })
 
-                            btn_remove.setOnClickListener(View.OnClickListener {
+                            btn_edit.setOnClickListener(View.OnClickListener {
                                 if (todoCheck) {
                                     editTodolist(
                                         items.createDate,
@@ -183,5 +185,4 @@ class TodoListAdapter(private val context: Context, private val viewModel: TodoL
 
         notifyDataSetChanged()
     }
-
 }
