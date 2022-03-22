@@ -48,7 +48,6 @@ class CamStudyViewModel(private val model: UserRepository) : BaseViewModel() {
                                     _CamstduyLeaveResponseLiveData.postValue(this)
                                 }
                             }
-
                         }
                     }, {
                         Log.d(TAG, "response error, message : ${it.message}")

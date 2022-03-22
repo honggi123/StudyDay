@@ -115,7 +115,6 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
                                     _EnterCamstudyResponseLiveData.postValue(it)
                                 }
                             }
-
                         }
                     }, {
                         Log.d(TAG, "response error, message : ${it.message}")

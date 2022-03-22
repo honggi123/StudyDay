@@ -14,6 +14,7 @@ import androidx.core.view.GravityCompat
 import androidx.databinding.ViewDataBinding
 import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
+import com.coworkerteam.coworker.data.UserRepository
 import com.coworkerteam.coworker.ui.main.MainActivity
 import com.coworkerteam.coworker.ui.mystudy.MyStudyActivity
 import com.coworkerteam.coworker.ui.search.StudySearchActivity
@@ -22,6 +23,7 @@ import com.coworkerteam.coworker.ui.statistics.StatisticsActivity
 import com.coworkerteam.coworker.ui.todolist.TodoListActivity
 import com.google.android.material.navigation.NavigationView
 import de.hdodenhof.circleimageview.CircleImageView
+import org.koin.android.ext.koin.androidApplication
 
 open abstract class NavigationActivity<T : ViewDataBinding, R : BaseViewModel> :
     BaseActivity<T, R>(),
@@ -29,6 +31,7 @@ open abstract class NavigationActivity<T : ViewDataBinding, R : BaseViewModel> :
 
     abstract val drawerLayout: DrawerLayout
     abstract val navigatinView: NavigationView
+    private val PREF_KEY_CURRENT_USER_NAME = "PREF_KEY_CURRENT_USER_NAME"
 
     fun setNavigaionProfileImage(img: String) {
         var navigationHeaderProfile =
@@ -54,6 +57,10 @@ open abstract class NavigationActivity<T : ViewDataBinding, R : BaseViewModel> :
     }
 
     fun setNavigaionNickname(nickname: String) {
+
+        var mPrefs = applicationContext.getSharedPreferences("studyday", Context.MODE_PRIVATE)
+        mPrefs!!.edit().putString(PREF_KEY_CURRENT_USER_NAME, nickname).apply()
+
         navigatinView.getHeaderView(0)
             .findViewById<TextView>(com.coworkerteam.coworker.R.id.navi_nickname).text = nickname
     }

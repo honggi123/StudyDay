@@ -6,9 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <import type="android.view.View" />
-
         <variable
             name="mainResponse"
             type="com.coworkerteam.coworker.data.model.api.MainResponse" />
@@ -37,7 +35,6 @@
         android:fitsSystemWindows="true">
 
         <!-- 툴바 -->
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -64,8 +61,8 @@
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/main_layout_dday"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_width="411dp"
+                        android:layout_height="108dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
@@ -97,7 +94,6 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
-
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
@@ -227,8 +223,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            android:visibility="gone"
-                            android:paddingRight="10dp">
+                            android:paddingRight="10dp"
+                            android:visibility="gone">
 
                             <TextView
                                 android:id="@+id/textView3"
@@ -355,6 +351,61 @@
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/study_script"
+                        android:layout_width="wrap_content"
+                        android:layout_height="200dp"
+                        android:background="@drawable/item_studydescription"
+                        android:onClick="@{(view)->activitiy.showStudyDescription(view)}"
+                        android:padding="15dp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/main_layout_dday">
+
+                        <ImageView
+                            android:id="@+id/imageView17"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:onClick="@{(view)->activitiy.closeStudyDescription(view)}"
+                            bind:layout_constraintEnd_toEndOf="parent"
+                            bind:layout_constraintTop_toTopOf="parent"
+                            bind:srcCompat="@drawable/ic_baseline_cancel_24" />
+
+                        <TextView
+                            android:id="@+id/textView4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="스터디 종류"
+                            android:textColor="#1B1B1B"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            bind:layout_constraintStart_toStartOf="parent"
+                            bind:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/textView6"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="25dp"
+                            android:text=" • 간편스터디\n  참여자가 없는 경우 종료되는 스터디입니다."
+                            android:textColor="#4B4B4B"
+                            bind:layout_constraintStart_toStartOf="parent"
+                            bind:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+                        <TextView
+                            android:id="@+id/textView85"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            android:text=" • 그룹스터디\n  리더가 삭제하기 전까지 유지되는 스터디입니다."
+                            android:textColor="#4B4B4B"
+                            bind:layout_constraintEnd_toEndOf="parent"
+                            bind:layout_constraintStart_toStartOf="parent"
+                            bind:layout_constraintTop_toBottomOf="@+id/textView6" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                     <LinearLayout
                         android:id="@+id/linearLayout2"
                         android:layout_width="0dp"
@@ -404,6 +455,7 @@
                         app:layout_constraintStart_toStartOf="@+id/guideline7"
                         app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
+
                     <TextView
                         android:id="@+id/textView9"
                         android:layout_width="wrap_content"
@@ -432,6 +484,18 @@
                         app:layout_constraintEnd_toStartOf="@+id/guideline8"
                         app:layout_constraintTop_toTopOf="@+id/textView9" />
 
+                    <ImageView
+                        android:id="@+id/infonew"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginEnd="8dp"
+                        android:visibility="visible"
+                        android:onClick="@{(view)->activitiy.showStudyDescription(view)}"
+                        app:layout_constraintBottom_toBottomOf="@+id/main_spinner_new_study"
+                        app:layout_constraintEnd_toStartOf="@+id/main_spinner_new_study"
+                        app:layout_constraintTop_toTopOf="@+id/main_spinner_new_study"
+                        bind:srcCompat="@drawable/ic_baseline_info_24" />
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/main_recommend_study_recylerView"
                         android:layout_width="0dp"
@@ -453,6 +517,19 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/guideline7"
                         app:layout_constraintTop_toBottomOf="@+id/main_spinner_new_study" />
+
+
+                    <ImageView
+                        android:id="@+id/infofit"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginEnd="8dp"
+                        android:onClick="@{(view)->activitiy.showStudyDescription(view)}"
+                        app:layout_constraintBottom_toBottomOf="@+id/main_spinner_dcommend"
+                        app:layout_constraintEnd_toStartOf="@+id/main_spinner_dcommend"
+                        app:layout_constraintTop_toTopOf="@+id/main_spinner_dcommend"
+                        app:layout_constraintVertical_bias="0.4"
+                        bind:srcCompat="@drawable/ic_baseline_info_24" />
 
                     <Spinner
                         android:id="@+id/main_spinner_dcommend"
@@ -488,6 +565,7 @@
                         android:gravity="center_horizontal|center_vertical"
                         android:minHeight="50dp"
                         android:text="신규 스터디가 없습니다."
+
                         android:visibility="@{isNewStudy?View.VISIBLE:View.GONE}"
                         app:layout_constraintEnd_toStartOf="@+id/guideline8"
                         app:layout_constraintStart_toStartOf="@+id/guideline7"
@@ -508,10 +586,10 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/constraintLayout5"
                         android:layout_width="0dp"
-                        android:layout_height="35dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:visibility="gone"
                         android:background="@drawable/main_myranking_background"
+                        android:visibility="gone"
                         app:layout_constraintEnd_toStartOf="@+id/guideline8"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="@+id/guideline7"
@@ -587,15 +665,16 @@
                         android:layout_height="35dp"
                         android:background="@drawable/edit_text"
                         android:dropDownWidth="wrap_content"
-                        android:visibility="gone"
-
                         android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+
                         android:popupBackground="@android:color/white"
                         android:popupElevation="3dp"
                         android:stateListAnimator="@animator/spinner_sla"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
                         app:layout_constraintEnd_toStartOf="@+id/guideline8"
                         app:layout_constraintTop_toTopOf="@+id/linearLayout" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.core.widget.NestedScrollView>
         </LinearLayout>

@@ -47,6 +47,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
     }
 
     override fun initDataBinding() {
+        Log.d(TAG," : initDataBinding")
         viewModel.LoginResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
@@ -137,9 +138,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
                 }
             }
         }
-
         mOAuthLoginModule.startOauthLoginActivity(this, mOAuthLoginHandler);
-
     }
 
     fun moveActivity(is_categoty: Boolean) {

@@ -35,7 +35,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     override val viewModel: SplashViewModel by viewModel()
 
     override fun initStartView() {
-
         //프로그래스바 로딩 이미지 세팅
         viewDataBinding.spinKit.setIndeterminateDrawable(Wave())
     }

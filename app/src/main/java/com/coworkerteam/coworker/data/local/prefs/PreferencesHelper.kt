@@ -34,5 +34,7 @@ interface PreferencesHelper {
         imageUri: String
     )
 
+    fun setLocalNickname(nickname: String)
+
     fun deletePreferencesData()
 }

@@ -35,6 +35,7 @@ class LoginViewModel(private val model: UserRepository) : BaseViewModel() {
 
                         if (this.isSuccessful) {
                             //로그인이 성공적으로 되었으면, User정보를 로컬에 저장한다.
+                            Log.d(TAG," : setPreferencesData")
                             val user = this.body()!!.result[0]
                             model.setPreferencesData(user.accessToken, user.refreshToken, user.nickname, email, loginType, imgUri)
                         }

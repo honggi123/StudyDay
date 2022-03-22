@@ -6,18 +6,19 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.local.notice.NoticeDialog
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityMainBinding
 import com.coworkerteam.coworker.ui.base.NavigationActivity
@@ -29,13 +30,12 @@ import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
-
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
-
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.net.URLEncoder
 import java.text.SimpleDateFormat
 
 
@@ -103,7 +103,10 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
 
         //패스워드 다이얼로그 ok버튼 함수 세팅
         passwordDialog.onClickOKButton = { i: Int, s: String? ->
-            viewModel.getEnterCamstduyData(i, s)
+            var encoded_s = Base64.encodeToString(s?.toByteArray(),0)
+            encoded_s = URLEncoder.encode(encoded_s, "UTF-8")
+            viewModel.getEnterCamstduyData(i, encoded_s)
+
             firebaseLog.addLog(TAG, "check_study_password")
         }
 
@@ -117,6 +120,8 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                 }).show()
         }
         init()
+
+
     }
 
     override fun onResume() {
@@ -134,6 +139,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                     passwordDialog.dismissDialog()
                     startActivity(intent)
                 }
+
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
                     val errorMessage = JSONObject(it.errorBody()?.string())
@@ -143,6 +149,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                     Toast.makeText(this, "스터디에 입장할 수 없습니다. 나중 다시 시도해주세요.", Toast.LENGTH_SHORT)
                         .show()
                 }
+
                 it.code() == 403 -> {
                     val errorMessage = JSONObject(it.errorBody()?.string())
                     Log.e(TAG, errorMessage.getString("message"))
@@ -647,7 +654,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     private fun onTimeSelected(hour: Int, minute: Int): String {
-
         val hourAsText = if (hour < 10) "0$hour" else hour
         val minuteAsText = if (minute < 10) "0$minute" else minute
 
@@ -695,7 +701,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     fun changTime(goalTime: String?): String? {
-
         if (goalTime != null) {
             val time = goalTime.split(":")
             val hour = time[0].toInt() * 60 * 60
@@ -703,7 +708,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
 
             return (hour + minute).toString()
         }
-
         return null
     }
 
@@ -713,9 +717,18 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
         finish()
     }
 
+    fun showStudyDescription(v : View){
+        var study_script = findViewById<ConstraintLayout>(R.id.study_script)
+        if(study_script.visibility !=  View.VISIBLE ){
+            study_script.bringToFront()
+            study_script.visibility = View.VISIBLE
+        }
+    }
 
-
-
+    fun closeStudyDescription(v : View) {
+        var study_script = findViewById<ConstraintLayout>(R.id.study_script)
+        study_script.visibility = View.GONE
+    }
 
 
 

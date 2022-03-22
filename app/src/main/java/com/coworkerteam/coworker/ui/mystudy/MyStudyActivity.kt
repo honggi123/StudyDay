@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
+import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.TextView
@@ -23,6 +24,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.net.URLEncoder
 
 class MyStudyActivity : NavigationActivity<ActivityMyStudyBinding, MyStudyViewModel>() , NavigationView.OnNavigationItemSelectedListener  {
     val TAG = "MyStudyActivity"
@@ -80,6 +82,10 @@ class MyStudyActivity : NavigationActivity<ActivityMyStudyBinding, MyStudyViewMo
 
         //패스워드 다이얼로그 ok버튼 함수 세팅
         passwordDialog.onClickOKButton = {i: Int, s: String? ->
+            var encoded_s = Base64.encodeToString(s?.toByteArray(),0)
+            encoded_s = URLEncoder.encode(encoded_s, "UTF-8")
+            viewModel.getEnterCamstduyData(i, encoded_s)
+
             viewModel.getEnterCamstduyData(i, s)
             firebaseLog.addLog(TAG,"check_study_password")
         }

@@ -79,6 +79,10 @@ class AppPreferencesHelper() : PreferencesHelper {
             .apply()
     }
 
+    override fun setLocalNickname(nickname: String) {
+        setCurrentUserName(nickname)
+    }
+
 
     override fun setPreferencesData(
         accessToken: String,

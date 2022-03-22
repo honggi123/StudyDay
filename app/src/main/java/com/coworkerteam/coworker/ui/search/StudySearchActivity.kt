@@ -2,6 +2,7 @@ package com.coworkerteam.coworker.ui.search
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -23,6 +24,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.firebase.analytics.FirebaseAnalytics
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.net.URLEncoder
 
 class StudySearchActivity :
     NavigationActivity<ActivityStudySearchBinding, StudySearchViewModel>() {
@@ -77,6 +79,10 @@ class StudySearchActivity :
 
         //패스워드 다이얼로그 ok버튼 함수 세팅
         passwordDialog.onClickOKButton = {i: Int, s: String? ->
+            var encoded_s = Base64.encodeToString(s?.toByteArray(),0)
+            encoded_s = URLEncoder.encode(encoded_s, "UTF-8")
+            viewModel.getEnterCamstduyData(i, encoded_s)
+
             viewModel.getEnterCamstduyData(i, s)
             firebaseLog.addLog(TAG,"check_study_password")
         }

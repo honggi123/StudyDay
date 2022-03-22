@@ -8,6 +8,7 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.*
+import android.util.Base64
 import android.util.Log
 import android.view.*
 import android.widget.*
@@ -28,6 +29,7 @@ import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.ceil
@@ -351,7 +353,13 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             val btn_studyUrl_copy =
                 dialogView.findViewById<ImageView>(R.id.camstudy_bottom_menu_link_copy)
 
-            txt_studyUrl.text = studyInfo!!.result.studyInfo.link
+            val array: List<String> = studyInfo!!.result.studyInfo.link.split("=")
+            var pwd = Base64.encodeToString(array[2].encodeToByteArray(),0)
+            pwd = URLEncoder.encode(pwd, "UTF-8")
+            val link = array[0] + array[1] + pwd
+
+           // txt_studyUrl.text = studyInfo!!.result.studyInfo.link
+            txt_studyUrl.text = link
 
             btn_studyUrl_copy.setOnClickListener(View.OnClickListener {
                 val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
@@ -382,7 +390,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 startActivity(intent)
                 dialog.dismiss()
             })
-
             dialog.show()
         })
 
@@ -401,9 +408,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             setPage()
             addCamStudyItemView()
         })
-
          */
-
     }
 
 
@@ -537,7 +542,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     }
 
     fun addCamStudyItemView() {
-
         val startIndex = 6 * ( page-1 )
         var endIndex = startIndex + 5
         val maxIndex = CamStudyService.peerConnection.keys.size -1
@@ -586,7 +590,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
 
     override fun onBackPressed() {
-
         ClickEndBackBtn = true
         // 캠스터디 종료 확인 다이얼로그
         val mDialogView =

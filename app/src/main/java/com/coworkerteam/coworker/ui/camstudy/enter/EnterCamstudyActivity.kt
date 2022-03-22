@@ -2,29 +2,30 @@ package com.coworkerteam.coworker.ui.camstudy.enter
 
 import android.Manifest
 import android.content.Intent
+import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.coworkerteam.coworker.data.local.service.CamStudyService
-
 import com.coworkerteam.coworker.R
+import com.coworkerteam.coworker.data.local.service.CamStudyService
 import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
 import com.coworkerteam.coworker.data.model.other.SingleObject.SinglePeerConnectionFactory
 import com.coworkerteam.coworker.databinding.ActivityEnterCamstudyBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.camstudy.CamStudyCategotyAdapter
 import com.coworkerteam.coworker.ui.camstudy.cam.CamStudyActivity
-import com.coworkerteam.coworker.ui.camstudy.info.ParticipantsActivity
-import com.coworkerteam.coworker.ui.main.MainActivity
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.webrtc.*
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCamstudyViewModel>() {
 
@@ -101,7 +102,6 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
                 viewDataBinding.imageButton3.isSelected = true
 
                 viewDataBinding.enterCamstudyBtnEnter.setOnClickListener(View.OnClickListener {
-
 
                     viewModel.getCamstduyInstanceData(dataIntent!!.result.studyInfo.link)
                 })
@@ -257,7 +257,16 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
             switchDevice(it, "camera")
         })
         viewDataBinding.enterCamstudyBtnEnter.setOnClickListener(View.OnClickListener {
-            viewModel.getCamstduyInstanceData(dataIntent!!.result.studyInfo.link)
+
+            var link : String = dataIntent!!.result.studyInfo.link
+            link = Base64.encodeToString(link.toByteArray(),0)
+            link = URLEncoder.encode(link, "UTF-8")
+
+          //  Log.d(TAG,pwd)
+
+            Log.d(TAG,"link : " + link)
+
+            viewModel.getCamstduyInstanceData(link)
         })
     }
 
@@ -269,7 +278,6 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
         myStudyAdepter.datas = categorys.toMutableList()
         rv.adapter = myStudyAdepter
     }
-
 
 
     override fun onDestroy() {
@@ -291,7 +299,6 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
             videoSource!!.dispose()
             videoSource = null
         }
-
 
 
         surface.release()
