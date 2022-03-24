@@ -257,12 +257,10 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
             switchDevice(it, "camera")
         })
         viewDataBinding.enterCamstudyBtnEnter.setOnClickListener(View.OnClickListener {
-
             var link : String = dataIntent!!.result.studyInfo.link
             link = Base64.encodeToString(link.toByteArray(),0)
             link = URLEncoder.encode(link, "UTF-8")
-
-          //  Log.d(TAG,pwd)
+            //  Log.d(TAG,pwd)
 
             Log.d(TAG,"link : " + link)
 

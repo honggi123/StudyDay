@@ -38,15 +38,17 @@
             android:paddingRight="20dp"
             android:paddingBottom="10dp">
 
-            <TextView
+            <EditText
                 android:id="@+id/camstudy_bottom_menu_link"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:focusableInTouchMode="false"
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:gravity="center_vertical"
                 android:singleLine="true"
-                android:text="https://test/study/dsf-xjsdfdjx"
+                android:text="https://test/study/dsf-xjsdfdjx/11111111111111111111111111111111111111111"
                 android:textColor="@color/black" />
 
             <ImageView

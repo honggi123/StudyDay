@@ -43,7 +43,6 @@ class EnterCamstudyViewModel(private val model: UserRepository) : BaseViewModel(
                                     //액세스 토큰 재발급
                                     getReissuanceToken(TAG,model,getCamstduyInstanceData(link))
 
-                                 //   model.setPreferencesData(user.accessToken, user.refreshToken, user.nickname, email, loginType, imgUri)
 
                                 }
                                 it.code() > 500 -> {

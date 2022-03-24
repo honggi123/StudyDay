@@ -14,6 +14,8 @@ data class EnterCamstudyResponse(
         val studyInfo: StudyInfo,
         @SerializedName("userImg")
         val userImg: String
+        //,@SerializedName("nickname")
+        //val nickname: String
     ) : Serializable {
         data class StudyInfo(
             @SerializedName("category")

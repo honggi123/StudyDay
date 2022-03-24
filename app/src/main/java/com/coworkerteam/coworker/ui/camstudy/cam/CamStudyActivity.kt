@@ -195,9 +195,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
         btn_end.setOnClickListener(View.OnClickListener {
             //종료하기 캠스터디
-            ClickEndBackBtn = true
-            val msg: Message = Message.obtain(null, CamStudyService.MSG_COMSTUDY_LEFT)
-            sendHandlerMessage(msg)
+            camStudyut()
         })
 
         btn_mic.isSelected = !CamStudyService.isAudio!!
@@ -353,17 +351,25 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             val btn_studyUrl_copy =
                 dialogView.findViewById<ImageView>(R.id.camstudy_bottom_menu_link_copy)
 
-            val array: List<String> = studyInfo!!.result.studyInfo.link.split("=")
-            var pwd = Base64.encodeToString(array[2].encodeToByteArray(),0)
-            pwd = URLEncoder.encode(pwd, "UTF-8")
-            val link = array[0] + array[1] + pwd
+            val newlink : String
 
+            val array: List<String> = studyInfo!!.result.studyInfo.link.split("=")
+            if(array[2].equals("null")){
+                newlink = studyInfo!!.result.studyInfo.link
+            }else{
+                Log.d(TAG,"array[2] : " + array[2])
+                var pwd = Base64.encodeToString(array[2].encodeToByteArray(),0)
+                pwd = URLEncoder.encode(pwd, "UTF-8")
+                newlink = array[0] + array[1] + "=" + pwd
+            }
+
+            Log.d(TAG,"newlink : " + newlink)
            // txt_studyUrl.text = studyInfo!!.result.studyInfo.link
-            txt_studyUrl.text = link
+            txt_studyUrl.text = newlink
 
             btn_studyUrl_copy.setOnClickListener(View.OnClickListener {
                 val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText("label", studyInfo!!.result.studyInfo.link)
+                val clip = ClipData.newPlainText("label", newlink)
                 clipboard.setPrimaryClip(clip)
 
                 Toast.makeText(this,"클립보드에 복사되었습니다.",Toast.LENGTH_SHORT).show()
@@ -590,6 +596,10 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
 
     override fun onBackPressed() {
+       camStudyut()
+    }
+
+    fun camStudyut(){
         ClickEndBackBtn = true
         // 캠스터디 종료 확인 다이얼로그
         val mDialogView =
@@ -611,8 +621,11 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         btn_out.setOnClickListener(View.OnClickListener {
             val msg: Message = Message.obtain(null, CamStudyService.MSG_COMSTUDY_LEFT)
             sendHandlerMessage(msg)
+            builder.dismiss()
         })
     }
+
+
 
     inner class CallbackHandler(looper: Looper) : Handler(looper) {
         override fun handleMessage(msg: Message) {
@@ -621,7 +634,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 CamStudyService.MSG_SERVICE_CONNECT -> {
                     //연결 성공했을 경우
                     viewDataBinding.camStudyFelxboxLayout.removeAllViews()
-
                     //레이아웃 설정
                     setPage()
                     addCamStudyItemView()

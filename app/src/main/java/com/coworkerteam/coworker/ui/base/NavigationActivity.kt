@@ -46,7 +46,6 @@ open abstract class NavigationActivity<T : ViewDataBinding, R : BaseViewModel> :
         var navigationHeaderLogin =
             navigatinView.getHeaderView(0)
                 .findViewById<CircleImageView>(com.coworkerteam.coworker.R.id.navi_login_image)
-
         if (loginType == "google") {
             navigationHeaderLogin.setImageResource(com.coworkerteam.coworker.R.drawable.btn_google_light_focus)
         } else if (loginType == "kakao") {
@@ -54,10 +53,10 @@ open abstract class NavigationActivity<T : ViewDataBinding, R : BaseViewModel> :
         } else if (loginType == "naver") {
             navigationHeaderLogin.setImageResource(com.coworkerteam.coworker.R.drawable.naver_icon)
         }
+
     }
 
     fun setNavigaionNickname(nickname: String) {
-
         var mPrefs = applicationContext.getSharedPreferences("studyday", Context.MODE_PRIVATE)
         mPrefs!!.edit().putString(PREF_KEY_CURRENT_USER_NAME, nickname).apply()
 

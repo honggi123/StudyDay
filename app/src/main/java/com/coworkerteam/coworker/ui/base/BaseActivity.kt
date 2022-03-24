@@ -173,18 +173,20 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
     }
 
     fun checktime(dayOfWeek: Int){
-
-
         var now = System.currentTimeMillis();
         var currentTime = Date(now);
         var dateFormat = SimpleDateFormat("HH:mm");
         var nowTime = dateFormat.format(currentTime);
 
         var splitTime = nowTime.split(":");
+        Log.d("baseact",dayOfWeek.toString())
+
+        Log.d("baseact",splitTime.toString())
 
         if(dayOfWeek == 5){
             if(splitTime[0].toInt() >= 20){
                 NoticeDialog().showDialog(this)
+                Log.d("baseact",splitTime[0].toString())
             }
         }else{
             if(splitTime[0].toInt() < 6){

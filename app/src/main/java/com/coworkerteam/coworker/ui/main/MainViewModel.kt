@@ -1,5 +1,6 @@
 package com.coworkerteam.coworker.ui.main
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,6 +16,7 @@ import retrofit2.Response
 
 class MainViewModel(private val model: UserRepository) : BaseViewModel() {
     private val TAG = "MainViewModel"
+    private val PREF_KEY_CURRENT_USER_NAME = "PREF_KEY_CURRENT_USER_NAME"
 
     //메인페이지 데이터
     private val _MainResponseLiveData = MutableLiveData<Response<MainResponse>>()
@@ -41,6 +43,11 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
     private val _CheckTodoListResponseLiveData = MutableLiveData<Response<CheckTodolistRequest>>()
     val CheckTodoListResponseLiveData: LiveData<Response<CheckTodolistRequest>>
         get() = _CheckTodoListResponseLiveData
+
+    //랭킹 데이터
+    private val _MainRankResponseLiveData = MutableLiveData<Response<MainRankResponse>>()
+    val MainRankResponseLiveData: LiveData<Response<MainRankResponse>>
+        get() = _MainRankResponseLiveData
 
 
     fun getMainData() {
@@ -97,6 +104,8 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
                             if (isSuccessful) {
                                 it.body()!!.result.studyInfo.idx = studyIdx
                             }
+
+                            //model.setnickname(it.body()!!.result.nickname)
 
                             when {
                                 it.code() == 401 -> {
@@ -162,6 +171,45 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
             )
         } else {
             Log.d(TAG, "setGoalCamstduyData:: accessToken 또는 nickname 값이 없습니다.")
+        }
+    }
+
+    fun getRankData(period: String) {
+        val accessToken = model.getAccessToken()
+        val nickname = model.getCurrentUserName()
+
+        if (!accessToken.isNullOrEmpty() && !nickname.isNullOrEmpty()) {
+            addDisposable(
+                model.getMainRankData(accessToken, nickname, period)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        it.run {
+                            Log.d(TAG, "meta : $it")
+                            when {
+                                it.code() == 401 -> {
+                                    //액세스토큰이 만료된 경우
+                                    Log.d(TAG, "액세스토큰이 만료된 경우")
+
+                                    //액세스 토큰 재발급
+                                    getReissuanceToken(TAG,model,getMainData())
+                                }
+                                it.code() > 500 -> {
+                                    //서비스 서버에 문제가 있을 경우
+                                    setServiceError(TAG, it.errorBody())
+                                }
+                                else -> {
+                                    //그 외에는 값 Activity에 전달 ( 200, 400번대의 경우 )
+                                    _MainRankResponseLiveData.postValue(this)
+                                }
+                            }
+                        }
+                    }, {
+                        Log.d(TAG, "response error, message : ${it.message}")
+                    })
+            )
+        } else {
+            Log.d(TAG, "getMainData:: accessToken 또는 nickname 값이 없습니다.")
         }
     }
 

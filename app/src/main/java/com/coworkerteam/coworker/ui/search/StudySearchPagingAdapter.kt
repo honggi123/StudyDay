@@ -74,16 +74,16 @@ class StudySearchPagingAdapter() :
 
         fun bind(item: StudySearchResponse.Result.Study?) {
             Glide.with(context).load(item!!.img).into(img)
-            Log.e("StudySearchPagingAdapter"+item.idx,item.isLeader.toString())
             if (!item.isLeader) {
                 leader.visibility = View.GONE
-                Log.e("StudySearchPagingAdapter"+item.idx,"isLeader")
             }else{
                 leader.visibility = View.VISIBLE
             }
 
             if(!item.isPw){
                 pw.visibility = View.GONE
+            }else{
+                pw.visibility = View.VISIBLE
             }
 
             studyName.text = item.name

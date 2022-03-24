@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Message
 import android.os.PersistableBundle
 import android.util.Base64
 import android.util.Log
@@ -19,6 +20,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
+import com.coworkerteam.coworker.data.local.service.CamStudyService
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityMainBinding
 import com.coworkerteam.coworker.ui.base.NavigationActivity
@@ -54,10 +56,13 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
     var NewStudyShowOpen: Boolean = true
     var RecommendStudyShowOpen: Boolean = true
     var setData: Boolean = false
+    var showStudyDescription = false
 
     lateinit var pagingMainMyStudyAdapter: MainMyStudyPagingAdapter
 
     val passwordDialog = PasswordDialog()
+    var builder: AlertDialog? = null
+    var studyScriptClickFrom: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
@@ -66,6 +71,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
 
     override fun initStartView() {
         super.initStartView()
+
         loding.showDialog(this)
 
         viewDataBinding.activitiy = this
@@ -103,9 +109,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
 
         //패스워드 다이얼로그 ok버튼 함수 세팅
         passwordDialog.onClickOKButton = { i: Int, s: String? ->
-            var encoded_s = Base64.encodeToString(s?.toByteArray(),0)
-            encoded_s = URLEncoder.encode(encoded_s, "UTF-8")
-            viewModel.getEnterCamstduyData(i, encoded_s)
+            viewModel.getEnterCamstduyData(i, s)
 
             firebaseLog.addLog(TAG, "check_study_password")
         }
@@ -120,8 +124,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                 }).show()
         }
         init()
-
-
     }
 
     override fun onResume() {
@@ -269,6 +271,37 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
             }
         })
 
+        viewModel.MainRankResponseLiveData.observe(this, androidx.lifecycle.Observer {
+            when {
+                it.isSuccessful -> {
+                    viewDataBinding.mainRankResponse = it.body()
+
+                    val nothaverank = findViewById<ConstraintLayout>(R.id.notHaveMyRanking)
+
+                    if(it.body()?.result?.myRank == null){
+                        nothaverank.visibility = View.VISIBLE
+                    }else{
+                        nothaverank.visibility = View.GONE
+                    }
+
+                    firebaseLog.addLog(TAG, "edit_goal")
+                    Log.d(TAG,"rank : " + it.body()?.result)
+                }
+                it.code() == 400 -> {
+
+                    //400번대 에러로 목표 수정이 실패했을 경우, 사용자에게 알려준다.
+                    Toast.makeText(this, "목표 수정에 실패했습니다. 나중에 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 404 -> {
+                    //존재하지 않은 회원일 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    moveLogin()
+                }
+            }
+        })
+
         /*
         viewModel.CheckTodoListResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
@@ -399,8 +432,11 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                 id: Long
             ) {
                 if (parent.getItemAtPosition(position).toString() == "어제") {
+                    viewModel.getRankData("yesterday")
                 } else if(parent.getItemAtPosition(position).toString() == "최근 1주일"){
+                    viewModel.getRankData("week")
                 }else{
+                    viewModel.getRankData("month")
                 }
             }
 
@@ -717,18 +753,41 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
         finish()
     }
 
-    fun showStudyDescription(v : View){
-        var study_script = findViewById<ConstraintLayout>(R.id.study_script)
-        if(study_script.visibility !=  View.VISIBLE ){
-            study_script.bringToFront()
-            study_script.visibility = View.VISIBLE
+    fun showStudyDescription(){
+        Log.d(TAG,"showStudyDescription : "+showStudyDescription)
+        // 스터디 설명 다이얼로그
+        if(showStudyDescription == false){
+            val mDialogView =
+                LayoutInflater.from(this).inflate(R.layout.dialog_studydescription, null)
+            val mBuilder = AlertDialog.Builder(this).setView(mDialogView)
+            builder = mBuilder?.create()
+            builder?.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            builder?.window!!.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            val btn_cancle =
+                mDialogView.findViewById<ImageView>(R.id.dialog_studydescripion_btncancle)
+
+            // 다이얼로그 끄기
+            btn_cancle.setOnClickListener(View.OnClickListener {
+                builder?.dismiss()
+                showStudyDescription = false
+            })
         }
+        showStudyDescription = false
+
+        if(showStudyDescription == true){
+            builder?.dismiss()
+        }else{
+            builder?.show()
+            showStudyDescription = true
+        }
+
     }
 
-    fun closeStudyDescription(v : View) {
-        var study_script = findViewById<ConstraintLayout>(R.id.study_script)
-        study_script.visibility = View.GONE
+    fun makeStudyDialog(){
+
+
     }
+
 
 
 

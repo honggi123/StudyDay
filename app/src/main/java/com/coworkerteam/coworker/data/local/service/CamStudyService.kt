@@ -261,7 +261,6 @@ class CamStudyService : Service() {
             if(instance != null){
                 URL += "?id=$instance"
             }
-
             Log.e(TAG, "REPLACE ME: IO Socket:$URL")
             socket = IO.socket(URL, opts)
             socket!!.on(
@@ -313,6 +312,7 @@ class CamStudyService : Service() {
 
                                         //참여자 프로필 사진을 세팅
                                         participantsResponse.participants.forEach {
+                                            Log.d(TAG,"nickname : " + it.nickname)
                                             foreach(it.nickname)
                                             peerConnection.get(it.nickname)?.itemView?.setProfileImage(
                                                 it.img
@@ -636,7 +636,6 @@ class CamStudyService : Service() {
     }
 
     private fun makeMe(): Participant {
-        Log.e(TAG,": make me")
          participantMe = Participant(this, hostname)
 
         participantMe!!.settingDevice(isVideo!!, isAudio!!)
@@ -679,7 +678,7 @@ class CamStudyService : Service() {
         }
     }
 
-    private fun startStreamingVideo(name: String) {
+    private fun startStreamingVideo(name: String){
         Log.d(TAG, "startStreamingVideo()")
         val mediaStream: MediaStream = factory!!.createLocalMediaStream("ARDAMS")
         if (isPermissions) {
@@ -800,6 +799,7 @@ class CamStudyService : Service() {
                 message.put("audioStatus", if (isAudio == true) "on" else "off")
             }
         }
+        Log.d(TAG,"name : " + hostname)
         return message
     }
 

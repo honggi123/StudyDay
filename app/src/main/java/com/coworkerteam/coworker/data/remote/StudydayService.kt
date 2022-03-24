@@ -69,6 +69,14 @@ interface StudydayService {
         @Path("nickname") nickname: String
     ): Single<Response<MainResponse>>
 
+    @GET("home/rank/{nickname}")
+    fun mainrank(
+        @Header("Authorization") accessToken: String,
+        @Path("nickname") nickname: String,
+        @Query("period") period: String
+    ): Single<Response<MainRankResponse>>
+
+
     @GET("home/my-study/{nickname}")
     fun mainMyStudyPaging(
         @Header("Authorization") accessToken: String,

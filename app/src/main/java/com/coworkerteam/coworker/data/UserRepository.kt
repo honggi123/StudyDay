@@ -44,7 +44,10 @@ interface UserRepository {
         loginType: String,
         imageUri: String
     )
+    fun setnickname (
+        nickname: String
 
+    )
     fun deletePreferencesData()
 
     //api 관련 함수
@@ -99,6 +102,8 @@ interface UserRepository {
 
     fun getMainMyStudyPagingData(): LiveData<PagingData<MainMyStudyPagingResponse.Result.MyStudy>>
 
+    fun getMainRankData(accessToken: String,nickname: String,period: String) : Single<Response<MainRankResponse>>
+
     fun getMyStudyData(accessToken: String, nickname: String): Single<Response<MyStudyResponse>>
 
     fun getMyStudyGroupPagingData(): LiveData<PagingData<MyStudyGroupPagingResponse.Result.Group>>
@@ -115,6 +120,8 @@ interface UserRepository {
     fun setDeleteStudyData(accessToken: String, studyIdx: Int): Single<Response<ApiRequest>>
 
     fun setWithdrawStudyData(accessToken: String, studyIdx: Int): Single<Response<ApiRequest>>
+
+
 
     fun getStudyMemberData(
         accessToken: String,

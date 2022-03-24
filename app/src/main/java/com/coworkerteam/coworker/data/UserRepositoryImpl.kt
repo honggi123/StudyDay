@@ -1,5 +1,7 @@
 package com.coworkerteam.coworker.data
 
+import android.util.Base64
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -14,6 +16,7 @@ import io.reactivex.Single
 import retrofit2.Response
 import retrofit2.http.Header
 import retrofit2.http.Query
+import java.net.URLEncoder
 
 class UserRepositoryImpl(
     private val service: StudydayService,
@@ -100,6 +103,10 @@ class UserRepositoryImpl(
         pref.setPreferencesData(accessToken, refreshToken, nickname, email, loginType, imageUri)
     }
 
+    override fun setnickname(nickname: String) {
+        pref.setLocalNickname(nickname)
+    }
+
     override fun deletePreferencesData() {
         pref.deletePreferencesData()
     }
@@ -177,6 +184,14 @@ class UserRepositoryImpl(
                 MainMyStudyPagingSource(service, pref)
             }
         ).liveData
+    }
+
+    override fun getMainRankData(
+        accessToken: String,
+        nickname: String,
+        period: String
+    ): Single<Response<MainRankResponse>> {
+        return service.mainrank(accessToken, nickname,period)
     }
 
     override fun getMyStudyData(
@@ -404,7 +419,14 @@ class UserRepositoryImpl(
         studyIdx: Int,
         password: String?
     ): Single<Response<EnterCamstudyResponse>> {
-        return service.enterCamStudy(accessToken, studyIdx, password)
+        if(password != null){
+            var encoded_s = Base64.encodeToString(password?.toByteArray(),0)
+            encoded_s = URLEncoder.encode(encoded_s, "UTF-8")
+            return service.enterCamStudy(accessToken, studyIdx, encoded_s)
+        }else{
+            return service.enterCamStudy(accessToken, studyIdx, password)
+        }
+
     }
 
     override fun getCamStudystudyInstanceData(
