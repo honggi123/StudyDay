@@ -23,9 +23,9 @@ class FragmentAdapter(fm: FragmentManager) :
     //tab의 이름 fragment마다 바꾸게 하기
     override fun getPageTitle(position: Int): CharSequence? {
         val title = when (position) {
-            0 -> "일일스터디"
+            0 -> "간편스터디"
             1 -> "그룹스터디"
-            else -> "일일스터디"
+            else -> "간편스터디"
         }
         return title
     }

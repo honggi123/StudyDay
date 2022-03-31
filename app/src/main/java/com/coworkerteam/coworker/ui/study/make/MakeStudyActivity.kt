@@ -11,6 +11,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -54,6 +55,8 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
     var isStudyNum = false
     var categorys = ArrayList<String>()
     var isIntroduce = false
+    var showStudyDescription = false
+    var builder: AlertDialog? = null
 
     val startForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -466,6 +469,35 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
         var result = timestamp + path.substring(extension, path.length)
 
         return result
+    }
+
+
+    fun showStudyDescription(){
+        // 스터디 설명 다이얼로그
+        if(showStudyDescription == false){
+            val mDialogView =
+                LayoutInflater.from(this).inflate(R.layout.dialog_studydescription, null)
+            val mBuilder = AlertDialog.Builder(this).setView(mDialogView)
+            builder = mBuilder?.create()
+            builder?.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            builder?.window!!.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            val btn_cancle =
+                mDialogView.findViewById<ImageView>(R.id.dialog_studydescripion_btncancle)
+
+            // 다이얼로그 끄기
+            btn_cancle.setOnClickListener(View.OnClickListener {
+                builder?.dismiss()
+                showStudyDescription = false
+            })
+        }
+        showStudyDescription = false
+
+        if(showStudyDescription == true){
+            builder?.dismiss()
+        }else{
+            builder?.show()
+            showStudyDescription = true
+        }
     }
 
 }

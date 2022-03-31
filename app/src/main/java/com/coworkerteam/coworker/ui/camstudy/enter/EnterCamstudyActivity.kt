@@ -2,6 +2,11 @@ package com.coworkerteam.coworker.ui.camstudy.enter
 
 import android.Manifest
 import android.content.Intent
+import android.os.Bundle
+import android.os.PersistableBundle
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
 import android.util.Base64
 import android.util.Log
 import android.view.View
@@ -26,10 +31,12 @@ import org.webrtc.*
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+import java.util.*
 
 class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCamstudyViewModel>() {
 
     val TAG = "EnterCamstudyActivity"
+    private var speechRecognizer: SpeechRecognizer? = null
 
     override val layoutResourceID: Int
         get() = R.layout.activity_enter_camstudy
@@ -111,11 +118,33 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
         TedPermission.create()
             .setPermissionListener(permissionListener)
             .setDeniedMessage("앱의 카메라, 마이크 권한을 허용해야 정상적으로 캠스터디를 이용할 수 있습니다. 해당 권한을 [설정] > [권한] 에서 허용해주세요.")
-            .setPermissions(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+            .setPermissions(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,Manifest.permission.RECORD_AUDIO)
             .check()
 
         checkdate()
+
     }
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+
+        val speechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName)
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+        }
+
+        /*
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this).apply {
+            setRecognitionListener(recognitionListener())
+            startListening(speechRecognizerIntent)
+        }
+
+        voice()
+*/
+    }
+
 
     override fun initDataBinding() {
         viewModel.EnterCamstudyResponseLiveData.observe(this, Observer {
@@ -266,6 +295,8 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
 
             viewModel.getCamstduyInstanceData(link)
         })
+
+
     }
 
     private fun initRV(category: String) {
@@ -403,6 +434,65 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
         return Camera2Enumerator.isSupported(this)
     }
 
+    /*
+    private fun recognitionListener() = object : RecognitionListener {
+        override fun onReadyForSpeech(params: Bundle?) = Toast.makeText(this@EnterCamstudyActivity, "음성인식 시작", Toast.LENGTH_SHORT).show()
+
+        override fun onRmsChanged(rmsdB: Float) {}
+
+        override fun onBufferReceived(buffer: ByteArray?) {}
+
+        override fun onPartialResults(partialResults: Bundle?) {}
+
+        override fun onEvent(eventType: Int, params: Bundle?) {}
+
+        override fun onBeginningOfSpeech() {
+            Log.d(TAG,"onBeginningOfSpeech")
+        }
+
+        override fun onEndOfSpeech() {
+            Log.d(TAG,"onEndOfSpeech")
+
+        }
+
+        override fun onError(error: Int) {
+            when(error) {
+                SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> Toast.makeText(this@EnterCamstudyActivity, "퍼미션 없음", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        override fun onResults(results: Bundle) {
+            Log.d(TAG,"Result : "+results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)!![0])
+        }
+    }
+
+    fun voice(){
+        var vad = Vad(
+            VadConfig.newBuilder()
+                .setSampleRate(VadConfig.SampleRate.SAMPLE_RATE_16K)
+                .setFrameSize(VadConfig.FrameSize.FRAME_SIZE_160)
+                .setMode(VadConfig.Mode.VERY_AGGRESSIVE)
+                .setSilenceDurationMillis(500)
+                .setVoiceDurationMillis(500)
+                .build());
+
+        vad.start();
+
+
+        var audioFrame = shortArrayOf()
+
+        vad.addContinuousSpeechListener(audioFrame, object : VadListener {
+            override fun onSpeechDetected() {
+                Log.d(TAG,"speech")
+            }
+
+            override fun onNoiseDetected() {
+
+            }
+        })
+    }
+
+     */
 
 
 }

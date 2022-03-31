@@ -426,7 +426,6 @@ class UserRepositoryImpl(
         }else{
             return service.enterCamStudy(accessToken, studyIdx, password)
         }
-
     }
 
     override fun getCamStudystudyInstanceData(

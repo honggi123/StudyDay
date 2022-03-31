@@ -24,9 +24,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="15dp"
         android:foregroundGravity="center"
         android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
         android:orientation="horizontal"
         android:paddingLeft="15dp"
         android:paddingRight="15dp">
@@ -35,8 +38,9 @@
             android:id="@+id/camstudy_btn_mic"
             android:layout_width="55dp"
             android:layout_height="55dp"
+            android:layout_marginBottom="0dp"
             android:background="@drawable/endter_camstudy_button"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/textView89"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_mic_24" />
@@ -83,5 +87,66 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/camstudy_btn_chat"
             app:srcCompat="@drawable/ic_baseline_more_vert_32" />
+
+        <TextView
+            android:id="@+id/textView89"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="마이크"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@+id/camstudy_btn_mic"
+            app:layout_constraintStart_toStartOf="@+id/camstudy_btn_mic"
+            app:layout_constraintTop_toBottomOf="@+id/camstudy_btn_mic" />
+
+        <TextView
+            android:id="@+id/textView90"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="카메라"
+            android:textColor="#FAFAFA"
+            android:textColorHint="#FFFFFF"
+            app:layout_constraintEnd_toEndOf="@+id/camstudy_btn_camera"
+            app:layout_constraintStart_toStartOf="@+id/camstudy_btn_camera"
+            app:layout_constraintTop_toBottomOf="@+id/camstudy_btn_camera" />
+
+        <TextView
+            android:id="@+id/textView91"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="타이머"
+
+            android:textColor="#FFFFFF"
+            app:layout_constraintEnd_toEndOf="@+id/camstudy_btn_play"
+            app:layout_constraintStart_toStartOf="@+id/camstudy_btn_play"
+            app:layout_constraintTop_toBottomOf="@+id/camstudy_btn_play" />
+
+        <TextView
+            android:id="@+id/textView92"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="채팅"
+
+            android:textColor="#FFFFFF"
+            app:layout_constraintEnd_toEndOf="@+id/camstudy_btn_chat"
+            app:layout_constraintStart_toStartOf="@+id/camstudy_btn_chat"
+            app:layout_constraintTop_toBottomOf="@+id/camstudy_btn_chat" />
+
+        <TextView
+            android:id="@+id/textView93"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="더보기"
+
+            android:textColor="#FFFFFF"
+            app:layout_constraintEnd_toEndOf="@+id/camstudy_btn_more"
+            app:layout_constraintStart_toStartOf="@+id/camstudy_btn_more"
+            app:layout_constraintTop_toBottomOf="@+id/camstudy_btn_more" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </LinearLayout>

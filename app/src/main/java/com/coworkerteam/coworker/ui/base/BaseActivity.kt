@@ -30,7 +30,8 @@ import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.util.*
 
-open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCompatActivity() {
+open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCompatActivity()
+     {
     lateinit var viewDataBinding: T
     abstract val layoutResourceID: Int
 
@@ -86,6 +87,8 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
             showServerErrorDialog()
         })
     }
+
+
 
     override fun onRestart() {
         super.onRestart()
@@ -194,6 +197,5 @@ open abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCo
             }
         }
     }
-
 
 }

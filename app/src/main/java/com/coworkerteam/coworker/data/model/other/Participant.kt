@@ -126,6 +126,9 @@ class Participant(context: Context, name: String) {
         }
     }
 
+    fun changehighlight(status: Boolean){
+        itemView.changeHighlight(status)
+    }
 
 
 }

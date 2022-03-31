@@ -91,7 +91,6 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
 
     fun getEnterCamstduyData(studyIdx: Int, password: String?) {
         val accessToken = model.getAccessToken()
-
         if (!accessToken.isNullOrEmpty()) {
             addDisposable(
                 model.getEnterCamStudyData(accessToken, studyIdx, password)
@@ -103,9 +102,10 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
 
                             if (isSuccessful) {
                                 it.body()!!.result.studyInfo.idx = studyIdx
+                                model.setnickname(it.body()!!.result.nickname)
+
                             }
 
-                            //model.setnickname(it.body()!!.result.nickname)
 
                             when {
                                 it.code() == 401 -> {

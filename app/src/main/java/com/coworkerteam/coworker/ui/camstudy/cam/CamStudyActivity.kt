@@ -7,16 +7,20 @@ import android.content.*
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.media.projection.MediaProjectionManager
 import android.os.*
 import android.util.Base64
 import android.util.Log
 import android.view.*
 import android.widget.*
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.local.prefs.PreferencesHelper
 import com.coworkerteam.coworker.data.local.service.CamStudyService
+import com.coworkerteam.coworker.data.local.service.CamStudyService.Companion.REQUEST_MEDIA_PROJECTION
 import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
 import com.coworkerteam.coworker.data.model.other.ChatData
 import com.coworkerteam.coworker.databinding.ActivityCamStudyBinding
@@ -25,6 +29,7 @@ import com.coworkerteam.coworker.ui.camstudy.info.MyStudyInfoActivity
 import com.coworkerteam.coworker.ui.camstudy.info.ParticipantsActivity
 import com.coworkerteam.coworker.ui.camstudy.info.StudyInfoActivity
 import com.coworkerteam.coworker.ui.main.MainActivity
+import com.coworkerteam.coworker.ui.main.VoiceRecorder
 import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import org.json.JSONObject
@@ -35,7 +40,8 @@ import java.util.*
 import kotlin.math.ceil
 
 
-class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel>() {
+class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel>()
+   {
     val TAG = "CamStudyActivity"
 
     override val layoutResourceID: Int
@@ -66,6 +72,10 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     var context : Context = this
 
+    lateinit var mediaProjectionManager : MediaProjectionManager
+    lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
+
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun initStartView() {
         Log.d(TAG,"initStartView")
@@ -80,6 +90,16 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         mainMoveIntent = Intent(this,MainActivity::class.java)
 
         //받아온값 세팅
+        /*
+        activityResultLauncher.launch(mediaProjectionManager.createScreenCaptureIntent())
+        activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+        {
+            if (it.resultCode == RESULT_OK) {
+                //SubActivity에서 갖고온 Intent(It)
+            }
+        }
+        */
+
         var intent = Intent(this, CamStudyService::class.java)
         intent.putExtra("studyInfo", studyInfo)
         intent.putExtra("instance", instance)
@@ -364,7 +384,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             }
 
             Log.d(TAG,"newlink : " + newlink)
-           // txt_studyUrl.text = studyInfo!!.result.studyInfo.link
+            // txt_studyUrl.text = studyInfo!!.result.studyInfo.link
             txt_studyUrl.text = newlink
 
             btn_studyUrl_copy.setOnClickListener(View.OnClickListener {
@@ -456,6 +476,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.camstudy_menu, menu)
+
         return true
     }
 
@@ -555,7 +576,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         if(endIndex > maxIndex){
             endIndex = maxIndex
         }
-        
+
         Log.d(TAG, "addCamStudyItemView: $startIndex, $endIndex, $maxIndex")
 
         if(maxIndex >= 0) {
@@ -596,7 +617,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
 
     override fun onBackPressed() {
-       camStudyut()
+        camStudyut()
     }
 
     fun camStudyut(){
@@ -708,5 +729,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             }
         }
     }
+
+
 
 }

@@ -1,13 +1,11 @@
 package com.coworkerteam.coworker.ui.main
 
+import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.os.Message
-import android.os.PersistableBundle
-import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +18,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.local.service.CamStudyService
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityMainBinding
 import com.coworkerteam.coworker.ui.base.NavigationActivity
@@ -32,16 +29,20 @@ import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import eu.dkaratzas.android.inapp.update.Constants.UpdateMode
+import eu.dkaratzas.android.inapp.update.InAppUpdateManager
+import eu.dkaratzas.android.inapp.update.InAppUpdateStatus
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.net.URLEncoder
 import java.text.SimpleDateFormat
 
 
-class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
+class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>(),
+    InAppUpdateManager.InAppUpdateHandler {
 
     val TAG = "MainActivity"
     override val layoutResourceID: Int
@@ -64,10 +65,22 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
     var builder: AlertDialog? = null
     var studyScriptClickFrom: Int? = null
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    private val REQ_CODE_VERSION_UPDATE = 500
+    lateinit var inAppUpdateManager : InAppUpdateManager
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+         inAppUpdateManager = InAppUpdateManager.Builder(this, REQ_CODE_VERSION_UPDATE)
+            .resumeUpdates(true) // Resume the update, if the update was stalled. Default is true
+            .mode(UpdateMode.IMMEDIATE)
+            .snackBarMessage("An update has just been downloaded.")
+            .snackBarAction("RESTART")
+            .handler(this)
+
+        inAppUpdateManager.checkForAppUpdate()
     }
+
 
     override fun initStartView() {
         super.initStartView()
@@ -126,8 +139,24 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
         init()
     }
 
+
+
     override fun onResume() {
         super.onResume()
+        /*
+        appUpdateManager
+            .appUpdateInfo
+            .addOnSuccessListener {
+                if(it.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS){
+                    appUpdateManager.startUpdateFlowForResult(
+                        it,
+                        AppUpdateType.IMMEDIATE, // or AppUpdateType.FLEXIBLE
+                        this,
+                        MY_REQUEST_CODE
+                    )
+                }
+            }
+         */
         checkdate()
     }
 
@@ -680,7 +709,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
                         }
 
                     })
-
                 }
             }
 
@@ -783,10 +811,59 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>() {
 
     }
 
-    fun makeStudyDialog(){
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQ_CODE_VERSION_UPDATE) {
+            if (resultCode == Activity.RESULT_CANCELED) {
+                // If the update is cancelled by the user,
+                // you can request to start the update again.
+                inAppUpdateManager.checkForAppUpdate()
 
+                Log.d(TAG, "Update flow failed! Result code: " + resultCode);
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
+
+    override fun onInAppUpdateError(code: Int, error: Throwable?) {
+    }
+
+    override fun onInAppUpdateStatus(status: InAppUpdateStatus?) {
+        if (status!!.isDownloaded) {
+            val rootView = window.decorView.findViewById<View>(android.R.id.content)
+            val snackbar = Snackbar.make(
+                rootView,
+                "An update has just been downloaded.",
+                Snackbar.LENGTH_INDEFINITE
+            )
+            snackbar.setAction("RESTART") { view: View? ->
+
+                // Triggers the completion of the update of the app for the flexible flow.
+                inAppUpdateManager.completeUpdate()
+            }
+            snackbar.show()
+        }
+    }
+
+    /*
+    // 인앱 업데이트
+    fun updaterequest() {
+        appUpdateManager  = AppUpdateManagerFactory.create(this)
+        appUpdateManager!!.let {
+            it.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                    && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
+                    // or AppUpdateType.FLEXIBLE
+                    appUpdateManager?.startUpdateFlowForResult(
+                        appUpdateInfo,
+                        AppUpdateType.IMMEDIATE, // or AppUpdateType.FLEXIBLE
+                        this,
+                        MY_REQUEST_CODE
+                    )
+                }
+            }
+        }
+    }*/
 
 
 

@@ -291,7 +291,7 @@
                             android:layout_height="wrap_content"
                             android:text='@{mainRankResponse.Result.rank.size()>=1 ? mainRankResponse.Result.rank.get(0).nickname:"없음"}'
                             android:textColor="#4B4B4B"
-                            app:layout_constraintBottom_toTopOf="@+id/textView67"
+                            app:layout_constraintBottom_toTopOf="@+id/ranktime1"
                             app:layout_constraintEnd_toEndOf="@+id/imageView7"
                             app:layout_constraintStart_toStartOf="@+id/imageView7" />
 
@@ -302,7 +302,7 @@
                             android:gravity="center_horizontal"
                             android:text='@{mainRankResponse.Result.rank.size()>=2 ? mainRankResponse.Result.rank.get(1).nickname:"없음"}'
                             android:textColor="#4B4B4B"
-                            app:layout_constraintBottom_toTopOf="@+id/textView73"
+                            app:layout_constraintBottom_toTopOf="@+id/ranktime2"
                             app:layout_constraintEnd_toEndOf="@+id/imageView8"
                             app:layout_constraintStart_toStartOf="@+id/imageView8" />
 
@@ -314,16 +314,16 @@
                             android:gravity="center_horizontal"
                             android:text='@{mainRankResponse.Result.rank.size()>=3 ? mainRankResponse.Result.rank.get(2).nickname:"없음"}'
                             android:textColor="#4B4B4B"
-                            app:layout_constraintBottom_toTopOf="@+id/textView75"
+                            app:layout_constraintBottom_toTopOf="@+id/ranktime3"
                             app:layout_constraintEnd_toEndOf="@+id/imageView4"
                             app:layout_constraintStart_toStartOf="@+id/imageView4" />
 
                         <TextView
-                            android:id="@+id/textView67"
+                            android:id="@+id/ranktime1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal"
-                            android:text='@{mainRankResponse.Result.rank.size()>=1 ? mainRankResponse.Result.rank.get(0).time:""}'
+                            android:text='@{mainRankResponse.Result.rank.size()>=1 ? (mainRankResponse.Result.rank.get(0).time.equals("00시간 00분") ? "1분 미만": mainRankResponse.Result.rank.get(0).time):""  }'
                             android:textColor="#A5A4A4"
                             android:textColorHint="#FFFFFF"
                             android:textColorLink="#00FFFFFF"
@@ -333,10 +333,10 @@
                             app:layout_constraintStart_toStartOf="@+id/textView5" />
 
                         <TextView
-                            android:id="@+id/textView73"
+                            android:id="@+id/ranktime2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text='@{mainRankResponse.Result.rank.size()>=2 ? mainRankResponse.Result.rank.get(1).time:""}'
+                            android:text='@{mainRankResponse.Result.rank.size()>=2 ?  (mainRankResponse.Result.rank.get(1).time.equals("00시간 00분") ? "1분 미만": mainRankResponse.Result.rank.get(1).time):""}'
                             android:textColor="#A3A3A3"
                             android:textColorHint="#FFFFFF"
                             android:textSize="12sp"
@@ -345,11 +345,11 @@
                             app:layout_constraintStart_toStartOf="@+id/textView64" />
 
                         <TextView
-                            android:id="@+id/textView75"
+                            android:id="@+id/ranktime3"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal"
-                            android:text='@{mainRankResponse.Result.rank.size()>=3 ? mainRankResponse.Result.rank.get(2).time:""}'
+                            android:text='@{mainRankResponse.Result.rank.size()>=3 ?  (mainRankResponse.Result.rank.get(2).time.equals("00시간 00분") ? "1분 미만": mainRankResponse.Result.rank.get(2).time):""}'
                             android:textColor="#9C9C9C"
                             android:textColorLink="#A2A2A2"
                             android:textSize="12sp"
@@ -442,10 +442,10 @@
                         android:id="@+id/infonew"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
-                        android:padding="5dp"
-                        android:layout_marginEnd="8dp"
-                        android:visibility="visible"
+
                         android:onClick="@{(view)->activitiy.showStudyDescription()}"
+                        android:padding="5dp"
+                        android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="@+id/main_spinner_new_study"
                         app:layout_constraintEnd_toStartOf="@+id/main_spinner_new_study"
                         app:layout_constraintTop_toTopOf="@+id/main_spinner_new_study"
@@ -478,9 +478,8 @@
                         android:id="@+id/infofit"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
-                        android:padding="5dp"
-                        android:layout_marginEnd="8dp"
                         android:onClick="@{(view)->activitiy.showStudyDescription()}"
+                        android:padding="5dp"
                         app:layout_constraintBottom_toBottomOf="@+id/main_spinner_dcommend"
                         app:layout_constraintEnd_toStartOf="@+id/main_spinner_dcommend"
                         app:layout_constraintTop_toTopOf="@+id/main_spinner_dcommend"
@@ -521,7 +520,6 @@
                         android:gravity="center_horizontal|center_vertical"
                         android:minHeight="50dp"
                         android:text="신규 스터디가 없습니다."
-
                         android:visibility="@{isNewStudy?View.VISIBLE:View.GONE}"
                         app:layout_constraintEnd_toStartOf="@+id/guideline8"
                         app:layout_constraintStart_toStartOf="@+id/guideline7"
@@ -580,7 +578,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:text='@{mainRankResponse.Result.myRank.rank+"등"}'
+                            android:text='@{mainRankResponse.Result.myRank.rank+"/" +mainRankResponse.Result.totalRank}'
                             android:textColor="#4B4B4B"
                             android:textColorLink="#4B4B4B"
                             android:textSize="12sp"
@@ -636,6 +634,7 @@
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:layout_marginTop="8dp"
+                        android:visibility="visible"
                         android:background="@drawable/main_myranking_background"
                         app:layout_constraintEnd_toStartOf="@+id/guideline8"
                         app:layout_constraintHorizontal_bias="0.0"

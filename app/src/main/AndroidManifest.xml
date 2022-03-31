@@ -16,6 +16,7 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
+    <queries> <package android:name="com.google.android.googlequicksearchbox"/> </queries>
 
     <application
         android:name=".MyApplication"

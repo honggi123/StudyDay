@@ -147,3 +147,6 @@
 -dontwarn com.amazonaws.http.**
 -dontwarn com.amazonaws.metrics.**
 -keepclassmembers enum * { *; }
+
+-keep class com.wang.avi.** { *; }
+-keep class com.wang.avi.indicators.** { *; }

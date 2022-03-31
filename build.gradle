@@ -23,7 +23,9 @@ allprojects {
         //카카오 로그인
         maven { url 'https://devrepo.kakao.com/nexus/content/groups/public/'}
         //그래프 라이브러리
-        maven { url = uri("https://jitpack.io") }
+        maven { url = uri("https://jitpack.io")}
+
+
     }
 }
 

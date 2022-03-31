@@ -3,7 +3,7 @@ package com.coworkerteam.coworker.data.local.service
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
+import android.media.projection.MediaProjection
 import android.os.*
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -18,8 +18,9 @@ import com.coworkerteam.coworker.data.model.other.Participant
 import com.coworkerteam.coworker.data.model.other.SingleObject.OkHttpBuilder
 import com.coworkerteam.coworker.data.model.other.SingleObject.SinglePeerConnectionFactory
 import com.coworkerteam.coworker.ui.camstudy.cam.CamStudyActivity
-import com.coworkerteam.coworker.ui.main.MainActivity
+import com.coworkerteam.coworker.ui.main.VoiceRecorder
 import com.google.gson.Gson
+import com.konovalov.vad.VadConfig
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
@@ -31,15 +32,14 @@ import java.net.URISyntaxException
 import java.security.KeyManagementException
 import java.security.NoSuchAlgorithmException
 import java.security.cert.X509Certificate
-import java.util.ArrayList
-import java.util.HashMap
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
-import org.webrtc.CameraVideoCapturer
 
-class CamStudyService : Service() {
+
+class CamStudyService : Service(),
+    VoiceRecorder.Listener{
     val TAG = "CamStudyService"
 
     val VIDEO_TRACK_ID = "ARDAMSv0"
@@ -66,6 +66,18 @@ class CamStudyService : Service() {
      var okHttpClient : OkHttpClient? = null
     var factory : PeerConnectionFactory? = null
 
+    private var recorder: VoiceRecorder? = null
+
+    private val DEFAULT_SAMPLE_RATE = VadConfig.SampleRate.SAMPLE_RATE_16K
+    private val DEFAULT_FRAME_SIZE = VadConfig.FrameSize.FRAME_SIZE_160
+    private val DEFAULT_MODE = VadConfig.Mode.VERY_AGGRESSIVE
+
+    private val DEFAULT_SILENCE_DURATION = 500
+    private val DEFAULT_VOICE_DURATION = 500
+
+    var speakStatus : Boolean = false
+    var noiseStatus : Boolean = false
+
     companion object {
         const val MSG_CLIENT_CONNECT = 0
         const val MSG_CLIENT_DISCNNECT = 1
@@ -87,7 +99,8 @@ class CamStudyService : Service() {
         const val MSG_NEWPARTICIPANTARRIVED = 17
         const val MSG_PARTICIPANTLEFT = 18
         const val MSG_SERVICE_FINISH = 19
-        const val  MSG_SERVICE_RESTART = 20
+        const val REQUEST_MEDIA_PROJECTION = 20
+
         var isVideo: Boolean? = null
         var isAudio: Boolean? = null
         var isPermissions = false
@@ -117,6 +130,18 @@ class CamStudyService : Service() {
             val notification = notification.createNotification(this)
             startForeground(NOTIFICATION_ID, notification)
         }
+
+        var config = VadConfig.newBuilder()
+            .setSampleRate(DEFAULT_SAMPLE_RATE)
+            .setFrameSize(DEFAULT_FRAME_SIZE)
+            .setMode(DEFAULT_MODE)
+            .setSilenceDurationMillis(DEFAULT_SILENCE_DURATION)
+            .setVoiceDurationMillis(DEFAULT_VOICE_DURATION)
+            .build()
+
+        recorder = VoiceRecorder(this, config)
+
+
         return START_STICKY
     }
 
@@ -143,6 +168,11 @@ class CamStudyService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG,"onDestroy")
+        if(recorder != null){
+            recorder?.stop()
+            recorder = null
+        }
+
         rootEglBase.release()
         // webrtc 관련
         if(videoTrackFromCamera != null){
@@ -531,6 +561,26 @@ class CamStudyService : Service() {
                                             par.toggleAudio(message.getString("status"))
                                         }
                                     }
+                                    "receiveStartRecognition" -> {
+                                        // 음성인식 시작
+                                        Log.d(TAG,"receiveStartRecognition")
+                                        var hmessage = mHandler.obtainMessage()
+                                        var bundle = Bundle()
+                                        bundle.putString("id", "receiveStartRecognition")
+                                        bundle.putString("sender", message.getString("sender"))
+                                        hmessage.data = bundle
+                                        mHandler.sendMessage(hmessage)
+                                    }
+                                    "receiveStopRecognition" -> {
+                                        // 음성인식 정지
+                                        Log.d(TAG,"receiveStopRecognition")
+                                        var hmessage = mHandler.obtainMessage()
+                                        var bundle = Bundle()
+                                        bundle.putString("id", "receiveStopRecognition")
+                                        bundle.putString("sender", message.getString("sender"))
+                                        hmessage.data = bundle
+                                        mHandler.sendMessage(hmessage)
+                                    }
                                 }
                             }
                         } catch (e: JSONException) {
@@ -613,6 +663,7 @@ class CamStudyService : Service() {
         videoCapturer = createVideoCapturer()
 
         videosource = factory?.createVideoSource(videoCapturer)
+
         videoCapturer?.startCapture(
             VIDEO_RESOLUTION_WIDTH,
             VIDEO_RESOLUTION_HEIGHT,
@@ -636,8 +687,11 @@ class CamStudyService : Service() {
     }
 
     private fun makeMe(): Participant {
-         participantMe = Participant(this, hostname)
+        participantMe = Participant(this, hostname)
 
+        if(isAudio == true){
+            recorder!!.start()
+        }
         participantMe!!.settingDevice(isVideo!!, isAudio!!)
         participantMe!!.timer.init(timer!!.toDouble());
         participantMe!!.timer.startStudyTimer()
@@ -915,6 +969,12 @@ class CamStudyService : Service() {
                     message.put("device", "audio")
                     message.put("status", msg.obj as String)
                     sendMessage(message)
+
+                    if(msg.obj as String == "off"){
+                        recorder?.stop()
+                    }else{
+                        recorder?.start()
+                    }
                 }
                 MSG_HOST_VIDEO_ON_OFF -> {
                     //내 카메라 on/off
@@ -989,9 +1049,51 @@ class CamStudyService : Service() {
                     message.put("device", "video")
                     sendMessage(message)
                 }
+
             }
         }
     }
+
+    override fun onSpeechDetected() {
+        if(speakStatus==false){
+            Log.d(TAG,"onSpeechDetected")
+            speakStatus = true
+            val message_send = JSONObject()
+            message_send.put("id", "sendStartRecognition")
+            message_send.put("room", room)
+            message_send.put("sender", hostname)
+            sendMessage(message_send)
+        }else{
+            noiseStatus = false
+        }
+    }
+
+    override fun onNoiseDetected() {
+        if(noiseStatus==false){
+            Log.d(TAG,"onNoiseDetected")
+
+            val message_send = JSONObject()
+            message_send.put("id", "sendStopRecognition")
+            message_send.put("room", room)
+            message_send.put("sender", hostname)
+            sendMessage(message_send)
+            noiseStatus = true
+        }else{
+            speakStatus = false
+        }
+    }
+
+    val mHandler: Handler = object : Handler() {
+        override fun handleMessage(msg: Message) {
+            var bundle = msg.data
+            if (bundle.getString("id") == "receiveStartRecognition") {
+                getParticipant(bundle.getString("sender")!!).itemView.changeHighlight(true)
+            }else{
+                getParticipant(bundle.getString("sender")!!).itemView.changeHighlight(false)
+            }
+        }
+    }
+
 }
 
 

@@ -1,30 +1,22 @@
 package com.coworkerteam.coworker.ui.splash
 
+import android.app.Activity
 import android.widget.Toast
 
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.widget.Button
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
-import com.coworkerteam.coworker.data.local.prefs.PreferencesHelper
 import com.coworkerteam.coworker.databinding.ActivitySplashBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.category.CategoryActivity
 import com.coworkerteam.coworker.ui.login.LoginActivity
 import com.coworkerteam.coworker.ui.main.MainActivity
-import com.github.ybq.android.spinkit.sprite.Sprite
-import com.github.ybq.android.spinkit.style.CubeGrid
-import com.github.ybq.android.spinkit.style.DoubleBounce
+
 import com.github.ybq.android.spinkit.style.Wave
+
 import org.json.JSONObject
-import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
@@ -33,6 +25,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     override val layoutResourceID: Int
         get() = R.layout.activity_splash
     override val viewModel: SplashViewModel by viewModel()
+
+
 
     override fun initStartView() {
         //프로그래스바 로딩 이미지 세팅
@@ -72,6 +66,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     }
 
     override fun initAfterBinding() {
+       // inAppUpdate = InAppUpdate(this)
+        Log.d(TAG,"initAfterBinding")
         //저장되어 있는 리프레쉬 토큰이 있다면
         if (!viewModel.getRefreshToken().isNullOrEmpty()) {
             viewModel.getAutoLoginData()
@@ -81,6 +77,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             startActivity(intent)
             finish()
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d(TAG,"onCreate")
+
     }
 
     //메인페이지로 이동하는 메소드
@@ -96,6 +98,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
         startActivity(intent)
         finish()
     }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
+
 
 }
 
