@@ -7,6 +7,7 @@ import android.content.*
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.media.AudioManager
 import android.media.projection.MediaProjectionManager
 import android.os.*
 import android.util.Base64
@@ -16,11 +17,12 @@ import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.get
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.local.prefs.PreferencesHelper
 import com.coworkerteam.coworker.data.local.service.CamStudyService
-import com.coworkerteam.coworker.data.local.service.CamStudyService.Companion.REQUEST_MEDIA_PROJECTION
 import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
 import com.coworkerteam.coworker.data.model.other.ChatData
 import com.coworkerteam.coworker.databinding.ActivityCamStudyBinding
@@ -30,7 +32,10 @@ import com.coworkerteam.coworker.ui.camstudy.info.ParticipantsActivity
 import com.coworkerteam.coworker.ui.camstudy.info.StudyInfoActivity
 import com.coworkerteam.coworker.ui.main.MainActivity
 import com.coworkerteam.coworker.ui.main.VoiceRecorder
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayout
+import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -41,7 +46,7 @@ import kotlin.math.ceil
 
 
 class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel>()
-   {
+{
     val TAG = "CamStudyActivity"
 
     override val layoutResourceID: Int
@@ -75,6 +80,29 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     lateinit var mediaProjectionManager : MediaProjectionManager
     lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
+    lateinit var headSetReceiver : HeadSetReceiver
+
+       override fun onCreate(savedInstanceState: Bundle?) {
+           super.onCreate(savedInstanceState)
+
+
+           headSetReceiver = HeadSetReceiver()
+           var filter = IntentFilter(Intent.ACTION_HEADSET_PLUG)
+           registerReceiver(headSetReceiver,filter)
+
+           //받아온값 세팅
+           mediaProjectionManager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+           activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+           {
+               if (it.resultCode == RESULT_OK) {
+                  //SubActivity에서 갖고온 Intent(It)
+                  // CamStudyService.screencaptureintent = it.data
+
+                  //  val msg: Message = Message.obtain(null, CamStudyService.MSG_SCREEN_SHARE)
+                  // sendHandlerMessage(msg)
+               }
+           }
+       }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun initStartView() {
@@ -89,17 +117,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
         mainMoveIntent = Intent(this,MainActivity::class.java)
 
-        //받아온값 세팅
-        /*
-        activityResultLauncher.launch(mediaProjectionManager.createScreenCaptureIntent())
-        activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
-        {
-            if (it.resultCode == RESULT_OK) {
-                //SubActivity에서 갖고온 Intent(It)
-            }
-        }
-        */
-
         var intent = Intent(this, CamStudyService::class.java)
         intent.putExtra("studyInfo", studyInfo)
         intent.putExtra("instance", instance)
@@ -110,7 +127,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     }
 
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
+    override fun onConfigurationChanged(newConfig: Configuration){
         super.onConfigurationChanged(newConfig)
     }
 
@@ -360,6 +377,13 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
             dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
+            // 화면공유시 필요한 레이아웃
+            val cam_study_share_layout = findViewById<CoordinatorLayout>(R.id.cam_study_share_layout)
+            val btn_screenshare =
+                dialogView.findViewById<TextView>(R.id.camstudy_bottom_menu_screenshare)
+            val screenshare_paging =
+                findViewById<LinearLayout>(R.id.screenshare_paging)
+
             val btn_participants =
                 dialogView.findViewById<TextView>(R.id.camstudy_bottom_menu_participants)
             val btn_study_info =
@@ -416,25 +440,39 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 startActivity(intent)
                 dialog.dismiss()
             })
+
+            btn_screenshare.setOnClickListener(View.OnClickListener {
+
+             //   activityResultLauncher.launch(mediaProjectionManager.createScreenCaptureIntent())
+
+                screenshare_paging.visibility = View.VISIBLE
+                cam_study_share_layout.visibility = View.VISIBLE
+                setPage()
+                viewDataBinding.camStudyFelxboxLayout.removeAllViews()
+
+                viewDataBinding.camStudyFelxboxLayout.flexWrap = FlexWrap.NOWRAP
+                addCamStudyItemViewPaging()
+                dialog.dismiss()
+            })
             dialog.show()
         })
 
-        /*
+
         viewDataBinding.camstudyPre.setOnClickListener(View.OnClickListener {
             page -= 1
-            viewDataBinding.camStudyFelxboxLayout.removeAllViews()
             setPage()
-            addCamStudyItemView()
+            viewDataBinding.camStudyFelxboxLayout.removeAllViewsInLayout()
+            addCamStudyItemViewPaging()
         })
 
         viewDataBinding.camstudyNext.setOnClickListener(View.OnClickListener {
             page += 1
+            viewDataBinding.camStudyFelxboxLayout.removeAllViewsInLayout()
 
-            viewDataBinding.camStudyFelxboxLayout.removeAllViews()
             setPage()
-            addCamStudyItemView()
+            addCamStudyItemViewPaging()
         })
-         */
+
     }
 
 
@@ -543,7 +581,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     }
 
     fun setPage(){
-        val maxPage = ceil(CamStudyService.peerConnection.keys.size / 6.0).toInt()
+        val maxPage = ceil(CamStudyService.peerConnection.keys.size / 2.0).toInt()
 
         if(page > maxPage && maxPage > 0){
             page = maxPage
@@ -559,12 +597,11 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         }
 
         //다음페이지 버튼 활성화
-        /*
         if(page >= maxPage){
             viewDataBinding.camstudyNext.visibility = View.INVISIBLE
         }else{
             viewDataBinding.camstudyNext.visibility = View.VISIBLE
-        }*/
+        }
 
     }
 
@@ -591,9 +628,39 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 viewDataBinding.camStudyFelxboxLayout.addView(
                     CamStudyService.peerConnection[key]?.itemView
                 )
+
             }
         }
     }
+
+    fun addCamStudyItemViewPaging() {
+        val startIndex = 2 * ( page-1 )
+        var endIndex = startIndex + 1
+        val maxIndex = CamStudyService.peerConnection.keys.size -1
+
+        if(endIndex > maxIndex){
+            endIndex = maxIndex
+        }
+
+        Log.d(TAG, "addCamStudyItemView: $startIndex, $endIndex, $maxIndex")
+
+        if(maxIndex >= 0) {
+            for (i in startIndex..endIndex) {
+                Log.d(TAG, "addCamStudyItemView: $i")
+                val key = CamStudyService.peerConnection.keys.toList()[i]
+                val item = CamStudyService.peerConnection[key]?.itemView
+
+                item?.layoutParams =
+                    getLayoutParams(viewDataBinding.camStudyFelxboxLayout.flexItemCount)
+
+                viewDataBinding.camStudyFelxboxLayout.addView(
+                    CamStudyService.peerConnection[key]?.itemView
+                )
+
+            }
+        }
+    }
+
 
     private var mConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -729,6 +796,31 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             }
         }
     }
+
+    class HeadSetReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if(intent?.action.equals(Intent.ACTION_HEADSET_PLUG)){
+                var state = intent?.getIntExtra("state",-1)
+                if(state == 0){ // 헤드셋 해제
+                    Log.d("CAMACT","헤드셋 해제")
+                    var audioManager : AudioManager
+                    audioManager = context?.getSystemService(AUDIO_SERVICE) as AudioManager
+                    audioManager.setSpeakerphoneOn(true)
+                    audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION)
+                }else{
+                    Log.d("CAMACT","헤드셋 장착")
+
+                    var audioManager : AudioManager
+                    audioManager = context?.getSystemService(AUDIO_SERVICE) as AudioManager
+                    audioManager.setSpeakerphoneOn(false)
+                    audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION)
+                }
+
+            }
+        }
+
+    }
+
 
 
 

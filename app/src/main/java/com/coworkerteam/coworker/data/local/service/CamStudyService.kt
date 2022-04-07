@@ -3,7 +3,7 @@ package com.coworkerteam.coworker.data.local.service
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.media.projection.MediaProjection
+import android.media.AudioManager
 import android.os.*
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -61,9 +61,9 @@ class CamStudyService : Service(),
 
     lateinit var audioConstraints: MediaConstraints
     var videoCapturer: VideoCapturer? = null
-     var audioSource: AudioSource? = null
-     var localAudioTrack: AudioTrack? = null
-     var okHttpClient : OkHttpClient? = null
+    var audioSource: AudioSource? = null
+    var localAudioTrack: AudioTrack? = null
+    var okHttpClient : OkHttpClient? = null
     var factory : PeerConnectionFactory? = null
 
     private var recorder: VoiceRecorder? = null
@@ -142,8 +142,11 @@ class CamStudyService : Service(),
         recorder = VoiceRecorder(this, config)
 
 
+
+
         return START_STICKY
     }
+
 
     //bindService()로 바인딩을 실행할 때 호출
     override fun onBind(intent: Intent): IBinder {
@@ -212,8 +215,8 @@ class CamStudyService : Service(),
 
         chatDate.clear()
         if(socket != null){
-           socket?.disconnect()
-           socket = null
+            socket?.disconnect()
+            socket = null
         }
     }
 
@@ -972,6 +975,16 @@ class CamStudyService : Service(),
 
                     if(msg.obj as String == "off"){
                         recorder?.stop()
+                        if(speakStatus){
+                            speakStatus = false
+                            noiseStatus = true
+                            val message_send = JSONObject()
+                            message_send.put("id", "sendStopRecognition")
+                            message_send.put("room", room)
+                            message_send.put("sender", hostname)
+                            sendMessage(message_send)
+                        }
+
                     }else{
                         recorder?.start()
                     }
@@ -1130,7 +1143,7 @@ object notification {
             .setContentText("캠스터디 진행중")
             .setSmallIcon(R.mipmap.ic_studyday)
             .setOngoing(true) // true 일경우 알림 리스트에서 클릭하거나 좌우로 드래그해도 사라지지 않음
-          //  .setContentIntent(pendingIntent)
+            //  .setContentIntent(pendingIntent)
             .build()
 
         return notification

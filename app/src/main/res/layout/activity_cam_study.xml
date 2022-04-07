@@ -17,17 +17,47 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/cam_study_share_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/cam_study_share_felxbox"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="20dp"
+                app:alignContent="center"
+                app:alignItems="center"
+                app:flexDirection="row"
+                app:justifyContent="center">
+
+            </com.google.android.flexbox.FlexboxLayout>
+
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
         <LinearLayout
+            android:id="@+id/screenshare_paging"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:visibility="invisible"
             android:padding="5dp">
-
             <ImageView
                 android:id="@+id/camstudy_pre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="invisible"
+                android:visibility="visible"
                 app:srcCompat="@drawable/ic_baseline_keyboard_arrow_left_24" />
 
             <TextView
@@ -37,26 +67,27 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:visibility="invisible"
+                android:visibility="visible"
                 android:text="1 / 1"
                 android:textColor="@color/white"
                 android:textSize="16sp" />
-
             <ImageView
-                android:id="@+id/toolbar_camstudy"
+                android:id="@+id/camstudyNext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="invisible"
+                android:visibility="visible"
                 app:srcCompat="@drawable/ic_baseline_keyboard_arrow_right_24" />
         </LinearLayout>
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
 
             <com.google.android.flexbox.FlexboxLayout
                 android:id="@+id/cam_study_felxbox_layout"
@@ -66,7 +97,7 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginBottom="20dp"
                 app:alignContent="center"
-                app:alignItems="center"
+                app:alignItems="stretch"
                 app:flexDirection="row"
                 app:flexWrap="wrap"
                 app:justifyContent="center">

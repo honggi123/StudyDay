@@ -59,6 +59,32 @@
                 app:srcCompat="@drawable/ic_baseline_content_copy_24" />
 
         </LinearLayout>
+        <View
+            android:id="@+id/view6"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#ABABAB"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2"></View>
+        <TextView
+            android:id="@+id/camstudy_bottom_menu_screenshare"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:text="화면공유"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+        <View
+            android:id="@+id/view5"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#ABABAB"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2"></View>
 
         <TextView
             android:id="@+id/camstudy_bottom_menu_participants"

@@ -1,6 +1,7 @@
 package com.coworkerteam.coworker.data.model.other
 
 import android.content.Context
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -47,6 +48,7 @@ class CamStudyItemView : ConstraintLayout {
         audioView = view.findViewById(R.id.item_camstudy_mic)
         userNameView = view.findViewById(R.id.item_camstudy_txt_name)
         highlightView = view.findViewById(R.id.cam_highlight)
+
         //surfaceView에 관련한 설정
         CoroutineScope(Dispatchers.Main).async {
             surfaceView.init(CamStudyService.rootEglBase?.eglBaseContext, null)
@@ -120,11 +122,9 @@ class CamStudyItemView : ConstraintLayout {
     // 하이라이트 온/오프
     fun changeHighlight(status: Boolean){
         if(status){
-            audioView.visibility = GONE
             highlightView.visibility = View.VISIBLE
             speakAnimation.visibility = View.VISIBLE
         }else{
-            audioView.visibility = VISIBLE
             highlightView.visibility = View.GONE
             speakAnimation.visibility = View.GONE
         }

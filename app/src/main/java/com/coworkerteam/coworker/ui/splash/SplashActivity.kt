@@ -7,13 +7,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
+import androidx.annotation.Nullable
+import androidx.core.content.ContextCompat
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.databinding.ActivitySplashBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.category.CategoryActivity
 import com.coworkerteam.coworker.ui.login.LoginActivity
 import com.coworkerteam.coworker.ui.main.MainActivity
-
 import com.github.ybq.android.spinkit.style.Wave
 
 import org.json.JSONObject
@@ -77,13 +78,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             startActivity(intent)
             finish()
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d(TAG,"onCreate")
 
     }
+
 
     //메인페이지로 이동하는 메소드
     private fun moveMain() {

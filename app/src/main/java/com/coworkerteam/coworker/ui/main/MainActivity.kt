@@ -1,18 +1,22 @@
 package com.coworkerteam.coworker.ui.main
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
+import androidx.annotation.Nullable
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.paging.LoadState
@@ -29,21 +33,19 @@ import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
-import eu.dkaratzas.android.inapp.update.Constants.UpdateMode
-import eu.dkaratzas.android.inapp.update.InAppUpdateManager
-import eu.dkaratzas.android.inapp.update.InAppUpdateStatus
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.model.UpdateAvailability
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 
 
-class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>(),
-    InAppUpdateManager.InAppUpdateHandler {
-
+class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
+     {
     val TAG = "MainActivity"
     override val layoutResourceID: Int
         get() = R.layout.activity_main
@@ -58,27 +60,56 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>(),
     var RecommendStudyShowOpen: Boolean = true
     var setData: Boolean = false
     var showStudyDescription = false
+    lateinit var appUpdateManager : AppUpdateManager
 
     lateinit var pagingMainMyStudyAdapter: MainMyStudyPagingAdapter
 
     val passwordDialog = PasswordDialog()
     var builder: AlertDialog? = null
-    var studyScriptClickFrom: Int? = null
 
     private val REQ_CODE_VERSION_UPDATE = 500
-    lateinit var inAppUpdateManager : InAppUpdateManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        var con = this
 
-         inAppUpdateManager = InAppUpdateManager.Builder(this, REQ_CODE_VERSION_UPDATE)
-            .resumeUpdates(true) // Resume the update, if the update was stalled. Default is true
-            .mode(UpdateMode.IMMEDIATE)
-            .snackBarMessage("An update has just been downloaded.")
-            .snackBarAction("RESTART")
-            .handler(this)
+        appUpdateManager = AppUpdateManagerFactory.create(this)
 
-        inAppUpdateManager.checkForAppUpdate()
+        appUpdateManager?.let {
+            it.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
+                    Log.d(TAG,"appUpdateInfo")
+                    if(appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE){
+                        val mDialogView =
+                            LayoutInflater.from(con).inflate(R.layout.dialog_updatecheck, null)
+                        val mBuilder = AlertDialog.Builder(con).setView(mDialogView)
+                        val builder = mBuilder.show()
+
+                        builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+                        val btn_cancle =
+                            mDialogView.findViewById<Button>(R.id.dialog_btn_cancle)
+                        val btn_ok = mDialogView.findViewById<Button>(R.id.dialog_btn_ok)
+
+                        btn_cancle.setOnClickListener(View.OnClickListener {
+                            builder.dismiss()
+                        })
+
+                        btn_ok.setOnClickListener(View.OnClickListener {
+                            val ownGooglePlayLink = "market://details?id=com.coworkerteam.coworker"
+                            val ownWebLink =
+                                "https://play.google.com/store/apps/details?id=com.coworkerteam.coworker"
+
+                            try {
+                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(ownGooglePlayLink)))
+                            } catch (anfe: ActivityNotFoundException) {
+                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(ownWebLink)))
+                            }
+                        })
+                    }
+
+
+            }
+        }
     }
 
 
@@ -814,36 +845,15 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>(),
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQ_CODE_VERSION_UPDATE) {
-            if (resultCode == Activity.RESULT_CANCELED) {
-                // If the update is cancelled by the user,
-                // you can request to start the update again.
-                inAppUpdateManager.checkForAppUpdate()
+            if (resultCode != Activity.RESULT_OK) {
 
-                Log.d(TAG, "Update flow failed! Result code: " + resultCode);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    override fun onInAppUpdateError(code: Int, error: Throwable?) {
-    }
 
-    override fun onInAppUpdateStatus(status: InAppUpdateStatus?) {
-        if (status!!.isDownloaded) {
-            val rootView = window.decorView.findViewById<View>(android.R.id.content)
-            val snackbar = Snackbar.make(
-                rootView,
-                "An update has just been downloaded.",
-                Snackbar.LENGTH_INDEFINITE
-            )
-            snackbar.setAction("RESTART") { view: View? ->
 
-                // Triggers the completion of the update of the app for the flexible flow.
-                inAppUpdateManager.completeUpdate()
-            }
-            snackbar.show()
-        }
-    }
 
     /*
     // 인앱 업데이트
