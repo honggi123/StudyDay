@@ -25,7 +25,9 @@ allprojects {
         //그래프 라이브러리
         maven { url = uri("https://jitpack.io")}
 
-
+        flatDir {
+            dirs "${project(':unityLibrary').projectDir}/libs"
+        }
     }
 }
 

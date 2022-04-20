@@ -3,7 +3,7 @@ package com.coworkerteam.coworker.data.local.service
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.media.AudioManager
+import android.media.projection.MediaProjection
 import android.os.*
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -57,6 +57,8 @@ class CamStudyService : Service(),
     lateinit var room: String
     var instance: String? = null
 
+    lateinit var screenUserName_whenstart : String
+
     var videosource :VideoSource? = null
 
     lateinit var audioConstraints: MediaConstraints
@@ -99,7 +101,14 @@ class CamStudyService : Service(),
         const val MSG_NEWPARTICIPANTARRIVED = 17
         const val MSG_PARTICIPANTLEFT = 18
         const val MSG_SERVICE_FINISH = 19
+
+        // 화면공유 변수
+        lateinit var screencaptureintent : Intent
         const val REQUEST_MEDIA_PROJECTION = 20
+        const val REQUEST_SCREEN_SHARE = 21
+        const val REQUEST_STOP_SHARE = 22
+        const val RECEIVE_STOP_SHARE = 22
+        var onScreen: Boolean? = false
 
         var isVideo: Boolean? = null
         var isAudio: Boolean? = null
@@ -108,6 +117,8 @@ class CamStudyService : Service(),
         var timer: Int? = null
 
         lateinit var rootEglBase: EglBase
+        lateinit var rootEglBaseScreen: EglBase
+
         var chatDate = ArrayList<ChatData>()
 
         var participantsResponses: ParticipantsResponse? = null
@@ -120,6 +131,7 @@ class CamStudyService : Service(),
 
     var videoTrackFromCamera: VideoTrack? = null
     var localvideoTrack : VideoTrack? = null
+    var videoShareTrackFromCamera:VideoTrack? = null
 
     var trackTrackingThread : Thread? = null
 
@@ -140,9 +152,6 @@ class CamStudyService : Service(),
             .build()
 
         recorder = VoiceRecorder(this, config)
-
-
-
 
         return START_STICKY
     }
@@ -201,9 +210,9 @@ class CamStudyService : Service(),
             audioSource = null
         }
 
-
         peerConnection.keys.forEach{
             peerConnection.get(it)?.stopCamStduy()
+            peerConnection.get(it)?.itemViewScreen?.surfaceView?.release()
             Log.d(TAG,"peerconnection.stopcamstudy")
         }
 
@@ -218,6 +227,9 @@ class CamStudyService : Service(),
             socket?.disconnect()
             socket = null
         }
+
+
+        onScreen = false
     }
 
 
@@ -351,9 +363,26 @@ class CamStudyService : Service(),
                                                 it.img
                                             )
                                         }
-                                        val handlerMessage =
-                                            Message.obtain(null, MSG_EXISTINGPARTICIPANNTS)
-                                        sendHandlerMessage(handlerMessage)
+
+                                        if(!message.getString("screenUserName").toString().equals("null")){
+                                            foreachscreen(message.getString("screenUserName"))
+
+                                            //CamStudyActivity의 비디오 Item을 그려주는 리사이클러뷰 다시 그리기
+                                            val handlerMessage =
+                                                Message.obtain(null, REQUEST_SCREEN_SHARE)
+                                            var bundle = Bundle()
+                                            bundle.putString("name", message.getString("screenUserName"))
+                                            handlerMessage.data = bundle
+
+                                            sendHandlerMessage(handlerMessage)
+                                            onScreen = true
+                                        }else{
+                                            val handlerMessage =
+                                                Message.obtain(null, MSG_EXISTINGPARTICIPANNTS)
+                                            sendHandlerMessage(handlerMessage)
+                                        }
+
+
                                     }
                                     "newParticipantArrived" -> {
                                         //새로운 참가자가 들어왔을때
@@ -410,8 +439,8 @@ class CamStudyService : Service(),
                                             if (isAudio == true) "on" else "off"
                                         )
                                         sendMessage(message_send)
-
                                     }
+
                                     "participantLeft" -> {
                                         //참여자가 방을 떠났을 경우
                                         getParticipant(message.getString("name")).stopCamStduy()
@@ -419,7 +448,6 @@ class CamStudyService : Service(),
 
                                         val handlerMessage = Message.obtain(null, MSG_PARTICIPANTLEFT)
                                         sendHandlerMessage(handlerMessage)
-                                        Log.d(TAG, "participantLeft3")
 
                                         //참여자 목록에 대한 정보에서 나간사람 빼기
                                         val refreshParticipantsResponses =
@@ -443,7 +471,6 @@ class CamStudyService : Service(),
                                         val handlerMessageParticipants =
                                             Message.obtain(null, MSG_PARTICIPANTS_ITEM)
                                         sendHandlerMessage(handlerMessageParticipants)
-
                                     }
                                     "receiveVideoAnswer" -> {
                                         //Answer을 받았을 경우
@@ -584,6 +611,82 @@ class CamStudyService : Service(),
                                         hmessage.data = bundle
                                         mHandler.sendMessage(hmessage)
                                     }
+                                    "startScreenOffer" -> {
+                                        //화면공유 시작
+                                        myscreen(message.getString("name"))
+                                        foreachscreen(message.getString("name"))
+
+                                        //CamStudyActivity의 비디오 Item을 그려주는 리사이클러뷰 다시 그리기
+                                        val handlerMessage =
+                                            Message.obtain(null, REQUEST_SCREEN_SHARE)
+                                        var bundle = Bundle()
+
+                                        if(message.getString("name").equals(hostname)){
+                                            bundle.putBoolean("shareHost", true)
+                                        }else{
+                                            bundle.putBoolean("shareHost", false)
+                                        }
+                                        bundle.putString("name", message.getString("name"))
+                                        handlerMessage.data = bundle
+
+                                        sendHandlerMessage(handlerMessage)
+
+                                        onScreen = true
+                                    }
+                                    "receiveScreenAnswer" ->{
+                                        //Answer을 받았을 경우
+                                        Log.d(TAG, "receiveScreenAnswer")
+                                        peerConnection.get(message.getString("name"))?.peerScreen?.setRemoteDescription(
+                                            SimpleSdpObserver(),
+                                            SessionDescription(
+                                                SessionDescription.Type.ANSWER,
+                                                message.getString("sdpAnswer")
+                                            )
+                                        )
+                                    }
+                                    "iceCandidateScreen" -> {
+                                        //iceCandidate를 받았을 경우
+                                        val candidatedate =
+                                            JSONObject(message.getString("candidate"))
+
+                                        val candidate = IceCandidate(
+                                            candidatedate.getString("sdpMid"),
+                                            candidatedate.getInt("sdpMLineIndex"),
+                                            candidatedate.getString("candidate")
+                                        )
+                                        peerConnection.get(message.getString("name"))?.peerScreen?.addIceCandidate(candidate)
+
+                                        Log.d(TAG, "iceCandidateScreen")
+                                    }
+                                    "newParticipantScreenArrived" -> {
+                                        Log.d(TAG,"newParticipantScreenArrived")
+                                        foreachscreen(message.getString("name"))
+
+                                        //CamStudyActivity의 비디오 Item을 그려주는 리사이클러뷰 다시 그리기
+                                        val handlerMessage =
+                                            Message.obtain(null, REQUEST_SCREEN_SHARE)
+                                        var bundle = Bundle()
+                                        bundle.putString("name", message.getString("name"))
+                                        handlerMessage.data = bundle
+
+                                        sendHandlerMessage(handlerMessage)
+                                        onScreen = true
+                                    }
+                                    "receiveStopScreen" -> {
+                                        // 화면공유 중지
+                                        peerConnection[message.getString("name")]?.stopCamStduyScreen()
+
+                                        //CamStudyActivity의 비디오 Item을 그려주는 리사이클러뷰 다시 그리기
+                                        val handlerMessage =
+                                            Message.obtain(null, RECEIVE_STOP_SHARE)
+                                        var bundle = Bundle()
+                                        bundle.putString("name", message.getString("name"))
+                                        handlerMessage.data = bundle
+
+                                        sendHandlerMessage(handlerMessage)
+
+                                    }
+
                                 }
                             }
                         } catch (e: JSONException) {
@@ -600,6 +703,37 @@ class CamStudyService : Service(),
             Log.e(TAG, "연결이 안됨")
             e.printStackTrace()
         }
+    }
+
+    private fun existingShareParticipants(name: String) {
+        val sdpMediaConstraints = MediaConstraints()
+        sdpMediaConstraints.mandatory.add(
+            MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true")
+        )
+        sdpMediaConstraints.mandatory.add(
+            MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true")
+        )
+        peerConnection.get(name)?.peerScreen?.createOffer(object : SimpleSdpObserver() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            override fun onCreateSuccess(sessionDescription: SessionDescription) {
+                Log.d(TAG, "onCreateSuccessScreen: ")
+                peerConnection.get(name)?.peerScreen
+                    ?.setLocalDescription(SimpleSdpObserver(), sessionDescription)
+                val message = JSONObject()
+                try {
+                    message.put("id", "receiveScreenFrom")
+                    message.put("sender", name)
+                    message.put("sdpOffer", sessionDescription.description)
+                    Log.d(
+                        TAG,
+                        sessionDescription.description
+                    )
+                    sendMessage(message)
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            }
+        }, sdpMediaConstraints)
     }
 
     private fun existingParticipants(name: String) {
@@ -639,6 +773,80 @@ class CamStudyService : Service(),
         startStreamingVideo(name)
         existingParticipants(name)
     }
+
+    private fun myscreen(name: String) {
+        initializeSharePeerConnections(name)
+        createVideoTrackFromCameraAndShowItScreen(name)
+        startStreamingVideoScreen(name)
+    }
+
+    private fun foreachscreen(name: String) {
+        if (hostname != name){
+            initializeSharePeerConnections(name)
+            startStreamingVideoScreen(name)
+        }
+        existingShareParticipants(name)
+    }
+
+    private fun initializeSharePeerConnections(name: String) {
+        var peer = factory?.let { createSharePeerConnection(it, name) }
+
+        if (peer != null) {
+            var part = getParticipant(name)
+            part?.peerScreen = peer
+            Log.d(TAG, name + "의 screenshare 추가")
+        }
+    }
+
+    private fun createVideoTrackFromCameraAndShowItScreen(name: String){
+        Log.d(TAG, "startStreamingShareVideo()")
+        val mediaStream: MediaStream = factory!!.createLocalMediaStream("ARDAMS")
+
+        audioConstraints = MediaConstraints()
+        var videoShareCapturer = ScreenCapturerAndroid(
+            screencaptureintent,
+            object : MediaProjection.Callback() {
+                override fun onStop() {
+                    super.onStop()
+                    Log.e(TAG, "User has revoked media projection permissions")
+                }
+            })
+
+        var videosource = factory?.createVideoSource(videoShareCapturer)
+
+        videoShareCapturer?.startCapture(
+            VIDEO_RESOLUTION_WIDTH,
+            VIDEO_RESOLUTION_HEIGHT,
+            FPS
+        )
+
+        videoShareTrackFromCamera = factory?.createVideoTrack(
+            VIDEO_TRACK_ID,
+            videosource
+        )
+
+        if (isPermissions) {
+            mediaStream.addTrack(videoShareTrackFromCamera)
+            mediaStream.addTrack(localAudioTrack)
+        }
+
+        //  peerConnection.get(name)?.startRenderScreen(videoShareTrackFromCamera, localAudioTrack)
+    }
+
+    private fun startStreamingVideoScreen(name: String){
+        Log.d(TAG, "startStreamingVideoScreen()")
+        val mediaStream: MediaStream = factory!!.createLocalMediaStream("ARDAMS")
+        if (isPermissions) {
+            if (hostname != name){
+                mediaStream.addTrack(videoTrackFromCamera)
+            }else{
+                mediaStream.addTrack(videoShareTrackFromCamera)
+            }
+            mediaStream.addTrack(localAudioTrack)
+        }
+        peerConnection[name]?.peerScreen?.addStream(mediaStream)
+    }
+
 
     private fun sendMessage(message: JSONObject){
         try {
@@ -735,6 +943,9 @@ class CamStudyService : Service(),
         }
     }
 
+
+
+
     private fun startStreamingVideo(name: String){
         Log.d(TAG, "startStreamingVideo()")
         val mediaStream: MediaStream = factory!!.createLocalMediaStream("ARDAMS")
@@ -744,6 +955,8 @@ class CamStudyService : Service(),
         }
         peerConnection[name]?.peer?.addStream(mediaStream)
     }
+
+
 
     private fun createPeerConnection(
         factory: PeerConnectionFactory,
@@ -835,6 +1048,98 @@ class CamStudyService : Service(),
         }
         return factory.createPeerConnection(rtcConfig, pcConstraints, pcObserver)
     }
+
+    private fun createSharePeerConnection(
+        factory: PeerConnectionFactory,
+        name: String
+    ): PeerConnection? {
+        val iceServers = ArrayList<PeerConnection.IceServer>()
+        val stunURL = getString(R.string.midea_stun_url)
+        val turnURL = getString(R.string.midea_turn_url)
+        iceServers.add(PeerConnection.IceServer(stunURL))
+        iceServers.add(PeerConnection.IceServer(turnURL, "kurento", "kurento"))
+        val rtcConfig = PeerConnection.RTCConfiguration(iceServers)
+        val pcConstraints = MediaConstraints()
+
+        val pcObserver: PeerConnection.Observer = object : PeerConnection.Observer {
+            override fun onSignalingChange(signalingState: PeerConnection.SignalingState) {
+                Log.d(TAG, "onSignalingScreenChange: ")
+            }
+
+            override fun onIceConnectionChange(iceConnectionState: PeerConnection.IceConnectionState) {
+                Log.d(
+                    TAG,
+                    "onIceConnectionChange: "
+                )
+            }
+
+            override fun onIceConnectionReceivingChange(b: Boolean) {
+                Log.d(
+                    TAG,
+                    "onIceConnectionReceivingChange: "
+                )
+            }
+
+            override fun onIceGatheringChange(iceGatheringState: PeerConnection.IceGatheringState) {
+                Log.d(
+                    TAG,
+                    "onIceGatheringChange: "
+                )
+            }
+
+            override fun onIceCandidate(iceCandidate: IceCandidate) {
+                Log.d(TAG, "onIceCandidateScreen: ")
+                val message = JSONObject()
+                val candidate = JSONObject()
+                try {
+                    candidate.put("candidate", iceCandidate.sdp)
+                    candidate.put("sdpMid", iceCandidate.sdpMid)
+                    candidate.put("sdpMLineIndex", iceCandidate.sdpMLineIndex)
+                    message.put("id", "onIceCandidateScreen")
+                    message.put("candidate", candidate)
+                    message.put("sender", name)
+                    Log.d(
+                        TAG,
+                        "onIceCandidate: sending candidate $message"
+                    )
+                    sendMessage(message)
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+            override fun onIceCandidatesRemoved(iceCandidates: Array<IceCandidate>) {
+                Log.d(TAG, "onIceCandidatesRemoved: ")
+            }
+
+            override fun onAddStream(mediaStream: MediaStream) {
+                Log.d(TAG, "onAddStreamScreen: ")
+
+                val remoteVideoTrack = mediaStream.videoTracks[0]
+                val remoteAudioTrack = mediaStream.audioTracks[0]
+                if (name != hostname) {
+                    peerConnection.get(name)?.startRenderScreen(remoteVideoTrack, remoteAudioTrack)
+                }
+            }
+
+            override fun onRemoveStream(mediaStream: MediaStream) {
+                Log.d(TAG, "onRemoveStream: ")
+            }
+
+            override fun onDataChannel(dataChannel: DataChannel) {
+                Log.d(TAG, "onDataChannel: ")
+            }
+
+            override fun onRenegotiationNeeded() {
+                Log.d(
+                    TAG,
+                    "onRenegotiationNeeded: "
+                )
+            }
+        }
+        return factory.createPeerConnection(rtcConfig, pcConstraints, pcObserver)
+    }
+
 
     private fun getSendMessage(event: String): JSONObject {
         val message = JSONObject()
@@ -1062,6 +1367,25 @@ class CamStudyService : Service(),
                     message.put("device", "video")
                     sendMessage(message)
                 }
+                REQUEST_MEDIA_PROJECTION -> {
+                    // 화면공유 시작
+                    val message = JSONObject()
+                    Log.d(TAG,"REQUEST_MEDIA_PROJECTION")
+                    message.put("id", "sendStartScreen")
+                    message.put("name", hostname)
+                    message.put("room", room)
+                    sendMessage(message)
+                }
+                REQUEST_STOP_SHARE -> {
+                    // 화면공유 중지
+                    val message = JSONObject()
+                    Log.d(TAG,"REQUEST_STOP_SHARE")
+                    message.put("id", "sendStopScreen")
+                    message.put("room", room)
+                    message.put("name", hostname)
+                    sendMessage(message)
+
+                }
 
             }
         }
@@ -1121,7 +1445,7 @@ object notification {
         notificationIntent.putExtra("video", CamStudyService.isVideo)
         notificationIntent.putExtra("studyInfo", CamStudyActivity.studyInfo)
         notificationIntent.putExtra("timer", CamStudyService.timer)
-//        notificationIntent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+//      notificationIntent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
 
         val pendingIntent = PendingIntent
             .getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)

@@ -4,20 +4,30 @@ import android.content.Context
 import android.util.Log
 import org.webrtc.*
 
-class Participant(context: Context, name: String) {
+class Participant(context: Context, name: String){
     val TAG = "Participant"
 
     var idx: Int = -1
 
+
     var itemView: CamStudyItemView = CamStudyItemView(context)
+    var myitemView: CamStudyItemView = CamStudyItemView(context)
+    var itemViewScreen: CamStudyItemView = CamStudyItemView(context)
+
+    var context : Context = context
+
     var timer: CamStudyTimer
 
     var mirrormode = true
 
     var peer: PeerConnection? = null
+    var peerScreen: PeerConnection? = null
 
     var remoteVideoTrack: VideoTrack? = null
     var remoteAudioTrack: AudioTrack? = null
+
+    var remoteVideoShareTrack: VideoTrack? = null
+    var remoteAudioShareTrack: AudioTrack? = null
 
     //오디오와 비디오의 on/off 상태
     var isAudio: Boolean = true
@@ -40,7 +50,6 @@ class Participant(context: Context, name: String) {
 
     //surfaceView에 받아온 비디오를 그리고, 받아온 오디오를 재생하는 함수
     fun startRender(remoteVideoTrack: VideoTrack?, remoteAudioTrack: AudioTrack?) {
-
         Log.d(TAG, " isvideo : $isVideo/ isaudio : $isAudio")
         itemView.showProfileImage(isVideo)
         itemView.changAudioImage(isAudio)
@@ -52,9 +61,25 @@ class Participant(context: Context, name: String) {
         remoteVideoTrack?.setEnabled(isVideo)
         videorender = VideoRenderer(itemView.surfaceView)
         remoteVideoTrack?.addRenderer(videorender)
+        myitemView = itemView
     }
 
 
+    //surfaceView에 받아온 비디오를 그리고, 받아온 오디오를 재생하는 함수
+    fun startRenderScreen(remoteVideoTrack: VideoTrack?, remoteAudioTrack: AudioTrack?) {
+
+        Log.d(TAG, " isvideo : $isVideo/ isaudio : $isAudio")
+        itemViewScreen.showProfileImage(true)
+        itemViewScreen.changAudioImage(true)
+
+        this.remoteVideoShareTrack = remoteVideoTrack
+        this.remoteAudioShareTrack = remoteAudioTrack
+
+        remoteAudioTrack?.setEnabled(false)
+        remoteVideoTrack?.setEnabled(true)
+        videorender = VideoRenderer(itemViewScreen.surfaceView)
+        remoteVideoTrack?.addRenderer(videorender)
+    }
 
     //Audio를 on/off 하는 함수
     fun toggleAudio(status: String) {
@@ -96,7 +121,6 @@ class Participant(context: Context, name: String) {
 
     //캠스터디 종료할때, 진행중이던 타이머와 비디오를 멈추기 위한 함수
     fun stopCamStduy() {
-
         timer.endTimer()
         itemView.surfaceView.pauseVideo()
         itemView.surfaceView.release()
@@ -114,6 +138,29 @@ class Participant(context: Context, name: String) {
         }
 
         peer?.close()
+        peer = null
+    }
+
+
+    //캠스터디 종료할때, 진행중이던 타이머와 비디오를 멈추기 위한 함수
+    fun stopCamStduyScreen() {
+        itemViewScreen.surfaceView.pauseVideo()
+
+
+        if (remoteVideoShareTrack != null) {
+            remoteVideoShareTrack!!.setEnabled(false)
+            remoteVideoShareTrack!!.removeRenderer(videorender)
+            remoteVideoShareTrack?.dispose()
+            remoteVideoShareTrack = null
+        }
+        if(remoteAudioShareTrack != null){
+            remoteAudioShareTrack?.setEnabled(false)
+            remoteAudioShareTrack?.dispose()
+            remoteAudioShareTrack = null
+        }
+
+        peerScreen?.close()
+        peerScreen = null
     }
 
     fun horizontalflipcamera(){

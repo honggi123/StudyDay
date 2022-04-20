@@ -29,20 +29,52 @@
             app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
             <com.google.android.flexbox.FlexboxLayout
-                android:id="@+id/cam_study_share_felxbox"
+                android:id="@+id/cam_study_share_felxbox_other"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginBottom="20dp"
+                android:visibility="gone"
                 app:alignContent="center"
-                app:alignItems="center"
+                app:alignItems="stretch"
                 app:flexDirection="row"
+                app:flexWrap="wrap"
                 app:justifyContent="center">
 
             </com.google.android.flexbox.FlexboxLayout>
 
+            <LinearLayout
+                android:id="@+id/cam_study_share_myview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/camstudy_mysharescreen"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:visibility="gone">
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill_horizontal"
+                    android:gravity="center"
+                    android:text="모든 사용자와 화면을 공유하고 있음"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"></TextView>
+
+                <Button
+                    android:id="@+id/btn_camstudy_stopscreen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:backgroundTint="#202124"
+                    android:text="공유 중지" />
+            </LinearLayout>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
@@ -80,6 +112,7 @@
         </LinearLayout>
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/camstudy_rr"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.5"

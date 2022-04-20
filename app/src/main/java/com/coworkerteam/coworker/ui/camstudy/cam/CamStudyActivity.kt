@@ -18,14 +18,17 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.view.get
+import androidx.core.view.*
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.local.prefs.PreferencesHelper
 import com.coworkerteam.coworker.data.local.service.CamStudyService
 import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
+import com.coworkerteam.coworker.data.model.other.CamStudyItemView
 import com.coworkerteam.coworker.data.model.other.ChatData
+import com.coworkerteam.coworker.data.remote.StudydayService
 import com.coworkerteam.coworker.databinding.ActivityCamStudyBinding
+import com.coworkerteam.coworker.di.module.preferencesModule
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.camstudy.info.MyStudyInfoActivity
 import com.coworkerteam.coworker.ui.camstudy.info.ParticipantsActivity
@@ -73,39 +76,44 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     var chatDialogView: View? = null
 
+    var newpart = false
+
     var page = 1
 
     var context : Context = this
+
+    lateinit var whoshare : String
 
     lateinit var mediaProjectionManager : MediaProjectionManager
     lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
     lateinit var headSetReceiver : HeadSetReceiver
+    var height : Int = 0
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-       override fun onCreate(savedInstanceState: Bundle?) {
-           super.onCreate(savedInstanceState)
+        headSetReceiver = HeadSetReceiver()
+        var filter = IntentFilter(Intent.ACTION_HEADSET_PLUG)
+        registerReceiver(headSetReceiver,filter)
 
+        //받아온값 세팅
+        mediaProjectionManager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+        activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+        {
+            if (it.resultCode == RESULT_OK) {
+                //SubActivity에서 갖고온 Intent(It)
+                CamStudyService.screencaptureintent = it.data!!
 
-           headSetReceiver = HeadSetReceiver()
-           var filter = IntentFilter(Intent.ACTION_HEADSET_PLUG)
-           registerReceiver(headSetReceiver,filter)
+                val msg: Message = Message.obtain(null, CamStudyService.REQUEST_MEDIA_PROJECTION)
+                sendHandlerMessage(msg)
+            }
+        }
 
-           //받아온값 세팅
-           mediaProjectionManager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-           activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
-           {
-               if (it.resultCode == RESULT_OK) {
-                  //SubActivity에서 갖고온 Intent(It)
-                  // CamStudyService.screencaptureintent = it.data
-
-                  //  val msg: Message = Message.obtain(null, CamStudyService.MSG_SCREEN_SHARE)
-                  // sendHandlerMessage(msg)
-               }
-           }
-       }
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun initStartView() {
+
         Log.d(TAG,"initStartView")
         initData()
 
@@ -189,6 +197,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
          */
         // 프로세스 종료로 캠스터디를 종료 할 경우 서비스를 종료시켜준다.
         if(!ClickEndBackBtn){
+            Log.d(TAG,"프로세스 종료")
             unbindService(mConnection)
             stopService(Intent(this, CamStudyService::class.java))
         }
@@ -378,11 +387,9 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
             // 화면공유시 필요한 레이아웃
-            val cam_study_share_layout = findViewById<CoordinatorLayout>(R.id.cam_study_share_layout)
+
             val btn_screenshare =
                 dialogView.findViewById<TextView>(R.id.camstudy_bottom_menu_screenshare)
-            val screenshare_paging =
-                findViewById<LinearLayout>(R.id.screenshare_paging)
 
             val btn_participants =
                 dialogView.findViewById<TextView>(R.id.camstudy_bottom_menu_participants)
@@ -441,17 +448,26 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 dialog.dismiss()
             })
 
+
+
             btn_screenshare.setOnClickListener(View.OnClickListener {
+                Log.d(TAG,"CamStudyService.onScreen: " + CamStudyService.onScreen)
+                if(CamStudyService.onScreen == true){
+                    val dialogView: View = layoutInflater.inflate(R.layout.dialog_camstudy_cannotshare, null)
+                    val mBuilder = androidx.appcompat.app.AlertDialog.Builder(context).setView(dialogView)
+                    val builder = mBuilder.show()
+                    builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                    val txt = dialogView.findViewById<TextView>(R.id.dialog_cannotshare_text)
+                    txt.setText(whoshare+"님이 화면 공유 중입니다.")
 
-             //   activityResultLauncher.launch(mediaProjectionManager.createScreenCaptureIntent())
-
-                screenshare_paging.visibility = View.VISIBLE
-                cam_study_share_layout.visibility = View.VISIBLE
-                setPage()
-                viewDataBinding.camStudyFelxboxLayout.removeAllViews()
-
-                viewDataBinding.camStudyFelxboxLayout.flexWrap = FlexWrap.NOWRAP
-                addCamStudyItemViewPaging()
+                    val btn_ok =
+                        dialogView.findViewById<Button>(R.id.dialog_camstudyshareing_btn_ok)
+                    btn_ok.setOnClickListener(View.OnClickListener {
+                        builder.dismiss()
+                    })
+                }else{
+                    activityResultLauncher.launch(mediaProjectionManager.createScreenCaptureIntent())
+                }
                 dialog.dismiss()
             })
             dialog.show()
@@ -514,7 +530,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.camstudy_menu, menu)
-
         return true
     }
 
@@ -580,6 +595,46 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         return lp
     }
 
+    private fun getLayoutParamsScreen(size: Int,num : Int): FlexboxLayout.LayoutParams {
+
+        var height = height
+
+        val item_height = when{
+            size < 2 -> {
+                Log.d(TAG, "getLayoutParams: peerConnection.keys.size < 2")
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            }
+            size == 2 -> {
+                Log.d(TAG, "getLayoutParams: peerConnection.keys.size  == 2 ")
+                height/2
+            }
+            else -> {
+                Log.d(TAG, "getLayoutParams: else ")
+                height/3
+            }
+        }
+        val lp = FlexboxLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            item_height
+        )
+
+        lp.order = 1
+
+        if (num == 0) {
+            Log.d(TAG, "getLayoutParams: size 0")
+            lp.flexGrow = 1.0F
+        } else if (num == 1 && CamStudyService.peerConnection.keys.size == 2) {
+            Log.d(TAG, "getLayoutParamsScreen: size == 1")
+            lp.flexGrow = 1.0F
+            lp.isWrapBefore = true
+        }
+
+        lp.flexShrink = 1.0F
+        lp.flexBasisPercent = 0.5F
+
+        return lp
+    }
+
     fun setPage(){
         val maxPage = ceil(CamStudyService.peerConnection.keys.size / 2.0).toInt()
 
@@ -606,14 +661,22 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     }
 
     fun addCamStudyItemView() {
-        val startIndex = 6 * ( page-1 )
-        var endIndex = startIndex + 5
+        val startIndex:Int
+        var endIndex:Int
+        if(CamStudyService.onScreen == true){
+            Log.d(TAG,"onScreen!!")
+            startIndex = 2 * ( page-1 )
+            endIndex = startIndex + 1
+        }else{
+            startIndex = 6 * ( page-1 )
+            endIndex = startIndex + 5
+        }
+
         val maxIndex = CamStudyService.peerConnection.keys.size -1
 
         if(endIndex > maxIndex){
             endIndex = maxIndex
         }
-
         Log.d(TAG, "addCamStudyItemView: $startIndex, $endIndex, $maxIndex")
 
         if(maxIndex >= 0) {
@@ -628,7 +691,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 viewDataBinding.camStudyFelxboxLayout.addView(
                     CamStudyService.peerConnection[key]?.itemView
                 )
-
             }
         }
     }
@@ -656,7 +718,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 viewDataBinding.camStudyFelxboxLayout.addView(
                     CamStudyService.peerConnection[key]?.itemView
                 )
-
             }
         }
     }
@@ -688,7 +749,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     }
 
     fun camStudyut(){
-        ClickEndBackBtn = true
         // 캠스터디 종료 확인 다이얼로그
         val mDialogView =
             LayoutInflater.from(context).inflate(R.layout.dialog_camstudyout, null)
@@ -707,12 +767,12 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         })
         // 캠스터디 퇴장
         btn_out.setOnClickListener(View.OnClickListener {
+            ClickEndBackBtn = true
             val msg: Message = Message.obtain(null, CamStudyService.MSG_COMSTUDY_LEFT)
             sendHandlerMessage(msg)
             builder.dismiss()
         })
     }
-
 
 
     inner class CallbackHandler(looper: Looper) : Handler(looper) {
@@ -733,23 +793,23 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     //레이아웃 설정
                     setPage()
                     addCamStudyItemView()
-
                 }
                 CamStudyService.MSG_NEWPARTICIPANTARRIVED -> {
                     //새로운 참여자가 들어왔을때
 
                     //레이아웃 초기화
                     viewDataBinding.camStudyFelxboxLayout.removeAllViews()
-
                     //레이아웃 다시 설정
                     setPage()
                     addCamStudyItemView()
+
                 }
                 CamStudyService.MSG_PARTICIPANTLEFT -> {
                     //누군가 스터디를 떠났을 경우
+                    Log.d(TAG,"onScreen : "+ CamStudyService.onScreen)
 
                     viewDataBinding.camStudyFelxboxLayout.removeAllViews()
-
+                    Log.d(TAG,"MSG_PARTICIPANTLEFT")
                     //레이아웃 다시 설정
                     setPage()
                     addCamStudyItemView()
@@ -780,7 +840,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 CamStudyService.MSG_LEADER_FORCED_VIDEO_OFF -> {
                     //리더에게 카메라 off
                     val btn_camera = findViewById<ImageButton>(R.id.camstudy_btn_camera)
-
                     CamStudyService.isVideo = false
                     btn_camera.isSelected = true
                 }
@@ -792,6 +851,79 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                         startActivity(mainMoveIntent)
                     }
                     if(!isFinishing) finish()
+                }
+                CamStudyService.REQUEST_SCREEN_SHARE -> {
+                    height = viewDataBinding.camStudyFelxboxLayout.height
+                    var bundle = Bundle()
+                    bundle = msg.data
+                    var sharehostname = bundle.getString("name")
+                    var shareHostorNot = bundle.getBoolean("shareHost")
+
+                    if (sharehostname != null){
+                        whoshare = sharehostname
+                    }
+
+                    viewDataBinding.camStudyFelxboxLayout.removeAllViews()
+                    viewDataBinding.camStudyShareLayout.visibility = View.VISIBLE
+                    viewDataBinding.screensharePaging.visibility = View.VISIBLE
+
+                    if (shareHostorNot){
+                        viewDataBinding.camStudyShareMyview.visibility = View.VISIBLE
+                    }else{
+                        viewDataBinding.camStudyShareMyview.visibility = View.GONE
+                        viewDataBinding.camStudyShareFelxboxOther.visibility = View.VISIBLE
+                        val item = CamStudyService.peerConnection[sharehostname]!!.itemViewScreen
+
+                        item?.layoutParams =
+                            getLayoutParams(0)
+
+                        viewDataBinding.camStudyShareFelxboxOther.addView(
+                            item
+                        )
+
+                        if (sharehostname != null) {
+                            item.screenShareMode(sharehostname)
+                        }
+                        item.showProfileImage("on")
+                    }
+                    setPage()
+
+                    viewDataBinding.camStudyFelxboxLayout.removeAllViewsInLayout()
+                    viewDataBinding.camStudyFelxboxLayout.flexWrap = FlexWrap.NOWRAP
+                    addCamStudyItemViewPaging()
+
+                    viewDataBinding.btnCamstudyStopscreen.setOnClickListener(View.OnClickListener {
+                        //레이아웃 초기화
+                        val msg: Message = Message.obtain(null, CamStudyService.REQUEST_STOP_SHARE)
+                        sendHandlerMessage(msg)
+                    })
+                }
+                CamStudyService.RECEIVE_STOP_SHARE -> {
+                    // 화면 공유 중지를 받음
+                    //레이아웃 초기화
+                    viewDataBinding.camStudyShareFelxboxOther.visibility = View.GONE
+                    viewDataBinding.camStudyShareLayout.visibility = View.GONE
+                    viewDataBinding.screensharePaging.visibility = View.INVISIBLE
+
+                    viewDataBinding.camStudyFelxboxLayout.flexWrap = FlexWrap.WRAP
+
+                    viewDataBinding.camStudyShareFelxboxOther.removeAllViews()
+                    viewDataBinding.camStudyFelxboxLayout.removeAllViewsInLayout()
+
+                    Log.d(TAG,"RECEIVE_STOP_SHARE")
+                    for (i in 1..CamStudyService.peerConnection.size) {
+                        Log.d(TAG, "addCamStudyItemView: $i")
+                        val key = CamStudyService.peerConnection.keys.toList()[i-1]
+                        val item = CamStudyService.peerConnection[key]?.itemView
+
+                        item?.layoutParams = getLayoutParamsScreen(CamStudyService.peerConnection.size,
+                            viewDataBinding.camStudyFelxboxLayout.flexItemCount)
+
+                        viewDataBinding.camStudyFelxboxLayout.addView(
+                            item
+                        )
+                    }
+                    CamStudyService.onScreen = false
                 }
             }
         }
@@ -809,7 +941,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION)
                 }else{
                     Log.d("CAMACT","헤드셋 장착")
-
                     var audioManager : AudioManager
                     audioManager = context?.getSystemService(AUDIO_SERVICE) as AudioManager
                     audioManager.setSpeakerphoneOn(false)

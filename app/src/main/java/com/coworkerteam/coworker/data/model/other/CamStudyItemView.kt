@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bumptech.glide.Glide
@@ -24,6 +25,7 @@ class CamStudyItemView : ConstraintLayout {
     lateinit var view: View
     lateinit var surfaceView: SurfaceViewRenderer
     lateinit var profileView: CircleImageView
+    lateinit var timerView: LinearLayout
     lateinit var timerImageView: ImageView
     lateinit var timerTextView: TextView
     lateinit var audioView: ImageView
@@ -48,14 +50,13 @@ class CamStudyItemView : ConstraintLayout {
         audioView = view.findViewById(R.id.item_camstudy_mic)
         userNameView = view.findViewById(R.id.item_camstudy_txt_name)
         highlightView = view.findViewById(R.id.cam_highlight)
+        timerView = view.findViewById(R.id.item_camstudy_timer)
 
         //surfaceView에 관련한 설정
         CoroutineScope(Dispatchers.Main).async {
             surfaceView.init(CamStudyService.rootEglBase?.eglBaseContext, null)
-
             surfaceView.setEnableHardwareScaler(true)
-            surfaceView.setMirror(true)
-
+            surfaceView.setMirror(false)
         }
     }
 
@@ -128,6 +129,11 @@ class CamStudyItemView : ConstraintLayout {
             highlightView.visibility = View.GONE
             speakAnimation.visibility = View.GONE
         }
+    }
+
+    fun screenShareMode(sharehostname : String){
+        userNameView.setText(sharehostname)
+        timerView.visibility = INVISIBLE
     }
 
 

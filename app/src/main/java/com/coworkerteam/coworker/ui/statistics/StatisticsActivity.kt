@@ -53,7 +53,7 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
 
     lateinit var appBarLayout: AppBarLayout
     lateinit var statisticsResponse: StatisticsResponse
-
+    var maxstudytime = 0f
     var period = "week"
     var selectDate = getToday()
 
@@ -193,6 +193,9 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
                             var hour = if (i.hour != null) i.hour else 0
 
                             barEntries.add(BarEntry(x.toFloat(), hour.toFloat()))
+                            if(maxstudytime < hour.toFloat()){
+                                maxstudytime = hour.toFloat()
+                            }
 
                             val statistcsDay = statisticsResponse.weekTimeAcheive.get(x).date
                             Log.d(TAG, "weekTimeAcheive 사이즈 : "+ x.toString())
@@ -337,7 +340,7 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
             setDrawBarShadow(false) //그래프의 그림자
             setDrawGridBackground(false)//격자구조 넣을건지
             axisLeft.run { //왼쪽 축. 즉 Y방향 축을 뜻한다.
-                axisMaximum = 25f //100 위치에 선을 그리기 위해 101f로 맥시멈값 설정
+                axisMaximum = maxstudytime + maxstudytime/2  //100 위치에 선을 그리기 위해 101f로 맥시멈값 설정
                 axisMinimum = 0f // 최소값 0
                 granularity = 1f // 50 단위마다 선을 그리려고 설정.
                 setDrawLabels(true) // 값 적는거 허용 (0, 50, 100)

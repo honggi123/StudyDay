@@ -57,7 +57,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
-                android:id="@+id/linearLayout6"
+                android:id="@+id/item_camstudy_timer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/black"
@@ -91,7 +91,7 @@
                 android:layout_marginStart="8dp"
                 android:src="@drawable/ic_baseline_mic_off_camstudyitem"
                 android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@+id/linearLayout6"
+                app:layout_constraintBottom_toBottomOf="@+id/item_camstudy_timer"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -104,7 +104,7 @@
                 android:layout_marginTop="8dp"
                 android:visibility="gone"
                 app:indicatorName="LineScalePulseOutIndicator"
-                app:layout_constraintBottom_toBottomOf="@+id/linearLayout6"
+                app:layout_constraintBottom_toBottomOf="@+id/item_camstudy_timer"
                 app:layout_constraintStart_toStartOf="parent">
 
             </com.wang.avi.AVLoadingIndicatorView>
