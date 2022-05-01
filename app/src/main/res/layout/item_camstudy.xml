@@ -10,21 +10,37 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="5dp"
-        app:cardCornerRadius="12dp"
+        app:cardCornerRadius="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+
+            android:background="#202124">
+
+            <View
+                android:id="@+id/cam_highlight"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_gradient"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <org.webrtc.SurfaceViewRenderer
                 android:id="@+id/cam_surface_view"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+               android:layout_margin="5dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -32,16 +48,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0" />
 
-            <View
-                android:id="@+id/cam_highlight"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/camstudy_highlight"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/item_camstudy_profile"

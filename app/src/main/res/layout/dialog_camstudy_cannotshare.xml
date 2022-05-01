@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_backround_round"
+    android:orientation="vertical"
+    android:paddingTop="20dp">
+
+    <TextView
+        android:id="@+id/dialog_cannotshare_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/notosans_medium_hestia"
+        android:gravity="center"
+        android:text="화면 공유중 입니다."
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:gravity="right"
+        android:orientation="horizontal">
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_backround_round"
+        android:orientation="horizontal">
+
+
+        <Button
+            android:id="@+id/dialog_camstudyshareing_btn_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/dialog_logout"
+            android:text="확인"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+</LinearLayout>

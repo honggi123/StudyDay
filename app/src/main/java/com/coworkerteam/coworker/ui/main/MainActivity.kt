@@ -37,11 +37,9 @@ import com.google.android.material.timepicker.TimeFormat
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.UpdateAvailability
-import com.unity3d.player.UnityPlayerActivity
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
-
 
 class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
      {
@@ -105,8 +103,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
                             }
                         })
                     }
-
-
             }
         }
     }
@@ -195,9 +191,19 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
         viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
+                    /*
                     var intent = Intent(this, EnterCamstudyActivity::class.java)
                     intent.putExtra("studyInfo", it.body()!!)
                     passwordDialog.dismissDialog()
+                    startActivity(intent)
+
+                     */
+                    Log.d(TAG,"studyinfo : "+ it.body()!!)
+                    passwordDialog.dismissDialog()
+                    var intent = Intent(this, UnityActivity::class.java)
+                    intent.putExtra("studyInfo", it.body()!!)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    Log.d(TAG,"studyInfo : "+it.body().toString())
                     startActivity(intent)
                 }
 
@@ -251,7 +257,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
                         }
                     }
                 }
-
             }
         })
 
@@ -295,7 +300,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
                     //존재하지 않은 회원일 경우
                     val errorMessage = JSONObject(it.errorBody()?.string())
                     Log.e(TAG, errorMessage.getString("message"))
-
                     moveLogin()
                 }
             }
@@ -737,7 +741,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
                         } else {
                             Toast.makeText(this, "값을 모두 입력해주세요.", Toast.LENGTH_SHORT).show()
                         }
-
                     })
                 }
             }
@@ -838,7 +841,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
             builder?.show()
             showStudyDescription = true
         }
-
     }
 
 
@@ -850,9 +852,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
-
-
 
     /*
     // 인앱 업데이트

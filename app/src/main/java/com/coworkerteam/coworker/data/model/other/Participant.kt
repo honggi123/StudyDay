@@ -10,9 +10,9 @@ class Participant(context: Context, name: String){
     var idx: Int = -1
 
 
-    var itemView: CamStudyItemView = CamStudyItemView(context)
-    var myitemView: CamStudyItemView = CamStudyItemView(context)
-    var itemViewScreen: CamStudyItemView = CamStudyItemView(context)
+    var itemView: CamStudyItemView = CamStudyItemView(context,false)
+    var myitemView: CamStudyItemView = CamStudyItemView(context,false)
+    var itemViewScreen: CamStudyItemView = CamStudyItemView(context,true)
 
     var context : Context = context
 
@@ -67,7 +67,6 @@ class Participant(context: Context, name: String){
 
     //surfaceView에 받아온 비디오를 그리고, 받아온 오디오를 재생하는 함수
     fun startRenderScreen(remoteVideoTrack: VideoTrack?, remoteAudioTrack: AudioTrack?) {
-
         Log.d(TAG, " isvideo : $isVideo/ isaudio : $isAudio")
         itemViewScreen.showProfileImage(true)
         itemViewScreen.changAudioImage(true)
@@ -75,17 +74,17 @@ class Participant(context: Context, name: String){
         this.remoteVideoShareTrack = remoteVideoTrack
         this.remoteAudioShareTrack = remoteAudioTrack
 
-        remoteAudioTrack?.setEnabled(false)
-        remoteVideoTrack?.setEnabled(true)
+        remoteAudioShareTrack?.setEnabled(false)
+        remoteVideoShareTrack?.setEnabled(true)
+
         videorender = VideoRenderer(itemViewScreen.surfaceView)
-        remoteVideoTrack?.addRenderer(videorender)
+        remoteVideoShareTrack?.addRenderer(videorender)
     }
 
     //Audio를 on/off 하는 함수
     fun toggleAudio(status: String) {
         if (status == "off") {
             isAudio = false
-
             if (remoteAudioTrack != null) {
                 remoteAudioTrack!!.setEnabled(false)
             }

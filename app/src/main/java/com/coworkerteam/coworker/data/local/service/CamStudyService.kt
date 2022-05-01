@@ -70,9 +70,9 @@ class CamStudyService : Service(),
 
     private var recorder: VoiceRecorder? = null
 
-    private val DEFAULT_SAMPLE_RATE = VadConfig.SampleRate.SAMPLE_RATE_16K
-    private val DEFAULT_FRAME_SIZE = VadConfig.FrameSize.FRAME_SIZE_160
-    private val DEFAULT_MODE = VadConfig.Mode.VERY_AGGRESSIVE
+    private val DEFAULT_SAMPLE_RATE = VadConfig.SampleRate.SAMPLE_RATE_8K
+    private val DEFAULT_FRAME_SIZE = VadConfig.FrameSize.FRAME_SIZE_80
+    private val DEFAULT_MODE = VadConfig.Mode.NORMAL
 
     private val DEFAULT_SILENCE_DURATION = 500
     private val DEFAULT_VOICE_DURATION = 500
@@ -115,6 +115,7 @@ class CamStudyService : Service(),
         var isPermissions = false
         var isPlay = true
         var timer: Int? = null
+        var forcedexit : Boolean = false
 
         lateinit var rootEglBase: EglBase
         lateinit var rootEglBaseScreen: EglBase
@@ -132,7 +133,7 @@ class CamStudyService : Service(),
     var videoTrackFromCamera: VideoTrack? = null
     var localvideoTrack : VideoTrack? = null
     var videoShareTrackFromCamera:VideoTrack? = null
-
+    var audioShareTrack: AudioTrack? = null
     var trackTrackingThread : Thread? = null
 
     //서비스가 시작될 때 호출
@@ -227,7 +228,6 @@ class CamStudyService : Service(),
             socket?.disconnect()
             socket = null
         }
-
 
         onScreen = false
     }
@@ -381,9 +381,8 @@ class CamStudyService : Service(),
                                                 Message.obtain(null, MSG_EXISTINGPARTICIPANNTS)
                                             sendHandlerMessage(handlerMessage)
                                         }
-
-
                                     }
+
                                     "newParticipantArrived" -> {
                                         //새로운 참가자가 들어왔을때
                                         Log.d(TAG, "newParticipantArrived")
@@ -546,6 +545,7 @@ class CamStudyService : Service(),
                                     "receiveForcedexit" -> {
                                         //강퇴 당하기
                                         Log.d(TAG, "receive forcedexit")
+                                        forcedexit = true
                                         val handlerMessage: Message =
                                             Message.obtain(null, CamStudyService.MSG_LEADER_FORCED_EXIT)
                                         sendHandlerMessage(handlerMessage)
@@ -572,6 +572,19 @@ class CamStudyService : Service(),
                                                     CamStudyService.MSG_LEADER_FORCED_AUDIO_OFF
                                                 )
                                                 sendHandlerMessage(handlerMessage)
+
+                                                recorder?.stop()
+                                                if(speakStatus){
+                                                    speakStatus = false
+                                                    noiseStatus = true
+                                                }
+                                                var hmessage = mHandler.obtainMessage()
+                                                var bundle = Bundle()
+                                                bundle.putString("id", "receiveStopRecognition")
+                                                bundle.putString("sender", hostname)
+                                                hmessage.data = bundle
+                                                mHandler.sendMessage(hmessage)
+
                                             }
                                         }
                                     }
@@ -825,9 +838,14 @@ class CamStudyService : Service(),
             videosource
         )
 
+        //create an AudioSource instance
+
+        var audioSource = factory?.createAudioSource(audioConstraints)
+        audioShareTrack = factory?.createAudioTrack("102", audioSource)
+        audioShareTrack?.setEnabled(false)
         if (isPermissions) {
             mediaStream.addTrack(videoShareTrackFromCamera)
-            mediaStream.addTrack(localAudioTrack)
+            mediaStream.addTrack(audioShareTrack)
         }
 
         //  peerConnection.get(name)?.startRenderScreen(videoShareTrackFromCamera, localAudioTrack)
@@ -839,10 +857,13 @@ class CamStudyService : Service(),
         if (isPermissions) {
             if (hostname != name){
                 mediaStream.addTrack(videoTrackFromCamera)
+                var audioSource = factory?.createAudioSource(audioConstraints)
+                audioShareTrack = factory?.createAudioTrack("102", audioSource)
+                audioShareTrack?.setEnabled(false)
             }else{
                 mediaStream.addTrack(videoShareTrackFromCamera)
             }
-            mediaStream.addTrack(localAudioTrack)
+            mediaStream.addTrack(audioShareTrack)
         }
         peerConnection[name]?.peerScreen?.addStream(mediaStream)
     }
@@ -955,7 +976,6 @@ class CamStudyService : Service(),
         }
         peerConnection[name]?.peer?.addStream(mediaStream)
     }
-
 
 
     private fun createPeerConnection(
@@ -1289,8 +1309,8 @@ class CamStudyService : Service(),
                             message_send.put("sender", hostname)
                             sendMessage(message_send)
                         }
-
                     }else{
+                        Log.d(TAG,"recorder.start")
                         recorder?.start()
                     }
                 }
@@ -1406,6 +1426,7 @@ class CamStudyService : Service(),
     }
 
     override fun onNoiseDetected() {
+
         if(noiseStatus==false){
             Log.d(TAG,"onNoiseDetected")
 

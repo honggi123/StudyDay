@@ -18,6 +18,7 @@ import com.coworkerteam.coworker.databinding.ActivityMyStudyBinding
 import com.coworkerteam.coworker.ui.base.NavigationActivity
 import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.ui.dialog.PasswordDialog
+import com.coworkerteam.coworker.ui.main.UnityActivity
 import com.coworkerteam.coworker.ui.study.management.ManagementActivity
 import com.coworkerteam.coworker.utils.RecyclerViewUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -133,10 +134,19 @@ class MyStudyActivity : NavigationActivity<ActivityMyStudyBinding, MyStudyViewMo
         viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
+                    /*
                     var intent = Intent(this, EnterCamstudyActivity::class.java)
                     intent.putExtra("studyInfo", it.body()!!)
 
                     passwordDialog.dismissDialog()
+                    startActivity(intent)
+                     */
+                    Log.d(TAG,"studyinfo : "+ it.body()!!)
+                    passwordDialog.dismissDialog()
+                    var intent = Intent(this, UnityActivity::class.java)
+                    intent.putExtra("studyInfo", it.body()!!)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    Log.d(TAG,"studyInfo : "+it.body().toString())
                     startActivity(intent)
                 }
                 it.code() == 400 -> {

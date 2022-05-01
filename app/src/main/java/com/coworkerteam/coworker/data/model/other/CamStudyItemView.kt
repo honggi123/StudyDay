@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.marginBottom
 import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.local.service.CamStudyService
@@ -32,8 +33,11 @@ class CamStudyItemView : ConstraintLayout {
     lateinit var userNameView: TextView
     lateinit var highlightView: View
     lateinit var speakAnimation : AVLoadingIndicatorView
+    var screenOrNot : Boolean = false
+
     //생성자
-    constructor(context: Context) : super(context) {
+    constructor(context: Context, screenOrNot:Boolean) : super(context) {
+        this.screenOrNot = screenOrNot
         init()
     }
 
@@ -56,7 +60,9 @@ class CamStudyItemView : ConstraintLayout {
         CoroutineScope(Dispatchers.Main).async {
             surfaceView.init(CamStudyService.rootEglBase?.eglBaseContext, null)
             surfaceView.setEnableHardwareScaler(true)
-            surfaceView.setMirror(false)
+            if (!screenOrNot){
+                surfaceView.setMirror(true)
+            }
         }
     }
 

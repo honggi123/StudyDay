@@ -2,6 +2,7 @@ package com.coworkerteam.coworker.ui.main
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -68,6 +69,7 @@ class MainMyStudyPagingAdapter(private val viewModel: MainViewModel) :
         private val studyNum: TextView = itemView.findViewById(R.id.item_my_study_txt_num)
 
         fun bind(item: MainMyStudyPagingResponse.Result.MyStudy?) {
+            Log.d("adapter : ","img :::: "+item!!.img)
             Glide.with(context).load(item!!.img).into(img)
 
             if (!item.isLeader) {
@@ -75,7 +77,6 @@ class MainMyStudyPagingAdapter(private val viewModel: MainViewModel) :
             }else{
                 leader.visibility = View.VISIBLE
             }
-
             studyName.text = item.name
             studyNum.text = "참여인원 " + item.userNum.toString() + "/" + item.maxNum.toString()
 

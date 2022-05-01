@@ -8,6 +8,8 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.AudioManager
+import android.media.MediaRecorder.AudioSource.VOICE_CALL
+import android.media.MicrophoneInfo
 import android.media.projection.MediaProjectionManager
 import android.os.*
 import android.util.Base64
@@ -94,7 +96,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
         headSetReceiver = HeadSetReceiver()
         var filter = IntentFilter(Intent.ACTION_HEADSET_PLUG)
-        registerReceiver(headSetReceiver,filter)
+       registerReceiver(headSetReceiver,filter)
 
         //받아온값 세팅
         mediaProjectionManager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
@@ -108,12 +110,10 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 sendHandlerMessage(msg)
             }
         }
-
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun initStartView() {
-
         Log.d(TAG,"initStartView")
         initData()
 
@@ -130,7 +130,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         intent.putExtra("instance", instance)
         startForegroundService(intent)
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
-
         init()
     }
 
@@ -196,7 +195,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         }
          */
         // 프로세스 종료로 캠스터디를 종료 할 경우 서비스를 종료시켜준다.
-        if(!ClickEndBackBtn){
+        if(isServiceRunningCheck(CamStudyService::class.java.name)){
             Log.d(TAG,"프로세스 종료")
             unbindService(mConnection)
             stopService(Intent(this, CamStudyService::class.java))
@@ -836,6 +835,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
                     CamStudyService.isAudio = false
                     btn_mic.isSelected = true
+
+
                 }
                 CamStudyService.MSG_LEADER_FORCED_VIDEO_OFF -> {
                     //리더에게 카메라 off
@@ -844,11 +845,16 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     btn_camera.isSelected = true
                 }
                 CamStudyService.MSG_SERVICE_FINISH -> {
-                    if(ClickEndBackBtn){
+                    if(ClickEndBackBtn  || CamStudyService.forcedexit){
                         mainMoveIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        mainMoveIntent.putExtra("KickFromLeader",kick)
-                        Log.d(TAG,"강퇴 여부 : "+kick)
-                        startActivity(mainMoveIntent)
+                        mainMoveIntent.putExtra("KickFromLeader",CamStudyService.forcedexit)
+                        Log.d(TAG,"강퇴 여부 : "+CamStudyService.forcedexit)
+                        CamStudyService.forcedexit = false
+                        if(kick){
+                            startActivity(mainMoveIntent)
+                        }else{
+                            finish()
+                        }
                     }
                     if(!isFinishing) finish()
                 }
@@ -937,6 +943,9 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     Log.d("CAMACT","헤드셋 해제")
                     var audioManager : AudioManager
                     audioManager = context?.getSystemService(AUDIO_SERVICE) as AudioManager
+                    audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,
+                        (audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL) * 0.35).toInt(),
+                        AudioManager.FLAG_SHOW_UI)
                     audioManager.setSpeakerphoneOn(true)
                     audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION)
                 }else{
@@ -946,10 +955,21 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     audioManager.setSpeakerphoneOn(false)
                     audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION)
                 }
-
             }
         }
+    }
 
+
+    @SuppressWarnings("deprecation")
+    fun isServiceRunningCheck(servicename:String) : Boolean{
+    var manager : ActivityManager =  this.getSystemService(Activity.ACTIVITY_SERVICE) as ActivityManager
+    for (service : ActivityManager.RunningServiceInfo in manager.getRunningServices(Integer.MAX_VALUE)) {
+        Log.d(TAG,"service.service.getClassName() ; " + service.service.getClassName())
+        if (servicename.equals(service.service.getClassName())) {
+            return true
+        }
+    }
+    return false
     }
 
 
