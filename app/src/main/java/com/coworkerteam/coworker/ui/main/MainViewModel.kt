@@ -49,7 +49,6 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
     val MainRankResponseLiveData: LiveData<Response<MainRankResponse>>
         get() = _MainRankResponseLiveData
 
-
     fun getMainData() {
         val accessToken = model.getAccessToken()
         val nickname = model.getCurrentUserName()
@@ -103,9 +102,7 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
                             if (isSuccessful) {
                                 it.body()!!.result.studyInfo.idx = studyIdx
                                 model.setnickname(it.body()!!.result.nickname)
-
                             }
-
 
                             when {
                                 it.code() == 401 -> {

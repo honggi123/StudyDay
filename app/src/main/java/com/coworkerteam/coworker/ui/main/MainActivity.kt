@@ -203,6 +203,8 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
                     var intent = Intent(this, UnityActivity::class.java)
                     intent.putExtra("studyInfo", it.body()!!)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setAction(Intent.ACTION_MAIN);
+                    intent.addCategory(Intent.CATEGORY_LAUNCHER);
                     Log.d(TAG,"studyInfo : "+it.body().toString())
                     startActivity(intent)
                 }

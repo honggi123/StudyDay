@@ -972,6 +972,11 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     return false
     }
 
+    override fun onTrimMemory(level: Int) {
+        Log.d(TAG,": onTrimMemory " + level)
+        super.onTrimMemory(level)
+    }
+
 
 
 

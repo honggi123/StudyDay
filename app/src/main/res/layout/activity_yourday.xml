@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="activitiy"
+            type="com.coworkerteam.coworker.ui.search.StudySearchActivity" />
+
+        <variable
+            name="draworInfo"
+            type="com.coworkerteam.coworker.data.model.other.DrawerBottomInfo" />
+    </data>
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:context=".ui.search.StudySearchActivity">
+
+            <include
+                android:id="@+id/yourday_toolber"
+                layout="@layout/toolbar_main"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingLeft="20dp"
+                android:paddingTop="20dp"
+                android:paddingRight="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"/>
+
+                <LinearLayout
+                    android:id="@+id/study_serarch_filter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/search_background"
+                    android:orientation="vertical"
+                    android:padding="10dp"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/study_search_category_test"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
+                            android:text="시험공부"
+                            android:textColor="@color/search_category" />
+
+                        <TextView
+                            android:id="@+id/study_search_category_sat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
+                            android:text="수능"
+                            android:textColor="@color/search_category" />
+
+                        <TextView
+                            android:id="@+id/study_search_category_em"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
+                            android:text="취업"
+                            android:textColor="@color/search_category" />
+
+                        <TextView
+                            android:id="@+id/study_search_category_tran"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
+                            android:text="이직"
+                            android:textColor="@color/search_category" />
+
+                        <TextView
+                            android:id="@+id/study_search_category_cr"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
+                            android:text="자격증"
+                            android:textColor="@color/search_category" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/study_search_category_lau"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
+                            android:text="어학"
+                            android:textColor="@color/search_category" />
+
+                        <TextView
+                            android:id="@+id/study_search_category_self"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
+                            android:text="자기개발"
+                            android:textColor="@color/search_category" />
+
+                        <TextView
+                            android:id="@+id/study_search_category_off"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
+                            android:text="고시/공시"
+                            android:textColor="@color/search_category" />
+
+                        <TextView
+                            android:id="@+id/study_search_category_other"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
+                            android:text="기타"
+                            android:textColor="@color/search_category" />
+
+                        <TextView
+                            android:id="@+id/textView74"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:gravity="center_horizontal"
+                            android:text="  " />
+                    </LinearLayout>
+                </LinearLayout>
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/yourday_tab"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:tabIndicatorColor="@color/main_color">
+
+                    <com.google.android.material.tabs.TabItem
+                        android:id="@+id/study_serarch_tab_daily"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="글 모아보기" />
+
+                    <com.google.android.material.tabs.TabItem
+                        android:id="@+id/study_serarch_tab_group"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="공부인증" />
+
+                </com.google.android.material.tabs.TabLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    android:gravity="right"
+                    >
+
+                    <TextView
+                        android:id="@+id/study_search_txt_studyTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/search_sort_background"
+                        android:text="공감많은순"
+                        android:textColor="@color/select_menu"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/study_search_txt_latest"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/search_sort_background"
+                        android:text="최신순"
+                        android:textColor="@color/select_menu"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+
+                <androidx.viewpager.widget.ViewPager
+                    android:id="@+id/yourday_viewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone">
+
+                </androidx.viewpager.widget.ViewPager>
+
+                <TextView
+                    android:id="@+id/textView21"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|center_horizontal|center_vertical"
+                    android:text="오늘 하루를 기록해요." />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!--자식 레이아웃. Navigation Drawer-->
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navigationView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            app:headerLayout="@layout/drawer_header"
+            app:menu="@menu/drawerlayout">
+
+            <include
+                layout="@layout/drawer_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                bind:draworInfo="@{draworInfo}"/>
+
+        </com.google.android.material.navigation.NavigationView>
+    </androidx.drawerlayout.widget.DrawerLayout>
+</layout>
