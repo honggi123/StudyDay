@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/item_camstudy_profile"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="15dp"
+            android:src="@mipmap/ic_studyday_round"
+            app:civ_border_color="#FF000000"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView98"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:text="hongs"
+            android:textColor="#000000"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/item_camstudy_profile"
+            app:layout_constraintTop_toTopOf="@+id/item_camstudy_profile" />
+
+        <TextView
+            android:id="@+id/textView99"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5월 16일"
+            app:layout_constraintStart_toStartOf="@+id/textView98"
+            app:layout_constraintTop_toBottomOf="@+id/textView98" />
+
+        <TextView
+            android:id="@+id/textView100"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="잠이 안오는 새벽 내 책을 읽었다. 이야기가 따뜻하고 서정적이어서 날씨가 더 추어지면 또 다시 읽고 싶어질 것 같다. good"
+            app:layout_constraintStart_toStartOf="@+id/item_camstudy_profile"
+            app:layout_constraintTop_toBottomOf="@+id/item_camstudy_profile" />
+
+        <include
+            android:id="@+id/dialog_empathy"
+            layout="@layout/dialog_empathy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/txt_empathy"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/txt_empathy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="공감하기"
+            app:layout_constraintStart_toStartOf="@+id/textView100"
+            app:layout_constraintTop_toBottomOf="@+id/textView100" />
+
+        <ImageView
+            android:id="@+id/imageView28"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/textView99"
+            app:layout_constraintEnd_toStartOf="@+id/imageView29"
+            app:layout_constraintTop_toTopOf="@+id/textView98"
+            app:srcCompat="@drawable/ic_baseline_pencil" />
+
+        <ImageView
+            android:id="@+id/imageView29"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/imageView28"
+            app:srcCompat="@drawable/ic_baseline_delete_24" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

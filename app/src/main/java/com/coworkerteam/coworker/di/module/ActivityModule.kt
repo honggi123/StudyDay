@@ -26,6 +26,7 @@ import com.coworkerteam.coworker.ui.study.make.MakeStudyViewModel
 import com.coworkerteam.coworker.ui.study.management.ManagementViewModel
 import com.coworkerteam.coworker.ui.study.memberlist.MemberListViewModel
 import com.coworkerteam.coworker.ui.todolist.TodoListViewModel
+import com.coworkerteam.coworker.ui.yourday.WriteMoodPostViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -101,6 +102,9 @@ var viewModelModule = module {
     }
     viewModel {
         MemberListViewModel(get())
+    }
+    viewModel {
+        WriteMoodPostViewModel(get())
     }
 }
 

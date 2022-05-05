@@ -15,4 +15,14 @@
         android:layout_marginRight="20dp"
         android:visibility="gone"
         app:srcCompat="@drawable/add" />
+
+    <ImageView
+        android:id="@+id/main_toolbar_writepost"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_gravity="right"
+        android:layout_marginRight="20dp"
+        android:visibility="gone"
+        app:srcCompat="@drawable/add" />
+
 </androidx.appcompat.widget.Toolbar>

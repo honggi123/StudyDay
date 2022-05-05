@@ -109,6 +109,18 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="deeplink"
+                android:scheme="studyday" />
+            </intent-filter>
+
         </activity>
         <activity android:name=".ui.main.UnityActivity"></activity>
 
@@ -116,6 +128,14 @@
             android:name=".ui.main.MainActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".ui.yourday.YourDayActivity"
+            tools:ignore="Instantiatable">
+        </activity>
+
+        <activity android:name=".ui.yourday.WriteMoodPostActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
         <service
             android:name=".data.local.service.CamStudyService"
             android:enabled="true"

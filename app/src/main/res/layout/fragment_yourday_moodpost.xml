@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="activitiy"
+            type="com.coworkerteam.coworker.ui.yourday.MoodPostFragment" />
+    </data>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -14,19 +20,40 @@
             android:orientation="vertical"
             android:paddingTop="15dp">
 
-            <TextView
-                android:id="@+id/open_search_empty_view"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal|center_vertical"
-                android:text="오늘 하루를 기록해요."/>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:gravity="right"
+                >
+
+                <TextView
+                    android:id="@+id/study_search_txt_studyTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/search_sort_background"
+                    android:text="공감많은순"
+                    android:textColor="@color/select_menu"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/study_search_txt_latest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/search_sort_background"
+                    android:text="최신순"
+                    android:textColor="@color/select_menu"
+                    android:textSize="12sp" />
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/fragment_yourday_moodpost_rv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layoutManager="GridLayoutManager"
-                app:spanCount="2" />
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:spanCount="1" />
         </LinearLayout>
 
     </FrameLayout>

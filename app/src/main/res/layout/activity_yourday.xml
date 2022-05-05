@@ -187,33 +187,7 @@
 
                 </com.google.android.material.tabs.TabLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal"
-                    android:gravity="right"
-                    >
 
-                    <TextView
-                        android:id="@+id/study_search_txt_studyTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="5dp"
-                        android:background="@drawable/search_sort_background"
-                        android:text="공감많은순"
-                        android:textColor="@color/select_menu"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:id="@+id/study_search_txt_latest"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/search_sort_background"
-                        android:text="최신순"
-                        android:textColor="@color/select_menu"
-                        android:textSize="12sp" />
-                </LinearLayout>
 
 
                 <androidx.viewpager.widget.ViewPager

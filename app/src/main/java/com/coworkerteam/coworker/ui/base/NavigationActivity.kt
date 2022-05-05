@@ -21,6 +21,7 @@ import com.coworkerteam.coworker.ui.search.StudySearchActivity
 import com.coworkerteam.coworker.ui.setting.SettingActivity
 import com.coworkerteam.coworker.ui.statistics.StatisticsActivity
 import com.coworkerteam.coworker.ui.todolist.TodoListActivity
+import com.coworkerteam.coworker.ui.yourday.YourDayActivity
 import com.google.android.material.navigation.NavigationView
 import de.hdodenhof.circleimageview.CircleImageView
 import org.koin.android.ext.koin.androidApplication
@@ -92,6 +93,9 @@ open abstract class NavigationActivity<T : ViewDataBinding, R : BaseViewModel> :
             }
             com.coworkerteam.coworker.R.id.menuitem5 -> {
                 moveIntent = Intent(this, TodoListActivity::class.java)
+            }
+            com.coworkerteam.coworker.R.id.menuitem6 -> {
+                moveIntent = Intent(this, YourDayActivity::class.java)
             }
         }
         moveIntent?.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)

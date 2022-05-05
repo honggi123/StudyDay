@@ -72,6 +72,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         var instance: String? = null
     }
 
+    private var speakMode : Boolean = true
+
     var receiver: String? = null
 
     var kick : Boolean = false
@@ -86,6 +88,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     lateinit var whoshare : String
 
+    var menu : Menu? = null
+
     lateinit var mediaProjectionManager : MediaProjectionManager
     lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
@@ -93,10 +97,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     var height : Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        headSetReceiver = HeadSetReceiver()
-        var filter = IntentFilter(Intent.ACTION_HEADSET_PLUG)
-       registerReceiver(headSetReceiver,filter)
 
         //받아온값 세팅
         mediaProjectionManager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
@@ -173,6 +173,13 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     }
 
     override fun initAfterBinding() {
+    }
+
+    override fun onResume() {
+        super.onResume()
+        headSetReceiver = HeadSetReceiver()
+        var filter = IntentFilter(Intent.ACTION_HEADSET_PLUG)
+        registerReceiver(headSetReceiver,filter)
     }
 
     override fun onDestroy() {
@@ -529,6 +536,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.camstudy_menu, menu)
+        this.menu = menu!!
         return true
     }
 
@@ -537,6 +545,14 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             R.id.camera_chang -> {
                 val msg: Message = Message.obtain(null, CamStudyService.MSG_SWITCH_CAMERA)
                 sendHandlerMessage(msg)
+            }
+            R.id.sound_change -> {
+                if (speakMode){
+                    commuicationModeOn()
+                }else{
+                    speakModeOn()
+                }
+
             }
         }
         return super.onOptionsItemSelected(item)
@@ -835,8 +851,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
                     CamStudyService.isAudio = false
                     btn_mic.isSelected = true
-
-
                 }
                 CamStudyService.MSG_LEADER_FORCED_VIDEO_OFF -> {
                     //리더에게 카메라 off
@@ -937,28 +951,47 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     class HeadSetReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+            var camstudyActivity  = context as CamStudyActivity
             if(intent?.action.equals(Intent.ACTION_HEADSET_PLUG)){
                 var state = intent?.getIntExtra("state",-1)
                 if(state == 0){ // 헤드셋 해제
                     Log.d("CAMACT","헤드셋 해제")
-                    var audioManager : AudioManager
-                    audioManager = context?.getSystemService(AUDIO_SERVICE) as AudioManager
-                    audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,
-                        (audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL) * 0.35).toInt(),
-                        AudioManager.FLAG_SHOW_UI)
-                    audioManager.setSpeakerphoneOn(true)
-                    audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION)
+                    camstudyActivity.speakModeOn()
                 }else{
                     Log.d("CAMACT","헤드셋 장착")
-                    var audioManager : AudioManager
-                    audioManager = context?.getSystemService(AUDIO_SERVICE) as AudioManager
-                    audioManager.setSpeakerphoneOn(false)
-                    audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION)
+                    camstudyActivity.commuicationModeOn()
                 }
             }
         }
     }
 
+    fun speakModeOn(){
+        var audioManager : AudioManager
+        audioManager = context!!.getSystemService(AUDIO_SERVICE) as AudioManager
+        /*
+        audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,
+            (audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL) * 0.4).toInt(),
+            AudioManager.FLAG_SHOW_UI)
+        */
+        audioManager.setSpeakerphoneOn(true)
+        audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION)
+        speakMode = true
+
+        menu?.getItem(1)?.setIcon(R.drawable.ic_baseline_volume_up_24)
+
+    }
+
+    fun commuicationModeOn(){
+        var audioManager : AudioManager
+        audioManager = context?.getSystemService(AUDIO_SERVICE) as AudioManager
+        audioManager.setSpeakerphoneOn(false)
+        audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION)
+        speakMode = false
+
+        menu?.getItem(1)?.setIcon(R.drawable.ic_baseline_phone_in_talk_24)
+
+
+    }
 
     @SuppressWarnings("deprecation")
     fun isServiceRunningCheck(servicename:String) : Boolean{

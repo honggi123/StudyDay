@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="250dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/studysuccess_background"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf
+                ="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/studysuccess_myfeeling"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="소감 작성"
+            android:textColor="#E8E0E0"
+            android:textSize="12dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/textView105"
+            app:layout_constraintTop_toBottomOf="@+id/textView105" />
+
+        <TextView
+            android:id="@+id/textView103"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="hongs"
+            android:textColor="#FFF7F7"
+            android:textSize="16dp"
+            app:layout_constraintStart_toStartOf="@+id/guideline23"
+            app:layout_constraintTop_toTopOf="@+id/guideline6" />
+
+        <TextView
+            android:id="@+id/textView104"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="6월 16일"
+            android:textColor="#FFFFFF"
+            android:textSize="10sp"
+            app:layout_constraintStart_toStartOf="@+id/textView103"
+            app:layout_constraintTop_toBottomOf="@+id/textView103" />
+
+        <TextView
+            android:id="@+id/textView105"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="목표시간 9시간을 달성하셨습니다."
+            android:textColor="#FFFFFF"
+            android:textSize="16dp"
+            app:layout_constraintStart_toStartOf="@+id/textView104"
+            app:layout_constraintTop_toBottomOf="@+id/textView104" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="58dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="192dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline23"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="56dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline35"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="303dp" />
+
+        <ImageView
+            android:id="@+id/imageView30"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@+id/guideline35"
+            app:layout_constraintTop_toTopOf="@+id/guideline6"
+            app:srcCompat="@drawable/ic_baseline_delete_white" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
