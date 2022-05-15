@@ -1,24 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="item"
+            type="com.coworkerteam.coworker.data.model.api.MoodPostResponse.Result.MoodPost"/>
+        <variable
+            name="adapter"
+            type="com.coworkerteam.coworker.ui.yourday.moodPost.MoodPostAdapter"/>
+        <variable
+            name="itemPosition"
+            type="Integer"/>
+        <variable
+            name="holder"
+            type="com.coworkerteam.coworker.ui.yourday.moodPost.ItemViewHolder"/>
+    </data>
+
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:padding="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/item_camstudy_profile"
+            android:id="@+id/item_mood_post_mood"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginTop="15dp"
@@ -28,73 +43,225 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView98"
+            android:id="@+id/item_mood_post_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:text="hongs"
+            android:text="@{item.nickname}"
             android:textColor="#000000"
             android:textSize="16dp"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/item_camstudy_profile"
-            app:layout_constraintTop_toTopOf="@+id/item_camstudy_profile" />
+            app:layout_constraintStart_toEndOf="@+id/item_mood_post_mood"
+            app:layout_constraintTop_toTopOf="@+id/item_mood_post_mood" />
 
         <TextView
-            android:id="@+id/textView99"
+            android:id="@+id/item_mood_post_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="5월 16일"
-            app:layout_constraintStart_toStartOf="@+id/textView98"
-            app:layout_constraintTop_toBottomOf="@+id/textView98" />
+            android:text="@{item.create_date}"
+            app:layout_constraintStart_toStartOf="@+id/item_mood_post_nickname"
+            app:layout_constraintTop_toBottomOf="@+id/item_mood_post_nickname" />
 
-        <TextView
-            android:id="@+id/textView100"
-            android:layout_width="wrap_content"
+        <kr.co.prnd.readmore.ReadMoreTextView
+            android:id="@+id/item_mood_post_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="잠이 안오는 새벽 내 책을 읽었다. 이야기가 따뜻하고 서정적이어서 날씨가 더 추어지면 또 다시 읽고 싶어질 것 같다. good"
-            app:layout_constraintStart_toStartOf="@+id/item_camstudy_profile"
-            app:layout_constraintTop_toBottomOf="@+id/item_camstudy_profile" />
+            android:text="@{item.contents}"
+            app:layout_constraintStart_toStartOf="@+id/item_mood_post_mood"
+            app:layout_constraintTop_toBottomOf="@+id/item_mood_post_mood"
+            app:readMoreColor="@color/gray"
+            app:readMoreMaxLine="3"
+            app:readMoreText="…더보기" />
 
-        <include
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/dialog_empathy"
-            layout="@layout/dialog_empathy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/txt_empathy"
             app:layout_constraintEnd_toEndOf="parent"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+           >
+
+            <ImageView
+                android:id="@+id/imageView9"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/dialog_empathyemotions" />
+
+
+            <LinearLayout
+                android:id="@+id/dialog_empathy_kinds"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView9"
+                app:layout_constraintEnd_toEndOf="@+id/imageView9"
+                app:layout_constraintStart_toStartOf="@+id/imageView9"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/dialog_empathy_kinds1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+
+                    app:srcCompat="@drawable/emotion1" />
+
+                <ImageView
+                    android:id="@+id/dialog_empathy_kinds2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+
+                    app:srcCompat="@drawable/emotion2" />
+
+                <ImageView
+                    android:id="@+id/dialog_empathy_kinds3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    app:srcCompat="@drawable/emotion3" />
+
+                <ImageView
+                    android:id="@+id/dialog_empathy_kinds4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    app:srcCompat="@drawable/emotion4" />
+
+                <ImageView
+                    android:id="@+id/dialog_empathy_kinds5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+
+                    app:srcCompat="@drawable/emotion5" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/txt_empathy"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:layout_marginTop="30dp"
+            android:gravity="center_horizontal|center_vertical"
             android:text="공감하기"
-            app:layout_constraintStart_toStartOf="@+id/textView100"
-            app:layout_constraintTop_toBottomOf="@+id/textView100" />
+            app:layout_constraintStart_toStartOf="@+id/item_mood_post_content"
+            app:layout_constraintTop_toBottomOf="@+id/item_mood_post_content" />
 
-        <ImageView
-            android:id="@+id/imageView28"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/linearLayoutCompat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/textView99"
-            app:layout_constraintEnd_toStartOf="@+id/imageView29"
-            app:layout_constraintTop_toTopOf="@+id/textView98"
+            android:layout_marginTop="18dp"
+            app:layout_constraintBottom_toBottomOf="@+id/item_mood_post_total_empathynum"
+            app:layout_constraintEnd_toStartOf="@+id/item_mood_post_total_empathynum"
+            app:layout_constraintTop_toTopOf="@+id/item_mood_post_total_empathynum">
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <ImageView
+            android:id="@+id/item_mood_post_btn_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/item_mood_post_date"
+            app:layout_constraintEnd_toStartOf="@+id/item_mood_post_btn_remove"
+            app:layout_constraintTop_toTopOf="@+id/item_mood_post_nickname"
             app:srcCompat="@drawable/ic_baseline_pencil" />
 
         <ImageView
-            android:id="@+id/imageView29"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/item_mood_post_btn_remove"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_marginEnd="15dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/imageView28"
-            app:srcCompat="@drawable/ic_baseline_delete_24" />
+            app:layout_constraintTop_toTopOf="@+id/item_mood_post_btn_edit"
+            app:srcCompat="@drawable/yourday_delete" />
+
+        <TextView
+            android:id="@+id/item_mood_post_total_empathynum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/txt_empathy"
+            app:layout_constraintEnd_toEndOf="@+id/item_mood_post_btn_remove"
+            app:layout_constraintTop_toTopOf="@+id/txt_empathy" />
+
+        <LinearLayout
+            android:id="@+id/item_moodpost_empathy_kinds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@+id/item_mood_post_total_empathynum"
+            app:layout_constraintEnd_toStartOf="@+id/item_mood_post_total_empathynum"
+            app:layout_constraintTop_toTopOf="@+id/item_mood_post_total_empathynum">
+
+            <ImageView
+                android:id="@+id/item_moodpost_empathy_kinds1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="gone"
+                app:srcCompat="@drawable/emotion1" />
+
+            <ImageView
+                android:id="@+id/item_moodpost_empathy_kinds2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="gone"
+                app:srcCompat="@drawable/emotion2" />
+
+            <ImageView
+                android:id="@+id/item_moodpost_empathy_kinds3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="gone"
+                app:srcCompat="@drawable/emotion3" />
+
+            <ImageView
+                android:id="@+id/item_moodpost_empathy_kinds4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="gone"
+                app:srcCompat="@drawable/emotion4" />
+
+            <ImageView
+                android:id="@+id/item_moodpost_empathy_kinds5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="gone"
+                app:srcCompat="@drawable/emotion5" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="#D6D6D6"
+        app:layout_constraintEnd_toEndOf="@+id/constraintLayout3"
+        app:layout_constraintStart_toStartOf="@+id/constraintLayout3"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

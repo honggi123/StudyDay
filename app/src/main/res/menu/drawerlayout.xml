@@ -20,8 +20,11 @@
         android:id="@+id/menuitem5"
         android:icon="@drawable/ic_baseline_checklist_24"
         android:title="투두리스트" />
+
     <item
         android:id="@+id/menuitem6"
+
         android:icon="@drawable/ic_baseline_article_24"
         android:title="너의 하루는" />
+
 </menu>

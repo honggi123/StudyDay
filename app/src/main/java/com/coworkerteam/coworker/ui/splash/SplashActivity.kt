@@ -4,6 +4,7 @@ import android.app.Activity
 import android.widget.Toast
 
 import android.content.Intent
+import android.net.UrlQuerySanitizer
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
@@ -19,6 +20,7 @@ import com.github.ybq.android.spinkit.style.Wave
 
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.logging.Logger
 
 class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     private val TAG = "SplashActivity"
@@ -27,9 +29,18 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
         get() = R.layout.activity_splash
     override val viewModel: SplashViewModel by viewModel()
 
-
+    private val DEFAULT_PATH = "studyday://main";
+    var studyinfo : String? = null
 
     override fun initStartView() {
+
+        var intent : Intent = getIntent();
+        Log.d(TAG,"data : " + intent.getDataString())
+        if (intent.getDataString()?.startsWith(DEFAULT_PATH+"?studylink=") == true) {
+            var param : String = intent.getDataString()!!.replace(DEFAULT_PATH, "");
+            studyinfo = param
+        }
+
         //프로그래스바 로딩 이미지 세팅
         viewDataBinding.spinKit.setIndeterminateDrawable(Wave())
     }
@@ -78,13 +89,14 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
             startActivity(intent)
             finish()
         }
-
     }
-
 
     //메인페이지로 이동하는 메소드
     private fun moveMain() {
         var intent = Intent(this, MainActivity::class.java)
+        if (studyinfo!=null){
+            intent.putExtra("studyinfo",studyinfo)
+        }
         startActivity(intent)
         finish()
     }

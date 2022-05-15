@@ -34,9 +34,7 @@ class StudyCategoryAdapter(private val context: Context) :
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
         private val category:TextView = itemView.findViewById(R.id.item_study_category)
-
         fun bind(item: String) {
             category.text = item
         }

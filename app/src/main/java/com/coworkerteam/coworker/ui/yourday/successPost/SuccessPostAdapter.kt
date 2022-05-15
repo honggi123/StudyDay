@@ -1,8 +1,6 @@
-package com.coworkerteam.coworker.ui.yourday
+package com.coworkerteam.coworker.ui.yourday.successPost
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,20 +10,22 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.R
+import com.coworkerteam.coworker.data.model.api.SuccessPostResponse
+import com.coworkerteam.coworker.ui.yourday.YourdayViewModel
 
 
-class SuccessPostAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SuccessPostAdapter(private val viewModel: YourdayViewModel) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val VIEW_TYPE_ITEM = 0
     private val VIEW_TYPE_LOADING = 1
 
-    private lateinit var items: ArrayList<String?>
+    private lateinit var items: ArrayList<SuccessPostResponse.Result.SuccessPost?>
     private lateinit var items_bgdrawble: ArrayList<Int>
     private lateinit var context : Context
+    var removeitem : SuccessPostResponse.Result.SuccessPost? = null
 
-    fun setdata(items: ArrayList<String?>,items_bgdrawble: ArrayList<Int>) {
+    fun setdata(items: ArrayList<SuccessPostResponse.Result.SuccessPost?>) {
         this.items = items
-        this.items_bgdrawble = items_bgdrawble
     }
 
     override fun onCreateViewHolder(
@@ -68,13 +68,8 @@ class SuccessPostAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         if(position>=5){
             item_bg = position%5
         }else{
-            item_bg = items_bgdrawble!![position]
+            item_bg = position
         }
-
-      //  holder.setItem(item,item_bg)
-
-        holder.textView.text = item
-
         when (item_bg) {
             0 -> Glide.with(context).load(R.drawable.card_back1).into(holder.background)
             1 -> Glide.with(context).load(R.drawable.card_back2).into(holder.background)
@@ -83,30 +78,56 @@ class SuccessPostAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             4 -> Glide.with(context).load(R.drawable.card_back5).into(holder.background)
             else -> Glide.with(context).load(R.drawable.card_back1).into(holder.background)
         }
+        holder.nickname.setText(item?.nickname)
+        holder.date.setText(item?.create_date)
+        holder.feeling.setText(item?.contents)
+        holder.time.setText(item?.success_time.toString())
 
+        if (item?.nickname?.equals(viewModel.getUserName())!!){
+            holder.view_remove.visibility = View.VISIBLE
+        }else{
+            holder.view_remove.visibility = View.INVISIBLE
+        }
 
+        holder.view_remove.setOnClickListener(View.OnClickListener {
+            if (item != null) {
+                viewModel.deleteSuccessPostdData(item.idx)
+                removeitem = item
+            }
+        })
     }
 
     private class ItemViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
-        val textView: TextView
+         val feeling: TextView
          var background: ImageView
-
+         val nickname: TextView
+         val date: TextView
+         val time: TextView
+         val view_remove : ImageView
         init {
-            textView = itemView.findViewById(R.id.studysuccess_myfeeling)
+            feeling = itemView.findViewById(R.id.item_success_post_myfeeling)
             background = itemView.findViewById(R.id.studysuccess_background)
+            nickname = itemView.findViewById(R.id.item_success_post_nickname)
+            date = itemView.findViewById(R.id.item_success_post_date)
+            time = itemView.findViewById(R.id.item_success_post_goaltime)
+            view_remove = itemView.findViewById(R.id.item_success_post_removeicon)
         }
     }
 
     private class LoadingViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         private val progressBar: ProgressBar
-
         init {
             progressBar = itemView.findViewById(R.id.progressBar)
         }
     }
 
-
+    fun adddata(datas: ArrayList<SuccessPostResponse.Result.SuccessPost>?) {
+        if (datas != null) {
+            items.addAll(datas)
+        }
+        notifyDataSetChanged()
+    }
 
 }

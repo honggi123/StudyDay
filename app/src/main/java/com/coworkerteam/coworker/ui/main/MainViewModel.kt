@@ -49,10 +49,16 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
     val MainRankResponseLiveData: LiveData<Response<MainRankResponse>>
         get() = _MainRankResponseLiveData
 
+    //랭킹 데이터
+    private val _GoalSuccessResponseLiveData = MutableLiveData<Response<ApiRequest>>()
+    val GoalSuccessResponseLiveData: LiveData<Response<ApiRequest>>
+        get() = _GoalSuccessResponseLiveData
+
+
     fun getMainData() {
         val accessToken = model.getAccessToken()
         val nickname = model.getCurrentUserName()
-
+        Log.d(TAG,"accesstoken_honggi : " + accessToken)
         if (!accessToken.isNullOrEmpty() && !nickname.isNullOrEmpty()) {
             addDisposable(
                 model.getMainData(accessToken, nickname)
@@ -207,6 +213,45 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
             )
         } else {
             Log.d(TAG, "getMainData:: accessToken 또는 nickname 값이 없습니다.")
+        }
+    }
+
+    fun setSuccessPostData(contents: String?) {
+        val accessToken = model.getAccessToken()
+        val nickname = model.getCurrentUserName()
+
+        if (!accessToken.isNullOrEmpty() && !nickname.isNullOrEmpty()) {
+            addDisposable(
+                model.setSuccessPost(accessToken,contents)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        it.run {
+                            Log.d(TAG, "meta : $it")
+                            when {
+                                it.code() == 401 -> {
+                                    //액세스토큰이 만료된 경우
+                                    Log.d(TAG, "액세스토큰이 만료된 경우")
+
+                                    //액세스 토큰 재발급
+                                    getReissuanceToken(TAG,model,setSuccessPostData(contents))
+                                }
+                                it.code() > 500 -> {
+                                    //서비스 서버에 문제가 있을 경우
+                                    setServiceError(TAG, it.errorBody())
+                                }
+                                else -> {
+                                    //그 외에는 값 Activity에 전달 ( 200, 400번대의 경우 )
+                                    _GoalSuccessResponseLiveData.postValue(it)
+                                }
+                            }
+                        }
+                    }, {
+                        Log.d(TAG, "response error, message : ${it.message}")
+                    })
+            )
+        } else {
+            Log.d(TAG, "setGoalCamstduyData:: accessToken 또는 nickname 값이 없습니다.")
         }
     }
 

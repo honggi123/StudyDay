@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-feature
@@ -87,10 +87,8 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data
                     android:host="oauth"
                     android:scheme="kakao8017cd7866917e1c96fbb041dba3a4ab" />
@@ -106,7 +104,6 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -117,25 +114,30 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="deeplink"
-                android:scheme="studyday" />
+                    android:host="main"
+                    android:scheme="studyday" />
             </intent-filter>
-
         </activity>
-        <activity android:name=".ui.main.UnityActivity"></activity>
+        <activity android:name=".ui.main.UnityActivity"
+            android:launchMode="singleTask"
+            android:process=":UnityKillsMe">></activity>
 
         <activity
             android:name=".ui.main.MainActivity"
             android:screenOrientation="portrait"/>
 
         <activity android:name=".ui.yourday.YourDayActivity"
-            tools:ignore="Instantiatable">
+           >
         </activity>
 
-        <activity android:name=".ui.yourday.WriteMoodPostActivity"
+        <activity android:name=".ui.yourday.moodPost.make.WriteMoodPostActivity"
             android:screenOrientation="portrait">
-
         </activity>
+
+        <activity android:name=".ui.yourday.moodPost.edit.EditMoodPostActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
         <service
             android:name=".data.local.service.CamStudyService"
             android:enabled="true"

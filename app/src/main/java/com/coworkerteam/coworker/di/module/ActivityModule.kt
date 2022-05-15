@@ -26,7 +26,9 @@ import com.coworkerteam.coworker.ui.study.make.MakeStudyViewModel
 import com.coworkerteam.coworker.ui.study.management.ManagementViewModel
 import com.coworkerteam.coworker.ui.study.memberlist.MemberListViewModel
 import com.coworkerteam.coworker.ui.todolist.TodoListViewModel
-import com.coworkerteam.coworker.ui.yourday.WriteMoodPostViewModel
+import com.coworkerteam.coworker.ui.yourday.moodPost.make.WriteMoodPostViewModel
+import com.coworkerteam.coworker.ui.yourday.YourdayViewModel
+import com.coworkerteam.coworker.ui.yourday.moodPost.edit.EditMoodPostViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -104,7 +106,13 @@ var viewModelModule = module {
         MemberListViewModel(get())
     }
     viewModel {
+        YourdayViewModel(get())
+    }
+    viewModel {
         WriteMoodPostViewModel(get())
+    }
+    viewModel {
+        EditMoodPostViewModel(get())
     }
 }
 
@@ -112,6 +120,7 @@ var dataModelModule = module {
     factory<UserRepository> {
         UserRepositoryImpl(get(),get(),get())
     }
+
 }
 
 var myActivityModule = listOf(viewModelModule,dataModelModule)

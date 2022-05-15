@@ -31,7 +31,6 @@ class MyStudyDailyPagingSource(
                     .observeOn(Schedulers.io())
                     .blockingGet()
 
-
             val next = if (position >= response.body()!!.result.totalPage) null else position + 1
 
             LoadResult.Page(

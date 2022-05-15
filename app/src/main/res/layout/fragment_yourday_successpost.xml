@@ -5,7 +5,7 @@
     <data>
         <variable
             name="activitiy"
-            type="com.coworkerteam.coworker.ui.yourday.SuccessPostFragment" />
+            type="com.coworkerteam.coworker.ui.yourday.successPost.SuccessPostFragment" />
     </data>
 
     <FrameLayout

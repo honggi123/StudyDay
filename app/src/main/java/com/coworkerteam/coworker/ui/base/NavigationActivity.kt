@@ -33,7 +33,7 @@ open abstract class NavigationActivity<T : ViewDataBinding, R : BaseViewModel> :
     abstract val drawerLayout: DrawerLayout
     abstract val navigatinView: NavigationView
     private val PREF_KEY_CURRENT_USER_NAME = "PREF_KEY_CURRENT_USER_NAME"
-
+    private var navigationclick = false
     fun setNavigaionProfileImage(img: String) {
         var navigationHeaderProfile =
             navigatinView.getHeaderView(0)
@@ -78,6 +78,10 @@ open abstract class NavigationActivity<T : ViewDataBinding, R : BaseViewModel> :
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         var moveIntent: Intent? = null
+        moveIntent?.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+        moveIntent?.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        moveIntent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+
         when (item.itemId) {
             com.coworkerteam.coworker.R.id.menuitem1 -> {
                 moveIntent = Intent(this, MainActivity::class.java)
@@ -96,13 +100,13 @@ open abstract class NavigationActivity<T : ViewDataBinding, R : BaseViewModel> :
             }
             com.coworkerteam.coworker.R.id.menuitem6 -> {
                 moveIntent = Intent(this, YourDayActivity::class.java)
+                moveIntent?.removeFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
             }
         }
-        moveIntent?.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-        moveIntent?.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        moveIntent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+
         drawerLayout.closeDrawers()
         startActivity(moveIntent)
+        finish()
         return false
     }
 

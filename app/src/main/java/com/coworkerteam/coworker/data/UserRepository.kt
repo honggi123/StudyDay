@@ -2,10 +2,8 @@ package com.coworkerteam.coworker.data
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingData
-import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
 import com.coworkerteam.coworker.data.model.api.*
 import io.reactivex.Single
-import retrofit2.Call
 import retrofit2.Response
 
 //레퍼지토리 interface 파일. 이곳에 형식을 선언 후 UserRepositoryImpl에 구체적으로 생성한다.
@@ -254,7 +252,7 @@ interface UserRepository {
         studyIdx: Int,
         studyTime: Int,
         restTime: Int
-    ): Single<Response<ApiRequest>>
+    ): Single<Response<CamstudyLeaveResponse>>
 
     fun getStudyInfoData(accessToken: String, studyIdx: Int): Single<Response<StudyInfoResponse>>
 
@@ -262,4 +260,50 @@ interface UserRepository {
         accessToken: String,
         nickname: String
     ): Single<Response<MyStudyInfoResponse>>
+
+    fun setSuccessPost(
+        accessToken: String,
+        contents: String?
+    ): Single<Response<ApiRequest>>
+
+    fun setMoodPost(
+        accessToken: String,
+        reqType: String,
+        mood: Int,
+        contents: String?
+    ): Single<Response<ApiRequest>>
+
+    fun getSuccessPost(
+        accessToken: String,
+        page : Int
+    ): Single<Response<SuccessPostResponse>>
+
+    fun setRemoveSuccessPost(
+        accessToken: String,
+        postNum : Int
+    ): Single<Response<PostDeleteResponse>>
+
+    fun getMoodPost(
+        accessToken: String,
+        sort: String,
+        page : Int
+    ): Single<Response<MoodPostResponse>>
+
+    fun setRemoveMoodPost(
+        accessToken: String,
+        postNum : Int
+    ): Single<Response<PostDeleteResponse>>
+
+    fun setEditMoodPost(
+        accessToken: String,
+        postNum : Int,
+        mood : Int,
+        contents : String
+    ): Single<Response<ApiRequest>>
+
+    fun setEmpathy(
+        accessToken: String,
+        postNum : Int,
+        mood : Int,
+    ): Single<Response<EmpathyResponse>>
 }

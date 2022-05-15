@@ -2,21 +2,24 @@
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:bind="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+   >
 
     <data>
         <import type="android.view.View" />
         <variable
             name="activitiy"
-            type="com.coworkerteam.coworker.ui.yourday.moodPost.make.WriteMoodPostActivity" />
+            type="com.coworkerteam.coworker.ui.yourday.moodPost.edit.EditMoodPostActivity" />
+        <variable
+            name="contents"
+            type="String" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <include
-            android:id="@+id/write_mood_toolbar"
+            android:id="@+id/edit_moodpost_toolbar"
             layout="@layout/toolbar_main"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -69,6 +72,7 @@
             android:gravity="start"
             android:hint="오늘 하루를 기록해 보아요."
             android:inputType="textMultiLine"
+            android:text='@{contents}'
             android:maxLength="1000"
             android:scrollbars="vertical"
             app:layout_constraintEnd_toEndOf="parent"
@@ -85,9 +89,8 @@
             android:layout_marginEnd="32dp"
             android:layout_marginTop="70dp"
             android:background="@drawable/button_navy"
-            android:onClick="@{(view)->activitiy.setMoodPost()}"
-
-            android:text="작성 완료"
+            android:onClick="@{(view)->activitiy.EditMoodPost()}"
+            android:text="수정 완료"
             android:textSize="15dp"
             app:layout_constraintEnd_toEndOf="@+id/edit_writemood"
             app:layout_constraintStart_toStartOf="@+id/edit_writemood"

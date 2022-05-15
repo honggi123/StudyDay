@@ -66,6 +66,9 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    lintOptions {
+        checkReleaseBuilds false
+    }
 }
 
 dependencies {
@@ -200,4 +203,8 @@ dependencies {
 
     implementation project(':unityLibrary')
     implementation fileTree(dir: project(':unityLibrary').getProjectDir().toString() + ('\\libs'), include: ['*.jar'])
+
+    // 더보기 뷰 라이브러리
+    implementation 'kr.co.prnd:readmore-textview:1.0.0'
+
 }

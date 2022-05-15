@@ -6,6 +6,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.icu.util.TimeUnit
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -23,7 +24,6 @@ import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityMainBinding
 import com.coworkerteam.coworker.ui.base.NavigationActivity
-import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.ui.dialog.PasswordDialog
 import com.coworkerteam.coworker.ui.study.make.MakeStudyActivity
 import com.coworkerteam.coworker.ui.todolist.TodoListActivity
@@ -95,7 +95,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
                             val ownGooglePlayLink = "market://details?id=com.coworkerteam.coworker"
                             val ownWebLink =
                                 "https://play.google.com/store/apps/details?id=com.coworkerteam.coworker"
-
                             try {
                                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(ownGooglePlayLink)))
                             } catch (anfe: ActivityNotFoundException) {
@@ -105,6 +104,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
                     }
             }
         }
+
     }
 
 
@@ -149,7 +149,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
         //패스워드 다이얼로그 ok버튼 함수 세팅
         passwordDialog.onClickOKButton = { i: Int, s: String? ->
             viewModel.getEnterCamstduyData(i, s)
-
             firebaseLog.addLog(TAG, "check_study_password")
         }
 
@@ -162,28 +161,49 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
                 .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
                 }).show()
         }
+
+        /*
+        var goalIsSuccess = intent.getBooleanExtra("goalIsSuccess",false)
+
+        if (goalIsSuccess){
+            Log.d(TAG, "goalSuccesstime : " + intent.getIntExtra("goalSuccesstime", 0))
+            showSuccessPostDialog(
+                intent.getIntExtra("goalSuccesstime",0),
+                intent.getBooleanExtra("goalPostIsWrite",false)
+            )
+        }
+         */
+
         init()
     }
 
-
-
     override fun onResume() {
         super.onResume()
-        /*
-        appUpdateManager
-            .appUpdateInfo
-            .addOnSuccessListener {
-                if(it.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS){
-                    appUpdateManager.startUpdateFlowForResult(
-                        it,
-                        AppUpdateType.IMMEDIATE, // or AppUpdateType.FLEXIBLE
-                        this,
-                        MY_REQUEST_CODE
-                    )
+        checkdate()
+        var studyinfo = intent.getStringExtra("studyinfo")
+
+        if(studyinfo != null){
+            Log.d(TAG,"studyinfo: "+studyinfo)
+            // '/'를 기준으로 문자열을 자른다.
+            var str_arr = studyinfo.split("https://www.studyday.co.kr/link")
+            Log.d(TAG,"str_arr[1]"+ str_arr[1])
+
+            var uri = Uri.parse(str_arr[1])
+            var studyidx = Uri.parse(str_arr[1]).getQueryParameter("idx")
+            var pwd = Uri.parse(studyidx).getQueryParameter("pwd")
+            studyidx = studyidx?.split("?pwd")?.get(0)
+            pwd = pwd!!.replace(" ", "")
+
+            if(!pwd.equals("null")){
+                //가입, 참여를 하지 않았던 비밀번호가 걸려있는 스터디를 선택했을 경우 비밀번호 입력 dialog가 노출
+                studyidx?.let { passwordDialog.showDialog(this, studyidx.toInt()) }
+            }else {
+                if (studyidx != null) {
+                    passwordDialog.onClickOKButton(studyidx.toInt(), null)
                 }
             }
-         */
-        checkdate()
+            intent.removeExtra("studyinfo")
+        }
     }
 
 
@@ -191,12 +211,13 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
         viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
-
+                /*
                     var intent = Intent(this, EnterCamstudyActivity::class.java)
                     intent.putExtra("studyInfo", it.body()!!)
+                    Log.d(TAG,"STUDYINFO"+it.body())
                     passwordDialog.dismissDialog()
                     startActivity(intent)
-                    /*
+                    */
                                        passwordDialog.dismissDialog()
                                        var intent = Intent(this, UnityActivity::class.java)
                                        intent.putExtra("studyInfo", it.body()!!)
@@ -205,7 +226,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
                                        intent.addCategory(Intent.CATEGORY_LAUNCHER);
                                        Log.d(TAG,"studyInfo : "+it.body().toString())
                                        startActivity(intent)
-                                 */
 
                 }
 
@@ -750,6 +770,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
             false
         }
         popup.show()
+
     }
 
     private fun onTimeSelected(hour: Int, minute: Int): String {
@@ -875,7 +896,44 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
         }
     }*/
 
+     fun showSuccessPostDialog(goalTime: Int?, iswrite:Boolean){
+         if (iswrite){
+             // 이미 공부인증 게시물이 적혀있는경우
+             return
+         }
+             val mDialogView =
+                 LayoutInflater.from(this).inflate(R.layout.dialog_successpost, null)
+             val mBuilder = AlertDialog.Builder(this).setView(mDialogView)
 
+             val builder = mBuilder.show()
+
+             builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+         var edit_contents = mDialogView.findViewById<EditText>(R.id.successpost_contents)
+         var view_time = mDialogView.findViewById<TextView>(R.id.dialog_successpost_time)
+         val btn_cancle = mDialogView.findViewById<Button>(R.id.dialog_successpost_btn_cancle)
+         val btn_ok = mDialogView.findViewById<Button>(R.id.dialog_successpost_btn_share)
+
+         var goalTime = goalTime
+
+         var min = goalTime?.div(60)
+         var hour  = min?.div(60)
+
+         if (hour!! >=1){
+             goalTime = hour
+         }else{
+             goalTime  = goalTime?.rem(60)
+         }
+
+         view_time.setText("오늘의 목표시간"+goalTime+"시간을 달성하셨습니다.")
+             btn_ok.setOnClickListener(View.OnClickListener {
+                 viewModel.setSuccessPostData(edit_contents.text.toString())
+                 builder.dismiss()
+             })
+             btn_cancle.setOnClickListener(View.OnClickListener {
+                 builder.dismiss()
+             })
+         }
 
 
 }

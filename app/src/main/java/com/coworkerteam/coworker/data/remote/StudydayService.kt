@@ -319,7 +319,7 @@ interface StudydayService {
         @Query("studyIdx") studyIdx: Int,
         @Query("studyTime") studyTime: Int,
         @Query("restTime") restTime: Int
-    ): Single<Response<ApiRequest>>
+    ): Single<Response<CamstudyLeaveResponse>>
 
     @GET("study/cam/info/{studyIdx}")
     fun studyInfo(
@@ -334,5 +334,66 @@ interface StudydayService {
         @Path("nickname") nickname: String,
         @Query("test") test: String? = null
     ): Single<Response<MyStudyInfoResponse>>
+
+    @FormUrlEncoded
+    @POST("your-daily/success")
+    fun addSuccessPost(
+        @Header("Authorization") accessToken: String,
+        @Field("contents") contents: String?
+    ): Single<Response<ApiRequest>>
+
+    @FormUrlEncoded
+    @POST("your-daily/mood")
+    fun addMoodPost(
+        @Header("Authorization") accessToken: String,
+        @Field("reqType") reqType: String?,
+        @Field("mood") mood: Int,
+        @Field("contents") contents: String?
+    ): Single<Response<ApiRequest>>
+
+
+    @GET("your-daily/success")
+    fun getSuccessPost(
+        @Header("Authorization") accessToken: String,
+        @Query("sort") sort: String,
+        @Query("page") page: Int
+    ): Single<Response<SuccessPostResponse>>
+
+    @DELETE("your-daily/success/{postNum}")
+    fun removeSuccessPost(
+        @Header("Authorization") accessToken: String,
+        @Path("postNum") postNum: Int,
+    ): Single<Response<PostDeleteResponse>>
+
+    @GET("your-daily/mood")
+    fun getMoodPost(
+        @Header("Authorization") accessToken: String,
+        @Query("sort") sort: String,
+        @Query("page") page: Int
+    ): Single<Response<MoodPostResponse>>
+
+    @DELETE("your-daily/mood/{postNum}")
+    fun removeMoodPost(
+        @Header("Authorization") accessToken: String,
+        @Path("postNum") postNum: Int,
+    ): Single<Response<PostDeleteResponse>>
+
+    @FormUrlEncoded
+    @PATCH("your-daily/mood/{postNum}")
+    fun editMoodPost(
+        @Header("Authorization") accessToken: String,
+        @Path("postNum") postNum: Int,
+        @Field("mood") mood: Int,
+        @Field("contents") contents: String?
+    ): Single<Response<ApiRequest>>
+
+    @GET("your-daily/mood/empathy/{postNum}")
+    fun empathy(
+        @Header("Authorization") accessToken: String,
+        @Path("postNum") postNum: Int,
+        @Query("empathy") empathy: Int
+    ): Single<Response<EmpathyResponse>>
+
+
 
 }

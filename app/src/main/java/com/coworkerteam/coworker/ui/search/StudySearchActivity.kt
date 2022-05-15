@@ -2,7 +2,6 @@ package com.coworkerteam.coworker.ui.search
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -16,7 +15,6 @@ import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.data.model.other.SearchStudy
 import com.coworkerteam.coworker.databinding.ActivityStudySearchBinding
 import com.coworkerteam.coworker.ui.base.NavigationActivity
-import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.ui.dialog.PasswordDialog
 import com.coworkerteam.coworker.ui.main.UnityActivity
 import com.coworkerteam.coworker.utils.PatternUtils
@@ -25,7 +23,6 @@ import com.google.android.material.tabs.TabLayout
 import com.google.firebase.analytics.FirebaseAnalytics
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.net.URLEncoder
 
 class StudySearchActivity :
     NavigationActivity<ActivityStudySearchBinding, StudySearchViewModel>() {
@@ -121,21 +118,22 @@ class StudySearchActivity :
         viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
-                    /*
+                /*
                     var intent = Intent(this, EnterCamstudyActivity::class.java)
                     intent.putExtra("studyInfo", it.body()!!)
-
                     passwordDialog.dismissDialog()
                     startActivity(intent)
+                  */
 
-                     */
-                    Log.d(TAG,"studyinfo : "+ it.body()!!)
-                    passwordDialog.dismissDialog()
-                    var intent = Intent(this, UnityActivity::class.java)
-                    intent.putExtra("studyInfo", it.body()!!)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    Log.d(TAG,"studyInfo : "+it.body().toString())
-                    startActivity(intent)
+                 Log.d(TAG,"studyinfo : "+ it.body()!!)
+                 passwordDialog.dismissDialog()
+                 var intent = Intent(this, UnityActivity::class.java)
+                 intent.putExtra("studyInfo", it.body()!!)
+                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                 Log.d(TAG,"studyInfo : "+it.body().toString())
+                 startActivity(intent)
+
+
                 }
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때

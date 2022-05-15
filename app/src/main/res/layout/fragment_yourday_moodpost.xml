@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="activitiy"
-            type="com.coworkerteam.coworker.ui.yourday.MoodPostFragment" />
+            name="fragment"
+            type="com.coworkerteam.coworker.ui.yourday.moodPost.MoodPostFragment" />
     </data>
 
     <FrameLayout
@@ -29,7 +29,7 @@
                 >
 
                 <TextView
-                    android:id="@+id/study_search_txt_studyTime"
+                    android:id="@+id/yourday_moodpost_txt_empathyNum"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="5dp"
@@ -39,7 +39,7 @@
                     android:textSize="12sp" />
 
                 <TextView
-                    android:id="@+id/study_search_txt_latest"
+                    android:id="@+id/yourday_moodpost_txt_latest"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/search_sort_background"

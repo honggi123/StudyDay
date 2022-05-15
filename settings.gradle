@@ -1,4 +1,6 @@
-include ':app',':unityLibrary'
+include ':app'
 rootProject.name = "coworker"
 
-project(':unityLibrary').projectDir=new File('C:\\android studio\\coworkerssss\\unityLibrary')
+include ':unityLibrary'
+
+project(':unityLibrary').projectDir=new File('C:\\android studio\\coworker\\unityLibrary')

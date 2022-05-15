@@ -1,12 +1,15 @@
 package com.coworkerteam.coworker.ui.base
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import com.coworkerteam.coworker.ui.login.LoginActivity
 import com.coworkerteam.coworker.utils.FirebaseAnalyticsUtils
 import org.koin.android.ext.android.get
 
@@ -49,5 +52,14 @@ open abstract class BaseFragment<T : ViewDataBinding, R : BaseViewModel> : Fragm
         initStartView()
         initDataBinding()
         initAfterBinding()
+    }
+
+    fun moveLogin(){
+        Toast.makeText(activity,"다시 로그인 해주세요.", Toast.LENGTH_SHORT).show()
+
+        val loginIntent = Intent(activity, LoginActivity::class.java)
+        loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(loginIntent)
     }
 }

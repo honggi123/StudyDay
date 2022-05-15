@@ -4,7 +4,8 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.coworkerteam.coworker.ui.search.OpenStudySerarchFragment
+import com.coworkerteam.coworker.ui.yourday.moodPost.MoodPostFragment
+import com.coworkerteam.coworker.ui.yourday.successPost.SuccessPostFragment
 
 class FragmentAdapter_YourDay (fm: FragmentManager):
     FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {

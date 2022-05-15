@@ -67,6 +67,10 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     private var ClickEndBackBtn = false    // 프로세스 종료로 캠스터디를 종료했을때와 종료, 뒤로가기 버튼을 클릭해서 종료했을때를 구분 false : 프로세스 종료 / true : 종료, 뒤로가기 버튼 클릭
     lateinit var mainMoveIntent : Intent
 
+    private var goalIsSuccess = false
+    private var goalSuccesstime: String? = null
+    private var goalPostIsWrite = false
+
     companion object {
         var studyInfo: EnterCamstudyResponse? = null
         var instance: String? = null
@@ -140,8 +144,15 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     override fun initDataBinding() {
         viewModel.CamstduyLeaveResponseLiveData.observe(this, androidx.lifecycle.Observer {
+            Log.d(TAG,"CamstduyLeaveResponseLiveData : "+ it.body())
             when {
                 it.isSuccessful -> {
+                    Log.d(TAG,"issucess"+it.body()?.result?.get(0)?.isSuccess)
+                    if (it.body()?.result?.get(0)?.isSuccess == true){
+                        mainMoveIntent.putExtra("goalIsSuccess",it.body()?.result?.get(0)?.isSuccess)
+                        mainMoveIntent.putExtra("goalSuccesstime",it.body()?.result?.get(0)?.successTime)
+                        mainMoveIntent.putExtra("goalPostIsWrite",it.body()!!.result.get(0)?.isWrite )
+                    }
                     //퇴장처리 성공
                     Log.d(TAG,"퇴장 처리 성공")
                     unbindService(mConnection)
@@ -177,9 +188,9 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
     override fun onResume() {
         super.onResume()
-        headSetReceiver = HeadSetReceiver()
-        var filter = IntentFilter(Intent.ACTION_HEADSET_PLUG)
-        registerReceiver(headSetReceiver,filter)
+       // headSetReceiver = HeadSetReceiver()
+       // var filter = IntentFilter(Intent.ACTION_HEADSET_PLUG)
+       // registerReceiver(headSetReceiver,filter)
     }
 
     override fun onDestroy() {
@@ -215,6 +226,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     }
 
     fun stopCamstudy(studyTime: Int, restTime: Int) {
+        Log.d(TAG,"stopcamstudy")
         var studyIdx = studyInfo!!.result.studyInfo.idx
         var studyTimeValue = if (studyTime < 0) 0 else studyTime
 
@@ -546,19 +558,21 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 val msg: Message = Message.obtain(null, CamStudyService.MSG_SWITCH_CAMERA)
                 sendHandlerMessage(msg)
             }
+
+            /*
             R.id.sound_change -> {
                 if (speakMode){
                     commuicationModeOn()
                 }else{
                     speakModeOn()
                 }
-
             }
+             */
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun sendHandlerMessage(msg: Message) {
+    private fun sendHandlerMessage(msg: Message){
         if (mServiceCallback != null) {
             try {
                 mServiceCallback!!.send(msg)
@@ -570,7 +584,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     }
 
     private fun getLayoutParams(size: Int): FlexboxLayout.LayoutParams {
-
         var height = viewDataBinding.camStudyFelxboxLayout.height
 
         val item_height = when{
@@ -864,11 +877,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                         mainMoveIntent.putExtra("KickFromLeader",CamStudyService.forcedexit)
                         Log.d(TAG,"강퇴 여부 : "+CamStudyService.forcedexit)
                         CamStudyService.forcedexit = false
-                        if(kick){
-                            startActivity(mainMoveIntent)
-                        }else{
-                            finish()
-                        }
+                        startActivity(mainMoveIntent)
                     }
                     if(!isFinishing) finish()
                 }
@@ -973,24 +982,33 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             (audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL) * 0.4).toInt(),
             AudioManager.FLAG_SHOW_UI)
         */
+       // audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION)
+        audioManager.setMode(AudioManager.MODE_NORMAL);
+
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
+            (audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC) * 0.1).toInt(),
+            AudioManager.FLAG_SHOW_UI)
+
+        audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,
+            (audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL) * 0.1).toInt(),
+            AudioManager.FLAG_SHOW_UI)
+
         audioManager.setSpeakerphoneOn(true)
-        audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION)
         speakMode = true
 
         menu?.getItem(1)?.setIcon(R.drawable.ic_baseline_volume_up_24)
-
     }
 
     fun commuicationModeOn(){
         var audioManager : AudioManager
         audioManager = context?.getSystemService(AUDIO_SERVICE) as AudioManager
+
+        audioManager.setMode(AudioManager.MODE_NORMAL);
+
         audioManager.setSpeakerphoneOn(false)
-        audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION)
         speakMode = false
 
         menu?.getItem(1)?.setIcon(R.drawable.ic_baseline_phone_in_talk_24)
-
-
     }
 
     @SuppressWarnings("deprecation")

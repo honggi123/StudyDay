@@ -4,11 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="350dp"
     android:layout_height="wrap_content"
-    android:background="@drawable/dialog_backround_round"
+    android:background="@drawable/success_post_dialog"
     android:orientation="vertical"
     android:padding="25dp"
     >
-
 
 
     <LinearLayout
@@ -32,18 +31,26 @@
 
     </LinearLayout>
 
-
     <TextView
-        android:id="@+id/textView95"
+        android:id="@+id/dialog_successpost_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="오늘의 목표시간 9시간을 달성하셨습니다.\n간단하게 소감한마디 남겨주세요."
+        android:text="오늘의 목표시간 9시간을 달성하셨습니다."
+        android:textColor="#908686"
+        android:textSize="12dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView97"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="간단하게 소감한마디 남겨주세요."
         android:textColor="#908686"
         android:textSize="12dp"
         android:textStyle="bold" />
 
     <EditText
-        android:id="@+id/editTextTextPersonName5"
+        android:id="@+id/successpost_contents"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_marginTop="20dp"
@@ -66,12 +73,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:gravity="right"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/dialog_select_image_btn_image_Import"
+            android:id="@+id/dialog_successpost_btn_cancle"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:background="@drawable/main_goal"
@@ -79,7 +86,7 @@
             android:textColor="@color/white" />
 
         <Button
-            android:id="@+id/dialog_select_image_btn_pick_ok"
+            android:id="@+id/dialog_successpost_btn_share"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_marginLeft="10dp"

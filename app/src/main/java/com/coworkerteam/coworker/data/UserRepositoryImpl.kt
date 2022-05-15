@@ -14,8 +14,6 @@ import com.coworkerteam.coworker.data.remote.NaverService
 import com.coworkerteam.coworker.data.remote.StudydayService
 import io.reactivex.Single
 import retrofit2.Response
-import retrofit2.http.Header
-import retrofit2.http.Query
 import java.net.URLEncoder
 
 class UserRepositoryImpl(
@@ -448,7 +446,7 @@ class UserRepositoryImpl(
         studyIdx: Int,
         studyTime: Int,
         restTime: Int
-    ): Single<Response<ApiRequest>> {
+    ): Single<Response<CamstudyLeaveResponse>> {
         return service.camStudyLeave(accessToken, nickname, studyIdx, studyTime, restTime)
     }
 
@@ -464,5 +462,68 @@ class UserRepositoryImpl(
         nickname: String
     ): Single<Response<MyStudyInfoResponse>> {
         return service.myStudyInfo(accessToken, nickname)
+    }
+
+    override fun setSuccessPost(
+        accessToken: String,
+        contents: String?
+    ): Single<Response<ApiRequest>> {
+        return service.addSuccessPost(accessToken,contents)
+    }
+
+    override fun setMoodPost(
+        accessToken: String,
+        reqType: String,
+        mood: Int,
+        contents: String?
+    ): Single<Response<ApiRequest>> {
+        return service.addMoodPost(accessToken,reqType,mood,contents)
+    }
+
+
+    override fun getSuccessPost(
+        accessToken: String,page : Int)
+    : Single<Response<SuccessPostResponse>> {
+        return service.getSuccessPost(accessToken,"latest",page)
+    }
+
+    override fun setRemoveSuccessPost(
+        accessToken: String,
+        postNum: Int
+    ): Single<Response<PostDeleteResponse>> {
+        return service.removeSuccessPost(accessToken,postNum)
+    }
+
+    override fun getMoodPost(
+        accessToken: String,
+        sort: String,
+        page: Int
+    ): Single<Response<MoodPostResponse>> {
+        return service.getMoodPost(accessToken,sort,page)
+    }
+
+    override fun setRemoveMoodPost(
+        accessToken: String,
+        postNum: Int
+    ): Single<Response<PostDeleteResponse>> {
+        return service.removeMoodPost(accessToken,postNum)
+    }
+
+    override fun setEditMoodPost(
+        accessToken: String,
+        postNum: Int,
+        mood: Int,
+        contents: String
+    ): Single<Response<ApiRequest>> {
+        return service.editMoodPost(accessToken,postNum,mood,contents)
+    }
+
+    override fun setEmpathy(
+        accessToken: String,
+        postNum: Int,
+        mood: Int
+    ): Single<Response<EmpathyResponse>> {
+        return service.empathy(accessToken,postNum,mood)
+
     }
 }

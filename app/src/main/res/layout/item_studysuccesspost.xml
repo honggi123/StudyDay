@@ -31,7 +31,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/studysuccess_myfeeling"
+            android:id="@+id/item_success_post_myfeeling"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -39,11 +39,11 @@
             android:textColor="#E8E0E0"
             android:textSize="12dp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/textView105"
-            app:layout_constraintTop_toBottomOf="@+id/textView105" />
+            app:layout_constraintStart_toStartOf="@+id/item_success_post_goaltime"
+            app:layout_constraintTop_toBottomOf="@+id/item_success_post_goaltime" />
 
         <TextView
-            android:id="@+id/textView103"
+            android:id="@+id/item_success_post_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="hongs"
@@ -53,26 +53,26 @@
             app:layout_constraintTop_toTopOf="@+id/guideline6" />
 
         <TextView
-            android:id="@+id/textView104"
+            android:id="@+id/item_success_post_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="6월 16일"
             android:textColor="#FFFFFF"
             android:textSize="10sp"
-            app:layout_constraintStart_toStartOf="@+id/textView103"
-            app:layout_constraintTop_toBottomOf="@+id/textView103" />
+            app:layout_constraintStart_toStartOf="@+id/item_success_post_nickname"
+            app:layout_constraintTop_toBottomOf="@+id/item_success_post_nickname" />
 
         <TextView
-            android:id="@+id/textView105"
+            android:id="@+id/item_success_post_goaltime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="목표시간 9시간을 달성하셨습니다."
             android:textColor="#FFFFFF"
             android:textSize="16dp"
-            app:layout_constraintStart_toStartOf="@+id/textView104"
-            app:layout_constraintTop_toBottomOf="@+id/textView104" />
+            app:layout_constraintStart_toStartOf="@+id/item_success_post_date"
+            app:layout_constraintTop_toBottomOf="@+id/item_success_post_date" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline6"
@@ -103,9 +103,10 @@
             app:layout_constraintGuide_begin="303dp" />
 
         <ImageView
-            android:id="@+id/imageView30"
+            android:id="@+id/item_success_post_removeicon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="visible"
             app:layout_constraintEnd_toStartOf="@+id/guideline35"
             app:layout_constraintTop_toTopOf="@+id/guideline6"
             app:srcCompat="@drawable/ic_baseline_delete_white" />
