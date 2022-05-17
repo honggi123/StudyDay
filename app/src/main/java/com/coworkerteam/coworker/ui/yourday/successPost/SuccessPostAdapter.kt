@@ -1,6 +1,7 @@
 package com.coworkerteam.coworker.ui.yourday.successPost
 
 import android.content.Context
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.SuccessPostResponse
 import com.coworkerteam.coworker.ui.yourday.YourdayViewModel
+import com.coworkerteam.coworker.utils.DateFormatUtils
 
 
 class SuccessPostAdapter(private val viewModel: YourdayViewModel) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -79,9 +81,13 @@ class SuccessPostAdapter(private val viewModel: YourdayViewModel) : RecyclerView
             else -> Glide.with(context).load(R.drawable.card_back1).into(holder.background)
         }
         holder.nickname.setText(item?.nickname)
-        holder.date.setText(item?.create_date)
+
+        var create_date = DateFormatUtils.daysToStringformat_successPost(item!!.create_date)
+        holder.date.setText(create_date)
         holder.feeling.setText(item?.contents)
-        holder.time.setText(item?.success_time.toString())
+
+        var successtime = DateFormatUtils.secondsToHourMin(item!!.success_time)
+        holder.time.setText("목표시간 "+successtime+"을 달성하셨습니다.")
 
         if (item?.nickname?.equals(viewModel.getUserName())!!){
             holder.view_remove.visibility = View.VISIBLE

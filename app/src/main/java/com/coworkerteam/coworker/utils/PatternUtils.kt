@@ -269,7 +269,7 @@ object PatternUtils {
         return text
     }
 
-    /*스터디 설명에 대한 유효성 검사
+    /*감정 글 쓰기에 대한 유효성 검사
     허용되지 않는 입력값의 경우
     1. Null, 공백만 입력이 되어있을 경우(띄어쓰기만 있는 경우도 포함)
     2. 한글, 숫자, 영어 대소문자, 특수문자 `~!@#$%^&*()_+[]{};':",./<>?|*-+. 외의 문자, 공백, 엔터 외 입력시
@@ -288,4 +288,25 @@ object PatternUtils {
 
         return PatternResult(true, null)
     }
+
+    /*공부인증 소감 작성에 대한 유효성 검사
+    허용되지 않는 입력값의 경우
+    1. Null, 공백만 입력이 되어있을 경우(띄어쓰기만 있는 경우도 포함)
+    2. 한글, 숫자, 영어 대소문자, 특수문자 `~!@#$%^&*()_+[]{};':",./<>?|*-+. 외의 문자, 공백, 엔터 외 입력시
+    */
+    fun matchSuccessPostContents(text: String): PatternResult {
+
+        //Null, 공백만 입력이 되어있을 경우
+        if (text.isNullOrBlank()) {
+            return PatternResult(false, "미입력 또는 공백문자만 입력할 수 없습니다.")
+        }
+
+        //한글, 숫자, 영어 대소문자, 특수문자 `~!@#$%^&*()_+[]{};':",./<>?|*-+. 외의 문자, 공백, 엔터 외 입력시
+        if (!text.matches(Regex("^[ㄱ-힣0-9a-zA-Z`~!@#\\$%^&*()_+\\[\\]{}; \\n':\",./<>?|*\\-+.]*$"))) {
+            return PatternResult(false, "사용할 수 없는 문자가 포함되어 있습니다.")
+        }
+
+        return PatternResult(true, null)
+    }
+
 }

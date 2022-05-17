@@ -151,5 +151,4 @@
 -keep class com.wang.avi.** { *; }
 -keep class com.wang.avi.indicators.** { *; }
 
--keep class com.unity3d.** { *; }
 -keep class com.coworkerteam.coworker.ui.main.UnityActivity { *; }

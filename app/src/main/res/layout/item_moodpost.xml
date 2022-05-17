@@ -211,40 +211,40 @@
 
             <ImageView
                 android:id="@+id/item_moodpost_empathy_kinds1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_weight="1"
                 android:visibility="gone"
                 app:srcCompat="@drawable/emotion1" />
 
             <ImageView
                 android:id="@+id/item_moodpost_empathy_kinds2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_weight="1"
                 android:visibility="gone"
                 app:srcCompat="@drawable/emotion2" />
 
             <ImageView
                 android:id="@+id/item_moodpost_empathy_kinds3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_weight="1"
                 android:visibility="gone"
                 app:srcCompat="@drawable/emotion3" />
 
             <ImageView
                 android:id="@+id/item_moodpost_empathy_kinds4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_weight="1"
                 android:visibility="gone"
                 app:srcCompat="@drawable/emotion4" />
 
             <ImageView
                 android:id="@+id/item_moodpost_empathy_kinds5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_weight="1"
                 android:visibility="gone"
                 app:srcCompat="@drawable/emotion5" />

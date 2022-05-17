@@ -6,7 +6,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.icu.util.TimeUnit
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -24,7 +23,9 @@ import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityMainBinding
 import com.coworkerteam.coworker.ui.base.NavigationActivity
+import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.ui.dialog.PasswordDialog
+import com.coworkerteam.coworker.ui.dialog.SuccessPostDialog
 import com.coworkerteam.coworker.ui.study.make.MakeStudyActivity
 import com.coworkerteam.coworker.ui.todolist.TodoListActivity
 import com.coworkerteam.coworker.utils.PatternUtils
@@ -162,17 +163,16 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
                 }).show()
         }
 
-        /*
+
         var goalIsSuccess = intent.getBooleanExtra("goalIsSuccess",false)
 
         if (goalIsSuccess){
-            Log.d(TAG, "goalSuccesstime : " + intent.getIntExtra("goalSuccesstime", 0))
             showSuccessPostDialog(
-                intent.getIntExtra("goalSuccesstime",0),
+                intent.getIntExtra("goalSuccesstime", 0),
                 intent.getBooleanExtra("goalPostIsWrite",false)
             )
         }
-         */
+
 
         init()
     }
@@ -211,21 +211,21 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
         viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
-                /*
+                    /*
                     var intent = Intent(this, EnterCamstudyActivity::class.java)
                     intent.putExtra("studyInfo", it.body()!!)
                     Log.d(TAG,"STUDYINFO"+it.body())
                     passwordDialog.dismissDialog()
                     startActivity(intent)
                     */
-                                       passwordDialog.dismissDialog()
-                                       var intent = Intent(this, UnityActivity::class.java)
-                                       intent.putExtra("studyInfo", it.body()!!)
-                                       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                       intent.setAction(Intent.ACTION_MAIN);
-                                       intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                                       Log.d(TAG,"studyInfo : "+it.body().toString())
-                                       startActivity(intent)
+                                     passwordDialog.dismissDialog()
+                                     var intent = Intent(this, UnityActivity::class.java)
+                                     intent.putExtra("studyInfo", it.body()!!)
+                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                     intent.setAction(Intent.ACTION_MAIN);
+                                     intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                                     Log.d(TAG,"studyInfo : "+it.body().toString())
+                                     startActivity(intent)
 
                 }
 
@@ -896,44 +896,20 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
         }
     }*/
 
-     fun showSuccessPostDialog(goalTime: Int?, iswrite:Boolean){
+     fun showSuccessPostDialog(goalTime: Int, iswrite:Boolean){
          if (iswrite){
              // 이미 공부인증 게시물이 적혀있는경우
              return
          }
-             val mDialogView =
-                 LayoutInflater.from(this).inflate(R.layout.dialog_successpost, null)
-             val mBuilder = AlertDialog.Builder(this).setView(mDialogView)
 
-             val builder = mBuilder.show()
+         var dialog = SuccessPostDialog.Builder(this)
+             .setGoalTime(goalTime)
+             .show()
+     }
 
-             builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-         var edit_contents = mDialogView.findViewById<EditText>(R.id.successpost_contents)
-         var view_time = mDialogView.findViewById<TextView>(R.id.dialog_successpost_time)
-         val btn_cancle = mDialogView.findViewById<Button>(R.id.dialog_successpost_btn_cancle)
-         val btn_ok = mDialogView.findViewById<Button>(R.id.dialog_successpost_btn_share)
-
-         var goalTime = goalTime
-
-         var min = goalTime?.div(60)
-         var hour  = min?.div(60)
-
-         if (hour!! >=1){
-             goalTime = hour
-         }else{
-             goalTime  = goalTime?.rem(60)
-         }
-
-         view_time.setText("오늘의 목표시간"+goalTime+"시간을 달성하셨습니다.")
-             btn_ok.setOnClickListener(View.OnClickListener {
-                 viewModel.setSuccessPostData(edit_contents.text.toString())
-                 builder.dismiss()
-             })
-             btn_cancle.setOnClickListener(View.OnClickListener {
-                 builder.dismiss()
-             })
-         }
+     fun shareSuccessPost(contents: String){
+        viewModel.setSuccessPostData(contents)
+     }
 
 
 }

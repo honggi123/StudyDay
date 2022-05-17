@@ -15,6 +15,7 @@ import com.coworkerteam.coworker.ui.mystudy.MyStudyViewModel
 import com.coworkerteam.coworker.ui.search.StudySearchViewModel
 import com.coworkerteam.coworker.ui.setting.SettingViewModel
 import com.coworkerteam.coworker.ui.setting.account.WithdrawalViewModel
+import com.coworkerteam.coworker.ui.setting.myday.MydayViewModel
 import com.coworkerteam.coworker.ui.setting.profile.MyProfileViewModel
 import com.coworkerteam.coworker.ui.setting.profile.edit.ProfileEditViewModel
 import com.coworkerteam.coworker.ui.setting.to.developer.ToDeveloperViewModel
@@ -113,6 +114,9 @@ var viewModelModule = module {
     }
     viewModel {
         EditMoodPostViewModel(get())
+    }
+    viewModel {
+        MydayViewModel(get())
     }
 }
 

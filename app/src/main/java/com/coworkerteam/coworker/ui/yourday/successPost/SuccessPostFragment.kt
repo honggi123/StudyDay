@@ -28,21 +28,8 @@ class SuccessPostFragment()
     private var page = 0       // 현재 페이지
     private var totalpage = 0     // 한 번에 가져올 아이템 수
 
-    override fun initStartView(){
-        successPostAdapter = SuccessPostAdapter(viewModel)
-
-        viewModel.getSuccessPost(getPage())
-        successPostAdapter.setdata(datas)
-
-        rv_SuccessPost = view?.findViewById<RecyclerView>(R.id.fragment_yourday_successpost_rv)!!
-        rv_SuccessPost?.adapter = successPostAdapter
-        rv_SuccessPost?.layoutManager = LinearLayoutManager(activity)
-
-        initScrollListener()
-    }
-
-
-    override fun initDataBinding(){
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         viewModel.SuccessPostPagingData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
@@ -101,6 +88,24 @@ class SuccessPostFragment()
                 }
             }
         })
+    }
+
+    override fun initStartView(){
+        successPostAdapter = SuccessPostAdapter(viewModel)
+
+        viewModel.getSuccessPost(getPage())
+        successPostAdapter.setdata(datas)
+
+        rv_SuccessPost = view?.findViewById<RecyclerView>(R.id.fragment_yourday_successpost_rv)!!
+        rv_SuccessPost?.adapter = successPostAdapter
+        rv_SuccessPost?.layoutManager = LinearLayoutManager(activity)
+
+        initScrollListener()
+    }
+
+
+    override fun initDataBinding(){
+
     }
 
     override fun initAfterBinding(){

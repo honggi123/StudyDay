@@ -3,7 +3,9 @@ package com.coworkerteam.coworker.ui.yourday.moodPost
 
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +20,7 @@ import com.coworkerteam.coworker.ui.yourday.YourdayViewModel
 import com.google.firebase.analytics.FirebaseAnalytics
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -40,40 +43,11 @@ class MoodPostFragment()
     private var totalpage = 0     // 한 번에 가져올 아이템 수
     private var sort = "latest"       // 현재 페이지
 
-    override fun initStartView() {
-        moodPostAdapter = MoodPostAdapter(viewModel)
 
-        moodPostAdapter.setdata(datas)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-        rv_MoodPost = view?.findViewById<RecyclerView>(R.id.fragment_yourday_moodpost_rv)!!
-        rv_MoodPost?.adapter = moodPostAdapter
-        rv_MoodPost?.layoutManager = LinearLayoutManager(activity)
-
-        initScrollListener()
-
-        val btn_latest = viewDataBinding.yourdayMoodpostTxtLatest
-        val btn_empathyNum = viewDataBinding.yourdayMoodpostTxtEmpathyNum
-
-
-        sortEvent(btn_latest,btn_empathyNum,"latest")
-        sort = "latest"
-
-        btn_latest.setOnClickListener(View.OnClickListener {
-            sortEvent(it,btn_empathyNum,"latest")
-            sort = "latest"
-        })
-
-        btn_empathyNum.setOnClickListener(View.OnClickListener {
-            sortEvent(it,btn_latest,"empathy")
-            sort = "empathy"
-        })
-
-
-
-    }
-
-    override fun initDataBinding() {
-        viewModel.MoodPostPagingData.observe(this, androidx.lifecycle.Observer {
+        viewModel.MoodPostPagingData.observe(this,  androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
                     if (isLoading){
@@ -162,6 +136,40 @@ class MoodPostFragment()
             }
         })
 
+
+    }
+
+    override fun initStartView() {
+        moodPostAdapter = MoodPostAdapter(viewModel)
+        datas.clear()
+        moodPostAdapter.setdata(datas)
+
+        rv_MoodPost = view?.findViewById<RecyclerView>(R.id.fragment_yourday_moodpost_rv)!!
+        rv_MoodPost?.adapter = moodPostAdapter
+        rv_MoodPost?.layoutManager = LinearLayoutManager(activity)
+
+        initScrollListener()
+
+        val btn_latest = viewDataBinding.yourdayMoodpostTxtLatest
+        val btn_empathyNum = viewDataBinding.yourdayMoodpostTxtEmpathyNum
+
+        btn_latest.setOnClickListener(View.OnClickListener {
+            sortEvent(it,btn_empathyNum,"latest")
+            sort = "latest"
+        })
+
+        btn_empathyNum.setOnClickListener(View.OnClickListener {
+            sortEvent(it,btn_latest,"empathy")
+            sort = "empathy"
+        })
+
+        sortEvent(btn_latest,btn_empathyNum,"latest")
+        sort = "latest"
+    }
+
+    override fun initDataBinding() {
+
+
     }
 
     override fun initAfterBinding() {
@@ -232,8 +240,6 @@ class MoodPostFragment()
         rv_MoodPost.itemAnimator = null
         searchEvent(sort)
     }
-
-
 
 
 }

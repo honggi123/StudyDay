@@ -306,4 +306,18 @@ interface UserRepository {
         postNum : Int,
         mood : Int,
     ): Single<Response<EmpathyResponse>>
+
+    fun getMyMoodPost(
+        accessToken: String,
+        nickname: String?,
+        sort: String,
+        page : Int
+    ): Single<Response<MoodPostResponse>>
+
+    fun getMySuccessPost(
+        accessToken: String,
+        nickname: String?,
+        page : Int
+    ): Single<Response<SuccessPostResponse>>
+
 }

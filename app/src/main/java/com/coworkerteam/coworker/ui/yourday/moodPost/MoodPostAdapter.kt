@@ -2,7 +2,6 @@ package com.coworkerteam.coworker.ui.yourday.moodPost
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,12 +15,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.MoodPostResponse
-import com.coworkerteam.coworker.databinding.ItemMoodpostBinding
 import com.coworkerteam.coworker.ui.yourday.YourdayViewModel
 import com.coworkerteam.coworker.ui.yourday.moodPost.edit.EditMoodPostActivity
-import com.coworkerteam.coworker.utils.DateUtils
+import com.coworkerteam.coworker.utils.DateFormatUtils
 import com.google.gson.Gson
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -115,7 +112,7 @@ class MoodPostAdapter (private val viewmodel : YourdayViewModel): RecyclerView.A
 
         holder.txt_nickname.setText(item?.nickname)
 
-        var diff_date = DateUtils.daysToformat_Yourday(item.create_date,item.create_date)
+        var diff_date = DateFormatUtils.daysToStringformat(item.create_date,item.create_date)
         holder.txt_create_date.setText(diff_date)
         holder.txt_contents.setText(item?.contents)
 

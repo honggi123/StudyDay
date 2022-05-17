@@ -394,6 +394,19 @@ interface StudydayService {
         @Query("empathy") empathy: Int
     ): Single<Response<EmpathyResponse>>
 
+    @GET("your-daily/mood/{nickname}")
+    fun getMyMoodPost(
+        @Header("Authorization") accessToken: String,
+        @Path("nickname") nickname: String?,
+        @Query("sort") sort: String,
+        @Query("page") page: Int
+    ): Single<Response<MoodPostResponse>>
 
+    @GET("your-daily/success/{nickname}")
+    fun getMySuccessPost(
+        @Header("Authorization") accessToken: String,
+        @Path("nickname") nickname: String?,
+        @Query("page") page: Int
+    ): Single<Response<SuccessPostResponse>>
 
 }

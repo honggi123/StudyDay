@@ -526,4 +526,21 @@ class UserRepositoryImpl(
         return service.empathy(accessToken,postNum,mood)
 
     }
+
+    override fun getMyMoodPost(
+        accessToken: String,
+        nickname: String?,
+        sort: String,
+        page: Int
+    ): Single<Response<MoodPostResponse>> {
+        return service.getMyMoodPost(accessToken,nickname,sort,page)
+    }
+
+    override fun getMySuccessPost(
+        accessToken: String,
+        nickname: String?,
+        page: Int
+    ): Single<Response<SuccessPostResponse>> {
+        return service.getMySuccessPost(accessToken,nickname,page)
+    }
 }

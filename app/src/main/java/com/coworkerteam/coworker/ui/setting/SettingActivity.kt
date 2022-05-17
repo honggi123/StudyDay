@@ -16,7 +16,6 @@ import com.coworkerteam.coworker.BuildConfig
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.databinding.ActivitySettingBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
-import com.coworkerteam.coworker.ui.login.LoginActivity
 import com.coworkerteam.coworker.ui.setting.account.WithdrawalActivity
 import com.coworkerteam.coworker.ui.setting.info.NoticeActivity
 import com.coworkerteam.coworker.ui.setting.info.OpenLicenseActivity
@@ -30,7 +29,7 @@ import com.nhn.android.naverlogin.OAuthLogin
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import android.content.pm.PackageManager
-import com.google.firebase.analytics.FirebaseAnalytics
+import com.coworkerteam.coworker.ui.setting.myday.MydayActivity
 
 class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>() {
     val TAG = "SettingActivity"
@@ -189,6 +188,13 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
         }
         return versionName
     }
+
+    fun moveMyYourday(){
+        //프로필로 이동
+        val intent = Intent(this, MydayActivity::class.java)
+        startActivity(intent)
+    }
+
 
     fun moveProfile(){
         //프로필로 이동
