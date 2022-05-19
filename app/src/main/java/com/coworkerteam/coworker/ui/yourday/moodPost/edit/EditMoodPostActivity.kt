@@ -78,13 +78,6 @@ class EditMoodPostActivity : BaseActivity<ActivityEditMoodpostBinding, EditMoodP
                 view_txtnumber.setText(userinput.length.toString() + " / 1000")
             }
         })
-
-        /*
-        btn_showemotion.setOnClickListener(View.OnClickListener {
-            showEmotionDialog()
-        })
-        */
-
         viewDataBinding.activitiy = this
 
         val current = LocalDateTime.now()

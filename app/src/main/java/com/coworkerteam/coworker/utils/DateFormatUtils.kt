@@ -1,5 +1,6 @@
 package com.coworkerteam.coworker.utils
 
+import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -20,11 +21,13 @@ object DateFormatUtils {
         var startDate = cdf.parse(start)
         var endDate = cdf.parse(end)
 
-        val diff = endDate.time - startDate.time
-
+        Log.d("diff??","enddate time : "+endDate+"time : "+startDate)
+        val diff = (endDate.time - startDate.time) / (60 * 60 * 24 * 1000)
+        Log.d("diff??",diff.toString())
         when(diff.toInt()){
             0 -> return "오늘"
-            in 1..365 -> return (diff/30).toString() + "일전"
+            in 1..29 -> return diff.toString() + "일전"
+            in 30..364 -> return (diff/30).toString() + "달전"
             else -> return (diff/365).toString() + "년전"
         }
     }

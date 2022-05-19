@@ -53,12 +53,7 @@ class MyMoodPostAdapter (private val viewmodel : MydayViewModel): RecyclerView.A
             val view: View =
                 LayoutInflater.from(parent.context).inflate(R.layout.item_moodpost, parent, false)
             ItemViewHolder(view)
-            /*
-            var binding : ItemMoodpostBinding = ItemMoodpostBinding.inflate(LayoutInflater.from(parent.context), parent,false)
-            itembinding = binding
-            itembinding.adapter = this
-            ItemViewHolder(binding)
-        */
+
 
         } else {
             val view: View =
@@ -115,7 +110,7 @@ class MyMoodPostAdapter (private val viewmodel : MydayViewModel): RecyclerView.A
 
         holder.txt_nickname.setText(item?.nickname)
 
-        var diff_date = DateFormatUtils.daysToStringformat(item.create_date,item.create_date)
+        var diff_date = DateFormatUtils.daysToStringformat(DateFormatUtils.getTodayDate(),item.create_date)
         holder.txt_create_date.setText(diff_date)
         holder.txt_contents.setText(item?.contents)
 

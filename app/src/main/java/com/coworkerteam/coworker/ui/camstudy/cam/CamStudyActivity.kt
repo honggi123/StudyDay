@@ -559,7 +559,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 sendHandlerMessage(msg)
             }
 
-            /*
+
             R.id.sound_change -> {
                 if (speakMode){
                     commuicationModeOn()
@@ -567,7 +567,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     speakModeOn()
                 }
             }
-             */
+
         }
         return super.onOptionsItemSelected(item)
     }
@@ -980,21 +980,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     fun speakModeOn(){
         var audioManager : AudioManager
         audioManager = context!!.getSystemService(AUDIO_SERVICE) as AudioManager
-        /*
-        audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,
-            (audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL) * 0.4).toInt(),
-            AudioManager.FLAG_SHOW_UI)
-        */
-       // audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION)
-        audioManager.setMode(AudioManager.MODE_NORMAL);
-
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
-            (audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC) * 0.1).toInt(),
-            AudioManager.FLAG_SHOW_UI)
-
-        audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,
-            (audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL) * 0.1).toInt(),
-            AudioManager.FLAG_SHOW_UI)
 
         audioManager.setSpeakerphoneOn(true)
         speakMode = true
@@ -1006,7 +991,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         var audioManager : AudioManager
         audioManager = context?.getSystemService(AUDIO_SERVICE) as AudioManager
 
-        audioManager.setMode(AudioManager.MODE_NORMAL);
+
 
         audioManager.setSpeakerphoneOn(false)
         speakMode = false

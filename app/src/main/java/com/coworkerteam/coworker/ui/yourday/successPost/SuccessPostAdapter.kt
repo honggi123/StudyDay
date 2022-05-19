@@ -23,7 +23,6 @@ class SuccessPostAdapter(private val viewModel: YourdayViewModel) : RecyclerView
     private val VIEW_TYPE_LOADING = 1
 
     private lateinit var items: ArrayList<SuccessPostResponse.Result.SuccessPost?>
-    private lateinit var items_bgdrawble: ArrayList<Int>
     private lateinit var context : YourDayActivity
     var removeitem : SuccessPostResponse.Result.SuccessPost? = null
 
