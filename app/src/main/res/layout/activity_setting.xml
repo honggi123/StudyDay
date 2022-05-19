@@ -61,7 +61,19 @@
                     android:textSize="18sp"
                     android:onClick="@{()->activitiy.moveProfile()}"/>
 
-
+                <TextView
+                    android:id="@+id/setting_myyourday"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:drawableRight="@drawable/ic_baseline_navigate_next_24"
+                    android:elevation="2dp"
+                    android:gravity="center_vertical"
+                    android:padding="15dp"
+                    android:text="내 글 관리"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:onClick="@{()->activitiy.moveMyYourday()}"/>
                 <TextView
                     android:id="@+id/textView50"
                     android:layout_width="match_parent"

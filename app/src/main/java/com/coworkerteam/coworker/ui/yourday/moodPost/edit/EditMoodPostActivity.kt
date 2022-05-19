@@ -128,20 +128,21 @@ class EditMoodPostActivity : BaseActivity<ActivityEditMoodpostBinding, EditMoodP
     fun showEmotionDialog(){
         MoodEmotionDialog.Builder(this)
             .show()
+        firebaseLog.addLog(TAG,"show_dialog_emotion")
     }
 
     fun setMyMoodEmoji(emotinoNum : String){
-        Log.d("setMyEmoji",emotinoNum.toString())
         this.emotinoNum = emotinoNum.toInt()
-        Log.d("setMyEmoji",this.emotinoNum.toString())
         var emotionname = "mood_emoticon"+emotinoNum
         Glide.with(this)
             .load(this.resources.getIdentifier(emotionname,"drawable",this.getPackageName()))
             .into(viewDataBinding.viewMyEmotion)
+        firebaseLog.addLog(TAG,"edit_emoji")
     }
 
     fun EditMoodPost(){
         viewModel.setEditMoodPost(idx,emotinoNum,edit_writemood.text.toString())
+        firebaseLog.addLog(TAG,"edit_moodpost")
     }
 
 }

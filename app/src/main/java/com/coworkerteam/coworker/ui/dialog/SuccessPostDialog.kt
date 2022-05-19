@@ -12,6 +12,7 @@ import com.coworkerteam.coworker.utils.DateFormatUtils
 import com.coworkerteam.coworker.utils.PatternUtils
 
 class SuccessPostDialog (context: MainActivity) : Dialog(context){
+    val TAG = "SuccessPostDialog"
     var mDialogView: View? = null
     var mBuilder: AlertDialog? = null
     lateinit var onClickOKButton: (Int, String?) -> Unit
@@ -37,6 +38,7 @@ class SuccessPostDialog (context: MainActivity) : Dialog(context){
             if (isOkContents){
                 context.shareSuccessPost(bind.successpostContents.text.toString())
                 dismiss()
+                context.firebaseLog.addLog(TAG,"add_successpost")
             }else{
                 Toast.makeText(context, "공부인증 소감을 확인해주세요.", Toast.LENGTH_SHORT)
                     .show()
@@ -46,6 +48,7 @@ class SuccessPostDialog (context: MainActivity) : Dialog(context){
 
         bind.dialogSuccesspostBtnCancle.setOnClickListener(View.OnClickListener {
             dismiss()
+            context.firebaseLog.addLog(TAG,"cancel")
         })
     }
 

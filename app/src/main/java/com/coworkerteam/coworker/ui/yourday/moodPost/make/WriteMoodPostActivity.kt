@@ -118,10 +118,8 @@ class WriteMoodPostActivity (): BaseActivity<ActivityWritemoodBinding, WriteMood
 
 
     fun setMyMoodEmoji(emotinoNum : Int){
-        Log.d("setMyEmoji",emotinoNum.toString())
         this.emotinoNum = emotinoNum
         var emotionname = "mood_emoticon"+emotinoNum.toString()
-        Log.d("setMyEmoji",emotionname)
         Glide.with(this)
             .load(this.getResources().getIdentifier(emotionname,"drawable",this.getPackageName()))
             .into(btn_showemotion)
@@ -133,6 +131,7 @@ class WriteMoodPostActivity (): BaseActivity<ActivityWritemoodBinding, WriteMood
             return
         }
         viewModel.setMoodPost("make",emotinoNum,edit_writemood.text.toString())
+        firebaseLog.addLog(TAG,"setMoodPost")
     }
 
 }

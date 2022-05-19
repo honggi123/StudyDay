@@ -1,4 +1,4 @@
-package com.coworkerteam.coworker.ui.yourday.moodPost
+package com.coworkerteam.coworker.ui.yourday.moodPost.make
 
 import android.content.Intent
 import android.util.Log
@@ -6,8 +6,6 @@ import android.view.View
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.databinding.ActivityEmotionchoiceBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
-import com.coworkerteam.coworker.ui.yourday.moodPost.make.WriteMoodPostActivity
-import com.coworkerteam.coworker.ui.yourday.moodPost.make.WriteMoodPostViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class EmotionChoiceActivity() : BaseActivity<ActivityEmotionchoiceBinding, WriteMoodPostViewModel>() {

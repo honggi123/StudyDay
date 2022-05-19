@@ -1,40 +1,31 @@
-package com.coworkerteam.coworker.ui.yourday.moodPost
+package com.coworkerteam.coworker.ui.setting.myday.moodpost
 
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.MoodPostResponse
-import com.coworkerteam.coworker.data.model.other.SearchStudy
+import com.coworkerteam.coworker.databinding.FragmentMydayMoodpostBinding
 import com.coworkerteam.coworker.databinding.FragmentYourdayMoodpostBinding
 import com.coworkerteam.coworker.ui.base.BaseFragment
-import com.coworkerteam.coworker.ui.search.StudySearchActivity
+import com.coworkerteam.coworker.ui.setting.myday.MydayViewModel
 import com.coworkerteam.coworker.ui.yourday.YourdayViewModel
-import com.google.firebase.analytics.FirebaseAnalytics
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import retrofit2.Response
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 import java.util.*
 import kotlin.collections.ArrayList
 
-class MoodPostFragment()
-    : BaseFragment<FragmentYourdayMoodpostBinding, YourdayViewModel>()  {
-    val TAG = "MoodPostFragment"
+class MyMoodPostFragment()
+    : BaseFragment<FragmentMydayMoodpostBinding, MydayViewModel>()  {
+    val TAG = "MyMoodPostFragment"
     override val layoutResourceID: Int
-        get() = R.layout.fragment_yourday_moodpost
-    override val viewModel: YourdayViewModel by viewModel()
-    lateinit var moodPostAdapter: MoodPostAdapter
+        get() = R.layout.fragment_myday_moodpost
+    override val viewModel: MydayViewModel by viewModel()
+    lateinit var moodPostAdapter: MyMoodPostAdapter
     var datas = ArrayList<MoodPostResponse.Result.MoodPost?>()
     lateinit var rv_MoodPost : RecyclerView
     var isLoading = false
@@ -43,8 +34,10 @@ class MoodPostFragment()
     private var totalpage = 0     // 한 번에 가져올 아이템 수
     private var sort = "latest"       // 현재 페이지
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         viewModel.MoodPostPagingData.observe(this,  androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
@@ -142,7 +135,7 @@ class MoodPostFragment()
     }
 
     override fun initStartView() {
-        moodPostAdapter = MoodPostAdapter(viewModel)
+        moodPostAdapter = MyMoodPostAdapter(viewModel)
         datas.clear()
         moodPostAdapter.setdata(datas)
 
@@ -158,13 +151,13 @@ class MoodPostFragment()
         btn_latest.setOnClickListener(View.OnClickListener {
             sortEvent(it,btn_empathyNum,"latest")
             sort = "latest"
-            firebaseLog.addLog(TAG,"show_latestsort")
+            firebaseLog.addLog(TAG,"sort_latest")
         })
 
         btn_empathyNum.setOnClickListener(View.OnClickListener {
             sortEvent(it,btn_latest,"empathy")
             sort = "empathy"
-            firebaseLog.addLog(TAG,"show_empathysort")
+            firebaseLog.addLog(TAG,"sort_empathy")
         })
 
         sortEvent(btn_latest,btn_empathyNum,"latest")
@@ -179,9 +172,9 @@ class MoodPostFragment()
     override fun initAfterBinding() {
     }
 
-    fun newInstant(): MoodPostFragment {
+    fun newInstant(): MyMoodPostFragment {
         val args = Bundle()
-        val frag = MoodPostFragment()
+        val frag = MyMoodPostFragment()
         frag.arguments = args
         return frag
     }
@@ -211,14 +204,14 @@ class MoodPostFragment()
     }
 
     private fun loadMore() {
+        firebaseLog.addLog(TAG,"load_more")
         datas.add(null)
         moodPostAdapter.notifyItemInserted(datas.size - 1)
         val handler = android.os.Handler()
         isLoading = true
         handler.postDelayed({
-            viewModel.getMoodPost(sort,getPage())
+            viewModel.getMyMoodPost(sort,getPage())
         },1000)
-        firebaseLog.addLog(TAG,"loadmore")
     }
 
     private fun getPage(): Int {
@@ -230,7 +223,7 @@ class MoodPostFragment()
         page = 0
         datas.clear()
 
-        viewModel.getMoodPost(sort,getPage())
+        viewModel.getMyMoodPost(sort,getPage())
         isLoading = false
     }
 

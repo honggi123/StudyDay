@@ -925,7 +925,9 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                         //레이아웃 초기화
                         val msg: Message = Message.obtain(null, CamStudyService.REQUEST_STOP_SHARE)
                         sendHandlerMessage(msg)
+                        firebaseLog.addLog(TAG,"stop_share")
                     })
+                    firebaseLog.addLog(TAG,"start_share")
                 }
                 CamStudyService.RECEIVE_STOP_SHARE -> {
                     // 화면 공유 중지를 받음
@@ -953,6 +955,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                         )
                     }
                     CamStudyService.onScreen = false
+                    firebaseLog.addLog(TAG,"receive_stop_share")
                 }
             }
         }
@@ -1021,11 +1024,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         }
     }
     return false
-    }
-
-    override fun onTrimMemory(level: Int) {
-        Log.d(TAG,": onTrimMemory " + level)
-        super.onTrimMemory(level)
     }
 
 

@@ -7,7 +7,7 @@
     <data>
         <variable
             name="activity"
-            type="com.coworkerteam.coworker.ui.yourday.moodPost.EmotionChoiceActivity" />
+            type="com.coworkerteam.coworker.ui.yourday.moodPost.make.EmotionChoiceActivity" />
     </data>
     <RelativeLayout
         android:layout_width="match_parent"

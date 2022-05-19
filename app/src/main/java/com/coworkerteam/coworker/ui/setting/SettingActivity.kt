@@ -161,7 +161,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
     }
 
     fun sendToDeveloper(){
-        firebaseLog.addLog(TAG,"sned_developer_email")
+        firebaseLog.addLog(TAG,"send_developer_email")
 
         val intent = Intent(Intent.ACTION_SENDTO)
         val emailTitle = "[" + getString(R.string.app_name) + "] 서비스에 대한 문의"
@@ -190,7 +190,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, SettingViewModel>()
     }
 
     fun moveMyYourday(){
-        //프로필로 이동
+        //나의 하루는으로 이동
         val intent = Intent(this, MydayActivity::class.java)
         startActivity(intent)
     }

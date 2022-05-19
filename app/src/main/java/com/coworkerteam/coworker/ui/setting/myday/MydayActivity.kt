@@ -1,4 +1,4 @@
-package com.coworkerteam.coworker.ui.yourday
+package com.coworkerteam.coworker.ui.setting.myday
 
 import android.content.Intent
 import android.util.Log
@@ -9,21 +9,22 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.viewpager.widget.ViewPager
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
+import com.coworkerteam.coworker.databinding.ActivityMydayBinding
 import com.coworkerteam.coworker.databinding.ActivityYourdayBinding
 import com.coworkerteam.coworker.ui.base.NavigationActivity
-import com.coworkerteam.coworker.ui.yourday.moodPost.make.EmotionChoiceActivity
+import com.coworkerteam.coworker.ui.yourday.moodPost.make.WriteMoodPostActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class YourDayActivity(
-) : NavigationActivity<ActivityYourdayBinding, YourdayViewModel>() {
+class MydayActivity(
+) : NavigationActivity<ActivityMydayBinding, MydayViewModel>() {
 
     val TAG = "YourDayActivity"
     override val layoutResourceID: Int
-        get() = R.layout.activity_yourday
-    override val viewModel: YourdayViewModel by viewModel()
+        get() = R.layout.activity_myday
+    override val viewModel: MydayViewModel by viewModel()
 
     override val drawerLayout: DrawerLayout
         get() = findViewById(R.id.drawer_layout)
@@ -32,26 +33,16 @@ class YourDayActivity(
 
     override fun initStartView() {
         super.initStartView()
-        var main_toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.yourday_toolber)
+        var main_toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.myday_toolber)
 
         setSupportActionBar(main_toolbar) // 툴바를 액티비티의 앱바로 지정
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24_write) // 홈버튼 이미지 변경
-        supportActionBar?.title = "너의 하루는"
+        supportActionBar?.title = "나의 하루는"
 
         fragment_init()
 
-        //툴바의 + 아이콘에 대한 세팅
-        val main_toolbar_writepost = findViewById<ImageView>(R.id.main_toolbar_writepost)
 
-        main_toolbar_writepost.visibility = View.VISIBLE
-        main_toolbar_writepost.setOnClickListener(
-            View.OnClickListener {
-                firebaseLog.addLog(TAG,"add_post")
-                var intent = Intent(this, EmotionChoiceActivity::class.java)
-                startActivity(intent)
-            }
-        )
     }
 
     override fun initDataBinding() {
@@ -86,15 +77,15 @@ class YourDayActivity(
     }
 
     override fun initAfterBinding() {
-        viewModel.getMoodPost("latest",1)
+        viewModel.getMyMoodPost("latest",1)
     }
 
     fun fragment_init() {
-        val pagerAdapter = FragmentAdapter_YourDay(supportFragmentManager)
-        val pager = findViewById<ViewPager>(R.id.yourday_viewPager)
+        val pagerAdapter = MydayFragmentAdapter(supportFragmentManager)
+        val pager = findViewById<ViewPager>(R.id.myday_viewPager)
         pager.visibility = View.VISIBLE
         pager.adapter = pagerAdapter
-        val tab = findViewById<TabLayout>(R.id.yourday_tab)
+        val tab = findViewById<TabLayout>(R.id.myday_tab)
         tab.setupWithViewPager(pager)
     }
 

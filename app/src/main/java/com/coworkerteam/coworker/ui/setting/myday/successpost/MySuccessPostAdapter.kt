@@ -1,4 +1,4 @@
-package com.coworkerteam.coworker.ui.yourday.successPost
+package com.coworkerteam.coworker.ui.setting.myday.successpost
 
 import android.content.Context
 import android.text.format.DateUtils
@@ -12,19 +12,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.SuccessPostResponse
-import com.coworkerteam.coworker.ui.yourday.YourDayActivity
+import com.coworkerteam.coworker.ui.setting.myday.MydayActivity
+import com.coworkerteam.coworker.ui.setting.myday.MydayViewModel
 import com.coworkerteam.coworker.ui.yourday.YourdayViewModel
 import com.coworkerteam.coworker.utils.DateFormatUtils
 
 
-class SuccessPostAdapter(private val viewModel: YourdayViewModel) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private val TAG = "SuccessPostAdapter"
+class MySuccessPostAdapter(private val viewModel: MydayViewModel) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    val TAG = "MySuccessPostAdapter"
     private val VIEW_TYPE_ITEM = 0
     private val VIEW_TYPE_LOADING = 1
 
     private lateinit var items: ArrayList<SuccessPostResponse.Result.SuccessPost?>
-    private lateinit var items_bgdrawble: ArrayList<Int>
-    private lateinit var context : YourDayActivity
+    private lateinit var context : MydayActivity
     var removeitem : SuccessPostResponse.Result.SuccessPost? = null
 
     fun setdata(items: ArrayList<SuccessPostResponse.Result.SuccessPost?>) {
@@ -36,7 +36,7 @@ class SuccessPostAdapter(private val viewModel: YourdayViewModel) : RecyclerView
         viewType: Int
     ): RecyclerView.ViewHolder {
         return if (viewType == VIEW_TYPE_ITEM) {
-            context = parent.context as YourDayActivity
+            context = parent.context as MydayActivity
             val view: View =
                 LayoutInflater.from(parent.context).inflate(R.layout.item_studysuccesspost, parent, false)
             ItemViewHolder(view)
@@ -98,7 +98,7 @@ class SuccessPostAdapter(private val viewModel: YourdayViewModel) : RecyclerView
 
         holder.view_remove.setOnClickListener(View.OnClickListener {
             if (item != null) {
-                context.firebaseLog.addLog(TAG,"remove")
+                context.firebaseLog.addLog(TAG,"delete")
                 viewModel.deleteSuccessPostdData(item.idx)
                 removeitem = item
             }

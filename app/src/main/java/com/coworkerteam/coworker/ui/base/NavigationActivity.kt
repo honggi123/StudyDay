@@ -29,7 +29,7 @@ import org.koin.android.ext.koin.androidApplication
 open abstract class NavigationActivity<T : ViewDataBinding, R : BaseViewModel> :
     BaseActivity<T, R>(),
     NavigationView.OnNavigationItemSelectedListener {
-
+    val TAG_Navigation = "NavigationActivity"
     abstract val drawerLayout: DrawerLayout
     abstract val navigatinView: NavigationView
     private val PREF_KEY_CURRENT_USER_NAME = "PREF_KEY_CURRENT_USER_NAME"
@@ -84,25 +84,33 @@ open abstract class NavigationActivity<T : ViewDataBinding, R : BaseViewModel> :
 
         when (item.itemId) {
             com.coworkerteam.coworker.R.id.menuitem1 -> {
+                firebaseLog.addLog(TAG_Navigation,"show_main")
                 moveIntent = Intent(this, MainActivity::class.java)
             }
             com.coworkerteam.coworker.R.id.menuitem2 -> {
+                firebaseLog.addLog(TAG_Navigation,"show_mystudy")
                 moveIntent = Intent(this, MyStudyActivity::class.java)
             }
             com.coworkerteam.coworker.R.id.menuitem3 -> {
+                firebaseLog.addLog(TAG_Navigation,"show_search")
                 moveIntent = Intent(this, StudySearchActivity::class.java)
             }
             com.coworkerteam.coworker.R.id.menuitem4 -> {
+                firebaseLog.addLog(TAG_Navigation,"show_statics")
                 moveIntent = Intent(this, StatisticsActivity::class.java)
             }
             com.coworkerteam.coworker.R.id.menuitem5 -> {
+                firebaseLog.addLog(TAG_Navigation,"show_todo")
                 moveIntent = Intent(this, TodoListActivity::class.java)
             }
 
             com.coworkerteam.coworker.R.id.menuitem6 -> {
+                firebaseLog.addLog(TAG_Navigation,"show_yourday")
                 moveIntent = Intent(this, YourDayActivity::class.java)
                 moveIntent?.removeFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
             }
+
+
 
         }
 

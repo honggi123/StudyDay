@@ -139,7 +139,7 @@
         <activity android:name=".ui.yourday.moodPost.edit.EditMoodPostActivity"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".ui.yourday.moodPost.EmotionChoiceActivity"></activity>
+        <activity android:name=".ui.yourday.moodPost.make.EmotionChoiceActivity"></activity>
         <service
             android:name=".data.local.service.CamStudyService"
             android:enabled="true"
