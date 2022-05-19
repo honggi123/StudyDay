@@ -11,7 +11,7 @@ import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityYourdayBinding
 import com.coworkerteam.coworker.ui.base.NavigationActivity
-import com.coworkerteam.coworker.ui.yourday.moodPost.make.WriteMoodPostActivity
+import com.coworkerteam.coworker.ui.yourday.moodPost.EmotionChoiceActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import org.json.JSONObject
@@ -47,7 +47,7 @@ class YourDayActivity(
         main_toolbar_writepost.visibility = View.VISIBLE
         main_toolbar_writepost.setOnClickListener(
             View.OnClickListener {
-                var intent = Intent(this, WriteMoodPostActivity::class.java)
+                var intent = Intent(this, EmotionChoiceActivity::class.java)
                 startActivity(intent)
             }
         )

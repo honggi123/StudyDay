@@ -36,6 +36,7 @@ data class MoodPostResponse(
             val create_date: String,
             val contents: String,
             var is_empathy: String,
+            var my_empathy: Int,
             var empathy_kinds: String,
             var total_empathy: Int
         )

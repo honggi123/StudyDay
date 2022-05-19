@@ -85,7 +85,11 @@ class MoodPostFragment()
             when {
                 it.isSuccessful -> {
                     Log.d(TAG,"empathydata : "+it.body())
-                    datas.get(moodPostAdapter.postPosition)?.empathy_kinds = it.body()!!.empathy.moodPost.get(0).empathyKinds
+                    if (it.body()!!.empathy.moodPost.get(0).totalEmpathy == 0){
+                        datas.get(moodPostAdapter.postPosition)?.empathy_kinds = null.toString()
+                    }else{
+                        datas.get(moodPostAdapter.postPosition)?.empathy_kinds = it.body()!!.empathy.moodPost.get(0).empathyKinds
+                    }
                     datas.get(moodPostAdapter.postPosition)?.total_empathy = it.body()!!.empathy.moodPost.get(0).totalEmpathy
                     datas.get(moodPostAdapter.postPosition)?.is_empathy = it.body()!!.empathy.moodPost.get(0).isEmpathy
 

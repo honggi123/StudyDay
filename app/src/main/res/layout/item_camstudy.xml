@@ -36,6 +36,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+
+
             <org.webrtc.SurfaceViewRenderer
                 android:id="@+id/cam_surface_view"
                 android:layout_width="0dp"
@@ -96,9 +98,9 @@
                 android:layout_width="23dp"
                 android:layout_height="23dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:src="@drawable/ic_baseline_mic_off_camstudyitem"
                 android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@+id/item_camstudy_timer"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

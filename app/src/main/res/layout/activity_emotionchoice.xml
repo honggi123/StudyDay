@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="activity"
+            type="com.coworkerteam.coworker.ui.yourday.moodPost.EmotionChoiceActivity" />
+    </data>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#00ffffff">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical"
+            android:padding="25dp">
+
+            <TextView
+                android:id="@+id/textView61"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:text="오늘의 감정을 골라보세요"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+
+            <TableLayout
+                android:id="@+id/table"
+                android:layout_width="match_parent"
+                android:padding="50dp"
+                android:layout_height="400dp"
+                android:layout_marginTop="20dp"
+                android:gravity="center">
+
+                <TableRow
+                    android:id="@+id/mood_check_row1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2.5">
+
+                    <ImageView
+                        android:id="@+id/mood_emoticon1_check"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:visibility="invisible"
+                        app:srcCompat="@drawable/checkicon" />
+
+                    <ImageView
+                        android:id="@+id/mood_emoticon2_check"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:visibility="invisible"
+                        app:srcCompat="@drawable/checkicon" />
+
+                    <ImageView
+                        android:id="@+id/mood_emoticon3_check"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:visibility="invisible"
+                        app:srcCompat="@drawable/checkicon" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.7">
+
+                    <ImageView
+                        android:id="@+id/imageView19"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:onClick="@{(view)->activity.choiceEmoji(1)}"
+                        app:srcCompat="@drawable/mood_emoticon1" />
+
+                    <ImageView
+                        android:id="@+id/imageView20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:onClick="@{(view)->activity.choiceEmoji(2)}"
+                        app:srcCompat="@drawable/mood_emoticon2"
+
+                        />
+
+                    <ImageView
+                        android:id="@+id/imageView21"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:onClick="@{(view)->activity.choiceEmoji(3)}"
+                        app:srcCompat="@drawable/mood_emoticon3" />
+
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/mood_check_row2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2.5">
+
+                    <ImageView
+                        android:id="@+id/mood_emoticon4_check"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:onClick="clickliten"
+                        android:visibility="invisible"
+                        app:srcCompat="@drawable/checkicon" />
+
+                    <ImageView
+                        android:id="@+id/mood_emoticon5_check"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:visibility="invisible"
+                        app:srcCompat="@drawable/checkicon" />
+
+                    <ImageView
+                        android:id="@+id/mood_emoticon6_check"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:visibility="invisible"
+                        app:srcCompat="@drawable/checkicon" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.7">
+
+
+                    <ImageView
+                        android:id="@+id/imageView22"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:onClick="@{(view)->activity.choiceEmoji(4)}"
+                        app:srcCompat="@drawable/mood_emoticon4"
+
+                        />
+
+                    <ImageView
+                        android:id="@+id/imageView23"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:onClick="@{(view)->activity.choiceEmoji(5)}"
+                        app:srcCompat="@drawable/mood_emoticon5" />
+
+                    <ImageView
+                        android:id="@+id/imageView24"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:onClick="@{(view)->activity.choiceEmoji(6)}"
+                        app:srcCompat="@drawable/mood_emoticon6" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/mood_check_row3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2.5">
+
+                    <ImageView
+                        android:id="@+id/mood_emoticon7_check"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:onClick="clickliten"
+                        android:visibility="invisible"
+                        app:srcCompat="@drawable/checkicon" />
+
+                    <ImageView
+                        android:id="@+id/mood_emoticon8_check"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:visibility="invisible"
+                        app:srcCompat="@drawable/checkicon" />
+
+                    <ImageView
+                        android:id="@+id/mood_emoticon9_check"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:visibility="invisible"
+                        app:srcCompat="@drawable/checkicon" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.7">
+
+                    <ImageView
+                        android:id="@+id/imageView25"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:onClick="@{(view)->activity.choiceEmoji(7)}"
+                        app:srcCompat="@drawable/mood_emoticon7" />
+
+                    <ImageView
+                        android:id="@+id/imageView26"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+
+                        android:onClick="@{(view)->activity.choiceEmoji(8)}"
+                        app:srcCompat="@drawable/mood_emoticon8" />
+
+                    <ImageView
+                        android:id="@+id/imageView27"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:onClick="@{(view)->activity.choiceEmoji(9)}"
+                        app:srcCompat="@drawable/mood_emoticon9"
+
+                        />
+
+                </TableRow>
+            </TableLayout>
+
+            <ImageView
+                android:id="@+id/dialog_btn_ok"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="40dp"
+                android:onClick="@{(view)->activity.setMyMood()}"
+                app:srcCompat="@drawable/ic_baseline_arrow_forward_ios_24" />
+
+        </LinearLayout>
+    </RelativeLayout>
+</layout>

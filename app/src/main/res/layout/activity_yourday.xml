@@ -56,116 +56,6 @@
                     android:padding="10dp"
                     android:visibility="gone">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/study_search_category_test"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_horizontal"
-                            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
-                            android:text="시험공부"
-                            android:textColor="@color/search_category" />
-
-                        <TextView
-                            android:id="@+id/study_search_category_sat"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_horizontal"
-                            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
-                            android:text="수능"
-                            android:textColor="@color/search_category" />
-
-                        <TextView
-                            android:id="@+id/study_search_category_em"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_horizontal"
-                            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
-                            android:text="취업"
-                            android:textColor="@color/search_category" />
-
-                        <TextView
-                            android:id="@+id/study_search_category_tran"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_horizontal"
-                            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
-                            android:text="이직"
-                            android:textColor="@color/search_category" />
-
-                        <TextView
-                            android:id="@+id/study_search_category_cr"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_horizontal"
-                            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
-                            android:text="자격증"
-                            android:textColor="@color/search_category" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/study_search_category_lau"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_horizontal"
-                            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
-                            android:text="어학"
-                            android:textColor="@color/search_category" />
-
-                        <TextView
-                            android:id="@+id/study_search_category_self"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_horizontal"
-                            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
-                            android:text="자기개발"
-                            android:textColor="@color/search_category" />
-
-                        <TextView
-                            android:id="@+id/study_search_category_off"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_horizontal"
-                            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
-                            android:text="고시/공시"
-                            android:textColor="@color/search_category" />
-
-                        <TextView
-                            android:id="@+id/study_search_category_other"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_horizontal"
-                            android:onClick="@{(view)->activitiy.clickCategoryButton(view)}"
-                            android:text="기타"
-                            android:textColor="@color/search_category" />
-
-                        <TextView
-                            android:id="@+id/textView74"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="2"
-                            android:gravity="center_horizontal"
-                            android:text="  " />
-                    </LinearLayout>
                 </LinearLayout>
                 <com.google.android.material.tabs.TabLayout
                     android:id="@+id/yourday_tab"
@@ -186,8 +76,6 @@
                         android:text="공부인증" />
 
                 </com.google.android.material.tabs.TabLayout>
-
-
 
 
                 <androidx.viewpager.widget.ViewPager

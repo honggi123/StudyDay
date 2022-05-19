@@ -2,6 +2,8 @@ package com.coworkerteam.coworker.ui.yourday.moodPost
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,9 +23,7 @@ import com.coworkerteam.coworker.utils.DateFormatUtils
 import com.google.gson.Gson
 import kotlin.collections.ArrayList
 
-
 class MoodPostAdapter (private val viewmodel : YourdayViewModel): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
     private val VIEW_TYPE_ITEM = 0
     private val VIEW_TYPE_LOADING = 1
 
@@ -34,7 +34,7 @@ class MoodPostAdapter (private val viewmodel : YourdayViewModel): RecyclerView.A
     lateinit var removeitem : MoodPostResponse.Result.MoodPost
     lateinit var context: Context
     val gson = Gson()
-    //lateinit var itembinding : ItemMoodpostBinding
+    // lateinit var itembinding : ItemMoodpostBinding
     var postPosition : Int = 0
 
     fun setdata(items: ArrayList<MoodPostResponse.Result.MoodPost?>) {
@@ -48,7 +48,6 @@ class MoodPostAdapter (private val viewmodel : YourdayViewModel): RecyclerView.A
     ): RecyclerView.ViewHolder {
         context = parent.context
         return if (viewType == VIEW_TYPE_ITEM) {
-
             val view: View =
                 LayoutInflater.from(parent.context).inflate(R.layout.item_moodpost, parent, false)
             ItemViewHolder(view)
@@ -57,8 +56,7 @@ class MoodPostAdapter (private val viewmodel : YourdayViewModel): RecyclerView.A
             itembinding = binding
             itembinding.adapter = this
             ItemViewHolder(binding)
-        */
-
+            */
         } else {
             val view: View =
                 LayoutInflater.from(parent.context).inflate(R.layout.item_loading, parent, false)
@@ -95,19 +93,20 @@ class MoodPostAdapter (private val viewmodel : YourdayViewModel): RecyclerView.A
         }
 
         holder.btn_empathy.setOnClickListener(View.OnClickListener {
-            if (dialog_showing){
+            if (item!!.is_empathy.toBoolean()){
                 holder.dialog_empathy.visibility = View.GONE
-                dialog_showing = false
+                empathy(item!!.idx,item!!.my_empathy,position)
             }else{
                 holder.dialog_empathy.visibility = View.VISIBLE
-                dialog_showing = true
             }
         })
 
         if (item!!.is_empathy.toBoolean()){
             holder.btn_empathy.setText("공감했어요")
+            holder.btn_empathy.setTextColor(context.resources.getColor(R.color.empathy_color))
         }else{
             holder.btn_empathy.setText("공감하기")
+            holder.btn_empathy.setTextColor(context.resources.getColor(R.color.gray))
         }
 
         holder.txt_nickname.setText(item?.nickname)
@@ -123,12 +122,14 @@ class MoodPostAdapter (private val viewmodel : YourdayViewModel): RecyclerView.A
             holder.btn_remove.visibility = View.INVISIBLE
             holder.btn_edt.visibility = View.INVISIBLE
         }
+
         holder.btn_remove.setOnClickListener(View.OnClickListener {
             item?.idx?.let { it1 -> viewmodel.deleteMoodPostdData(it1) }
             if (item != null) {
                 removeitem = item
             }
         })
+
         holder.btn_edt.setOnClickListener(View.OnClickListener {
             var intent = Intent(context, EditMoodPostActivity::class.java)
             intent.putExtra("idx", item.idx)
@@ -146,14 +147,16 @@ class MoodPostAdapter (private val viewmodel : YourdayViewModel): RecyclerView.A
 
         var empathy_kinds = item?.empathy_kinds?.split(",")
 
+        // 게시글 공감 이모티콘 모두 안보이게 한 후 게시물의 공감 종류에 따라 해당 이모티콘이 보이게 한다.
         for (i in 1..5){
             holder.layout_emoticon_kinds.get(i-1).visibility = View.GONE
         }
-        if (empathy_kinds != null) {
+        if (item?.total_empathy != 0) {
             for (i in 1..empathy_kinds.size){
                 holder.layout_emoticon_kinds.get(empathy_kinds[i-1].toInt()-1).visibility = View.VISIBLE
             }
         }
+
         holder.dialog_empathy_kinds1.setOnClickListener(View.OnClickListener {
             empathy(item!!.idx,1,position)
             holder.dialog_empathy.visibility = View.GONE
@@ -181,11 +184,11 @@ class MoodPostAdapter (private val viewmodel : YourdayViewModel): RecyclerView.A
     }
 
     fun adddata(datas: ArrayList<MoodPostResponse.Result.MoodPost>?) {
-        if (datas != null) {
-            items.addAll(datas)
+            if (datas != null) {
+                items.addAll(datas)
+            }
+            notifyDataSetChanged()
         }
-        notifyDataSetChanged()
-    }
     }
 
     class ItemViewHolder(view: View) :
@@ -208,7 +211,6 @@ class MoodPostAdapter (private val viewmodel : YourdayViewModel): RecyclerView.A
         var dialog_empathy_kinds5 : ImageView
 
         init {
-
             layout_emoticon_kinds = itemView.findViewById(R.id.item_moodpost_empathy_kinds)
             layout_empathy_kinds = itemView.findViewById<LinearLayout>(R.id.dialog_empathy_kinds)
 
@@ -240,7 +242,7 @@ class MoodPostAdapter (private val viewmodel : YourdayViewModel): RecyclerView.A
            btn_edt = binding.itemMoodPostBtnEdit
            btn_remove = binding.itemMoodPostBtnRemove
            txt_totalempathynum = binding.itemMoodPostTotalEmpathynum
-*/
+            */
 
         }
     }

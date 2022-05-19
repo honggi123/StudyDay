@@ -29,6 +29,7 @@ import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.databinding.ActivityMakeStudyBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
+import com.coworkerteam.coworker.ui.main.UnityActivity
 import com.coworkerteam.coworker.utils.PatternUtils
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
@@ -117,14 +118,24 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
 
         viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
             loding.dismissDialog()
-
             when {
                 it.isSuccessful -> {
                     firebaseLog.addLog(TAG,"make_study")
 
+                    /*
                     var intent = Intent(this, EnterCamstudyActivity::class.java)
                     intent.putExtra("studyInfo", it.body()!!)
 
+                    startActivity(intent)
+                    finish()
+                     */
+
+                    var intent = Intent(this, UnityActivity::class.java)
+                    intent.putExtra("studyInfo", it.body()!!)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setAction(Intent.ACTION_MAIN);
+                    intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                    Log.d(TAG,"studyInfo : "+it.body().toString())
                     startActivity(intent)
                     finish()
                 }

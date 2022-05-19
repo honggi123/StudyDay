@@ -10,10 +10,9 @@ import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.model.api.MoodPostResponse
 import com.coworkerteam.coworker.databinding.ActivityEditMoodpostBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
-import com.coworkerteam.coworker.ui.dialog.MoodEmotionDialog_EditActivity
+import com.coworkerteam.coworker.ui.dialog.MoodEmotionDialog
 import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.gson.Gson
 import org.json.JSONObject
@@ -89,7 +88,7 @@ class EditMoodPostActivity : BaseActivity<ActivityEditMoodpostBinding, EditMoodP
         viewDataBinding.activitiy = this
 
         val current = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("MM월 dd일")
+        val formatter = DateTimeFormatter.ofPattern("M월 d일")
         val formatted = current.format(formatter)
 
         Log.d(TAG,"Current: $formatted")
@@ -127,7 +126,7 @@ class EditMoodPostActivity : BaseActivity<ActivityEditMoodpostBinding, EditMoodP
     }
 
     fun showEmotionDialog(){
-        MoodEmotionDialog_EditActivity.Builder(this)
+        MoodEmotionDialog.Builder(this)
             .show()
     }
 

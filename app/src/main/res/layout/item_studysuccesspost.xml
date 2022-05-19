@@ -79,7 +79,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_begin="58dp" />
+            app:layout_constraintGuide_begin="48dp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline10"
@@ -100,7 +100,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="303dp" />
+            app:layout_constraintGuide_begin="300dp" />
 
         <ImageView
             android:id="@+id/item_success_post_removeicon"
@@ -109,9 +109,8 @@
             android:visibility="visible"
             app:layout_constraintEnd_toStartOf="@+id/guideline35"
             app:layout_constraintTop_toTopOf="@+id/guideline6"
-            app:srcCompat="@drawable/ic_baseline_delete_white" />
+            app:srcCompat="@drawable/ic_baseline_cancel" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

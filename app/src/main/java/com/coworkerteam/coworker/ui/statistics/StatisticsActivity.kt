@@ -145,6 +145,8 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
 //            카테고리가 성공적으로 선택
             when {
                 it.isSuccessful -> {
+
+                    Log.d(TAG,"viewmodel " + it.body() )
                     statisticsResponse = it.body()!!
                     viewDataBinding.statisticsResponse = it.body()!!
 
@@ -214,7 +216,7 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
 
                             Log.d(TAG, x.toString())
                         }
-                        barChart()
+                        barChart("week")
                     } else if (statisticsResponse.monthTimeAcheive != null) {
                         viewDataBinding.timeAVG =
                             it.body()!!.monthTimeAVG.hour + "시간 " + it.body()!!.monthTimeAVG.min + "분"
@@ -243,7 +245,7 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
 
                             Log.d(TAG, x.toString())
                         }
-                        barChart()
+                        barChart("month")
                     }
                 }
                 it.code() == 400 -> {
@@ -331,7 +333,7 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
 
     }
 
-    fun barChart() {
+    fun barChart(period : String) {
         val barchart = findViewById<CustBarChart>(R.id.statistics_barChart)
         barchart.run {
             description.isEnabled = false // 차트 옆에 별도로 표기되는 description을 안보이게 설정 (false)
@@ -340,7 +342,12 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
             setDrawBarShadow(false) //그래프의 그림자
             setDrawGridBackground(false)//격자구조 넣을건지
             axisLeft.run { //왼쪽 축. 즉 Y방향 축을 뜻한다.
-                axisMaximum = maxstudytime + maxstudytime/2  //100 위치에 선을 그리기 위해 101f로 맥시멈값 설정
+                if (period.equals("week")){
+                    axisMaximum = maxstudytime + maxstudytime/2  //100 위치에 선을 그리기 위해 101f로 맥시멈값 설정
+                }else{
+                    axisMaximum = 101f
+                }
+
                 axisMinimum = 0f // 최소값 0
                 granularity = 1f // 50 단위마다 선을 그리려고 설정.
                 setDrawLabels(true) // 값 적는거 허용 (0, 50, 100)
@@ -432,6 +439,7 @@ class StatisticsActivity : NavigationActivity<ActivityStatisticsBinding, Statist
             view.isSelected = true
             viewDataBinding.statisticsMenthly.isSelected = false
             viewModel.getStatisticsData("old", selectDate, period)
+
             setRangeTime(selectDate)
             firebaseLog.addLog(TAG,"show_weekly")
         } else if (name.equals("월간")) {

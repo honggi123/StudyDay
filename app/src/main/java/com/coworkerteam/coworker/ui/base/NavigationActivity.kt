@@ -98,10 +98,12 @@ open abstract class NavigationActivity<T : ViewDataBinding, R : BaseViewModel> :
             com.coworkerteam.coworker.R.id.menuitem5 -> {
                 moveIntent = Intent(this, TodoListActivity::class.java)
             }
+
             com.coworkerteam.coworker.R.id.menuitem6 -> {
                 moveIntent = Intent(this, YourDayActivity::class.java)
                 moveIntent?.removeFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
             }
+
         }
 
         drawerLayout.closeDrawers()

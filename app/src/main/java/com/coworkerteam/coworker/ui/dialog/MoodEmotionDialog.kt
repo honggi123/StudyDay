@@ -5,15 +5,15 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import com.coworkerteam.coworker.databinding.DialogChoicemoodEditactivityBinding
-import com.coworkerteam.coworker.ui.yourday.moodPost.edit.EditMoodPostActivity
-import com.coworkerteam.coworker.ui.yourday.moodPost.make.WriteMoodPostActivity
+import com.coworkerteam.coworker.databinding.DialogChoicemoodBinding
 
-class MoodEmotionDialog_EditActivity  (context: EditMoodPostActivity) : Dialog(context){
+import com.coworkerteam.coworker.ui.yourday.moodPost.edit.EditMoodPostActivity
+
+class MoodEmotionDialog  (context: EditMoodPostActivity) : Dialog(context){
     var mDialogView: View? = null
     var mBuilder: AlertDialog? = null
     lateinit var onClickOKButton: (Int, String?) -> Unit
-    lateinit var bind : DialogChoicemoodEditactivityBinding
+    lateinit var bind : DialogChoicemoodBinding
     var checkNum : Int = 0
     var context : EditMoodPostActivity = context
 
@@ -22,16 +22,16 @@ class MoodEmotionDialog_EditActivity  (context: EditMoodPostActivity) : Dialog(c
         setCanceledOnTouchOutside(false)
         window?.setBackgroundDrawable(ColorDrawable())
         window?.setDimAmount(0.3f)
-        bind = DialogChoicemoodEditactivityBinding.inflate(this.layoutInflater)
+        bind = DialogChoicemoodBinding.inflate(this.layoutInflater)
         bind.dialog = this
 
         setContentView(bind.root)
     }
 
     class Builder(context: EditMoodPostActivity){
-        private val dialog = MoodEmotionDialog_EditActivity(context)
+        private val dialog = MoodEmotionDialog(context)
 
-        fun show(): MoodEmotionDialog_EditActivity {
+        fun show(): MoodEmotionDialog {
             dialog.show()
             return dialog
         }

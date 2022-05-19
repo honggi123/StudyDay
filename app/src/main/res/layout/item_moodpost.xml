@@ -59,6 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{item.create_date}"
+            android:textColor="@android:color/secondary_text_light_nodisable"
             app:layout_constraintStart_toStartOf="@+id/item_mood_post_nickname"
             app:layout_constraintTop_toBottomOf="@+id/item_mood_post_nickname" />
 
@@ -88,11 +89,10 @@
             <ImageView
                 android:id="@+id/imageView9"
                 android:layout_width="250dp"
-                android:layout_height="40dp"
+                android:layout_height="50dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:srcCompat="@drawable/dialog_empathyemotions" />
-
 
             <LinearLayout
                 android:id="@+id/dialog_empathy_kinds"
@@ -110,7 +110,6 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:padding="5dp"
-
                     app:srcCompat="@drawable/emotion1" />
 
                 <ImageView
@@ -148,6 +147,8 @@
                     app:srcCompat="@drawable/emotion5" />
             </LinearLayout>
 
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
@@ -156,6 +157,7 @@
             android:layout_height="30dp"
             android:layout_marginTop="30dp"
             android:gravity="center_horizontal|center_vertical"
+            android:textColor="@android:color/secondary_text_light_nodisable"
             android:text="공감하기"
             app:layout_constraintStart_toStartOf="@+id/item_mood_post_content"
             app:layout_constraintTop_toBottomOf="@+id/item_mood_post_content" />
@@ -188,7 +190,7 @@
             android:layout_marginEnd="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/item_mood_post_btn_edit"
-            app:srcCompat="@drawable/yourday_delete" />
+            app:srcCompat="@drawable/trash_backet" />
 
         <TextView
             android:id="@+id/item_mood_post_total_empathynum"

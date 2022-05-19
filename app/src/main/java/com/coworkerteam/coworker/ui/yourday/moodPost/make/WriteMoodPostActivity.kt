@@ -9,7 +9,6 @@ import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.databinding.ActivityWritemoodBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
-import com.coworkerteam.coworker.ui.dialog.MoodEmotionDialog
 import com.coworkerteam.coworker.utils.PatternUtils
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -31,8 +30,12 @@ class WriteMoodPostActivity (): BaseActivity<ActivityWritemoodBinding, WriteMood
     lateinit var view_letter_errmsg : TextView
     var todaydate : String? = "123"
     var emotinoNum : Int = 0
+    var patternError = false
 
     override fun initStartView() {
+
+        emotinoNum = intent.getIntExtra("emotinoNum",1)
+
         var main_toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.write_mood_toolbar)
 
         setSupportActionBar(main_toolbar) // 툴바를 액티비티의 앱바로 지정
@@ -56,9 +59,11 @@ class WriteMoodPostActivity (): BaseActivity<ActivityWritemoodBinding, WriteMood
                 val result = PatternUtils.matchMoodDescription(s.toString())
                 if (result.isNotError){
                     view_letter_errmsg.visibility = View.GONE
+                    patternError = false
                 } else {
                     view_letter_errmsg.visibility = View.VISIBLE
                     view_letter_errmsg.setText(result.ErrorMessge)
+                    patternError = true
                 }
             }
 
@@ -71,12 +76,14 @@ class WriteMoodPostActivity (): BaseActivity<ActivityWritemoodBinding, WriteMood
         viewDataBinding.activitiy = this
 
         val current = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("MM월 dd일")
+        val formatter = DateTimeFormatter.ofPattern("M월 d일")
         val formatted = current.format(formatter)
 
         Log.d(TAG,"Current: $formatted")
 
         today_date.setText(formatted)
+        setMyMoodEmoji(emotinoNum)
+
     }
 
     override fun initDataBinding(){
@@ -107,13 +114,8 @@ class WriteMoodPostActivity (): BaseActivity<ActivityWritemoodBinding, WriteMood
     }
 
     override fun initAfterBinding(){
-
     }
 
-    fun showEmotionDialog(){
-        MoodEmotionDialog.Builder(this)
-            .show()
-    }
 
     fun setMyMoodEmoji(emotinoNum : Int){
         Log.d("setMyEmoji",emotinoNum.toString())
@@ -126,6 +128,10 @@ class WriteMoodPostActivity (): BaseActivity<ActivityWritemoodBinding, WriteMood
     }
 
     fun setMoodPost(){
+        if (patternError){
+            Toast.makeText(this,"작성 글을 확인해주세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
         viewModel.setMoodPost("make",emotinoNum,edit_writemood.text.toString())
     }
 
