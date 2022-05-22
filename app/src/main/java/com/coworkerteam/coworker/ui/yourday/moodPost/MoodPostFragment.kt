@@ -3,30 +3,18 @@ package com.coworkerteam.coworker.ui.yourday.moodPost
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.amazonaws.mobile.auth.core.internal.util.ThreadUtils.runOnUiThread
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.MoodPostResponse
-import com.coworkerteam.coworker.data.model.other.SearchStudy
 import com.coworkerteam.coworker.databinding.FragmentYourdayMoodpostBinding
 import com.coworkerteam.coworker.ui.base.BaseFragment
-import com.coworkerteam.coworker.ui.search.StudySearchActivity
 import com.coworkerteam.coworker.ui.yourday.YourdayViewModel
-import com.google.firebase.analytics.FirebaseAnalytics
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import retrofit2.Response
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
-import java.util.*
-import kotlin.collections.ArrayList
 
 class MoodPostFragment()
     : BaseFragment<FragmentYourdayMoodpostBinding, YourdayViewModel>()  {
@@ -60,6 +48,13 @@ class MoodPostFragment()
                     totalpage = it.body()?.result?.get(0)?.totalPage!!
                     moodPostAdapter.adddata(it.body()?.result?.get(0)?.moodPosts)
                     Log.d(TAG,"SIZE" + it.body()?.result?.get(0)?.moodPosts)
+
+
+                    if (totalpage ==0){
+                        viewDataBinding.yourdayMoodpostEmptyView.visibility = View.VISIBLE
+                    }else{
+                        viewDataBinding.yourdayMoodpostEmptyView.visibility = View.GONE
+                    }
                 }
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
@@ -88,6 +83,7 @@ class MoodPostFragment()
                     }else{
                         datas.get(moodPostAdapter.postPosition)?.empathy_kinds = it.body()!!.empathy.moodPost.get(0).empathyKinds
                     }
+                    datas.get(moodPostAdapter.postPosition)?.my_empathy = it.body()!!.empathy.moodPost.get(0).my_empathy
                     datas.get(moodPostAdapter.postPosition)?.total_empathy = it.body()!!.empathy.moodPost.get(0).totalEmpathy
                     datas.get(moodPostAdapter.postPosition)?.is_empathy = it.body()!!.empathy.moodPost.get(0).isEmpathy
 
@@ -117,7 +113,9 @@ class MoodPostFragment()
                     if (moodPostAdapter.removeitem?.idx == it.body()?.deleteIdx){
                         var position = datas.indexOf(moodPostAdapter.removeitem)
                         datas.remove(moodPostAdapter.removeitem)
-                        moodPostAdapter.notifyItemRemoved(position)
+
+                        runOnUiThread(Runnable { moodPostAdapter.notifyItemRemoved(position) })
+
                     }
                 }
                 it.code() == 400 -> {
@@ -245,6 +243,4 @@ class MoodPostFragment()
         rv_MoodPost.itemAnimator = null
         searchEvent(sort)
     }
-
-
 }

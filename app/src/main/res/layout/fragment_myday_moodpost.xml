@@ -48,6 +48,13 @@
                     android:textSize="12sp" />
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/myday_moodpost_empty_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="내 감정 글이 없습니다."/>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/fragment_yourday_moodpost_rv"
                 android:layout_width="match_parent"

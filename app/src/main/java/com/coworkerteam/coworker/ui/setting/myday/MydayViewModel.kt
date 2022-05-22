@@ -11,7 +11,7 @@ import io.reactivex.schedulers.Schedulers
 import retrofit2.Response
 
 class MydayViewModel (private val model: UserRepository) : BaseViewModel() {
-    private val TAG = "YourdayViewModel"
+    private val TAG = "MydayViewModel"
 
     //공부인증 데이터
     private var _SuccessPostPagingData = MutableLiveData<Response<SuccessPostResponse>>()
@@ -86,7 +86,7 @@ class MydayViewModel (private val model: UserRepository) : BaseViewModel() {
 
         if (!accessToken.isNullOrEmpty()) {
             addDisposable(
-                model.getMyMoodPost(accessToken,nickname,sort, page)
+                model.getMyMoodPost(accessToken,nickname,sort,page)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({

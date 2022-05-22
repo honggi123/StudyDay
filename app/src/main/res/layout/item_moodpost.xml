@@ -58,7 +58,6 @@
             android:id="@+id/item_mood_post_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{item.create_date}"
             android:textColor="@android:color/secondary_text_light_nodisable"
             app:layout_constraintStart_toStartOf="@+id/item_mood_post_nickname"
             app:layout_constraintTop_toBottomOf="@+id/item_mood_post_nickname" />
@@ -68,7 +67,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="@{item.contents}"
             app:layout_constraintStart_toStartOf="@+id/item_mood_post_mood"
             app:layout_constraintTop_toBottomOf="@+id/item_mood_post_mood"
             app:readMoreColor="@color/gray"

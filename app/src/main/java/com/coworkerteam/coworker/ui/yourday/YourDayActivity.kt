@@ -31,36 +31,41 @@ class YourDayActivity(
         get() = findViewById(R.id.navigationView)
 
     override fun initStartView() {
-        super.initStartView()
-        var main_toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.yourday_toolber)
 
-        setSupportActionBar(main_toolbar) // 툴바를 액티비티의 앱바로 지정
-        supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24_write) // 홈버튼 이미지 변경
-        supportActionBar?.title = "너의 하루는"
+              super.initStartView()
+              var main_toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.yourday_toolber)
 
-        fragment_init()
+              setSupportActionBar(main_toolbar) // 툴바를 액티비티의 앱바로 지정
+              supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
+              supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24_write) // 홈버튼 이미지 변경
+              supportActionBar?.title = "너의 하루는"
 
-        //툴바의 + 아이콘에 대한 세팅
-        val main_toolbar_writepost = findViewById<ImageView>(R.id.main_toolbar_writepost)
+                     fragment_init()
 
-        main_toolbar_writepost.visibility = View.VISIBLE
-        main_toolbar_writepost.setOnClickListener(
-            View.OnClickListener {
-                firebaseLog.addLog(TAG,"add_post")
-                var intent = Intent(this, EmotionChoiceActivity::class.java)
-                startActivity(intent)
-            }
-        )
+
+                     //툴바의 + 아이콘에 대한 세팅
+                     val main_toolbar_writepost = findViewById<ImageView>(R.id.main_toolbar_writepost)
+
+                     main_toolbar_writepost.visibility = View.VISIBLE
+                     main_toolbar_writepost.setOnClickListener(
+                         View.OnClickListener {
+                             firebaseLog.addLog(TAG,"add_post")
+                             var intent = Intent(this, EmotionChoiceActivity::class.java)
+                             startActivity(intent)
+                         }
+                     )
+
     }
 
     override fun initDataBinding() {
+
         viewModel.MoodPostPagingData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
                     //네비게이션 정보 세팅
+
                     setNavigaionProfileImage(it.body()!!.result.get(0).profile.img)
-                    setNavigaionLoginImage(it.body()!!.result.get(0).profile.login_type)
+                   setNavigaionLoginImage(it.body()!!.result.get(0).profile.login_type)
                     setNavigaionNickname(it.body()!!.result.get(0).profile.nickname)
 
                     viewDataBinding.draworInfo = DrawerBottomInfo(it.body()!!.result.get(0).achieveTimeRate,it.body()!!.result.get(0).achieveTodoRate,it.body()!!.result.get(0).dream.dday,it.body()!!.result.get(0).dream.dday_name)
@@ -96,6 +101,7 @@ class YourDayActivity(
         pager.adapter = pagerAdapter
         val tab = findViewById<TabLayout>(R.id.yourday_tab)
         tab.setupWithViewPager(pager)
+
     }
 
     override fun onDestroy() {

@@ -32,11 +32,10 @@ class EditMoodPostActivity : BaseActivity<ActivityEditMoodpostBinding, EditMoodP
     lateinit var btn_showemotion : ImageView
     lateinit var today_date : TextView
     lateinit var view_letter_errmsg : TextView
-    var todaydate : String? = "123"
     var emotinoNum : Int = 0
     var idx : Int = 0
-    var dataIntent: String? = null
     val gson = Gson()
+    var texterror : Boolean = false
 
     override fun initStartView() {
         viewDataBinding.activitiy = this
@@ -68,9 +67,11 @@ class EditMoodPostActivity : BaseActivity<ActivityEditMoodpostBinding, EditMoodP
                 val result = PatternUtils.matchMoodDescription(s.toString())
                 if (result.isNotError){
                     view_letter_errmsg.visibility = View.GONE
+                    texterror = false
                 } else {
                     view_letter_errmsg.visibility = View.VISIBLE
                     view_letter_errmsg.setText(result.ErrorMessge)
+                    texterror = true
                 }
             }
             override fun afterTextChanged(s: Editable?) {
@@ -100,8 +101,8 @@ class EditMoodPostActivity : BaseActivity<ActivityEditMoodpostBinding, EditMoodP
                     val errorMessage = JSONObject(it.errorBody()?.string())
                     Log.e(TAG, errorMessage.getString("message"))
 
-                    //400번대 에러로 검색 데이터 가져오기가 실패했을 경우, 사용자에게 알려준다.
-                    Toast.makeText(this,"검색 데이터를 가져오지 못했습니다. 나중 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                    //400번대 에러로
+                    Toast.makeText(this,"다시 시도해주세요.", Toast.LENGTH_SHORT).show()
                 }
                 it.code() == 404 -> {
                     //존재하지 않은 회원일 경우
@@ -134,6 +135,10 @@ class EditMoodPostActivity : BaseActivity<ActivityEditMoodpostBinding, EditMoodP
     }
 
     fun EditMoodPost(){
+        if (texterror){
+            Toast.makeText(this,"글을 다시 확인해주세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
         viewModel.setEditMoodPost(idx,emotinoNum,edit_writemood.text.toString())
         firebaseLog.addLog(TAG,"edit_moodpost")
     }

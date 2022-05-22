@@ -2,6 +2,7 @@ package com.coworkerteam.coworker.ui.yourday.successPost
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -43,6 +44,12 @@ class SuccessPostFragment()
                     totalpage = it.body()?.result?.get(0)?.totalPage!!
                     successPostAdapter.adddata(it.body()?.result?.get(0)?.successPosts)
                     Log.d(TAG,"SIZE" + it.body()?.result?.get(0)?.successPosts)
+
+                    if (totalpage ==0){
+                        viewDataBinding.yourdaySuccesspostEmptyView.visibility = View.VISIBLE
+                    }else{
+                        viewDataBinding.yourdaySuccesspostEmptyView.visibility = View.GONE
+                    }
                 }
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때

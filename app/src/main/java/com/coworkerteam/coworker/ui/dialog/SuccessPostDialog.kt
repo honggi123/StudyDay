@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.coworkerteam.coworker.databinding.DialogSuccesspostBinding
@@ -26,12 +27,13 @@ class SuccessPostDialog (context: MainActivity) : Dialog(context){
         setCanceledOnTouchOutside(false)
         window?.setBackgroundDrawable(ColorDrawable())
         window?.setDimAmount(0.3f)
+
         bind = DialogSuccesspostBinding.inflate(this.layoutInflater)
         bind.dialog = this
 
         setContentView(bind.root)
 
-        bind.dialogSuccesspostTime.setText(sgoalTime+"을 달성하셨습니다.")
+        bind.dialogSuccesspostTime.setText("오늘의 목표시간 " +sgoalTime+"을 달성하셨습니다.")
 
         bind.dialogSuccesspostBtnShare.setOnClickListener(View.OnClickListener {
             // 특수문자 껴있는지 예외처리 해야함
@@ -43,7 +45,6 @@ class SuccessPostDialog (context: MainActivity) : Dialog(context){
                 Toast.makeText(context, "공부인증 소감을 확인해주세요.", Toast.LENGTH_SHORT)
                     .show()
             }
-
         })
 
         bind.dialogSuccesspostBtnCancle.setOnClickListener(View.OnClickListener {
@@ -84,5 +85,4 @@ class SuccessPostDialog (context: MainActivity) : Dialog(context){
     fun setgoalTime(goalTime: Int){
         sgoalTime = DateFormatUtils.secondsToHourMin(goalTime)
     }
-
 }

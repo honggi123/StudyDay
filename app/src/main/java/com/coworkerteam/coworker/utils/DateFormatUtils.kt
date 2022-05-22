@@ -21,9 +21,7 @@ object DateFormatUtils {
         var startDate = cdf.parse(start)
         var endDate = cdf.parse(end)
 
-        Log.d("diff??","enddate time : "+endDate+"time : "+startDate)
         val diff = (endDate.time - startDate.time) / (60 * 60 * 24 * 1000)
-        Log.d("diff??",diff.toString())
         when(diff.toInt()){
             0 -> return "오늘"
             in 1..29 -> return diff.toString() + "일전"

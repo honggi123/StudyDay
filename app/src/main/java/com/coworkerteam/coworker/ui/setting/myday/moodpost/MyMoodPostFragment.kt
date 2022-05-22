@@ -1,6 +1,5 @@
 package com.coworkerteam.coworker.ui.setting.myday.moodpost
 
-
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -10,13 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.MoodPostResponse
 import com.coworkerteam.coworker.databinding.FragmentMydayMoodpostBinding
-import com.coworkerteam.coworker.databinding.FragmentYourdayMoodpostBinding
 import com.coworkerteam.coworker.ui.base.BaseFragment
 import com.coworkerteam.coworker.ui.setting.myday.MydayViewModel
-import com.coworkerteam.coworker.ui.yourday.YourdayViewModel
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.*
 import kotlin.collections.ArrayList
 
 class MyMoodPostFragment()
@@ -52,7 +48,13 @@ class MyMoodPostFragment()
 
                     totalpage = it.body()?.result?.get(0)?.totalPage!!
                     moodPostAdapter.adddata(it.body()?.result?.get(0)?.moodPosts)
-                    Log.d(TAG,"SIZE" + it.body()?.result?.get(0)?.moodPosts)
+                   if (totalpage == 0){
+                       viewDataBinding.mydayMoodpostEmptyView.visibility = View.VISIBLE
+                   }else{
+                       viewDataBinding.mydayMoodpostEmptyView.visibility = View.GONE
+                   }
+
+
                 }
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
@@ -81,10 +83,12 @@ class MyMoodPostFragment()
                     }else{
                         datas.get(moodPostAdapter.postPosition)?.empathy_kinds = it.body()!!.empathy.moodPost.get(0).empathyKinds
                     }
+                    datas.get(moodPostAdapter.postPosition)?.my_empathy = it.body()!!.empathy.moodPost.get(0).my_empathy
                     datas.get(moodPostAdapter.postPosition)?.total_empathy = it.body()!!.empathy.moodPost.get(0).totalEmpathy
                     datas.get(moodPostAdapter.postPosition)?.is_empathy = it.body()!!.empathy.moodPost.get(0).isEmpathy
 
                     moodPostAdapter.notifyItemChanged(moodPostAdapter.postPosition)
+
                 }
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
@@ -107,11 +111,14 @@ class MyMoodPostFragment()
         viewModel.DeletePostResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
+
                     if (moodPostAdapter.removeitem?.idx == it.body()?.deleteIdx){
                         var position = datas.indexOf(moodPostAdapter.removeitem)
                         datas.remove(moodPostAdapter.removeitem)
+
                         moodPostAdapter.notifyItemRemoved(position)
                     }
+
                 }
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때

@@ -2,6 +2,7 @@ package com.coworkerteam.coworker.ui.setting.myday.moodpost
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -127,6 +128,8 @@ class MyMoodPostAdapter (private val viewmodel : MydayViewModel): RecyclerView.A
                 removeitem = item
                 context.firebaseLog.addLog(TAG,"delete")
             }
+            holder.btn_edt.visibility = View.GONE
+            holder.btn_remove.visibility = View.GONE
         })
         holder.btn_edt.setOnClickListener(View.OnClickListener {
             context.firebaseLog.addLog(TAG,"edit")
@@ -149,7 +152,7 @@ class MyMoodPostAdapter (private val viewmodel : MydayViewModel): RecyclerView.A
         for (i in 1..5){
             holder.layout_emoticon_kinds.get(i-1).visibility = View.GONE
         }
-        if (empathy_kinds != null) {
+        if (item.total_empathy != 0 ) {
             for (i in 1..empathy_kinds.size){
                 holder.layout_emoticon_kinds.get(empathy_kinds[i-1].toInt()-1).visibility = View.VISIBLE
             }
@@ -164,7 +167,6 @@ class MyMoodPostAdapter (private val viewmodel : MydayViewModel): RecyclerView.A
         dialog_empathy_onclick(holder.dialog_empathy_kinds3,item!!.idx,3,position,holder)
         dialog_empathy_onclick(holder.dialog_empathy_kinds4,item!!.idx,4,position,holder)
         dialog_empathy_onclick(holder.dialog_empathy_kinds5,item!!.idx,5,position,holder)
-
     }
 
     fun dialog_empathy_onclick(view: View,idx : Int,mood : Int,position : Int,holder: ItemViewHolder){

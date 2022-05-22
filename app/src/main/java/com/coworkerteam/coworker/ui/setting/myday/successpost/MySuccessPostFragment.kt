@@ -2,29 +2,28 @@ package com.coworkerteam.coworker.ui.setting.myday.successpost
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.SuccessPostResponse
-import com.coworkerteam.coworker.databinding.FragmentYourdaySuccesspostBinding
+import com.coworkerteam.coworker.databinding.FragmentMydaySuccesspostBinding
 import com.coworkerteam.coworker.ui.base.BaseFragment
 import com.coworkerteam.coworker.ui.setting.myday.MydayViewModel
-import com.coworkerteam.coworker.ui.yourday.YourdayViewModel
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MySuccessPostFragment()
-    : BaseFragment<FragmentYourdaySuccesspostBinding, MydayViewModel>()  {
-    val TAG = "SuccessPostFragment"
+    : BaseFragment<FragmentMydaySuccesspostBinding, MydayViewModel>()  {
+    val TAG = "MySuccessPostFragment"
     override val layoutResourceID: Int
-        get() = R.layout.fragment_yourday_successpost
+        get() = R.layout.fragment_myday_successpost
     override val viewModel: MydayViewModel by viewModel()
     lateinit var mySuccessPostAdapter: MySuccessPostAdapter
     val datas = ArrayList<SuccessPostResponse.Result.SuccessPost?>()
     lateinit var rv_SuccessPost : RecyclerView
      var isLoading = false
-    var datas_postbg = ArrayList<Int>()
 
     private var page = 0       // 현재 페이지
     private var totalpage = 0     // 한 번에 가져올 아이템 수
@@ -44,6 +43,11 @@ class MySuccessPostFragment()
                     totalpage = it.body()?.result?.get(0)?.totalPage!!
                     mySuccessPostAdapter.adddata(it.body()?.result?.get(0)?.successPosts)
                     Log.d(TAG,"SIZE" + it.body()?.result?.get(0)?.successPosts)
+                    if (totalpage ==0){
+                        viewDataBinding.mydaySuccesspostEmptyView.visibility = View.VISIBLE
+                    }else{
+                        viewDataBinding.mydaySuccesspostEmptyView.visibility = View.GONE
+                    }
                 }
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
@@ -97,7 +101,7 @@ class MySuccessPostFragment()
         viewModel.getMySuccessPost(getPage())
         mySuccessPostAdapter.setdata(datas)
 
-        rv_SuccessPost = view?.findViewById<RecyclerView>(R.id.fragment_yourday_successpost_rv)!!
+        rv_SuccessPost = view?.findViewById<RecyclerView>(R.id.fragment_myday_successpost_rv)!!
         rv_SuccessPost?.adapter = mySuccessPostAdapter
         rv_SuccessPost?.layoutManager = LinearLayoutManager(activity)
 

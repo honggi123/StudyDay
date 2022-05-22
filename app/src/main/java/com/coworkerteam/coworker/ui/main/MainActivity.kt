@@ -164,7 +164,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
         }
 
 
-        /*
         var goalIsSuccess = intent.getBooleanExtra("goalIsSuccess",false)
 
         if (goalIsSuccess){
@@ -173,7 +172,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
                 intent.getBooleanExtra("goalPostIsWrite",false)
             )
         }
-         */
+
 
         init()
     }

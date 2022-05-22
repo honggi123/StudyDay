@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
-            name="activitiy"
+            name="fragment"
             type="com.coworkerteam.coworker.ui.yourday.successPost.SuccessPostFragment" />
     </data>
 
@@ -19,9 +19,15 @@
             android:orientation="vertical"
             android:paddingTop="15dp">
 
+            <TextView
+                android:id="@+id/myday_successpost_empty_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="내 공부인증 글이 없습니다."/>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/fragment_yourday_successpost_rv"
+                android:id="@+id/fragment_myday_successpost_rv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
