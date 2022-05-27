@@ -4,11 +4,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
             name="activity"
             type="com.coworkerteam.coworker.ui.yourday.moodPost.make.EmotionChoiceActivity" />
     </data>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -24,7 +27,7 @@
             <TextView
                 android:id="@+id/textView61"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="120dp"
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
                 android:text="오늘의 감정을 골라보세요"
@@ -36,10 +39,10 @@
             <TableLayout
                 android:id="@+id/table"
                 android:layout_width="match_parent"
-                android:padding="50dp"
                 android:layout_height="400dp"
                 android:layout_marginTop="20dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:padding="30dp">
 
                 <TableRow
                     android:id="@+id/mood_check_row1"
@@ -104,7 +107,38 @@
                         app:srcCompat="@drawable/mood_emoticon3" />
 
                 </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="(헤헤)"
+                        android:textSize="10dp"
+                        android:textStyle="bold"></TextView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="(엉엉)"
+                        android:textSize="10dp"
+                        android:textStyle="bold"></TextView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="(쒸익쒸익)"
+                        android:textSize="10dp"
+                        android:textStyle="bold"></TextView>
+                </TableRow>
                 <TableRow
                     android:id="@+id/mood_check_row2"
                     android:layout_width="match_parent"
@@ -169,7 +203,38 @@
                         android:onClick="@{(view)->activity.choiceEmoji(6)}"
                         app:srcCompat="@drawable/mood_emoticon6" />
                 </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="(꾸벅꾸벅)"
+                        android:textSize="10dp"
+                        android:textStyle="bold"></TextView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="(홍홍)"
+                        android:textSize="10dp"
+                        android:textStyle="bold"></TextView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="(히잉)"
+                        android:textSize="10dp"
+                        android:textStyle="bold"></TextView>
+                </TableRow>
                 <TableRow
                     android:id="@+id/mood_check_row3"
                     android:layout_width="match_parent"
@@ -234,6 +299,38 @@
 
                         />
 
+                </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="(헤롱헤롱)"
+                        android:textSize="10dp"
+                        android:textStyle="bold"></TextView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="(후훗)"
+                        android:textSize="10dp"
+                        android:textStyle="bold"></TextView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="(허걱)"
+                        android:textSize="10dp"
+                        android:textStyle="bold"></TextView>
                 </TableRow>
             </TableLayout>
 

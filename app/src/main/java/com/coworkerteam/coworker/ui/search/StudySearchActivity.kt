@@ -119,21 +119,21 @@ class StudySearchActivity :
         viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
-                    /*
+
                                        var intent = Intent(this, EnterCamstudyActivity::class.java)
                                        intent.putExtra("studyInfo", it.body()!!)
                                        passwordDialog.dismissDialog()
                                        startActivity(intent)
-                      */
+                    /*
 
-                                                       Log.d(TAG,"studyinfo : "+ it.body()!!)
-                                                       passwordDialog.dismissDialog()
-                                                       var intent = Intent(this, UnityActivity::class.java)
-                                                       intent.putExtra("studyInfo", it.body()!!)
-                                                       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                       Log.d(TAG,"studyInfo : "+it.body().toString())
-                                                       startActivity(intent)
-
+                                                     Log.d(TAG,"studyinfo : "+ it.body()!!)
+                                                     passwordDialog.dismissDialog()
+                                                     var intent = Intent(this, UnityActivity::class.java)
+                                                     intent.putExtra("studyInfo", it.body()!!)
+                                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                     Log.d(TAG,"studyInfo : "+it.body().toString())
+                                                     startActivity(intent)
+*/
 
                 }
                 it.code() == 400 -> {

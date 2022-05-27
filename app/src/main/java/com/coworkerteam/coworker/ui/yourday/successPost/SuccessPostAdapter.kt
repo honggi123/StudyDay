@@ -1,13 +1,17 @@
 package com.coworkerteam.coworker.ui.yourday.successPost
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.R
@@ -96,11 +100,37 @@ class SuccessPostAdapter(private val viewModel: YourdayViewModel) : RecyclerView
         }
 
         holder.view_remove.setOnClickListener(View.OnClickListener {
-            if (item != null) {
-                context.firebaseLog.addLog(TAG,"remove")
-                viewModel.deleteSuccessPostdData(item.idx)
-                removeitem = item
-            }
+            val mDialogView =
+                LayoutInflater.from(context).inflate(R.layout.dialog_deletemoodpost, null)
+            val mBuilder = AlertDialog.Builder(context).setView(mDialogView)
+            var builder = mBuilder?.create()
+
+            builder?.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+            val btn_cancle =
+                mDialogView.findViewById<Button>(R.id.dialog_deletemoodpost_btn_cancle)
+            val btn_ok =
+                mDialogView.findViewById<Button>(R.id.dialog_deletemoodpost_btn_ok)
+
+            // 다이얼로그 끄기
+            btn_cancle.setOnClickListener(View.OnClickListener {
+                builder?.dismiss()
+                context.firebaseLog.addLog(TAG,"delete_post_cancel")
+            })
+            btn_ok.setOnClickListener(View.OnClickListener {
+                if (item != null) {
+                    context.firebaseLog.addLog(TAG,"remove")
+                    viewModel.deleteSuccessPostdData(item.idx)
+                    removeitem = item
+                }
+                builder?.dismiss()
+            })
+
+            builder.show()
+
+
+
+
         })
     }
 

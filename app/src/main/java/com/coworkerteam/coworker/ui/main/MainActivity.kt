@@ -106,6 +106,20 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
             }
         }
 
+        val mDialogView =
+            LayoutInflater.from(con).inflate(R.layout.dialog_notice_unityerror, null)
+        val mBuilder = AlertDialog.Builder(con).setView(mDialogView)
+        val builder = mBuilder.show()
+
+        builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+
+        val btn_ok = mDialogView.findViewById<Button>(R.id.dialog_unity_error_btn_ok)
+
+        btn_ok.setOnClickListener(View.OnClickListener {
+            builder.dismiss()
+        })
+        builder.show()
     }
 
 
@@ -211,13 +225,13 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
         viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
-/*
+
                     var intent = Intent(this, EnterCamstudyActivity::class.java)
                     intent.putExtra("studyInfo", it.body()!!)
                     Log.d(TAG,"STUDYINFO"+it.body())
                     passwordDialog.dismissDialog()
                     startActivity(intent)
-                     */
+                    /*
                                     passwordDialog.dismissDialog()
                                     var intent = Intent(this, UnityActivity::class.java)
                                     intent.putExtra("studyInfo", it.body()!!)
@@ -226,7 +240,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
                                     intent.addCategory(Intent.CATEGORY_LAUNCHER);
                                     Log.d(TAG,"studyInfo : "+it.body().toString())
                                     startActivity(intent)
-
+ */
                 }
 
                 it.code() == 400 -> {
@@ -382,6 +396,41 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
                     val errorMessage = JSONObject(it.errorBody()?.string())
                     Log.e(TAG, errorMessage.getString("message"))
 
+                    moveLogin()
+                }
+            }
+        })
+
+
+        viewModel.GoalSuccessResponseLiveData.observe(this, androidx.lifecycle.Observer {
+            when {
+                it.isSuccessful -> {
+                }
+                it.code() == 400 -> {
+                    //400번대 에러로 게시물 내용에 문제가 있을경우 ex) 20자 초과, 게시글내용에 사용할 수 없는 문자. 공빽문자만 입력
+                    Toast.makeText(this, "목표 수정에 실패했습니다. 나중에 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                }
+                it.code() == 404 -> {
+                    //존재하지 않는 게시물 또는 회원일 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, errorMessage.getString("message"))
+
+                    when (errorMessage.getInt("code")) {
+                        -2 -> {
+                            //존재하지 않는 회원인 경우
+                            moveLogin()
+                        }
+                        -10 -> {
+                            //존재하지 않는 게시물일 경우
+                            Toast.makeText(this, "목표 시간 설정이 없습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                }
+                it.code() == 500 -> {
+                    // 서버에서 게시물 삭제에 실패할 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, "게시물 삭제에 실패했습니다. 다시 시도해주세요.")
                     moveLogin()
                 }
             }

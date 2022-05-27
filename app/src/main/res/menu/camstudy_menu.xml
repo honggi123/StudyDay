@@ -9,7 +9,7 @@
     <item
         android:id="@+id/sound_change"
         android:icon="@drawable/ic_baseline_volume_up_24"
-
+        android:visible="false"
         android:title="소리 종류 전환"
         app:showAsAction="always"
         />

@@ -559,7 +559,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                 sendHandlerMessage(msg)
             }
 
-
+            /*
             R.id.sound_change -> {
                 if (speakMode){
                     commuicationModeOn()
@@ -567,6 +567,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     speakModeOn()
                 }
             }
+
+             */
 
         }
         return super.onOptionsItemSelected(item)

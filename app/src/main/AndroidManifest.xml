@@ -126,10 +126,12 @@
             android:name=".ui.main.MainActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.yourday.YourDayActivity">
+        <activity android:name=".ui.yourday.YourDayActivity"
+            android:screenOrientation="portrait">
         </activity>
 
-        <activity android:name=".ui.setting.myday.MydayActivity">
+        <activity android:name=".ui.setting.myday.MydayActivity"
+            android:screenOrientation="portrait">
         </activity>
 
         <activity android:name=".ui.yourday.moodPost.make.WriteMoodPostActivity"

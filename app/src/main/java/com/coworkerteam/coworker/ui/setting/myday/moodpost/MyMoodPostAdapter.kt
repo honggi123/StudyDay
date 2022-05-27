@@ -2,14 +2,14 @@ package com.coworkerteam.coworker.ui.setting.myday.moodpost
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.get
 import androidx.recyclerview.widget.RecyclerView
@@ -100,14 +100,20 @@ class MyMoodPostAdapter (private val viewmodel : MydayViewModel): RecyclerView.A
                 context.firebaseLog.addLog(TAG,"show_empathy")
             }
         })
+        holder.btn_empathy.setOnClickListener(View.OnClickListener {
+            if (holder.dialog_empathy.visibility == View.VISIBLE){
+                holder.dialog_empathy.visibility = View.GONE
+                context.firebaseLog.addLog(TAG,"show_empathy")
+            }else{
+                if (item!!.is_empathy.toBoolean()){
+                    showEmpathyCancelDialog(item,position)
+                }else{
+                    holder.dialog_empathy.visibility = View.VISIBLE
+                    context.firebaseLog.addLog(TAG,"show_empathy")
+                }
+            }
+        })
 
-        if (item!!.is_empathy.toBoolean()){
-            holder.btn_empathy.setText("공감했어요")
-            holder.btn_empathy.setTextColor(context.resources.getColor(R.color.empathy_color))
-        }else{
-            holder.btn_empathy.setText("공감하기")
-            holder.btn_empathy.setTextColor(context.resources.getColor(R.color.gray))
-        }
 
         holder.txt_nickname.setText(item?.nickname)
 
@@ -123,11 +129,33 @@ class MyMoodPostAdapter (private val viewmodel : MydayViewModel): RecyclerView.A
             holder.btn_edt.visibility = View.INVISIBLE
         }
         holder.btn_remove.setOnClickListener(View.OnClickListener {
-            item?.idx?.let { it1 -> viewmodel.deleteMoodPostdData(it1) }
-            if (item != null) {
-                removeitem = item
-                context.firebaseLog.addLog(TAG,"delete")
-            }
+            val mDialogView =
+                LayoutInflater.from(context).inflate(R.layout.dialog_deletemoodpost, null)
+            val mBuilder = AlertDialog.Builder(context).setView(mDialogView)
+            var builder = mBuilder?.create()
+
+            builder?.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+            val btn_cancle =
+                mDialogView.findViewById<Button>(R.id.dialog_deletemoodpost_btn_cancle)
+            val btn_ok =
+                mDialogView.findViewById<Button>(R.id.dialog_deletemoodpost_btn_ok)
+
+            // 다이얼로그 끄기
+            btn_cancle.setOnClickListener(View.OnClickListener {
+                builder?.dismiss()
+                context.firebaseLog.addLog(TAG,"delete_post_cancel")
+            })
+            btn_ok.setOnClickListener(View.OnClickListener {
+                item?.idx?.let { it1 -> viewmodel.deleteMoodPostdData(it1) }
+                if (item != null) {
+                    removeitem = item
+                    context.firebaseLog.addLog(TAG,"delete_post")
+                }
+                builder?.dismiss()
+            })
+            builder.show()
+
             holder.btn_edt.visibility = View.GONE
             holder.btn_remove.visibility = View.GONE
         })
@@ -187,6 +215,29 @@ class MyMoodPostAdapter (private val viewmodel : MydayViewModel): RecyclerView.A
             items.addAll(datas)
         }
         notifyDataSetChanged()
+    }
+
+    fun showEmpathyCancelDialog(item : MoodPostResponse.Result.MoodPost?, position: Int){
+        val mDialogView =
+            LayoutInflater.from(context).inflate(R.layout.dialog_empathy_cancel, null)
+        val mBuilder = AlertDialog.Builder(context).setView(mDialogView)
+        val builder = mBuilder.show()
+
+        builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val btn_cancle =
+            mDialogView.findViewById<Button>(R.id.dialog_empathy_cancel_btn_cancel)
+        val btn_ok = mDialogView.findViewById<Button>(R.id.dialog_empathy_cancel_btn_ok)
+
+        btn_cancle.setOnClickListener(View.OnClickListener {
+            builder.dismiss()
+        })
+
+        btn_ok.setOnClickListener(View.OnClickListener {
+            empathy(item!!.idx,item!!.my_empathy,position)
+            context.firebaseLog.addLog(TAG,"cancel_empathy")
+            builder.dismiss()
+        })
     }
     }
 

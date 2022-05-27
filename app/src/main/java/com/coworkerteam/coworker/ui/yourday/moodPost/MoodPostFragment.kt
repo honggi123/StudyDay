@@ -49,20 +49,21 @@ class MoodPostFragment()
                     moodPostAdapter.adddata(it.body()?.result?.get(0)?.moodPosts)
                     Log.d(TAG,"SIZE" + it.body()?.result?.get(0)?.moodPosts)
 
+                    Log.d(TAG,"totalpage : " + totalpage)
 
-                    if (totalpage ==0){
+                    if (totalpage ==0 && datas.size == 0){
                         viewDataBinding.yourdayMoodpostEmptyView.visibility = View.VISIBLE
                     }else{
                         viewDataBinding.yourdayMoodpostEmptyView.visibility = View.GONE
                     }
                 }
                 it.code() == 400 -> {
-                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    //요청값을 제대로 다 전달하지 않은 경우
                     val errorMessage = JSONObject(it.errorBody()?.string())
                     Log.e(TAG, errorMessage.getString("message"))
 
                     //400번대 에러로 검색 데이터 가져오기가 실패했을 경우, 사용자에게 알려준다.
-                    Toast.makeText(activity,"검색 데이터를 가져오지 못했습니다. 나중 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity,"데이터를 가져오지 못했습니다. 나중 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
                 }
                 it.code() == 404 -> {
                     //존재하지 않은 회원일 경우
@@ -90,19 +91,37 @@ class MoodPostFragment()
                     moodPostAdapter.notifyItemChanged(moodPostAdapter.postPosition)
                 }
                 it.code() == 400 -> {
-                    //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때
+                    //요청값을 제대로 다 전달하지 않은 경우
                     val errorMessage = JSONObject(it.errorBody()?.string())
                     Log.e(TAG, errorMessage.getString("message"))
                     Toast.makeText(activity,"검색 데이터를 가져오지 못했습니다. 나중 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
 
                 }
                 it.code() == 404 -> {
-                    //존재하지 않은 회원일 경우
+                    //존재하지 않는 게시물 또는 회원일 경우
                     val errorMessage = JSONObject(it.errorBody()?.string())
                     Log.e(TAG, errorMessage.getString("message"))
+                    Log.e(TAG, errorMessage.getInt("code").toString())
 
+                    when (errorMessage.getInt("code")) {
+                        -2 -> {
+                            //존재하지 않는 회원인 경우
+                            moveLogin()
+                        }
+                        -11 -> {
+                            //존재하지 않는 게시물일 경우
+                            Toast.makeText(context, "해당 게시물이 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                }
+                it.code() == 500 -> {
+                    // 서버에서 공감하기 실패할 경우
+                    val errorMessage = JSONObject(it.errorBody()?.string())
+                    Log.e(TAG, "공감하기에 실패했습니다. 다시 시도해주세요.")
                     moveLogin()
                 }
+
             }
         })
 
@@ -115,7 +134,12 @@ class MoodPostFragment()
                         datas.remove(moodPostAdapter.removeitem)
 
                         runOnUiThread(Runnable { moodPostAdapter.notifyItemRemoved(position) })
+                    }
 
+                    if (datas.size == 0){
+                        viewDataBinding.yourdayMoodpostEmptyView.visibility = View.VISIBLE
+                    }else{
+                        viewDataBinding.yourdayMoodpostEmptyView.visibility = View.GONE
                     }
                 }
                 it.code() == 400 -> {
@@ -124,15 +148,9 @@ class MoodPostFragment()
                     Log.e(TAG, errorMessage.getString("message"))
 
                     //400번대 에러로 검색 데이터 가져오기가 실패했을 경우, 사용자에게 알려준다.
-                    Toast.makeText(activity,"검색 데이터를 가져오지 못했습니다. 나중 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity,"데이터를 가져오지 못했습니다. 나중 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
                 }
-                it.code() == 404 -> {
-                    //존재하지 않은 회원일 경우
-                    val errorMessage = JSONObject(it.errorBody()?.string())
-                    Log.e(TAG, errorMessage.getString("message"))
 
-                    moveLogin()
-                }
             }
         })
 

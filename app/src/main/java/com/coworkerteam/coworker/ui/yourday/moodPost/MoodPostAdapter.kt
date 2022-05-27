@@ -1,16 +1,18 @@
 package com.coworkerteam.coworker.ui.yourday.moodPost
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.view.WindowManager
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.get
 import androidx.recyclerview.widget.RecyclerView
@@ -53,7 +55,6 @@ class MoodPostAdapter (private val viewmodel : YourdayViewModel): RecyclerView.A
             val view: View =
                 LayoutInflater.from(parent.context).inflate(R.layout.item_moodpost, parent, false)
             ItemViewHolder(view)
-
         } else {
             val view: View =
                 LayoutInflater.from(parent.context).inflate(R.layout.item_loading, parent, false)
@@ -90,13 +91,16 @@ class MoodPostAdapter (private val viewmodel : YourdayViewModel): RecyclerView.A
         }
 
         holder.btn_empathy.setOnClickListener(View.OnClickListener {
-            if (item!!.is_empathy.toBoolean()){
-
-                empathy(item!!.idx,item!!.my_empathy,position)
-                context.firebaseLog.addLog(TAG,"cancel_empathy")
-            }else{
-                holder.dialog_empathy.visibility = View.VISIBLE
+            if (holder.dialog_empathy.visibility == View.VISIBLE){
+                holder.dialog_empathy.visibility = View.GONE
                 context.firebaseLog.addLog(TAG,"show_empathy")
+            }else{
+                if (item!!.is_empathy.toBoolean()){
+                    showEmpathyCancelDialog(item,position)
+                }else{
+                    holder.dialog_empathy.visibility = View.VISIBLE
+                    context.firebaseLog.addLog(TAG,"show_empathy")
+                }
             }
         })
 
@@ -123,11 +127,40 @@ class MoodPostAdapter (private val viewmodel : YourdayViewModel): RecyclerView.A
         }
 
         holder.btn_remove.setOnClickListener(View.OnClickListener {
+            val mDialogView =
+                LayoutInflater.from(context).inflate(R.layout.dialog_deletemoodpost, null)
+            val mBuilder = AlertDialog.Builder(context).setView(mDialogView)
+            var builder = mBuilder?.create()
+
+            builder?.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+            val btn_cancle =
+                mDialogView.findViewById<Button>(R.id.dialog_deletemoodpost_btn_cancle)
+            val btn_ok =
+                mDialogView.findViewById<Button>(R.id.dialog_deletemoodpost_btn_ok)
+
+            // 다이얼로그 끄기
+            btn_cancle.setOnClickListener(View.OnClickListener {
+                builder?.dismiss()
+                context.firebaseLog.addLog(TAG,"delete_post_cancel")
+            })
+            btn_ok.setOnClickListener(View.OnClickListener {
+                item?.idx?.let { it1 -> viewmodel.deleteMoodPostdData(it1) }
+                if (item != null) {
+                    removeitem = item
+                    context.firebaseLog.addLog(TAG,"delete_post")
+                }
+                builder?.dismiss()
+            })
+/*
             item?.idx?.let { it1 -> viewmodel.deleteMoodPostdData(it1) }
             if (item != null) {
                 removeitem = item
                 context.firebaseLog.addLog(TAG,"delete_post")
             }
+
+ */
+            builder.show()
         })
 
         holder.btn_edt.setOnClickListener(View.OnClickListener {
@@ -186,61 +219,85 @@ class MoodPostAdapter (private val viewmodel : YourdayViewModel): RecyclerView.A
     }
 
     fun adddata(datas: ArrayList<MoodPostResponse.Result.MoodPost>?) {
-            if (datas != null) {
-                items.addAll(datas)
-            }
-            notifyDataSetChanged()
+        if (datas != null) {
+            items.addAll(datas)
         }
+        notifyDataSetChanged()
     }
 
-    class ItemViewHolder(view: View) :
-        RecyclerView.ViewHolder(view) {
-        var view_mood : ImageView
-        var btn_empathy: TextView
-        var dialog_empathy: ConstraintLayout
-        var txt_nickname : TextView
-        var txt_create_date : TextView
-        var txt_contents : TextView
-        var btn_edt : ImageView
-        var btn_remove : ImageView
-        var txt_totalempathynum : TextView
-        var layout_emoticon_kinds : LinearLayout
-        var layout_empathy_kinds : LinearLayout
-        var dialog_empathy_kinds1 : ImageView
-        var dialog_empathy_kinds2 : ImageView
-        var dialog_empathy_kinds3 : ImageView
-        var dialog_empathy_kinds4 : ImageView
-        var dialog_empathy_kinds5 : ImageView
+    fun showEmpathyCancelDialog(item : MoodPostResponse.Result.MoodPost?, position: Int){
+        val mDialogView =
+            LayoutInflater.from(context).inflate(R.layout.dialog_empathy_cancel, null)
+        val mBuilder = AlertDialog.Builder(context).setView(mDialogView)
+        val builder = mBuilder.show()
 
-        init {
-            layout_emoticon_kinds = itemView.findViewById(R.id.item_moodpost_empathy_kinds)
-            layout_empathy_kinds = itemView.findViewById<LinearLayout>(R.id.dialog_empathy_kinds)
+        builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-            view_mood = itemView.findViewById(R.id.item_mood_post_mood)
-            btn_empathy = itemView.findViewById(R.id.txt_empathy)
-            dialog_empathy = itemView.findViewById(R.id.dialog_empathy)
-            txt_nickname = itemView.findViewById(R.id.item_mood_post_nickname)
-            txt_create_date = itemView.findViewById(R.id.item_mood_post_date)
-            txt_contents = itemView.findViewById(R.id.item_mood_post_content)
-            btn_edt = itemView.findViewById(R.id.item_mood_post_btn_edit)
-            btn_remove = itemView.findViewById(R.id.item_mood_post_btn_remove)
-            txt_totalempathynum = itemView.findViewById(R.id.item_mood_post_total_empathynum)
+        val btn_cancle =
+            mDialogView.findViewById<Button>(R.id.dialog_empathy_cancel_btn_cancel)
+        val btn_ok = mDialogView.findViewById<Button>(R.id.dialog_empathy_cancel_btn_ok)
 
-            dialog_empathy_kinds1 = itemView.findViewById(R.id.dialog_empathy_kinds1)
-            dialog_empathy_kinds2 = itemView.findViewById(R.id.dialog_empathy_kinds2)
-            dialog_empathy_kinds3 = itemView.findViewById(R.id.dialog_empathy_kinds3)
-            dialog_empathy_kinds4 = itemView.findViewById(R.id.dialog_empathy_kinds4)
-            dialog_empathy_kinds5 = itemView.findViewById(R.id.dialog_empathy_kinds5)
+        btn_cancle.setOnClickListener(View.OnClickListener {
+            builder.dismiss()
+        })
 
-        }
+        btn_ok.setOnClickListener(View.OnClickListener {
+            empathy(item!!.idx,item!!.my_empathy,position)
+            context.firebaseLog.addLog(TAG,"cancel_empathy")
+            builder.dismiss()
+        })
     }
 
-    private class LoadingViewHolder(itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
-        private val progressBar: ProgressBar
+}
 
-        init {
-            progressBar = itemView.findViewById(R.id.progressBar)
-        }
+class ItemViewHolder(view: View) :
+    RecyclerView.ViewHolder(view) {
+    var view_mood : ImageView
+    var btn_empathy: TextView
+    var dialog_empathy: ConstraintLayout
+    var txt_nickname : TextView
+    var txt_create_date : TextView
+    var txt_contents : TextView
+    var btn_edt : ImageView
+    var btn_remove : ImageView
+    var txt_totalempathynum : TextView
+    var layout_emoticon_kinds : LinearLayout
+    var layout_empathy_kinds : LinearLayout
+    var dialog_empathy_kinds1 : ImageView
+    var dialog_empathy_kinds2 : ImageView
+    var dialog_empathy_kinds3 : ImageView
+    var dialog_empathy_kinds4 : ImageView
+    var dialog_empathy_kinds5 : ImageView
+
+    init {
+        layout_emoticon_kinds = itemView.findViewById(R.id.item_moodpost_empathy_kinds)
+        layout_empathy_kinds = itemView.findViewById<LinearLayout>(R.id.dialog_empathy_kinds)
+
+        view_mood = itemView.findViewById(R.id.item_mood_post_mood)
+        btn_empathy = itemView.findViewById(R.id.txt_empathy)
+        dialog_empathy = itemView.findViewById(R.id.dialog_empathy)
+        txt_nickname = itemView.findViewById(R.id.item_mood_post_nickname)
+        txt_create_date = itemView.findViewById(R.id.item_mood_post_date)
+        txt_contents = itemView.findViewById(R.id.item_mood_post_content)
+        btn_edt = itemView.findViewById(R.id.item_mood_post_btn_edit)
+        btn_remove = itemView.findViewById(R.id.item_mood_post_btn_remove)
+        txt_totalempathynum = itemView.findViewById(R.id.item_mood_post_total_empathynum)
+
+        dialog_empathy_kinds1 = itemView.findViewById(R.id.dialog_empathy_kinds1)
+        dialog_empathy_kinds2 = itemView.findViewById(R.id.dialog_empathy_kinds2)
+        dialog_empathy_kinds3 = itemView.findViewById(R.id.dialog_empathy_kinds3)
+        dialog_empathy_kinds4 = itemView.findViewById(R.id.dialog_empathy_kinds4)
+        dialog_empathy_kinds5 = itemView.findViewById(R.id.dialog_empathy_kinds5)
+
     }
+}
+
+private class LoadingViewHolder(itemView: View) :
+    RecyclerView.ViewHolder(itemView) {
+    private val progressBar: ProgressBar
+
+    init {
+        progressBar = itemView.findViewById(R.id.progressBar)
+    }
+}
 

@@ -19,7 +19,7 @@
         android:gravity="center"
         android:text="현재 서비스 점검중 입니다. \n서비스 이용에 제한이 됩니다."
         android:textColor="@color/black"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold" />
 
     <TextView

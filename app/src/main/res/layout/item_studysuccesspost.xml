@@ -23,9 +23,7 @@
             android:id="@+id/studysuccess_background"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@color/white"
-            app:layout_constraintBottom_toBottomOf
-                ="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -39,7 +37,8 @@
             android:textColor="#E8E0E0"
             android:textSize="12dp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/item_success_post_goaltime"
+            app:layout_constraintEnd_toStartOf="@+id/guideline35"
+            app:layout_constraintStart_toStartOf="@+id/guideline23"
             app:layout_constraintTop_toBottomOf="@+id/item_success_post_goaltime" />
 
         <TextView
@@ -49,6 +48,7 @@
             android:text="hongs"
             android:textColor="#FFF7F7"
             android:textSize="16dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline35"
             app:layout_constraintStart_toStartOf="@+id/guideline23"
             app:layout_constraintTop_toTopOf="@+id/guideline6" />
 
@@ -60,6 +60,7 @@
             android:text="6월 16일"
             android:textColor="#FFFFFF"
             android:textSize="10sp"
+            app:layout_constraintEnd_toEndOf="@+id/item_success_post_nickname"
             app:layout_constraintStart_toStartOf="@+id/item_success_post_nickname"
             app:layout_constraintTop_toBottomOf="@+id/item_success_post_nickname" />
 
@@ -71,7 +72,8 @@
             android:text="목표시간 9시간을 달성하셨습니다."
             android:textColor="#FFFFFF"
             android:textSize="16dp"
-            app:layout_constraintStart_toStartOf="@+id/item_success_post_date"
+            app:layout_constraintEnd_toStartOf="@+id/guideline35"
+            app:layout_constraintStart_toStartOf="@+id/guideline23"
             app:layout_constraintTop_toBottomOf="@+id/item_success_post_date" />
 
         <androidx.constraintlayout.widget.Guideline
@@ -106,9 +108,11 @@
             android:id="@+id/item_success_post_removeicon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
             android:visibility="visible"
-            app:layout_constraintEnd_toStartOf="@+id/guideline35"
-            app:layout_constraintTop_toTopOf="@+id/guideline6"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_cancel" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

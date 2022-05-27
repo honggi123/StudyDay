@@ -49,7 +49,7 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
     val MainRankResponseLiveData: LiveData<Response<MainRankResponse>>
         get() = _MainRankResponseLiveData
 
-    //랭킹 데이터
+    //공부인증 데이터
     private val _GoalSuccessResponseLiveData = MutableLiveData<Response<ApiRequest>>()
     val GoalSuccessResponseLiveData: LiveData<Response<ApiRequest>>
         get() = _GoalSuccessResponseLiveData

@@ -42,7 +42,6 @@ class YourDayActivity(
 
                      fragment_init()
 
-
                      //툴바의 + 아이콘에 대한 세팅
                      val main_toolbar_writepost = findViewById<ImageView>(R.id.main_toolbar_writepost)
 
