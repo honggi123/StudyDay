@@ -467,7 +467,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             })
 
 
-
             btn_screenshare.setOnClickListener(View.OnClickListener {
                 Log.d(TAG,"CamStudyService.onScreen: " + CamStudyService.onScreen)
                 if(CamStudyService.onScreen == true){
@@ -874,7 +873,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     btn_camera.isSelected = true
                 }
                 CamStudyService.MSG_SERVICE_FINISH -> {
-                    if(ClickEndBackBtn  || CamStudyService.forcedexit){
+                    if(CamStudyService.forcedexit){
                         mainMoveIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                         mainMoveIntent.putExtra("KickFromLeader",CamStudyService.forcedexit)
                         Log.d(TAG,"강퇴 여부 : "+CamStudyService.forcedexit)

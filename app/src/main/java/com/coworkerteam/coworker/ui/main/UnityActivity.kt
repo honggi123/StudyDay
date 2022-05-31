@@ -56,7 +56,6 @@ class UnityActivity : UnityPlayerActivity() {
         var intent = Intent(this, EnterCamstudyActivity::class.java)
         intent.putExtra("studyInfo", dataIntent)
         startActivity(intent)
-        finish()
     }
 
     fun exit(str : String){

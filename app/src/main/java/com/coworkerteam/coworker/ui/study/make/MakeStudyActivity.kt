@@ -122,14 +122,13 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
                 it.isSuccessful -> {
                     firebaseLog.addLog(TAG,"make_study")
 
-
+                    /*
                     var intent = Intent(this, EnterCamstudyActivity::class.java)
                     intent.putExtra("studyInfo", it.body()!!)
 
                     startActivity(intent)
                     finish()
-
-                    /*
+                    */
                                        var intent = Intent(this, UnityActivity::class.java)
                                        intent.putExtra("studyInfo", it.body()!!)
                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -139,7 +138,7 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
                                        startActivity(intent)
                                        finish()
 
-                                        */
+
                 }
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때

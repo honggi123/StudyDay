@@ -133,20 +133,20 @@ class MyStudyActivity : NavigationActivity<ActivityMyStudyBinding, MyStudyViewMo
         viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
-
+                    startActivity(intent)
+                    /*
                     var intent = Intent(this, EnterCamstudyActivity::class.java)
                     intent.putExtra("studyInfo", it.body()!!)
 
                     passwordDialog.dismissDialog()
-                    startActivity(intent)
-                    /*
+                    */
                     Log.d(TAG,"studyinfo : "+ it.body()!!)
                     passwordDialog.dismissDialog()
                     var intent = Intent(this, UnityActivity::class.java)
                     intent.putExtra("studyInfo", it.body()!!)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     Log.d(TAG,"studyInfo : "+it.body().toString())
-                    startActivity(intent)*/
+                    startActivity(intent)
                 }
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때

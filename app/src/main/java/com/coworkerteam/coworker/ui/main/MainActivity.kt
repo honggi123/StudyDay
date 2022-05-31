@@ -105,7 +105,8 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
                     }
             }
         }
-
+        // 메타버스 제공 되지 않을 때 다이얼로그
+        /*
         val mDialogView =
             LayoutInflater.from(con).inflate(R.layout.dialog_notice_unityerror, null)
         val mBuilder = AlertDialog.Builder(con).setView(mDialogView)
@@ -120,7 +121,9 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
             builder.dismiss()
         })
         builder.show()
+    */
     }
+
 
 
     override fun initStartView() {
@@ -225,13 +228,13 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
         viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
-
+/*
                     var intent = Intent(this, EnterCamstudyActivity::class.java)
                     intent.putExtra("studyInfo", it.body()!!)
                     Log.d(TAG,"STUDYINFO"+it.body())
                     passwordDialog.dismissDialog()
                     startActivity(intent)
-                    /*
+                    */
                                     passwordDialog.dismissDialog()
                                     var intent = Intent(this, UnityActivity::class.java)
                                     intent.putExtra("studyInfo", it.body()!!)
@@ -240,7 +243,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
                                     intent.addCategory(Intent.CATEGORY_LAUNCHER);
                                     Log.d(TAG,"studyInfo : "+it.body().toString())
                                     startActivity(intent)
- */
+
                 }
 
                 it.code() == 400 -> {

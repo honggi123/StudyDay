@@ -31,6 +31,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_margin="5dp"
+
             android:background="@drawable/dialog_cancle"
             android:text="취소" />
 
@@ -39,6 +41,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_margin="5dp"
+
             android:background="@drawable/dialog_logout"
             android:text="리더 양도"
             android:textColor="@color/white" />
