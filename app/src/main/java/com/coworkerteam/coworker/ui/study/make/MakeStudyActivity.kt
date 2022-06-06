@@ -136,8 +136,6 @@ class MakeStudyActivity : BaseActivity<ActivityMakeStudyBinding, MakeStudyViewMo
                                        Log.d(TAG,"studyInfo : "+it.body().toString())
                                        startActivity(intent)
                                        finish()
-
-
                 }
                 it.code() == 400 -> {
                     //요청값을 제대로 다 전달하지 않은 경우 ex. 날짜 또는 요청타입 값이 잘못되거나 없을때

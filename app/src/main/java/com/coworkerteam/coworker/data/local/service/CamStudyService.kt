@@ -185,7 +185,6 @@ class CamStudyService : Service(),
             recorder?.stop()
             recorder = null
         }
-
         rootEglBase.release()
         // webrtc 관련
         if(videoTrackFromCamera != null){

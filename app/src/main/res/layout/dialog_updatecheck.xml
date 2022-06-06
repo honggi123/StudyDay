@@ -14,7 +14,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
         android:gravity="center"
-        android:text="STUDYDAY를 새로운 버전으로\n 업데이트 하시겠습니까?"
+        android:text="STUDYDAY의 새로운 버전으로\n 업데이트가 필요합니다"
         android:textColor="#000000"
         android:textSize="16sp"
         android:textStyle="bold" />
@@ -34,15 +34,6 @@
         android:layout_height="wrap_content"
         android:background="@drawable/dialog_backround_round"
         android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/dialog_btn_cancle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:background="@drawable/dialog_cancle"
-            android:text="취소" />
 
         <Button
             android:id="@+id/dialog_btn_ok"

@@ -102,7 +102,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         //받아온값 세팅
         mediaProjectionManager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
@@ -992,8 +991,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     fun commuicationModeOn(){
         var audioManager : AudioManager
         audioManager = context?.getSystemService(AUDIO_SERVICE) as AudioManager
-
-
 
         audioManager.setSpeakerphoneOn(false)
         speakMode = false

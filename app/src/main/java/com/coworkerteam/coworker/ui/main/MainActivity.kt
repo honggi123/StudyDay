@@ -23,6 +23,7 @@ import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityMainBinding
 import com.coworkerteam.coworker.ui.base.NavigationActivity
+import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.ui.dialog.PasswordDialog
 import com.coworkerteam.coworker.ui.dialog.SuccessPostDialog
 import com.coworkerteam.coworker.ui.study.make.MakeStudyActivity
@@ -84,13 +85,8 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
 
                         builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-                        val btn_cancle =
-                            mDialogView.findViewById<Button>(R.id.dialog_btn_cancle)
                         val btn_ok = mDialogView.findViewById<Button>(R.id.dialog_btn_ok)
-
-                        btn_cancle.setOnClickListener(View.OnClickListener {
-                            builder.dismiss()
-                        })
+                        builder.setCancelable(false)
 
                         btn_ok.setOnClickListener(View.OnClickListener {
                             val ownGooglePlayLink = "market://details?id=com.coworkerteam.coworker"
@@ -101,6 +97,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
                             } catch (anfe: ActivityNotFoundException) {
                                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(ownWebLink)))
                             }
+                            onDestroy()
                         })
                     }
             }
@@ -228,22 +225,22 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
         viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
-/*
+
                     var intent = Intent(this, EnterCamstudyActivity::class.java)
                     intent.putExtra("studyInfo", it.body()!!)
                     Log.d(TAG,"STUDYINFO"+it.body())
                     passwordDialog.dismissDialog()
                     startActivity(intent)
-                    */
-                                    passwordDialog.dismissDialog()
-                                    var intent = Intent(this, UnityActivity::class.java)
-                                    intent.putExtra("studyInfo", it.body()!!)
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    intent.setAction(Intent.ACTION_MAIN);
-                                    intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                                    Log.d(TAG,"studyInfo : "+it.body().toString())
-                                    startActivity(intent)
-
+                    /*
+                                       passwordDialog.dismissDialog()
+                                       var intent = Intent(this, UnityActivity::class.java)
+                                       intent.putExtra("studyInfo", it.body()!!)
+                                       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                       intent.setAction(Intent.ACTION_MAIN);
+                                       intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                                       Log.d(TAG,"studyInfo : "+it.body().toString())
+                                       startActivity(intent)
+      */
                 }
 
                 it.code() == 400 -> {
