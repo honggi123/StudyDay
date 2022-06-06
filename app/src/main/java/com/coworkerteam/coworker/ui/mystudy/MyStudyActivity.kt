@@ -1,9 +1,6 @@
 package com.coworkerteam.coworker.ui.mystudy
 
-import android.content.DialogInterface
 import android.content.Intent
-import android.content.SharedPreferences
-import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.TextView
@@ -15,16 +12,13 @@ import com.coworkerteam.coworker.data.model.api.MyStudyResponse
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityMyStudyBinding
 import com.coworkerteam.coworker.ui.base.NavigationActivity
-import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.ui.dialog.PasswordDialog
-import com.coworkerteam.coworker.ui.main.UnityActivity
+import com.coworkerteam.coworker.ui.unity.UnityActivity
 import com.coworkerteam.coworker.ui.study.management.ManagementActivity
 import com.coworkerteam.coworker.utils.RecyclerViewUtils
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.net.URLEncoder
 
 class MyStudyActivity : NavigationActivity<ActivityMyStudyBinding, MyStudyViewModel>() , NavigationView.OnNavigationItemSelectedListener  {
     val TAG = "MyStudyActivity"

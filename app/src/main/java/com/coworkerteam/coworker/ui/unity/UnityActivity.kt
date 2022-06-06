@@ -1,4 +1,4 @@
-package com.coworkerteam.coworker.ui.main
+package com.coworkerteam.coworker.ui.unity
 
 import android.content.Context
 import android.content.Intent
@@ -7,22 +7,17 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
 import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.unity3d.player.UnityPlayer
 import com.unity3d.player.UnityPlayerActivity
 
 class UnityActivity : UnityPlayerActivity() {
+
     lateinit var mHandler: Handler
     lateinit var handler: Handler
     lateinit var mhandler: Handler
-
     lateinit var context: Context
     lateinit var roomlink : String
     var show : Boolean = true
@@ -31,8 +26,8 @@ class UnityActivity : UnityPlayerActivity() {
     lateinit var builder : AlertDialog
     lateinit var thread : Thread
 
+
     override fun onCreate(savedInstanceState: Bundle?){
-        Log.d("UnityActivity","oncreate")
         dataIntent = intent.getSerializableExtra("studyInfo") as EnterCamstudyResponse?
         var data = dataIntent
         context = this
@@ -82,6 +77,7 @@ class UnityActivity : UnityPlayerActivity() {
 
     override fun onDestroy() {
         mUnityPlayer.quit()
+        Log.d("UnityActivity : ","onDestroy")
         super.onDestroy()
     }
 

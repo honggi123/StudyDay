@@ -23,11 +23,11 @@ import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityMainBinding
 import com.coworkerteam.coworker.ui.base.NavigationActivity
-import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.ui.dialog.PasswordDialog
 import com.coworkerteam.coworker.ui.dialog.SuccessPostDialog
 import com.coworkerteam.coworker.ui.study.make.MakeStudyActivity
 import com.coworkerteam.coworker.ui.todolist.TodoListActivity
+import com.coworkerteam.coworker.ui.unity.UnityActivity
 import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder

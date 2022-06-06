@@ -22,7 +22,6 @@ class StudySearchPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, StudySearchResponse.Result.Study> {
         return try {
             val position = params.key ?: 1
-
             var response =
                 service.studySerch(
                     pref.getAccessToken()!!,

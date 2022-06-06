@@ -15,9 +15,8 @@ import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.data.model.other.SearchStudy
 import com.coworkerteam.coworker.databinding.ActivityStudySearchBinding
 import com.coworkerteam.coworker.ui.base.NavigationActivity
-import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.ui.dialog.PasswordDialog
-import com.coworkerteam.coworker.ui.main.UnityActivity
+import com.coworkerteam.coworker.ui.unity.UnityActivity
 import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
