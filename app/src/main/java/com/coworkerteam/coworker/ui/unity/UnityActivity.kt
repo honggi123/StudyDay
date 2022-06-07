@@ -7,17 +7,17 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.util.Log
+import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
 import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
+import com.coworkerteam.coworker.ui.main.MainActivity
 import com.unity3d.player.UnityPlayer
 import com.unity3d.player.UnityPlayerActivity
 
 class UnityActivity : UnityPlayerActivity() {
 
-    lateinit var mHandler: Handler
     lateinit var handler: Handler
-    lateinit var mhandler: Handler
     lateinit var context: Context
     lateinit var roomlink : String
     var show : Boolean = true
@@ -25,7 +25,6 @@ class UnityActivity : UnityPlayerActivity() {
     lateinit var mBuilder : AlertDialog.Builder
     lateinit var builder : AlertDialog
     lateinit var thread : Thread
-
 
     override fun onCreate(savedInstanceState: Bundle?){
         dataIntent = intent.getSerializableExtra("studyInfo") as EnterCamstudyResponse?
@@ -36,7 +35,6 @@ class UnityActivity : UnityPlayerActivity() {
                 Log.d("handleMessage : ","setData2")
                 Log.d("Nickname : ",dataIntent!!.result.nickname)
                 Log.d("Roomlink : ",dataIntent!!.result.studyInfo.link)
-                //UnityPlayer.UnitySendMessage("Cube","move",dataIntent!!.result.nickname)
                 UnityPlayer.UnitySendMessage("PlayerData","setNickname",dataIntent!!.result.nickname)
                 UnityPlayer.UnitySendMessage("PlayerData","setRoomlink",dataIntent!!.result.studyInfo.link)
                 super.handleMessage(msg)
@@ -45,7 +43,15 @@ class UnityActivity : UnityPlayerActivity() {
         super.onCreate(savedInstanceState)
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        Log.d("unityactivity","onrestart")
+    }
 
+    override fun onResume() {
+        super.onResume()
+        Log.d("unityactivity","onResume")
+    }
 
     fun startStudy(str : String){
         var intent = Intent(this, EnterCamstudyActivity::class.java)
@@ -54,6 +60,8 @@ class UnityActivity : UnityPlayerActivity() {
     }
 
     fun exit(str : String){
+        var intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
         finish()
     }
 

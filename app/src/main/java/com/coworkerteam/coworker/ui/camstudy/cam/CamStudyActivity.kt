@@ -152,6 +152,14 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                         mainMoveIntent.putExtra("goalIsSuccess",it.body()?.result?.get(0)?.isSuccess)
                         mainMoveIntent.putExtra("goalSuccesstime",it.body()?.result?.get(0)?.successTime)
                         mainMoveIntent.putExtra("goalPostIsWrite",it.body()!!.result.get(0)?.isWrite )
+
+                        val sharedPreference = getSharedPreferences("successpost", 0)
+                        val editor = sharedPreference.edit()
+                        editor.putBoolean("goalIsSuccess", it.body()?.result?.get(0)?.isSuccess!!)
+                        editor.putInt("goalSuccesstime", it.body()?.result?.get(0)?.successTime!!)
+                        editor.putBoolean("goalPostIsWrite", it.body()!!.result.get(0)?.isWrite)
+                        editor.apply()
+
                     }
                     //퇴장처리 성공
                     Log.d(TAG,"퇴장 처리 성공")
@@ -625,7 +633,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
     }
 
     private fun getLayoutParamsScreen(size: Int,num : Int): FlexboxLayout.LayoutParams {
-
         var height = height
 
         val item_height = when{
@@ -686,7 +693,6 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
         }else{
             viewDataBinding.camstudyNext.visibility = View.VISIBLE
         }
-
     }
 
     fun addCamStudyItemView() {
@@ -697,9 +703,12 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
             startIndex = 2 * ( page-1 )
             endIndex = startIndex + 1
         }else{
-            startIndex = 6 * ( page-1 )
+            startIndex = 0
             endIndex = startIndex + 5
         }
+        Log.d(TAG,"page"+page)
+        Log.d(TAG,"startIndex"+page)
+        Log.d(TAG,"endIndex"+page)
 
         val maxIndex = CamStudyService.peerConnection.keys.size -1
 
@@ -840,6 +849,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                     viewDataBinding.camStudyFelxboxLayout.removeAllViews()
                     Log.d(TAG,"MSG_PARTICIPANTLEFT")
                     //레이아웃 다시 설정
+
                     setPage()
                     addCamStudyItemView()
 
@@ -879,6 +889,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                         Log.d(TAG,"강퇴 여부 : "+CamStudyService.forcedexit)
                         CamStudyService.forcedexit = false
                         startActivity(mainMoveIntent)
+
                     }
                     if(!isFinishing) finish()
                 }
@@ -929,6 +940,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                         firebaseLog.addLog(TAG,"stop_share")
                     })
                     firebaseLog.addLog(TAG,"start_share")
+                    page = 1
                 }
                 CamStudyService.RECEIVE_STOP_SHARE -> {
                     // 화면 공유 중지를 받음
@@ -941,7 +953,7 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
 
                     viewDataBinding.camStudyShareFelxboxOther.removeAllViews()
                     viewDataBinding.camStudyFelxboxLayout.removeAllViewsInLayout()
-
+                    page = 1
                     Log.d(TAG,"RECEIVE_STOP_SHARE")
                     for (i in 1..CamStudyService.peerConnection.size) {
                         Log.d(TAG, "addCamStudyItemView: $i")

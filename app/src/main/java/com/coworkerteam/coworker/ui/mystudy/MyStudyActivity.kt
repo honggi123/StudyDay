@@ -13,6 +13,7 @@ import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityMyStudyBinding
 import com.coworkerteam.coworker.ui.base.NavigationActivity
 import com.coworkerteam.coworker.ui.dialog.PasswordDialog
+import com.coworkerteam.coworker.ui.dialog.SuccessPostDialog
 import com.coworkerteam.coworker.ui.unity.UnityActivity
 import com.coworkerteam.coworker.ui.study.management.ManagementActivity
 import com.coworkerteam.coworker.utils.RecyclerViewUtils
@@ -208,4 +209,8 @@ class MyStudyActivity : NavigationActivity<ActivityMyStudyBinding, MyStudyViewMo
             startActivity(Intent(this, ManagementActivity::class.java))
         })
     }
+
+
+
+
 }

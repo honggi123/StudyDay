@@ -71,56 +71,7 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         var con = this
-
-        appUpdateManager = AppUpdateManagerFactory.create(this)
-
-        appUpdateManager?.let {
-            it.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
-                    Log.d(TAG,"appUpdateInfo")
-                    if(appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE){
-                        val mDialogView =
-                            LayoutInflater.from(con).inflate(R.layout.dialog_updatecheck, null)
-                        val mBuilder = AlertDialog.Builder(con).setView(mDialogView)
-                        val builder = mBuilder.show()
-
-                        builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-                        val btn_ok = mDialogView.findViewById<Button>(R.id.dialog_btn_ok)
-                        builder.setCancelable(false)
-
-                        btn_ok.setOnClickListener(View.OnClickListener {
-                            val ownGooglePlayLink = "market://details?id=com.coworkerteam.coworker"
-                            val ownWebLink =
-                                "https://play.google.com/store/apps/details?id=com.coworkerteam.coworker"
-                            try {
-                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(ownGooglePlayLink)))
-                            } catch (anfe: ActivityNotFoundException) {
-                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(ownWebLink)))
-                            }
-                            onDestroy()
-                        })
-                    }
-            }
-        }
-        // 메타버스 제공 되지 않을 때 다이얼로그
-        /*
-        val mDialogView =
-            LayoutInflater.from(con).inflate(R.layout.dialog_notice_unityerror, null)
-        val mBuilder = AlertDialog.Builder(con).setView(mDialogView)
-        val builder = mBuilder.show()
-
-        builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-
-        val btn_ok = mDialogView.findViewById<Button>(R.id.dialog_unity_error_btn_ok)
-
-        btn_ok.setOnClickListener(View.OnClickListener {
-            builder.dismiss()
-        })
-        builder.show()
-    */
     }
-
 
 
     override fun initStartView() {
@@ -177,14 +128,21 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
                 }).show()
         }
 
+        val sharedPreference = getSharedPreferences("successpost", 0)
+        var goalIsSuccess =  sharedPreference.getBoolean("goalIsSuccess",false)
 
-        var goalIsSuccess = intent.getBooleanExtra("goalIsSuccess",false)
+        //var goalIsSuccess = intent.getBooleanExtra("goalIsSuccess",false)
 
         if (goalIsSuccess){
             showSuccessPostDialog(
-                intent.getIntExtra("goalSuccesstime", 0),
-                intent.getBooleanExtra("goalPostIsWrite",false)
+                //intent.getIntExtra("goalSuccesstime", 0),
+               // intent.getBooleanExtra("goalPostIsWrite",false)
+                sharedPreference.getInt("goalSuccesstime",0),
+                sharedPreference.getBoolean("goalPostIsWrite",false)
             )
+            val editor = sharedPreference.edit()
+            editor.putBoolean("goalIsSuccess", false)
+            editor.apply()
         }
 
 
@@ -225,22 +183,22 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
         viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
-
+/*
                     var intent = Intent(this, EnterCamstudyActivity::class.java)
                     intent.putExtra("studyInfo", it.body()!!)
                     Log.d(TAG,"STUDYINFO"+it.body())
                     passwordDialog.dismissDialog()
                     startActivity(intent)
-                    /*
-                                       passwordDialog.dismissDialog()
-                                       var intent = Intent(this, UnityActivity::class.java)
-                                       intent.putExtra("studyInfo", it.body()!!)
-                                       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                       intent.setAction(Intent.ACTION_MAIN);
-                                       intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                                       Log.d(TAG,"studyInfo : "+it.body().toString())
-                                       startActivity(intent)
-      */
+                    */
+                                      passwordDialog.dismissDialog()
+                                      var intent = Intent(this, UnityActivity::class.java)
+                                      intent.putExtra("studyInfo", it.body()!!)
+                                      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                      intent.setAction(Intent.ACTION_MAIN);
+                                      intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                                      Log.d(TAG,"studyInfo : "+it.body().toString())
+                                      startActivity(intent)
+
                 }
 
                 it.code() == 400 -> {

@@ -24,7 +24,7 @@ class SuccessPostDialog (context: MainActivity) : Dialog(context){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setCanceledOnTouchOutside(false)
+        setCanceledOnTouchOutside(true)
         window?.setBackgroundDrawable(ColorDrawable())
         window?.setDimAmount(0.3f)
 

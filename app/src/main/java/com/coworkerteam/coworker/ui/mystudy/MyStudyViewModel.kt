@@ -120,4 +120,6 @@ class MyStudyViewModel(private val model: UserRepository) : BaseViewModel() {
             Log.d(TAG, "getEnterCamstduyData:: accessToken 값이 없습니다.")
         }
     }
+
+
 }
