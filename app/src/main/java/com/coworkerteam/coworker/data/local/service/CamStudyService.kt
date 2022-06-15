@@ -349,7 +349,7 @@ class CamStudyService : Service(),
                                             Gson().fromJson(
                                                 message.getString("entry"),
                                                 ParticipantsResponse::class.java
-                                            )
+                                         )
 
                                         //매핑된 참여자리스트 전역변수에 저장
                                         participantsResponses = participantsResponse

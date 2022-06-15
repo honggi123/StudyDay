@@ -210,7 +210,14 @@ dependencies {
     // 더보기 뷰 라이브러리
     implementation 'kr.co.prnd:readmore-textview:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
+/*
+    implementation ('com.github.dhaval2404:colorpicker:2.0'){
+        exclude module: 'flexbox'
+    }
 
+ */
+   // implementation "com.github.skydoves:colorpickerview:2.2.4"
+    implementation "com.github.danielnilsson9:color-picker-view:1.4.0@aar"
 
 
 }

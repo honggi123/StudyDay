@@ -12,12 +12,14 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
 
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
     <queries> <package android:name="com.google.android.googlequicksearchbox"/> </queries>
+
 
     <application
         android:name=".MyApplication"
@@ -102,10 +104,7 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.splash.SplashActivity"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -124,8 +123,17 @@
         <activity android:name=".ui.unity.WhiteBoardActivity"
             android:screenOrientation="landscape" >
 
-
        </activity>
+
+        <activity android:name=".ui.unity.whiteBoardTogether.WhiteBoardTogetherActivity"
+            android:screenOrientation="landscape"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
 
         <activity
             android:name=".ui.main.MainActivity"
@@ -155,7 +163,11 @@
         <service
             android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
             android:enabled="true"/>
-
+        <service
+            android:name=".data.local.service.WhiteBoardService"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="mediaProjection"/>
     </application>
 
 </manifest>
