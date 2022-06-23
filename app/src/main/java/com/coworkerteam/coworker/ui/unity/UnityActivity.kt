@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
 import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.ui.main.MainActivity
+import com.coworkerteam.coworker.ui.unity.whiteBoardTogether.WhiteBoardTogetherActivity
 import com.unity3d.player.UnityPlayer
 import com.unity3d.player.UnityPlayerActivity
 
@@ -56,6 +57,18 @@ class UnityActivity : UnityPlayerActivity() {
     fun startStudy(str : String){
         var intent = Intent(this, EnterCamstudyActivity::class.java)
         intent.putExtra("studyInfo", dataIntent)
+        startActivity(intent)
+    }
+
+    fun drawAlone(str : String){
+        var intent = Intent(this, WhiteBoardActivity::class.java)
+        intent.putExtra("roomLink", dataIntent!!.result.studyInfo.link)
+        startActivity(intent)
+    }
+
+    fun drawTogether(str : String){
+        var intent = Intent(this, WhiteBoardTogetherActivity::class.java)
+        intent.putExtra("roomLink", dataIntent!!.result.studyInfo.link)
         startActivity(intent)
     }
 

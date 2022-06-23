@@ -13,4 +13,7 @@
     <color name="gray">#B8B8B8</color>
     <color name="contour">#C8C8C8</color>
     <color name="empathy_color">#0055FF</color>
+    <color name="light_gray_color">#C4C4C4</color>
+    <color name="purple_color">#9747FF</color>
+
 </resources>

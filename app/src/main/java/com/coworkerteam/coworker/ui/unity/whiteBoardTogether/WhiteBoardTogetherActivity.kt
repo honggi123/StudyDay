@@ -1,12 +1,14 @@
-package com.coworkerteam.coworker.ui.unity
+package com.coworkerteam.coworker.ui.unity.whiteBoardTogether
 
 import android.Manifest
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.graphics.*
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.os.Environment
+import android.os.*
 import android.util.Log
 import android.view.*
 import android.widget.*
@@ -14,17 +16,22 @@ import androidx.appcompat.app.AlertDialog
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.databinding.ActivityWhiteboardBinding
+import com.coworkerteam.coworker.data.local.service.CamStudyService
+import com.coworkerteam.coworker.data.local.service.WhiteBoardService
+import com.coworkerteam.coworker.databinding.ActivityWhiteboardtogetherBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
-import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyViewModel
 import com.coworkerteam.coworker.ui.dialog.SketchChoiceDialog
 import com.coworkerteam.coworker.ui.unity.data.Path_info
+import com.coworkerteam.coworker.ui.unity.data.Xy
+import com.google.gson.Gson
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import org.json.JSONArray
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
@@ -35,13 +42,13 @@ import java.net.URL
 import java.util.*
 
 
-class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudyViewModel>() {
+class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBinding, WhiteBoardTogetherViewModel>() {
 
-    val TAG = "WhiteBoardActivity"
+    val TAG = "WhiteBoardTogetherActivity"
 
     override val layoutResourceID: Int
-        get() = R.layout.activity_whiteboard
-    override val viewModel: EnterCamstudyViewModel by viewModel()
+        get() = R.layout.activity_whiteboardtogether
+    override val viewModel: WhiteBoardTogetherViewModel by viewModel()
     var canvas: ConstraintLayout? = null
     var canvas_checkwidth: LinearLayout? = null
 
@@ -49,10 +56,11 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
     private val undonePaths = ArrayList<Path>()
     private val paths_circle = ArrayList<Path>()
     private val paths = ArrayList<Path>()
-    private val paths_info = ArrayList<Path_info>()
-
-    lateinit var drawingPanel : DrawingPanel
+     var jsonarray = null
+    lateinit var drawingPanel : DrawingPaneltogether
     lateinit var drawingPanel_checksize : DrawingPanel_CheckWidth
+
+    var allpaths_info = ArrayList<Path_info>()
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
@@ -60,25 +68,35 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
 
     var nowcolor = 0
 
+    var name : String = ""
+
+    var roomLink : String? = ""
+
+    //서비스와 통신하는 Messenger 객체
+    private var mServiceCallback: Messenger? = null
+    private var mClientCallback = Messenger(CallbackHandler(Looper.getMainLooper()))
+
     companion object {
         private const val TOUCH_TOLERANCE = 0f
     }
 
     override fun initStartView() {
         Log.d(TAG,"initStartView")
+        roomLink = intent.getStringExtra("roomlink")
+
         canvas_checkwidth = findViewById<View>(R.id.whiteboard_canvas_check_width) as LinearLayout
         drawingPanel_checksize = DrawingPanel_CheckWidth(this)
         canvas_checkwidth!!.addView(drawingPanel_checksize)
 
         canvas = findViewById<View>(R.id.whiteboard_canvas) as ConstraintLayout
-        drawingPanel = DrawingPanel(this)
+        drawingPanel = DrawingPaneltogether(this)
         canvas!!.addView(drawingPanel)
         viewDataBinding.activitiy = this
         viewDataBinding.drawingpanel = drawingPanel
         viewDataBinding.zoomdirection = drawingPanel.zoomdirection
 
-
-
+        name = viewModel.getUserName().toString()
+        name = "hongs"
         //툴바 세팅
         var main_toolbar = viewDataBinding.toolbarWhiteboard as androidx.appcompat.widget.Toolbar
 
@@ -139,14 +157,13 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
             }
         })
-        /*
-        val brightnessSlideBar = findViewById<BrightnessSlideBar>(R.id.brightnessSlide)
-        viewDataBinding.dialogColorpickerPallete.attachBrightnessSlider(brightnessSlideBar)
-        viewDataBinding.dialogColorpickerPallete.setInitialColor(Color.BLACK)
-        viewDataBinding.dialogColorpickerPallete.setColorListener(ColorListener(){ color: Int, b: Boolean ->
-            drawingPanel.setPaintColor(color)
-        })
-         */
+
+
+        var intent = Intent(this, WhiteBoardService::class.java)
+        intent.putExtra("name","hongs")
+        intent.putExtra("roomLink",roomLink)
+        startForegroundService(intent)
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
     }
 
     // 터치 이벤트 처리
@@ -166,32 +183,35 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
                 val permissionListener: PermissionListener = object: PermissionListener {
                     override fun onPermissionGranted() {
                         //권한 허가시 실행할 내용
-                       drawingPanel.save(this@WhiteBoardActivity)
+                        drawingPanel.save(this@WhiteBoardTogetherActivity)
                     }
 
                     override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
                         // 권한 거부시 실행  할 내용
-                        Toast.makeText(this@WhiteBoardActivity,"권한을 허용하지 않으면 그림을 저장 할 수 없습니다..",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@WhiteBoardTogetherActivity,"권한을 허용하지 않으면 그림을 저장 할 수 없습니다..",Toast.LENGTH_SHORT).show()
 
-                        }
                     }
+                }
                 TedPermission.create()
                     .setPermissionListener(permissionListener)
                     .setDeniedMessage("해당 권한을 [설정] > [권한] 에서 허용해주세요.")
                     .setPermissions(
                         Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
-                        )
+                    )
                     .check()
 
             }
             R.id.menu_out->{
+                var msg: Message? = null
+                msg = Message.obtain(null, WhiteBoardService.MSG_LEAVE_ROOM)
+
+                sendHandlerMessage(msg)
                 finish()
             }
 
         }
         return super.onOptionsItemSelected(item)
     }
-
 
 
 
@@ -205,6 +225,173 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
     private fun initView() {
     }
 
+    inner class CallbackHandler(looper: Looper) : Handler(looper) {
+        override fun handleMessage(msg: Message) {
+            Log.d(TAG, "Activity에 메세지 도착 : $msg")
+            when (msg.what) {
+                CamStudyService.MSG_SERVICE_CONNECT -> {
+                    //연결 성공했을 경우
+                }
+                WhiteBoardService.MSG_RECEIVE_ROOM_DATA ->{
+                    Log.d(TAG,"MSG_RECEIVE_ROOM_DATA")
+                   var data = msg.data
+                    var gson = Gson()
+                    var json = JSONObject(data.get("data").toString())
+                    Log.d(TAG,json.toString())
+
+                    if (!json.isNull("canvasList")){
+                        var jsonArray =  JSONArray(json.getString("canvasList"))
+                        for (i in 0..jsonArray.length() -1){
+                            Log.d(TAG,jsonArray.length().toString())
+                            var path = gson.fromJson(jsonArray.get(i).toString(),Path_info::class.java)
+                            allpaths_info.add(path)
+                        }
+                    }
+
+                    if (!json.isNull("sketchNum")){
+                        WhiteBoardService.sketchNum = json.getInt("sketchNum")
+                        var num = json.getInt("sketchNum")
+                        var resid = resources.getIdentifier("SketchURL$num","string",packageName)
+                        SetSketchURL(resources.getString(resid))
+                     }else{
+                        WhiteBoardService.sketchNum = 0
+                    }
+
+                    if(json.getInt("participantNum")==1){
+                        viewDataBinding.whiteboardTxtParticiantenum.setText("혼자 그리는중")
+                    }else{
+                        viewDataBinding.whiteboardTxtParticiantenum.setText(json.getInt("participantNum").toString()+"명이 그리는중")
+                    }
+
+
+
+                    for(p in allpaths_info){
+                        p.setpaint(Paint())
+                        p.setpath(Path())
+                        p.paint .isAntiAlias = true
+                        p.paint .color = Color.BLACK
+                        p.paint .style = Paint.Style.STROKE
+                        p.paint .strokeJoin = Paint.Join.ROUND
+                        p.paint .strokeCap = Paint.Cap.ROUND
+                        p.paint.strokeWidth = p.penwidth
+                        p.paint.color =  Color.parseColor(p.pencolor)
+
+                        if(p.shapemode == true){
+                            p.setshapetype(p.shapetype)
+                        }else if(p.penmode == true){
+                            p.setpentype(p.pentype)
+                        }
+
+
+                        Log.d(TAG,Integer.decode(p.pencolor).toString())
+
+                        setPath(p.path,p.listxy)
+                    }
+
+                    drawingPanel.invalidate()
+                }WhiteBoardService.MSG_SEND_REMOVE_ACTION ->{
+                    drawingPanel.clearAll()
+                }WhiteBoardService.MSG_RECEIVE_DRAWING->{
+                Log.d(TAG,"MSG_RECEIVE_DRAWING")
+
+                var data = msg.data
+                var gson = Gson()
+                var path_info = gson.fromJson(data.get("data").toString(),Path_info::class.java)
+                Log.d(TAG,data.get("data").toString())
+                Log.d(TAG,"SHAPEMODE"+path_info.shapemode)
+
+                path_info.setpaint(Paint())
+                path_info.setpath(Path())
+                path_info.paint .isAntiAlias = true
+                path_info.paint .color = Color.BLACK
+                path_info.paint .style = Paint.Style.STROKE
+                path_info.paint .strokeJoin = Paint.Join.ROUND
+                path_info.paint .strokeCap = Paint.Cap.ROUND
+                path_info.paint.strokeWidth = path_info.penwidth
+
+                path_info.paint.color =  Color.parseColor(path_info.pencolor)
+                if(path_info.shapemode == true){
+                    path_info.setshapetype(path_info.shapetype)
+                }else if(path_info.penmode == true){
+                    path_info.setpentype(path_info.pentype)
+                }
+
+
+                setPath(path_info.path,path_info.listxy)
+                allpaths_info.add(path_info)
+                drawingPanel.invalidate()
+            }WhiteBoardService.MSG_RECEIVE_SKETCH->{
+                Log.d(TAG,"MSG_RECEIVE_SKETCH")
+                var data = msg.data
+                var json = JSONObject(data.get("data").toString())
+                Log.d(TAG,json.toString())
+                if (!json.isNull("sketchNum")){
+                    var num = json.getInt("sketchNum")
+                     WhiteBoardService.sketchNum = num
+
+                    if(num == 0){
+                        drawingPanel.sketch = null
+                    }else{
+                        var resid = resources.getIdentifier("SketchURL$num","string",packageName)
+                        SetSketchURL(resources.getString(resid))
+                    }
+                    drawingPanel.invalidate()
+
+                }else{
+                    WhiteBoardService.sketchNum = 0
+                }
+
+            }WhiteBoardService.MSG_RECEIVE_ACTION ->{
+                Log.d(TAG,"MSG_RECEIVE_SKETCH")
+                var data = msg.data
+                var json = JSONObject(data.get("data").toString())
+                if(json.getString("actionName").equals("undo")){
+                    if(allpaths_info.size>0){
+                        for (i in allpaths_info.size-1 downTo 0){
+                            if(allpaths_info.get(i).name.equals(json.getString("nickname"))){
+                              allpaths_info.removeAt(i)
+                                break
+                            }
+                        }
+                    }
+                }else if(json.getString("actionName").equals("remove")){
+                    drawingPanel.clearAll()
+                }
+
+                drawingPanel.invalidate()
+            }WhiteBoardService.MSG_RECEIVE_INTO ->{
+                Log.d(TAG,"MSG_RECEIVE_INTO")
+                var data = msg.data
+                var json = JSONObject(data.get("data").toString())
+
+                if(json.getInt("participantNum")==1){
+                    viewDataBinding.whiteboardTxtParticiantenum.setText("혼자 그리는중")
+                }else{
+                    viewDataBinding.whiteboardTxtParticiantenum.setText(json.getInt("participantNum").toString()+"명이 그리는중")
+                }
+
+            }WhiteBoardService.MSG_RECEIVE_LEAVE->{
+                Log.d(TAG,"MSG_RECEIVE_LEAVE")
+                var data = msg.data
+                var json = JSONObject(data.get("data").toString())
+
+                if(json.getInt("participantNum")==1){
+                    viewDataBinding.whiteboardTxtParticiantenum.setText("혼자 그리는중")
+                }else{
+                    viewDataBinding.whiteboardTxtParticiantenum.setText(json.getInt("participantNum").toString()+"명이 그리는중")
+                }
+
+            }
+
+            }
+        }
+    }
+    private fun setPath(path: Path, listxy : java.util.ArrayList<Xy>, ){
+        path.moveTo(listxy.get(0).x,listxy.get(0).y)
+        for(i in 1..listxy.size-1){
+            path.lineTo(listxy.get(i).x,listxy.get(i).y)
+        }
+    }
 
     fun showPenMenu(){
         var visible = viewDataBinding.dialogPenSelect.visibility
@@ -223,19 +410,57 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
     }
 
 
-    fun SetSketchURL(url : String){
-        var imgUrl : URL
-		var connection : HttpURLConnection
-		var iS : InputStream
-		var sketchBitmap : Bitmap? = null
+    // 서비스 바인딩, 통신
+    private var mConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            Log.e(TAG,"ServiceConnection")
+            mServiceCallback = Messenger(service)
+            //서비스랑 연결
+            val connectMsg = Message.obtain(null, WhiteBoardService.MSG_CLIENT_CONNECT)
+            connectMsg.replyTo = mClientCallback
 
-        coroutineScope.launch {
-            val originalDeferred = coroutineScope.async(Dispatchers.IO) {
-                getOriginalBitmap(url)
+            try {
+                mServiceCallback!!.send(connectMsg)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-             sketchBitmap = originalDeferred.await()
-            sketchBitmap?.let { drawingPanel.setSketchImg(it) }
         }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            mServiceCallback = null
+        }
+    }
+
+
+    private fun sendHandlerMessage(msg: Message){
+        if (mServiceCallback != null) {
+            try {
+                mServiceCallback!!.send(msg)
+            } catch (e: RemoteException) {
+                e.printStackTrace()
+            }
+            Log.d(TAG, "Send message to Service")
+        }
+    }
+
+
+
+    fun SetSketchURL(url : String){
+        if(!url.equals("")){
+            var sketchBitmap : Bitmap? = null
+
+            coroutineScope.launch {
+                val originalDeferred = coroutineScope.async(Dispatchers.IO) {
+                    getOriginalBitmap(url)
+                }
+                sketchBitmap = originalDeferred.await()
+                sketchBitmap?.let { drawingPanel.setSketchImg(it) }
+            }
+        }else{
+            drawingPanel.sketch = null
+            drawingPanel.invalidate()
+        }
+
     }
 
 
@@ -256,9 +481,12 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
     }
 
     fun setColor(){
-        setVisible(View.VISIBLE,viewDataBinding.dialogColorpicker)
         drawingPanel.setPaintColor(viewDataBinding.dialogColorpickerPallete.color)
+        Log.d(TAG,"color int : " + viewDataBinding.dialogColorpickerPallete.color)
+        setVisible(View.VISIBLE,viewDataBinding.dialogColorpicker)
     }
+
+
 
     fun changeZoomDirection(direction: String){
         Log.d(TAG,"DIRECTION"+direction)
@@ -272,10 +500,18 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
 
         SketchChoiceDialog.Builder(this,object : SketchChoiceDialog.DialogListener {
             override fun clickBtn(url: String?, sketchNum: Int) {
+
                 if (url != null) {
                     SetSketchURL(url)
+                    WhiteBoardService.sketchNum = sketchNum
+                    var msg: Message? = null
+                    msg = Message.obtain(null, WhiteBoardService.MSG_SEND_SKETCH)
+                    msg.arg1 = sketchNum
+                    sendHandlerMessage(msg)
                 }
-            }},2).show()
+                }},WhiteBoardService.sketchNum).show()
+
+        //SketchChoiceDialog.Builder(this).show()
     }
 
     fun showShapeMenu(){
@@ -301,7 +537,9 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
             mDialogView.findViewById<Button>(R.id.dialog_btn_cancle)
 
         btn_ok.setOnClickListener(View.OnClickListener {
-            drawingPanel.clearAll()
+            var msg: Message? = null
+            msg = Message.obtain(null, WhiteBoardService.MSG_SEND_REMOVE_ACTION)
+            sendHandlerMessage(msg)
             builder.dismiss()
         })
 
@@ -316,7 +554,7 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
 
 
 
-    inner class DrawingPanel(context: Context?) : View(context),
+    inner class DrawingPaneltogether(context: Context?) : View(context),
         View.OnTouchListener {
         private val mCanvas: Canvas
         private var mPath: Path
@@ -373,34 +611,35 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
                     }
                 }
             }
-            Log.d(TAG,"paths_info"+paths_info.size)
-          for (i in 0..paths_info.size-1) {
-              var p = paths_info.get(i)
-              // 도형 그리기 일 경우
-              if(p.shapemode){
-                  when(p.shapetype){
-                      1->{
-                          var rect =RectF(p.listxy.get(0).x,p.listxy.get(0).y,
-                              p.shapeRightX, p.shapeRightY
-                          )
-                          canvas.drawArc(rect, 0F, 360F, false, p.paint);
-                      }
-                      2->{
-                          drawTriangle(canvas, p.paint, p.listxy.get(0).x, p.listxy.get(0).y, p.shapeRightX - p.listxy.get(0).x);
-                      }
-                      3->{
-                          var rect =Rect(p.listxy.get(0).x.toInt(),p.listxy.get(0).y.toInt(),
-                              p.shapeRightX.toInt(), p.shapeRightY.toInt()
-                          )
-                          Log.d(TAG,"X: " +p.listxy.get(0).x.toInt() +"SX"+ p.shapeRightX.toInt())
-                          canvas.drawRect(rect, p.paint)
-                      }
-                  }
-              }else{
-                  // 일반 그리기 또는 지우기 일 경우
-                  canvas.drawPath(p.path, p.paint)
-              }
-          }
+            Log.d(TAG,"paths_info"+allpaths_info.size)
+            for (p in allpaths_info) {
+                // 도형 그리기 일 경우
+                if(p.shapemode){
+                    when(p.shapetype){
+                        1->{
+                            Log.d(TAG,"shapemode,X : "+p.listxy.get(0).x)
+                            var rect =RectF(p.listxy.get(0).x,p.listxy.get(0).y,
+                                p.shapeRightX, p.shapeRightY
+                            )
+                            canvas.drawArc(rect, 0F, 360F, false, p.paint);
+                        }
+                        2->{
+                            var rect =Rect(p.listxy.get(0).x.toInt(),p.listxy.get(0).y.toInt(),
+                                p.shapeRightX.toInt(), p.shapeRightY.toInt()
+                            )
+                            Log.d(TAG,"X: " +p.listxy.get(0).x.toInt() +"SX"+ p.shapeRightX.toInt())
+                            canvas.drawRect(rect, p.paint)
+                        }
+                        3->{
+                            drawTriangle(canvas, p.paint, p.listxy.get(0).x, p.listxy.get(0).y, p.shapeRightX - p.listxy.get(0).x);
+                        }
+                    }
+                }else{
+                    // 일반 그리기 또는 지우기 일 경우
+                    Log.d(TAG,"COLOR : : "+p.paint.color)
+                    canvas.drawPath(p.path, p.paint)
+                }
+            }
             if(sketch != null){
                 drawSketchBitmap(canvas)
             }
@@ -426,40 +665,41 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
 
             path = Path_info()
             path.setpaint(mPaint)
-            path_count++
-            paths_info.add(path)
+            path_count = allpaths_info.size+1
+            Log.d(TAG,"SIZE"+allpaths_info.size)
+            allpaths_info.add(path)
+            Log.d(TAG,"SIZE"+allpaths_info.size)
 
             if(zoomStatus){
                 //확대했을때 그림을 그린 경우 좌표값을 축소했을때의 좌표값과 차이가 있어 계산해서 넣어줘야함
                 var listAbsolute = getAbsolutePosition(x,y,0f,0f,2f)
                 mPath.moveTo(listAbsolute.get(0), listAbsolute.get(1))
-                paths_info.get(path_count-1).setxy(listAbsolute.get(0),listAbsolute.get(1))
+                allpaths_info.get(path_count-1).setxy(listAbsolute.get(0),listAbsolute.get(1))
             }else{
                 mPath.moveTo(x, y)
-                paths_info.get(path_count-1).setxy(x,y)
+                allpaths_info.get(path_count-1).setxy(x,y)
             }
-
 
             callprevpaint() // 전에 펜 상태 불러오기 ex) 색상
 
             if (penMode){
                 Log.d(TAG,"pentype"+pentype)
-                paths_info.get(path_count-1).setpentype(pentype)
+                allpaths_info.get(path_count-1).setpentype(pentype)
             }else if(shapeMode){
-                paths_info.get(path_count-1).setshapetype(shapetype)
+                allpaths_info.get(path_count-1).setshapetype(shapetype)
                 if (zoomStatus){
                     var listAbsolute = getAbsolutePosition(x,y,0f,0f,2f)
-                    paths_info.get(path_count-1).shapeRightX = listAbsolute.get(0)
-                    paths_info.get(path_count-1).shapeRightY = listAbsolute.get(1)
+                    allpaths_info.get(path_count-1).shapeRightX = listAbsolute.get(0)
+                    allpaths_info.get(path_count-1).shapeRightY = listAbsolute.get(1)
                 }else{
-                    paths_info.get(path_count-1).shapeRightX = x
-                    paths_info.get(path_count-1).shapeRightY = y
+                    allpaths_info.get(path_count-1).shapeRightX = x
+                    allpaths_info.get(path_count-1).shapeRightY = y
                 }
 
 
             }else if(eraseMode){
-                paths_info.get(path_count-1).erasestrokewidth = erasestrokewidth
-                paths_info.get(path_count-1).setpentype(4)
+                allpaths_info.get(path_count-1).erasestrokewidth = erasestrokewidth
+                allpaths_info.get(path_count-1).setpentype(4)
                 Log.d(TAG,"STROKEWIDTH"+erasestrokewidth)
             }
 
@@ -471,22 +711,22 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
                     //확대 했을때 그림을 그린 경우 좌표값을 축소 했을때의 좌표값과 차이가 있어 계산해서 넣어줘야함
                     var listAbsolute = getAbsolutePosition(x,y,0f,0f,2f)
                     mPath.lineTo(listAbsolute.get(0), listAbsolute.get(1))
-                    paths_info.get(path_count-1).setpath(mPath)
-                    paths_info.get(path_count-1).setxy(listAbsolute.get(0),listAbsolute.get(1))
+                    allpaths_info.get(path_count-1).setpath(mPath)
+                    allpaths_info.get(path_count-1).setxy(listAbsolute.get(0),listAbsolute.get(1))
                 }else{
                     mPath.lineTo(x, y)
-                    paths_info.get(path_count-1).setpath(mPath)
-                    paths_info.get(path_count-1).setxy(x,y)
+                    allpaths_info.get(path_count-1).setpath(mPath)
+                    allpaths_info.get(path_count-1).setxy(x,y)
                 }
 
             }else if(shapeMode){
                 if(zoomStatus){
                     var listAbsolute = getAbsolutePosition(x,y,0f,0f,2f)
-                    paths_info.get(path_count-1).shapeRightX = listAbsolute.get(0)
-                    paths_info.get(path_count-1).shapeRightY = listAbsolute.get(1)
+                    allpaths_info.get(path_count-1).shapeRightX = listAbsolute.get(0)
+                    allpaths_info.get(path_count-1).shapeRightY = listAbsolute.get(1)
                 }else{
-                    paths_info.get(path_count-1).shapeRightX = x
-                    paths_info.get(path_count-1).shapeRightY = y
+                    allpaths_info.get(path_count-1).shapeRightX = x
+                    allpaths_info.get(path_count-1).shapeRightY = y
                 }
             }
 
@@ -501,14 +741,16 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
         }
 
         private fun touch_up(x: Float, y: Float) {
-            if(penMode || eraseMode){
-                paths_info.get(path_count-1).setpath(mPath)
-            }
+            allpaths_info.get(path_count-1).setname("hongs")
+
+            WhiteBoardService.path_info =  allpaths_info.get(path_count-1)
+            var msg: Message? = null
+            msg = Message.obtain(null, WhiteBoardService.MSG_SEND_DRAWING)
+
+            sendHandlerMessage(msg)
 
             mPath = Path()
             mPaint = Paint()
-
-            Log.d(TAG,paths_info.toString())
         }
 
         fun callprevpaint(){
@@ -518,6 +760,8 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
             mPaint.strokeJoin = Paint.Join.ROUND
             mPaint.strokeCap = Paint.Cap.ROUND
             mPaint.strokeWidth = prevWidth
+            allpaths_info.get(path_count-1).setpencolor(prevColor)
+            allpaths_info.get(path_count-1).setpenwidth(prevWidth)
         }
 
         fun setPaintColor(color : Int){
@@ -526,7 +770,7 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
         }
 
         fun clearAll(){
-            paths_info.clear()
+            allpaths_info.clear()
             path_count = 0
             invalidate()
         }
@@ -544,7 +788,7 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
             try {
                 val fos: FileOutputStream = FileOutputStream(
                     File(dir, FILE_NAME+"_"+java.text.SimpleDateFormat("yyyyMMddHHmmss").format(Date())+".png"
-                )
+                    )
                 )
 
                 saveFile.compress(Bitmap.CompressFormat.PNG, 100, fos)
@@ -648,23 +892,44 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
         fun setSketchImg(img : Bitmap){
             // 원본이미지 영역을 축소해서 그리기
             this.sketch = img
-           invalidate()
+            invalidate()
         }
 
         fun undo(){
-            if(paths_info.size>0){
-                undonePaths.add(paths_info.removeAt(paths_info.size-1))
-                path_count--
+            if(allpaths_info.size>0){
+                Log.d(TAG,"size"+allpaths_info.size)
+
+                for (i in allpaths_info.size-1 downTo 0){
+                    Log.d(TAG,"undo"+allpaths_info.get(i).name)
+                    Log.d(TAG,"undo"+name)
+
+                    if(allpaths_info.get(i).name.equals(name)){
+                        undonePaths.add(allpaths_info.removeAt(i))
+                        break
+                    }
+                }
+
+                var msg: Message? = null
+                msg = Message.obtain(null, WhiteBoardService.MSG_SEND_UNDO_ACTION)
+
+                sendHandlerMessage(msg)
                 invalidate()
             }
         }
 
         fun redo(){
             if (undonePaths.size > 0) {
-                paths_info.add(undonePaths.removeAt(undonePaths.size - 1))
-                path_count++
+                allpaths_info.add(undonePaths.removeAt(undonePaths.size - 1))
+                WhiteBoardService.path_info =  allpaths_info.get(allpaths_info.size-1)
+
                 invalidate()
             }
+
+
+            var msg: Message? = null
+            msg = Message.obtain(null, WhiteBoardService.MSG_SEND_DRAWING)
+
+            sendHandlerMessage(msg)
         }
 
 
@@ -673,7 +938,7 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
         fun hideMenu(){
             viewDataBinding.dialogShapeSelect.visibility = View.INVISIBLE
             viewDataBinding.dialogPenSelect.visibility = View.INVISIBLE
-           viewDataBinding.dialogColorpicker.visibility = View.INVISIBLE
+            viewDataBinding.dialogColorpicker.visibility = View.INVISIBLE
             viewDataBinding.dialogEraseSelect.visibility = View.INVISIBLE
         }
 
@@ -684,14 +949,14 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
             path.moveTo(x, (y + width).toFloat()) // Bottom left
             path.lineTo(x+halfWidth, y) // Bottom right
             path.lineTo((x + width).toFloat(), (y + width).toFloat()) // Bottom right
-           // path.lineTo(x.toFloat(), (y - halfWidth).toFloat()) // Back to Top
+            // path.lineTo(x.toFloat(), (y - halfWidth).toFloat()) // Back to Top
             path.close()
             canvas.drawPath(path, paint)
         }
 
         fun getAbsolutePosition(Ax: Float, Ay: Float, centerX : Float, centerY : Float, mScaleFactor : Float): FloatArray {
-          var cx = 0f
-          var cy = 0f
+            var cx = 0f
+            var cy = 0f
             when(zoomdirection){
                 1->{
                     cx = 0f
@@ -787,10 +1052,7 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
         override fun onDraw(canvas: Canvas?) {
             super.onDraw(canvas)
 
-            Log.d(TAG,"WIDTH"+canvas!!.width)
-            Log.d(TAG,"height"+canvas!!.height)
-
-            mPath.moveTo(this.width.toFloat()*1/10f,(this.height/2).toFloat()) // Bottom left
+            mPath.moveTo(this.width.toFloat()*1/10,(this.height/2).toFloat()) // Bottom left
             mPath.lineTo(this.width.toFloat()*9/10,(this.height/2).toFloat()) // Bottom right
 
             canvas!!.drawPath(mPath, mPaint)
@@ -832,11 +1094,15 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
             mCanvas = Canvas()
             mPath = Path()
 
-
-
-
-
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+
+        stopService(Intent(this, WhiteBoardService::class.java))
+
     }
 
 }

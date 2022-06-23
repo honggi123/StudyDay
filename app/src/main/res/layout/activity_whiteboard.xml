@@ -1,0 +1,682 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+   >
+
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="activitiy"
+            type="com.coworkerteam.coworker.ui.unity.WhiteBoardActivity" />
+
+        <variable
+            name="drawingpanel"
+            type="com.coworkerteam.coworker.ui.unity.WhiteBoardActivity.DrawingPanel" />
+
+        <variable
+            name="zoomdirection"
+            type="Integer" />
+
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F3F2F2">
+
+        <include
+            android:id="@+id/toolbar_whiteboard"
+            layout="@layout/toolbar_whiteboard"
+            android:elevation="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout4"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="1dp"
+            android:background="#FFFFFF"
+            android:elevation="5dp"
+            android:orientation="horizontal"
+            android:paddingStart="10dp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/textView96"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="화이트보드 • 페인팅 드로우"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/imageButton6"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="10dp"
+                android:background="#00FFFFFF"
+                app:srcCompat="@drawable/ic_baseline_zoom_in_24" />
+
+
+
+            <ImageButton
+                android:id="@+id/imageButton5"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+
+                android:background="#00FFFFFF"
+                app:srcCompat="@drawable/ic_baseline_undo_24" />
+
+            <ImageButton
+                android:id="@+id/imageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+
+                android:background="#02FFFFFF"
+                app:srcCompat="@drawable/ic_baseline_redo_24" />
+
+            <View
+                android:id="@+id/view9"
+                android:layout_width="1dp"
+                android:layout_height="3dp"
+                />
+
+        </LinearLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/whiteboard_canvas"
+            android:layout_width="1500px"
+            android:layout_height="850px"
+            android:background="@drawable/whiteboard_canvas_background"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_whiteboard">
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/dialog_colorpicker"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/whiteboard_menu_dialog_background"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="5dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@+id/whiteboard_menu_colorpick"
+            app:layout_constraintTop_toBottomOf="@+id/whiteboard_menu_pen">
+
+
+            <TextView
+                android:id="@+id/textView105"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="색상 선택"
+                android:textSize="13dp"
+                android:textStyle="bold" />
+
+            <com.github.danielnilsson9.colorpickerview.view.ColorPickerView
+                android:id="@+id/dialog_colorpicker_pallete"
+                android:layout_width="160dp"
+                android:layout_height="130dp"></com.github.danielnilsson9.colorpickerview.view.ColorPickerView>
+
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:gravity="right|center_vertical">
+
+
+                <TextView
+                    android:id="@+id/textView98"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+
+                    android:onClick='@{(view)->drawingpanel.hideMenu()}'
+                    android:text="취소"
+                    android:textSize="13dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView101"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:onClick='@{(view)->activitiy.setColor()}'
+                    android:text="확인"
+                    android:textSize="13dp"
+                    android:textStyle="bold" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:id="@+id/linearLayout6"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            android:background="@drawable/whiteboard_toolbar"
+            android:orientation="vertical"
+
+            android:paddingBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/imageButton9"
+            app:layout_constraintEnd_toStartOf="@+id/whiteboard_canvas"
+            app:layout_constraintStart_toStartOf="@+id/whiteboard_canvas"
+            app:layout_constraintTop_toTopOf="@+id/whiteboard_canvas">
+
+
+            <ImageView
+                android:id="@+id/imageView15"
+                android:padding="5dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:visibility="@{drawingpanel.penMode? View.VISIBLE:View.INVISIBLE}"
+                bind:srcCompat="@drawable/whiteboard_button_background" />
+            <ImageView
+                android:id="@+id/imageView16"
+                android:padding="5dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:visibility="invisible"
+                bind:srcCompat="@drawable/whiteboard_button_background" />
+            <ImageView
+                android:id="@+id/imageView17"
+                android:padding="5dp"
+                android:layout_width="50dp"
+                android:visibility="@{drawingpanel.eraseMode? View.VISIBLE:View.INVISIBLE}"
+                android:layout_height="50dp"
+                bind:srcCompat="@drawable/whiteboard_button_background" />
+            <ImageView
+                android:id="@+id/imageView18"
+                android:padding="5dp"
+                android:visibility="@{drawingpanel.shapeMode? View.VISIBLE:View.INVISIBLE}"
+
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                bind:srcCompat="@drawable/whiteboard_button_background" />
+        </LinearLayout>
+
+
+
+
+        <ImageView
+            android:id="@+id/whiteboard_zoom_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick='@{(view)->activitiy.changeZoomDirection("top")}'
+            android:visibility="@{zoomdirection == 3 ?View.VISIBLE:zoomdirection == 4? View.VISIBLE:View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/whiteboard_canvas"
+            bind:srcCompat="@drawable/whiteboard_arrow_up" />
+
+        <ImageView
+            android:id="@+id/whiteboard_zoom_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick='@{(view)->activitiy.changeZoomDirection("bottom")}'
+            android:visibility="@{zoomdirection == 1 ?View.VISIBLE:zoomdirection == 2? View.VISIBLE:View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@+id/whiteboard_canvas"
+            app:layout_constraintEnd_toEndOf="parent"
+
+
+            app:layout_constraintHorizontal_bias="0.523"
+            app:layout_constraintStart_toStartOf="parent"
+            bind:srcCompat="@drawable/whiteboard_arrow_down" />
+
+        <ImageView
+            android:id="@+id/whiteboard_zoom_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick='@{(view)->activitiy.changeZoomDirection("right")}'
+            android:visibility="@{zoomdirection == 1 ?View.VISIBLE:zoomdirection == 3? View.VISIBLE:View.GONE}"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/whiteboard_canvas"
+            app:layout_constraintTop_toTopOf="parent"
+            bind:srcCompat="@drawable/whiteboard_arrow_right" />
+
+        <ImageView
+            android:id="@+id/whiteboard_zoom_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick='@{(view)->activitiy.changeZoomDirection("left")}'
+            android:visibility="@{zoomdirection == 2 ?View.VISIBLE:zoomdirection == 4? View.VISIBLE:View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout6"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_whiteboard"
+            bind:srcCompat="@drawable/whiteboard_arrow_prev" />
+
+        <ImageButton
+            android:id="@+id/whiteboard_menu_pen"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:onClick="@{(view)->activitiy.showPenMenu()}"
+            app:layout_constraintEnd_toEndOf="@+id/linearLayout6"
+            app:layout_constraintStart_toStartOf="@+id/linearLayout6"
+            app:layout_constraintTop_toTopOf="@+id/linearLayout6"
+            bind:srcCompat="@drawable/pen_icon" />
+
+        <ImageButton
+            android:id="@+id/whiteboard_menu_colorpick"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:onClick="@{(view)->activitiy.showColorPicker()}"
+            app:layout_constraintEnd_toEndOf="@+id/linearLayout6"
+            app:layout_constraintStart_toStartOf="@+id/linearLayout6"
+            app:layout_constraintTop_toBottomOf="@+id/whiteboard_menu_pen"
+            app:srcCompat="@drawable/pallete_icon" />
+
+        <ImageButton
+            android:id="@+id/whiteboard_menu_erase"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:onClick="@{(view)->activitiy.showEraseMenu()}"
+            app:layout_constraintEnd_toEndOf="@+id/linearLayout6"
+            app:layout_constraintStart_toStartOf="@+id/linearLayout6"
+            app:layout_constraintTop_toBottomOf="@+id/whiteboard_menu_colorpick"
+            app:srcCompat="@drawable/eraser_icon" />
+
+        <ImageButton
+            android:id="@+id/whiteboard_menu_shape"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:onClick="@{(view)->activitiy.showShapeMenu()}"
+            app:layout_constraintEnd_toEndOf="@+id/whiteboard_menu_backdraw"
+            app:layout_constraintStart_toStartOf="@+id/whiteboard_menu_backdraw"
+            app:layout_constraintTop_toBottomOf="@+id/whiteboard_menu_erase"
+            app:srcCompat="@drawable/shapes_icon" />
+
+        <ImageButton
+            android:id="@+id/whiteboard_menu_backdraw"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:onClick="@{(view)->activitiy.showSketchMenu()}"
+            app:layout_constraintEnd_toEndOf="@+id/linearLayout6"
+            app:layout_constraintStart_toStartOf="@+id/linearLayout6"
+            app:layout_constraintTop_toBottomOf="@+id/whiteboard_menu_shape"
+            app:srcCompat="@drawable/sketch_icon" />
+
+        <ImageButton
+            android:id="@+id/imageButton9"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:onClick="@{(view)->activitiy.clear()}"
+            app:layout_constraintEnd_toEndOf="@+id/whiteboard_menu_backdraw"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/whiteboard_menu_backdraw"
+            app:layout_constraintTop_toBottomOf="@+id/whiteboard_menu_backdraw"
+            app:srcCompat="@drawable/trash_icon" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/dialog_pen_select"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/whiteboard_menu_dialog_background"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@+id/whiteboard_menu_pen"
+            app:layout_constraintTop_toTopOf="@+id/linearLayout6">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="horizontal"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                app:layout_constraintBottom_toBottomOf="@+id/linearLayout7"
+                app:layout_constraintEnd_toEndOf="@+id/linearLayout7"
+                app:layout_constraintStart_toStartOf="@+id/linearLayout7"
+                app:layout_constraintTop_toTopOf="@+id/linearLayout7">
+
+                <ImageView
+                    android:id="@+id/imageView34"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:visibility="@{drawingpanel.pentype == 1? View.VISIBLE:View.INVISIBLE}"
+
+                    bind:srcCompat="@drawable/whiteboard_button_background" />
+
+                <ImageView
+                    android:id="@+id/imageView32"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:visibility="@{drawingpanel.pentype == 2? View.VISIBLE:View.INVISIBLE}"
+
+                    bind:srcCompat="@drawable/whiteboard_button_background" />
+
+                <ImageView
+                    android:id="@+id/imageView33"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:visibility="@{drawingpanel.pentype == 3? View.VISIBLE:View.INVISIBLE}"
+
+                    bind:srcCompat="@drawable/whiteboard_button_background" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageButton
+                    android:id="@+id/imageButton18"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_weight="1"
+                    android:background="#00FFFFFF"
+                    android:onClick="@{(view)->drawingpanel.setPenMode(1)}"
+                    app:srcCompat="@drawable/pen_icon" />
+
+                <ImageButton
+                    android:id="@+id/imageButton17"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:background="#00FFFFFF"
+
+                    android:onClick="@{(view)->drawingpanel.setPenMode(2)}"
+                    app:srcCompat="@drawable/highlighter_icon" />
+
+                <ImageButton
+                    android:id="@+id/imageButton20"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_weight="1"
+                    android:background="#00FFFFFF"
+
+                    android:onClick="@{(view)->drawingpanel.setPenMode(3)}"
+                    app:srcCompat="@drawable/brush_icon" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="@+id/linearLayout7"
+                app:layout_constraintStart_toStartOf="@+id/linearLayout7"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout7">
+
+                <TextView
+                    android:id="@+id/textView102"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="펜"
+                    android:textSize="10dp" />
+
+                <TextView
+                    android:id="@+id/textView103"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="형광펜"
+                    android:textSize="10dp" />
+
+                <TextView
+                    android:id="@+id/textView104"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="붓"
+                    android:textSize="10dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/whiteboard_canvas_check_width"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="@+id/linearLayout8"
+                app:layout_constraintStart_toStartOf="@+id/linearLayout8"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout8"></LinearLayout>
+
+            <TextView
+                android:id="@+id/textView99"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="크기"
+                android:textSize="10dp"
+                app:layout_constraintEnd_toEndOf="@+id/whiteboard_canvas_check_width"
+                app:layout_constraintStart_toStartOf="@+id/whiteboard_canvas_check_width"
+                app:layout_constraintTop_toBottomOf="@+id/whiteboard_canvas_check_width" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout9"
+                android:layout_width="match_parent"
+
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="@+id/textView99"
+                app:layout_constraintStart_toStartOf="@+id/textView99"
+                app:layout_constraintTop_toBottomOf="@+id/textView99">
+
+                <ImageButton
+                    android:id="@+id/imageButton21"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#00FFFFFF"
+                    app:srcCompat="@drawable/ic_baseline_horizontal_rule_24" />
+
+                <SeekBar
+                    android:id="@+id/seekBar_strokewidth"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:progress="50"
+                    android:thumb="@drawable/whiteboard_custom_seekbar_thumb" />
+
+                <ImageButton
+                    android:id="@+id/imageButton16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#00FFFFFF"
+                    app:srcCompat="@drawable/ic_baseline_add_writemood" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/dialog_shape_select"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/whiteboard_menu_dialog_background"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:padding="5dp"
+            app:layout_constraintBottom_toBottomOf="@+id/whiteboard_menu_shape"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout6"
+            app:layout_constraintTop_toBottomOf="@+id/whiteboard_menu_erase">
+
+            <ImageView
+                android:id="@+id/imageView19"
+                android:layout_width="0dp"
+
+                android:layout_height="match_parent"
+                android:padding="5dp"
+                android:visibility="@{drawingpanel.shapetype == 1? View.VISIBLE:View.INVISIBLE}"
+                app:layout_constraintEnd_toEndOf="@+id/imageButton22"
+                app:layout_constraintStart_toStartOf="@+id/imageButton22"
+                app:layout_constraintStart_toEndOf="@+id/imageButton22"
+                bind:srcCompat="@drawable/whiteboard_button_background"
+                tools:layout_editor_absoluteY="5dp" />
+
+            <ImageView
+                android:id="@+id/imageView20"
+                android:layout_width="0dp"
+
+                android:layout_height="match_parent"
+                android:padding="5dp"
+                android:visibility="@{drawingpanel.shapetype == 2? View.VISIBLE:View.INVISIBLE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/imageButton24"
+                app:layout_constraintStart_toEndOf="@+id/imageButton24"
+                app:layout_constraintStart_toStartOf="@+id/imageButton24"
+                app:layout_constraintTop_toTopOf="parent"
+                bind:srcCompat="@drawable/whiteboard_button_background" />
+
+            <ImageView
+                android:id="@+id/imageView21"
+                android:layout_width="0dp"
+
+                android:layout_height="match_parent"
+                android:padding="5dp"
+                android:visibility="@{drawingpanel.shapetype == 3? View.VISIBLE:View.INVISIBLE}"
+                app:layout_constraintEnd_toEndOf="@+id/imageButton23"
+                app:layout_constraintStart_toStartOf="@+id/imageButton23"
+                app:layout_constraintStart_toEndOf="@+id/imageButton23"
+                bind:srcCompat="@drawable/whiteboard_button_background"
+                tools:layout_editor_absoluteY="5dp" />
+
+            <ImageButton
+                android:id="@+id/imageButton22"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:background="#00FFFFFF"
+                android:onClick="@{(view)->drawingpanel.setShapeMode(1)}"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView19"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/circle_icon" />
+
+            <ImageButton
+                android:id="@+id/imageButton24"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#00FFFFFF"
+                android:onClick="@{(view)->drawingpanel.setShapeMode(2)}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageButton22"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/square_icon" />
+
+            <ImageButton
+                android:id="@+id/imageButton23"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#00FFFFFF"
+                android:onClick="@{(view)->drawingpanel.setShapeMode(3)}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageButton24"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/triangle_icon"></ImageButton>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/dialog_erase_select"
+            android:layout_width="170dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="5dp"
+            android:padding="5dp"
+            android:background="@drawable/whiteboard_menu_dialog_background"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@+id/whiteboard_menu_erase"
+            app:layout_constraintTop_toBottomOf="@+id/whiteboard_menu_colorpick">
+
+            <TextView
+                android:id="@+id/textView100"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="크기"
+                android:textSize="10dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+
+                >
+
+                <ImageButton
+                    android:id="@+id/imageButton29"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="#00FFFFFF"
+                    app:srcCompat="@drawable/ic_baseline_horizontal_rule_24" />
+
+                <SeekBar
+                    android:id="@+id/seekBar_erase_strokewidth"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:progress="50"
+                    android:thumb="@drawable/whiteboard_custom_seekbar_thumb" />
+
+                <ImageButton
+                    android:id="@+id/imageButton19"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#00FFFFFF"
+                    app:srcCompat="@drawable/ic_baseline_add_writemood" />
+            </LinearLayout>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
+
