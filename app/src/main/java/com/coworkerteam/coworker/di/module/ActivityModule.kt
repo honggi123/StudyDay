@@ -27,7 +27,7 @@ import com.coworkerteam.coworker.ui.study.make.MakeStudyViewModel
 import com.coworkerteam.coworker.ui.study.management.ManagementViewModel
 import com.coworkerteam.coworker.ui.study.memberlist.MemberListViewModel
 import com.coworkerteam.coworker.ui.todolist.TodoListViewModel
-import com.coworkerteam.coworker.ui.unity.whiteBoardTogether.WhiteBoardTogetherViewModel
+import com.coworkerteam.coworker.unity.whiteBoard.WhiteBoardTogetherViewModel
 import com.coworkerteam.coworker.ui.yourday.moodPost.make.WriteMoodPostViewModel
 import com.coworkerteam.coworker.ui.yourday.YourdayViewModel
 import com.coworkerteam.coworker.ui.yourday.moodPost.edit.EditMoodPostViewModel

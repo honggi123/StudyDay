@@ -3,47 +3,19 @@ package com.coworkerteam.coworker.data.local.service
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Path
-import android.media.projection.MediaProjection
 import android.os.*
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.coworkerteam.coworker.R
-import com.coworkerteam.coworker.data.local.prefs.AppPreferencesHelper
-import com.coworkerteam.coworker.data.local.prefs.PreferencesHelper
-import com.coworkerteam.coworker.data.local.service.WhiteBoardService.Companion.path_info
-import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
-import com.coworkerteam.coworker.data.model.api.ParticipantsResponse
-import com.coworkerteam.coworker.data.model.other.ChatData
-import com.coworkerteam.coworker.data.model.other.Participant
-import com.coworkerteam.coworker.data.model.other.SingleObject.OkHttpBuilder
-import com.coworkerteam.coworker.data.model.other.SingleObject.SinglePeerConnectionFactory
-import com.coworkerteam.coworker.ui.camstudy.cam.CamStudyActivity
-import com.coworkerteam.coworker.ui.main.VoiceRecorder
-import com.coworkerteam.coworker.ui.unity.data.Path_info
-import com.coworkerteam.coworker.ui.unity.data.Xy
+import com.coworkerteam.coworker.unity.data.Path_info
 import com.google.gson.Gson
-import com.konovalov.vad.VadConfig
 import io.socket.client.IO
 import io.socket.client.Manager
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
 import io.socket.engineio.client.EngineIOException
-import okhttp3.OkHttpClient
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import org.webrtc.*
-import java.net.URISyntaxException
-import java.security.KeyManagementException
-import java.security.NoSuchAlgorithmException
-import java.security.cert.X509Certificate
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
 
 class WhiteBoardService : Service() {
     val TAG = "WhiteBoardService"
@@ -175,35 +147,7 @@ class WhiteBoardService : Service() {
                                         Message.obtain(null, MSG_RECEIVE_ROOM_DATA)
 
                                     var bundle = Bundle()
-                                    /*
-                                                                    if(message.getBoolean("isSetSketch")){
-                                                                        bundle.putBoolean("isSetSketch", true)
-                                                                    }else{
-                                                                        bundle.putBoolean("isSetSketch", false)
-                                                                    }
-
-                                                                    bundle.putInt("num", message.getInt("participantNum"))
-                                                                    var jsonArray =JSONArray(message.getString("canvasList"))
-                                */
                                     bundle.putString("data",message.toString())
-                                    /*
-                                        for (p in allpaths_info){
-                                            p.path = Path()
-                                            p.paint = Paint()
-                                            p.paint .isAntiAlias = true
-                                            p.paint .color = Color.BLACK
-                                            p.paint .style = Paint.Style.STROKE
-                                            p.paint .strokeJoin = Paint.Join.ROUND
-                                            p.paint .strokeCap = Paint.Cap.ROUND
-                                            p.paint .strokeWidth = 50f
-
-                                            p.paint.color =  Color.parseColor(p.pencolor)
-
-                                            Log.d(TAG,Integer.decode(p.pencolor).toString())
-                                            p.paint.strokeWidth = p.penwidth
-                                            setPath(p.path,p.listxy)
-                                        }
-*/
 
                                     handlerMessage.data = bundle
                                     sendHandlerMessage(handlerMessage)
@@ -311,9 +255,8 @@ class WhiteBoardService : Service() {
 
                     message.put("id", "intoCanvas")
                     message.put("roomLink","https://www.studyday.co.kr/link?idx=211?pwd=null")
-                    message.put("nickname","hongs")
+                    message.put("nickname","honghong5")
 
-                    Log.d("intocanvas",message.toString())
                     sendMessage(message)
 
                     val handlerMessage =
@@ -330,13 +273,9 @@ class WhiteBoardService : Service() {
                     val message = JSONObject()
 
                     message.put("id", "sendDraw")
-                    message.put("nickname","hongs")
+                    message.put("nickname","honghong5")
                     var drawData : String = gson.toJson(path_info)
-                    Log.d(TAG,"drawData : "+ drawData)
-
                     //  list.put(drawData)
-                    Log.d(TAG,"s : "+ drawData)
-
                     message.put("draw",drawData)
                     var s = message.toString().replace("\\", "")
 
@@ -347,7 +286,7 @@ class WhiteBoardService : Service() {
                     val message = JSONObject()
 
                     message.put("id", "sendSetSketch")
-                    message.put("nickname","hongs")
+                    message.put("nickname","honghong5")
                     message.put("sketchNum",msg.arg1)
 
                     sendMessage(message)
@@ -355,7 +294,7 @@ class WhiteBoardService : Service() {
                     val message = JSONObject()
 
                     message.put("id", "sendCanvasAction")
-                    message.put("nickname","hongs")
+                    message.put("nickname","honghong5")
                     message.put("actionName","undo")
 
                     sendMessage(message)
@@ -364,7 +303,7 @@ class WhiteBoardService : Service() {
                 val message = JSONObject()
 
                 message.put("id", "sendCanvasAction")
-                message.put("nickname","hongs")
+                message.put("nickname","honghong5")
                 message.put("actionName","remove")
 
                 sendMessage(message)
@@ -377,7 +316,7 @@ class WhiteBoardService : Service() {
                     val message = JSONObject()
 
                     message.put("id", "leaveWhiteboard")
-                    message.put("nickname","hongs")
+                    message.put("nickname","honghong5")
 
                     sendMessage(message)
                 }
@@ -389,29 +328,6 @@ class WhiteBoardService : Service() {
     }
 
 
-private fun getSendMessage(event: String): JSONObject {
-    val message = JSONObject()
-    when (event) {
-        "drawing" -> {
-            message.put("id", "joinRoom")
-        //    message.put("name", hostname)
-            message.put("크기", path_info.paint.strokeWidth)
-            message.put("색상", path_info.paint.color)
-            message.put("펜타입", path_info.pentype)
-            var maglist = JSONArray();
-            for (p in path_info.listxy){
-                var xy = JSONObject()
-                xy.put("x",p.x)
-                xy.put("y",p.y)
-                maglist.put(xy)
-            }
-            message.put("xy좌표값모음",maglist)
-        }
-    }
-
-
-    return message
-}
 
 
 object notification_whiteboard {

@@ -1,4 +1,4 @@
-package com.coworkerteam.coworker.ui.unity.whiteBoardTogether
+package com.coworkerteam.coworker.unity.whiteBoard
 
 import android.Manifest
 import android.content.ComponentName
@@ -21,23 +21,19 @@ import com.coworkerteam.coworker.data.local.service.WhiteBoardService
 import com.coworkerteam.coworker.databinding.ActivityWhiteboardtogetherBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.dialog.SketchChoiceDialog
-import com.coworkerteam.coworker.ui.unity.data.Path_info
-import com.coworkerteam.coworker.ui.unity.data.Xy
+import com.coworkerteam.coworker.unity.data.Path_info
+import com.coworkerteam.coworker.unity.data.Xy
+import com.coworkerteam.coworker.unity.data.NameView
 import com.google.gson.Gson
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.json.JSONArray
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
-import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
 
@@ -91,12 +87,15 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
         canvas = findViewById<View>(R.id.whiteboard_canvas) as ConstraintLayout
         drawingPanel = DrawingPaneltogether(this)
         canvas!!.addView(drawingPanel)
+
+
+
         viewDataBinding.activitiy = this
         viewDataBinding.drawingpanel = drawingPanel
         viewDataBinding.zoomdirection = drawingPanel.zoomdirection
 
         name = viewModel.getUserName().toString()
-        name = "hongs"
+        name = "honghong5"
         //툴바 세팅
         var main_toolbar = viewDataBinding.toolbarWhiteboard as androidx.appcompat.widget.Toolbar
 
@@ -160,7 +159,7 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
 
 
         var intent = Intent(this, WhiteBoardService::class.java)
-        intent.putExtra("name","hongs")
+        intent.putExtra("name","honghong5")
         intent.putExtra("roomLink",roomLink)
         startForegroundService(intent)
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
@@ -223,6 +222,18 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
     }
 
     private fun initView() {
+    }
+
+    fun showOtherName(name : String, x: Float,y:Float){
+
+        coroutineScope.launch {
+            var nameview = NameView(context = applicationContext)
+            nameview.setName(name)
+            nameview.setXY(x,y)
+            canvas!!.addView(nameview)
+            delay(1000)
+            canvas!!.removeView(nameview)
+        }
     }
 
     inner class CallbackHandler(looper: Looper) : Handler(looper) {
@@ -297,8 +308,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                 var data = msg.data
                 var gson = Gson()
                 var path_info = gson.fromJson(data.get("data").toString(),Path_info::class.java)
-                Log.d(TAG,data.get("data").toString())
-                Log.d(TAG,"SHAPEMODE"+path_info.shapemode)
 
                 path_info.setpaint(Paint())
                 path_info.setpath(Path())
@@ -308,6 +317,8 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                 path_info.paint .strokeJoin = Paint.Join.ROUND
                 path_info.paint .strokeCap = Paint.Cap.ROUND
                 path_info.paint.strokeWidth = path_info.penwidth
+
+                path_info.name?.let { showOtherName(it,path_info.listxy.get(0).x,path_info.listxy.get(0).y) }
 
                 path_info.paint.color =  Color.parseColor(path_info.pencolor)
                 if(path_info.shapemode == true){
@@ -439,7 +450,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
             } catch (e: RemoteException) {
                 e.printStackTrace()
             }
-            Log.d(TAG, "Send message to Service")
         }
     }
 
@@ -482,14 +492,12 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
 
     fun setColor(){
         drawingPanel.setPaintColor(viewDataBinding.dialogColorpickerPallete.color)
-        Log.d(TAG,"color int : " + viewDataBinding.dialogColorpickerPallete.color)
         setVisible(View.VISIBLE,viewDataBinding.dialogColorpicker)
     }
 
 
 
     fun changeZoomDirection(direction: String){
-        Log.d(TAG,"DIRECTION"+direction)
         drawingPanel.setZoomDirection(direction)
         viewDataBinding.zoomdirection = drawingPanel.zoomdirection
     }
@@ -586,12 +594,9 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
         var zoomDrawCount = 0
         var zoomdirection = 0
 
-        fun colorChanged(color: Int) {
-            mPaint.color = color
-        }
-
         override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
             super.onSizeChanged(w, h, oldw, oldh)
+
         }
 
         override fun onDraw(canvas: Canvas) {
@@ -611,7 +616,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                     }
                 }
             }
-            Log.d(TAG,"paths_info"+allpaths_info.size)
             for (p in allpaths_info) {
                 // 도형 그리기 일 경우
                 if(p.shapemode){
@@ -627,7 +631,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                             var rect =Rect(p.listxy.get(0).x.toInt(),p.listxy.get(0).y.toInt(),
                                 p.shapeRightX.toInt(), p.shapeRightY.toInt()
                             )
-                            Log.d(TAG,"X: " +p.listxy.get(0).x.toInt() +"SX"+ p.shapeRightX.toInt())
                             canvas.drawRect(rect, p.paint)
                         }
                         3->{
@@ -636,7 +639,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                     }
                 }else{
                     // 일반 그리기 또는 지우기 일 경우
-                    Log.d(TAG,"COLOR : : "+p.paint.color)
                     canvas.drawPath(p.path, p.paint)
                 }
             }
@@ -661,14 +663,13 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
 
 
         private fun touch_start(x: Float, y: Float) {
+
             mPath.reset()
 
             path = Path_info()
             path.setpaint(mPaint)
             path_count = allpaths_info.size+1
-            Log.d(TAG,"SIZE"+allpaths_info.size)
             allpaths_info.add(path)
-            Log.d(TAG,"SIZE"+allpaths_info.size)
 
             if(zoomStatus){
                 //확대했을때 그림을 그린 경우 좌표값을 축소했을때의 좌표값과 차이가 있어 계산해서 넣어줘야함
@@ -683,7 +684,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
             callprevpaint() // 전에 펜 상태 불러오기 ex) 색상
 
             if (penMode){
-                Log.d(TAG,"pentype"+pentype)
                 allpaths_info.get(path_count-1).setpentype(pentype)
             }else if(shapeMode){
                 allpaths_info.get(path_count-1).setshapetype(shapetype)
@@ -700,7 +700,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
             }else if(eraseMode){
                 allpaths_info.get(path_count-1).erasestrokewidth = erasestrokewidth
                 allpaths_info.get(path_count-1).setpentype(4)
-                Log.d(TAG,"STROKEWIDTH"+erasestrokewidth)
             }
 
         }
@@ -730,24 +729,17 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                 }
             }
 
-            /*
-            if (zoomStatus){
-                // 확대했을 경우 내가 그릴때 보여지는 좌표값
-                var listAbsolute = getAbsolutePosition(x,y,0f,0f,2f)
-                paths_info.get(path_count-1).setzoomxy(listAbsolute.get(0),listAbsolute.get(1))
-            }
-
-             */
         }
 
         private fun touch_up(x: Float, y: Float) {
-            allpaths_info.get(path_count-1).setname("hongs")
+            allpaths_info.get(path_count-1).setname("honghong5")
 
             WhiteBoardService.path_info =  allpaths_info.get(path_count-1)
             var msg: Message? = null
             msg = Message.obtain(null, WhiteBoardService.MSG_SEND_DRAWING)
 
             sendHandlerMessage(msg)
+
 
             mPath = Path()
             mPaint = Paint()
@@ -784,7 +776,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
             if (!dir.exists()){
                 dir.mkdir()
             }
-            Log.d("Paintview dir : ",dir.absolutePath)
             try {
                 val fos: FileOutputStream = FileOutputStream(
                     File(dir, FILE_NAME+"_"+java.text.SimpleDateFormat("yyyyMMddHHmmss").format(Date())+".png"
@@ -1030,7 +1021,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
             mPaint.strokeJoin = Paint.Join.ROUND
             mPaint.strokeCap = Paint.Cap.ROUND
             mPaint.strokeWidth = 50f
-            //  mPaint.alpha = 130
             setPenMode(1)
 
             outercirclePaint.strokeWidth = 6f

@@ -1,4 +1,4 @@
-package com.coworkerteam.coworker.ui.unity
+package com.coworkerteam.coworker.unity
 
 import android.content.Context
 import android.content.Intent
@@ -7,12 +7,12 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.util.Log
-import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
 import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.ui.main.MainActivity
-import com.coworkerteam.coworker.ui.unity.whiteBoardTogether.WhiteBoardTogetherActivity
+import com.coworkerteam.coworker.unity.whiteBoard.WhiteBoardActivity
+import com.coworkerteam.coworker.unity.whiteBoard.WhiteBoardTogetherActivity
 import com.unity3d.player.UnityPlayer
 import com.unity3d.player.UnityPlayerActivity
 

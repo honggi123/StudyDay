@@ -12,8 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.databinding.DialogWhiteboardSketchChoiceBinding
-import com.coworkerteam.coworker.ui.unity.WhiteBoardActivity
-import com.coworkerteam.coworker.ui.unity.data.SketchURL
+import com.coworkerteam.coworker.unity.data.SketchURL
 
 class SketchChoiceDialog (ctx: Context,dialogListener:DialogListener,sketchNum: Int) : Dialog(ctx){
 

@@ -1,12 +1,9 @@
-package com.coworkerteam.coworker.ui.unity.whiteBoardTogether
+package com.coworkerteam.coworker.unity.whiteBoard
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.coworkerteam.coworker.data.UserRepository
-import com.coworkerteam.coworker.data.model.api.EmpathyResponse
-import com.coworkerteam.coworker.data.model.api.MoodPostResponse
-import com.coworkerteam.coworker.data.model.api.PostDeleteResponse
 import com.coworkerteam.coworker.data.model.api.SuccessPostResponse
 import com.coworkerteam.coworker.ui.base.BaseViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers

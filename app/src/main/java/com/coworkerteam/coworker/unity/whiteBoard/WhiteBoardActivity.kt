@@ -1,4 +1,4 @@
-package com.coworkerteam.coworker.ui.unity
+package com.coworkerteam.coworker.unity.whiteBoard
 
 import android.Manifest
 import android.content.Context
@@ -18,7 +18,7 @@ import com.coworkerteam.coworker.databinding.ActivityWhiteboardBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyViewModel
 import com.coworkerteam.coworker.ui.dialog.SketchChoiceDialog
-import com.coworkerteam.coworker.ui.unity.data.Path_info
+import com.coworkerteam.coworker.unity.data.Path_info
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import kotlinx.coroutines.CoroutineScope
@@ -139,14 +139,6 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
             }
         })
-        /*
-        val brightnessSlideBar = findViewById<BrightnessSlideBar>(R.id.brightnessSlide)
-        viewDataBinding.dialogColorpickerPallete.attachBrightnessSlider(brightnessSlideBar)
-        viewDataBinding.dialogColorpickerPallete.setInitialColor(Color.BLACK)
-        viewDataBinding.dialogColorpickerPallete.setColorListener(ColorListener(){ color: Int, b: Boolean ->
-            drawingPanel.setPaintColor(color)
-        })
-         */
     }
 
     // 터치 이벤트 처리

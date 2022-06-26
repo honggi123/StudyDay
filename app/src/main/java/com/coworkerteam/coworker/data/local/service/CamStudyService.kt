@@ -102,7 +102,7 @@ class CamStudyService : Service(),
         const val MSG_PARTICIPANTLEFT = 18
         const val MSG_SERVICE_FINISH = 19
 
-        // 화면공유 변수
+        // 화면공유
         lateinit var screencaptureintent : Intent
         const val REQUEST_MEDIA_PROJECTION = 20
         const val REQUEST_SCREEN_SHARE = 21

@@ -1,7 +1,6 @@
 package com.coworkerteam.coworker.ui.main
 
 import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
@@ -23,12 +22,11 @@ import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
 import com.coworkerteam.coworker.databinding.ActivityMainBinding
 import com.coworkerteam.coworker.ui.base.NavigationActivity
-import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
 import com.coworkerteam.coworker.ui.dialog.PasswordDialog
 import com.coworkerteam.coworker.ui.dialog.SuccessPostDialog
 import com.coworkerteam.coworker.ui.study.make.MakeStudyActivity
 import com.coworkerteam.coworker.ui.todolist.TodoListActivity
-import com.coworkerteam.coworker.ui.unity.UnityActivity
+import com.coworkerteam.coworker.unity.UnityActivity
 import com.coworkerteam.coworker.utils.PatternUtils
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -37,8 +35,6 @@ import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.google.android.play.core.appupdate.AppUpdateManager
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory
-import com.google.android.play.core.install.model.UpdateAvailability
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat

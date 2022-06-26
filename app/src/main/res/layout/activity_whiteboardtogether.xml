@@ -9,11 +9,11 @@
         <import type="android.view.View" />
         <variable
             name="activitiy"
-            type="com.coworkerteam.coworker.ui.unity.whiteBoardTogether.WhiteBoardTogetherActivity" />
+            type="com.coworkerteam.coworker.unity.whiteBoard.WhiteBoardTogetherActivity" />
 
         <variable
             name="drawingpanel"
-            type="com.coworkerteam.coworker.ui.unity.whiteBoardTogether.WhiteBoardTogetherActivity.DrawingPaneltogether" />
+            type="com.coworkerteam.coworker.unity.whiteBoard.WhiteBoardTogetherActivity.DrawingPaneltogether" />
 
         <variable
             name="zoomdirection"
@@ -98,7 +98,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/whiteboard_canvas"
-            android:layout_width="1500px"
+            android:layout_width="1300px"
             android:layout_height="850px"
             android:background="@drawable/whiteboard_canvas_background"
             android:orientation="horizontal"

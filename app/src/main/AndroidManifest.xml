@@ -105,7 +105,10 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".ui.splash.SplashActivity"
             android:screenOrientation="portrait">
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -117,22 +120,19 @@
                     android:scheme="studyday" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.unity.UnityActivity"
+        <activity android:name="com.coworkerteam.coworker.unity.UnityActivity"
             android:launchMode="singleTask"
             android:process=":UnityKillsMe">></activity>
 
-        <activity android:name=".ui.unity.WhiteBoardActivity"
+        <activity android:name="com.coworkerteam.coworker.unity.whiteBoard.WhiteBoardActivity"
             android:screenOrientation="landscape" >
 
        </activity>
 
-        <activity android:name=".ui.unity.whiteBoardTogether.WhiteBoardTogetherActivity"
+        <activity android:name="com.coworkerteam.coworker.unity.whiteBoard.WhiteBoardTogetherActivity"
             android:screenOrientation="landscape"
             >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
 
         <activity

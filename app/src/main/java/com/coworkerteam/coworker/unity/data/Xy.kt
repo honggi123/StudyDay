@@ -1,4 +1,4 @@
-package com.coworkerteam.coworker.ui.unity.data
+package com.coworkerteam.coworker.unity.data
 
 class Xy (
     var x: Float, //펜의 좌표

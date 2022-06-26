@@ -28,7 +28,7 @@ import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.databinding.ActivityMakeStudyBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
-import com.coworkerteam.coworker.ui.unity.UnityActivity
+import com.coworkerteam.coworker.unity.UnityActivity
 import com.coworkerteam.coworker.utils.PatternUtils
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
