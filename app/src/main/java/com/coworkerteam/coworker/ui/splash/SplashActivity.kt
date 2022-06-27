@@ -49,6 +49,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
     override fun initStartView() {
         appUpdateManager = AppUpdateManagerFactory.create(this)
 
+
         appUpdateManager?.let {
             it.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
                 if(appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE){
@@ -76,7 +77,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
                        // finishAndRemoveTask(); // 액티비티 종료 + 태스크 리스트에서 지우기
                         System.exit(0)
                     })
-
                 }else{
                     //앱 업데이트가 되어있고 저장되어 있는 리프레쉬 토큰이 있다면
                     if (!viewModel.getRefreshToken().isNullOrEmpty()) {
@@ -88,7 +88,21 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>() {
                        finish()
                     }
                 }
-            }
+                it.appUpdateInfo.addOnFailureListener{it ->
+                    //앱 업데이트정보 가져오는데 실패 했고 저장되어 있는 리프레쉬 토큰이 있다면
+                    if (!viewModel.getRefreshToken().isNullOrEmpty()) {
+                        viewModel.getAutoLoginData()
+                    } else {
+                        //없다면 어플을 다시 깔거나, 신규회원이므로 로그인 화면
+                        var intent = Intent(this, LoginActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+                }
+
+
+         }
+
         }
 
         var intent : Intent = getIntent();

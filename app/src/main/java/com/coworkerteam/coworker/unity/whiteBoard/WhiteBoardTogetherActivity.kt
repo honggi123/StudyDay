@@ -1,6 +1,8 @@
 package com.coworkerteam.coworker.unity.whiteBoard
 
 import android.Manifest
+import android.app.Activity
+import android.app.ActivityManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -49,10 +51,7 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
     var canvas_checkwidth: LinearLayout? = null
 
     var menu : Menu? = null
-    private val undonePaths = ArrayList<Path>()
-    private val paths_circle = ArrayList<Path>()
     private val paths = ArrayList<Path>()
-     var jsonarray = null
     lateinit var drawingPanel : DrawingPaneltogether
     lateinit var drawingPanel_checksize : DrawingPanel_CheckWidth
 
@@ -95,7 +94,7 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
         viewDataBinding.zoomdirection = drawingPanel.zoomdirection
 
         name = viewModel.getUserName().toString()
-        name = "honghong5"
+
         //툴바 세팅
         var main_toolbar = viewDataBinding.toolbarWhiteboard as androidx.appcompat.widget.Toolbar
 
@@ -132,7 +131,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
 
         viewDataBinding.seekBarStrokewidth.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                Log.d(TAG,"PRGRESS"+progress)
                 drawingPanel.setStrokeWidth(progress.toFloat())
                 drawingPanel_checksize.setSize(progress.toFloat())
             }
@@ -146,7 +144,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
 
         viewDataBinding.seekBarEraseStrokewidth.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                Log.d(TAG,"PRGRESS"+progress)
                 drawingPanel.setEraseStrokeWidth(progress.toFloat())
             }
 
@@ -159,11 +156,66 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
 
 
         var intent = Intent(this, WhiteBoardService::class.java)
-        intent.putExtra("name","honghong5")
+        intent.putExtra("name",name)
         intent.putExtra("roomLink",roomLink)
         startForegroundService(intent)
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if(isServiceRunningCheck(WhiteBoardService::class.java.name)){
+            unbindService(mConnection)
+            stopService(Intent(this, WhiteBoardService::class.java))
+        }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        showExitDialog()
+    }
+
+    @SuppressWarnings("deprecation")
+    fun isServiceRunningCheck(servicename:String) : Boolean{
+        var manager : ActivityManager =  this.getSystemService(Activity.ACTIVITY_SERVICE) as ActivityManager
+        for (service : ActivityManager.RunningServiceInfo in manager.getRunningServices(Integer.MAX_VALUE)) {
+            Log.d(TAG,"service.service.getClassName() ; " + service.service.getClassName())
+            if (servicename.equals(service.service.getClassName())) {
+                return true
+            }
+        }
+        return false
+    }
+
+
+    // 나가기 다이얼로그
+    fun showExitDialog(){
+        val mDialogView =
+            LayoutInflater.from(this).inflate(R.layout.dialog_whiteboard_exit, null)
+        val mBuilder = AlertDialog.Builder(this).setView(mDialogView)
+        val builder = mBuilder.show()
+
+        builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val btn_cancle =
+            mDialogView.findViewById<Button>(R.id.dialog_whiteboard_exit_btn_cancle)
+        val btn_ok = mDialogView.findViewById<Button>(R.id.dialog_whiteboard_exit_btn_ok)
+
+        btn_cancle.setOnClickListener(View.OnClickListener {
+            builder.dismiss()
+        })
+
+        btn_ok.setOnClickListener(View.OnClickListener {
+            var msg: Message? = null
+            msg = Message.obtain(null, WhiteBoardService.MSG_LEAVE_ROOM)
+
+            sendHandlerMessage(msg)
+            builder.dismiss()
+        })
+    }
+
+
+
 
     // 터치 이벤트 처리
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -201,11 +253,7 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
 
             }
             R.id.menu_out->{
-                var msg: Message? = null
-                msg = Message.obtain(null, WhiteBoardService.MSG_LEAVE_ROOM)
-
-                sendHandlerMessage(msg)
-                finish()
+                showExitDialog()
             }
 
         }
@@ -225,7 +273,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
     }
 
     fun showOtherName(name : String, x: Float,y:Float){
-
         coroutineScope.launch {
             var nameview = NameView(context = applicationContext)
             nameview.setName(name)
@@ -317,8 +364,8 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                 path_info.paint .strokeJoin = Paint.Join.ROUND
                 path_info.paint .strokeCap = Paint.Cap.ROUND
                 path_info.paint.strokeWidth = path_info.penwidth
-
-                path_info.name?.let { showOtherName(it,path_info.listxy.get(0).x,path_info.listxy.get(0).y) }
+                var paths_size = path_info.listxy.size
+                path_info.name?.let { showOtherName(it,path_info.listxy.get(paths_size-1).x,path_info.listxy.get(paths_size-1).y) }
 
                 path_info.paint.color =  Color.parseColor(path_info.pencolor)
                 if(path_info.shapemode == true){
@@ -339,7 +386,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                 if (!json.isNull("sketchNum")){
                     var num = json.getInt("sketchNum")
                      WhiteBoardService.sketchNum = num
-
                     if(num == 0){
                         drawingPanel.sketch = null
                     }else{
@@ -347,7 +393,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                         SetSketchURL(resources.getString(resid))
                     }
                     drawingPanel.invalidate()
-
                 }else{
                     WhiteBoardService.sketchNum = 0
                 }
@@ -391,12 +436,19 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                 }else{
                     viewDataBinding.whiteboardTxtParticiantenum.setText(json.getInt("participantNum").toString()+"명이 그리는중")
                 }
-
+            }WhiteBoardService.MSG_LEAVE_ROOM->{
+                unbindService(mConnection)
+                stopService(Intent(this@WhiteBoardTogetherActivity, WhiteBoardService::class.java))
+                finish()
             }
 
             }
         }
+
     }
+
+
+
     private fun setPath(path: Path, listxy : java.util.ArrayList<Xy>, ){
         path.moveTo(listxy.get(0).x,listxy.get(0).y)
         for(i in 1..listxy.size-1){
@@ -628,13 +680,13 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                             canvas.drawArc(rect, 0F, 360F, false, p.paint);
                         }
                         2->{
+                            drawTriangle(canvas, p.paint, p.listxy.get(0).x, p.listxy.get(0).y, p.shapeRightX - p.listxy.get(0).x);
+                        }
+                        3->{
                             var rect =Rect(p.listxy.get(0).x.toInt(),p.listxy.get(0).y.toInt(),
                                 p.shapeRightX.toInt(), p.shapeRightY.toInt()
                             )
                             canvas.drawRect(rect, p.paint)
-                        }
-                        3->{
-                            drawTriangle(canvas, p.paint, p.listxy.get(0).x, p.listxy.get(0).y, p.shapeRightX - p.listxy.get(0).x);
                         }
                     }
                 }else{
@@ -732,7 +784,7 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
         }
 
         private fun touch_up(x: Float, y: Float) {
-            allpaths_info.get(path_count-1).setname("honghong5")
+            allpaths_info.get(path_count-1).setname(name)
 
             WhiteBoardService.path_info =  allpaths_info.get(path_count-1)
             var msg: Message? = null
@@ -1020,7 +1072,7 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
             mPaint.style = Paint.Style.STROKE
             mPaint.strokeJoin = Paint.Join.ROUND
             mPaint.strokeCap = Paint.Cap.ROUND
-            mPaint.strokeWidth = 50f
+            mPaint.strokeWidth = 20f
             setPenMode(1)
 
             outercirclePaint.strokeWidth = 6f
@@ -1079,20 +1131,12 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
             mPaint.strokeJoin = Paint.Join.ROUND
             mPaint.strokeCap = Paint.Cap.ROUND
             mPaint.strokeWidth = 50f
-            //  mPaint.alpha = 130
-
             mCanvas = Canvas()
             mPath = Path()
 
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
 
-
-        stopService(Intent(this, WhiteBoardService::class.java))
-
-    }
 
 }

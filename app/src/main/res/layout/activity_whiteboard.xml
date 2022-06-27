@@ -171,7 +171,6 @@
         </LinearLayout>
 
 
-
         <LinearLayout
             android:id="@+id/linearLayout6"
             android:layout_width="50dp"
@@ -182,38 +181,41 @@
             android:paddingBottom="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/imageButton9"
             app:layout_constraintEnd_toStartOf="@+id/whiteboard_canvas"
-            app:layout_constraintStart_toStartOf="@+id/whiteboard_canvas"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/whiteboard_canvas">
 
 
             <ImageView
                 android:id="@+id/imageView15"
-                android:padding="5dp"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:padding="5dp"
                 android:visibility="@{drawingpanel.penMode? View.VISIBLE:View.INVISIBLE}"
                 bind:srcCompat="@drawable/whiteboard_button_background" />
+
             <ImageView
                 android:id="@+id/imageView16"
-                android:padding="5dp"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:padding="5dp"
                 android:visibility="invisible"
                 bind:srcCompat="@drawable/whiteboard_button_background" />
+
             <ImageView
                 android:id="@+id/imageView17"
-                android:padding="5dp"
                 android:layout_width="50dp"
-                android:visibility="@{drawingpanel.eraseMode? View.VISIBLE:View.INVISIBLE}"
                 android:layout_height="50dp"
+                android:padding="5dp"
+                android:visibility="@{drawingpanel.eraseMode? View.VISIBLE:View.INVISIBLE}"
                 bind:srcCompat="@drawable/whiteboard_button_background" />
+
             <ImageView
                 android:id="@+id/imageView18"
-                android:padding="5dp"
-                android:visibility="@{drawingpanel.shapeMode? View.VISIBLE:View.INVISIBLE}"
-
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+
+                android:padding="5dp"
+                android:visibility="@{drawingpanel.shapeMode? View.VISIBLE:View.INVISIBLE}"
                 bind:srcCompat="@drawable/whiteboard_button_background" />
         </LinearLayout>
 
@@ -264,7 +266,7 @@
             android:onClick='@{(view)->activitiy.changeZoomDirection("left")}'
             android:visibility="@{zoomdirection == 2 ?View.VISIBLE:zoomdirection == 4? View.VISIBLE:View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/linearLayout6"
+            app:layout_constraintStart_toStartOf="@+id/whiteboard_canvas"
             app:layout_constraintTop_toBottomOf="@+id/toolbar_whiteboard"
             bind:srcCompat="@drawable/whiteboard_arrow_prev" />
 
@@ -516,7 +518,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:max="100"
-                    android:progress="50"
+                    android:progress="20"
                     android:thumb="@drawable/whiteboard_custom_seekbar_thumb" />
 
                 <ImageButton
@@ -536,7 +538,7 @@
             android:layout_weight="1"
             android:background="@drawable/whiteboard_menu_dialog_background"
             android:orientation="horizontal"
-            android:visibility="gone"
+            android:visibility="visible"
             android:padding="5dp"
             app:layout_constraintBottom_toBottomOf="@+id/whiteboard_menu_shape"
             app:layout_constraintStart_toEndOf="@+id/linearLayout6"
@@ -606,7 +608,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageButton22"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/square_icon" />
+                app:srcCompat="@drawable/triangle_icon" />
 
             <ImageButton
                 android:id="@+id/imageButton23"
@@ -618,7 +620,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageButton24"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/triangle_icon"></ImageButton>
+                app:srcCompat="@drawable/square_icon"></ImageButton>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -663,7 +665,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:max="100"
-                    android:progress="50"
+                    android:progress="20"
                     android:thumb="@drawable/whiteboard_custom_seekbar_thumb" />
 
                 <ImageButton

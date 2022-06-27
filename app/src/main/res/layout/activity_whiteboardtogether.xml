@@ -512,7 +512,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:max="100"
-                    android:progress="50"
+                    android:progress="20"
                     android:thumb="@drawable/whiteboard_custom_seekbar_thumb" />
 
                 <ImageButton
@@ -602,7 +602,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageButton22"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/square_icon" />
+                app:srcCompat="@drawable/triangle_icon" />
 
             <ImageButton
                 android:id="@+id/imageButton23"
@@ -614,7 +614,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageButton24"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/triangle_icon"></ImageButton>
+                app:srcCompat="@drawable/square_icon"></ImageButton>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -659,7 +659,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:max="100"
-                    android:progress="50"
+                    android:progress="20"
                     android:thumb="@drawable/whiteboard_custom_seekbar_thumb" />
 
                 <ImageButton

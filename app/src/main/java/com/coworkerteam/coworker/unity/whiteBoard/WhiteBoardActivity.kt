@@ -2,6 +2,7 @@ package com.coworkerteam.coworker.unity.whiteBoard
 
 import android.Manifest
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.*
 import android.graphics.drawable.ColorDrawable
@@ -13,12 +14,18 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.widget.addTextChangedListener
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.databinding.ActivityWhiteboardBinding
 import com.coworkerteam.coworker.ui.base.BaseActivity
 import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyViewModel
 import com.coworkerteam.coworker.ui.dialog.SketchChoiceDialog
 import com.coworkerteam.coworker.unity.data.Path_info
+import com.coworkerteam.coworker.utils.PatternUtils
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputLayout
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import kotlinx.coroutines.CoroutineScope
@@ -46,8 +53,6 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
     var canvas_checkwidth: LinearLayout? = null
 
     var menu : Menu? = null
-    private val undonePaths = ArrayList<Path>()
-    private val paths_circle = ArrayList<Path>()
     private val paths = ArrayList<Path>()
     private val paths_info = ArrayList<Path_info>()
 
@@ -58,7 +63,7 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
 
     val FILE_NAME = "studyday"
 
-    var nowcolor = 0
+    var sketchNum = 0
 
     companion object {
         private const val TOUCH_TOLERANCE = 0f
@@ -115,7 +120,6 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
 
         viewDataBinding.seekBarStrokewidth.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                Log.d(TAG,"PRGRESS"+progress)
                 drawingPanel.setStrokeWidth(progress.toFloat())
                 drawingPanel_checksize.setSize(progress.toFloat())
             }
@@ -129,7 +133,6 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
 
         viewDataBinding.seekBarEraseStrokewidth.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                Log.d(TAG,"PRGRESS"+progress)
                 drawingPanel.setEraseStrokeWidth(progress.toFloat())
             }
 
@@ -151,10 +154,11 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
         return true
     }
 
+
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            R.id.menu_save->{
-                Log.d(TAG,"SAVE")
+            R.id.menu_save->{   // 화이트보드 그림 저장하기
                 val permissionListener: PermissionListener = object: PermissionListener {
                     override fun onPermissionGranted() {
                         //권한 허가시 실행할 내용
@@ -176,8 +180,8 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
                     .check()
 
             }
-            R.id.menu_out->{
-                finish()
+            R.id.menu_out->{        // 화이트보드 나가기
+                showExitDialog()
             }
 
         }
@@ -259,15 +263,15 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
     }
 
     fun showSketchMenu(){
-
         drawingPanel.hideMenu()
 
         SketchChoiceDialog.Builder(this,object : SketchChoiceDialog.DialogListener {
             override fun clickBtn(url: String?, sketchNum: Int) {
                 if (url != null) {
+                    this@WhiteBoardActivity.sketchNum = sketchNum
                     SetSketchURL(url)
                 }
-            }},2).show()
+            }},sketchNum).show()
     }
 
     fun showShapeMenu(){
@@ -278,6 +282,33 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
         setVisible(visible,viewDataBinding.dialogShapeSelect)
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        showExitDialog()
+    }
+
+
+    fun showExitDialog(){
+        val mDialogView =
+            LayoutInflater.from(this).inflate(R.layout.dialog_whiteboard_exit, null)
+        val mBuilder = AlertDialog.Builder(this).setView(mDialogView)
+        val builder = mBuilder.show()
+
+        builder.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val btn_cancle =
+            mDialogView.findViewById<Button>(R.id.dialog_whiteboard_exit_btn_cancle)
+        val btn_ok = mDialogView.findViewById<Button>(R.id.dialog_whiteboard_exit_btn_ok)
+
+        btn_cancle.setOnClickListener(View.OnClickListener {
+            builder.dismiss()
+        })
+
+        btn_ok.setOnClickListener(View.OnClickListener {
+            finish()
+            builder.dismiss()
+        })
+    }
 
     fun clear(){
         val mDialogView =
@@ -404,7 +435,6 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
         fun drawSketchBitmap(canvas: Canvas){
             val w: Int = sketch!!.getWidth()
             val h: Int = 850
-            Log.d(TAG,"v"+w +"h"+h)
             val src = Rect(0, 0, w, h)
             val dst = Rect((this.width-sketch!!.width)/2, 0, w+(this.width-sketch!!.width)/2, h)
 
@@ -452,7 +482,6 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
             }else if(eraseMode){
                 paths_info.get(path_count-1).erasestrokewidth = erasestrokewidth
                 paths_info.get(path_count-1).setpentype(4)
-                Log.d(TAG,"STROKEWIDTH"+erasestrokewidth)
             }
 
         }
@@ -482,14 +511,6 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
                 }
             }
 
-            /*
-            if (zoomStatus){
-                // 확대했을 경우 내가 그릴때 보여지는 좌표값
-                var listAbsolute = getAbsolutePosition(x,y,0f,0f,2f)
-                paths_info.get(path_count-1).setzoomxy(listAbsolute.get(0),listAbsolute.get(1))
-            }
-
-             */
         }
 
         private fun touch_up(x: Float, y: Float) {
@@ -637,6 +658,7 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
         }
 
 
+
         fun setSketchImg(img : Bitmap){
             // 원본이미지 영역을 축소해서 그리기
             this.sketch = img
@@ -779,9 +801,6 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
         override fun onDraw(canvas: Canvas?) {
             super.onDraw(canvas)
 
-            Log.d(TAG,"WIDTH"+canvas!!.width)
-            Log.d(TAG,"height"+canvas!!.height)
-
             mPath.moveTo(this.width.toFloat()*1/10f,(this.height/2).toFloat()) // Bottom left
             mPath.lineTo(this.width.toFloat()*9/10,(this.height/2).toFloat()) // Bottom right
 
@@ -818,7 +837,7 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
             mPaint.style = Paint.Style.STROKE
             mPaint.strokeJoin = Paint.Join.ROUND
             mPaint.strokeCap = Paint.Cap.ROUND
-            mPaint.strokeWidth = 50f
+            mPaint.strokeWidth = 20f
             //  mPaint.alpha = 130
 
             mCanvas = Canvas()

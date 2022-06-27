@@ -254,8 +254,8 @@ class WhiteBoardService : Service() {
                     val message = JSONObject()
 
                     message.put("id", "intoCanvas")
-                    message.put("roomLink","https://www.studyday.co.kr/link?idx=211?pwd=null")
-                    message.put("nickname","honghong5")
+                    message.put("roomLink",roomLink)
+                    message.put("nickname",myname)
 
                     sendMessage(message)
 
@@ -273,20 +273,17 @@ class WhiteBoardService : Service() {
                     val message = JSONObject()
 
                     message.put("id", "sendDraw")
-                    message.put("nickname","honghong5")
+                    message.put("nickname",myname)
                     var drawData : String = gson.toJson(path_info)
                     //  list.put(drawData)
                     message.put("draw",drawData)
-                    var s = message.toString().replace("\\", "")
-
-                    Log.d(TAG,"message : "+ message.toString())
                    sendMessage(JSONObject(message.toString()))
                   // sendMessage(getSendMessage("drawing"))
                 }MSG_SEND_SKETCH -> {
                     val message = JSONObject()
 
                     message.put("id", "sendSetSketch")
-                    message.put("nickname","honghong5")
+                    message.put("nickname",myname)
                     message.put("sketchNum",msg.arg1)
 
                     sendMessage(message)
@@ -294,7 +291,7 @@ class WhiteBoardService : Service() {
                     val message = JSONObject()
 
                     message.put("id", "sendCanvasAction")
-                    message.put("nickname","honghong5")
+                    message.put("nickname",myname)
                     message.put("actionName","undo")
 
                     sendMessage(message)
@@ -303,7 +300,7 @@ class WhiteBoardService : Service() {
                 val message = JSONObject()
 
                 message.put("id", "sendCanvasAction")
-                message.put("nickname","honghong5")
+                message.put("nickname",myname)
                 message.put("actionName","remove")
 
                 sendMessage(message)
@@ -316,9 +313,14 @@ class WhiteBoardService : Service() {
                     val message = JSONObject()
 
                     message.put("id", "leaveWhiteboard")
-                    message.put("nickname","honghong5")
+                    message.put("nickname",myname)
 
                     sendMessage(message)
+
+                val handlerMessage =
+                    Message.obtain(null, MSG_LEAVE_ROOM)
+                sendHandlerMessage(handlerMessage)
+
                 }
 
                 }
