@@ -60,4 +60,9 @@ class CamStudyViewModel(private val model: UserRepository) : BaseViewModel() {
     fun getNickName(): String? {
         return model.getCurrentUserName()
     }
+
+    fun setGoalIsSuccess(goalIsSuccess: Boolean,goalSuccesstime : Int,goalPostIsWrite : Boolean ){
+        model.setPreferenceIsSuccess(goalIsSuccess,goalSuccesstime,goalPostIsWrite)
+    }
+
 }

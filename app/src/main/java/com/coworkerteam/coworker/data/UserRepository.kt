@@ -42,6 +42,15 @@ interface UserRepository {
         loginType: String,
         imageUri: String
     )
+
+     fun getIsGoalSuccess(): String?
+
+    fun setPreferenceIsSuccess(
+        goalIsSuccess : Boolean,
+        goalSuccesstime: Int,
+        goalPostIsWrite : Boolean
+    )
+
     fun setnickname (
         nickname: String
 

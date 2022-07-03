@@ -134,7 +134,6 @@ class CamStudyService : Service(),
     var localvideoTrack : VideoTrack? = null
     var videoShareTrackFromCamera:VideoTrack? = null
     var audioShareTrack: AudioTrack? = null
-    var trackTrackingThread : Thread? = null
 
     //서비스가 시작될 때 호출
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

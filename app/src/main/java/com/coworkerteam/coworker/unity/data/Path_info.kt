@@ -25,11 +25,11 @@ class Path_info {
     var shapeRightY = 0f    // 오른쪽 하단 y 좌표값
 
     // 지우개 크기
-    var erasestrokewidth = 50f
+    var erasestrokewidth = 20f
 
     // 펜 색상, 펜 굵기
     var pencolor : String = ""
-    var penwidth : Float  = 50f
+    var penwidth : Float  = 20f
 
     init {
         paint = Paint()
@@ -52,7 +52,6 @@ class Path_info {
     fun setname(name : String){
         this.name = name
     }
-
 
     fun setpencolor(color : Int){
         pencolor = java.lang.String.format("#%06X", 0xFFFFFF and color)

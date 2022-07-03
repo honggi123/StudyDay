@@ -25,6 +25,8 @@ interface PreferencesHelper {
 
     fun setCurrentUserProfilePicUrl(profilePicUrl: String?)
 
+    fun getGoalIsSuccess(): String?
+
     fun setPreferencesData(
         accessToken: String,
         refreshToken: String,
@@ -33,6 +35,8 @@ interface PreferencesHelper {
         loginType: String,
         imageUri: String
     )
+
+    fun setGoalIsSuccess(goalIsSuccess: Boolean, goalSuccesstime : Int, goalPostIsWrite :Boolean)
 
     fun setLocalNickname(nickname: String)
 

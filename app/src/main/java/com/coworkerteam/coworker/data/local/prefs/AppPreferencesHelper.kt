@@ -3,7 +3,9 @@ import android.util.Log
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.coworkerteam.coworker.data.model.other.IsGoalSucess
 import com.coworkerteam.coworker.di.PreferenceInfo
+import com.google.gson.Gson
 
 class AppPreferencesHelper() : PreferencesHelper {
 
@@ -21,8 +23,11 @@ class AppPreferencesHelper() : PreferencesHelper {
 
     private val PREF_KEY_USER_LOGGED_IN_MODE = "PREF_KEY_USER_LOGGED_IN_MODE"
 
+    private val PREF_KEY_IS_GOAL_SUCESS = "PREF_KEY_IS_GOAL_SUCESS"
+
 
     private var mPrefs: SharedPreferences? = null
+    var gson = Gson()
 
     constructor(context: Context, @PreferenceInfo prefFileName: String) : this() {
         mPrefs = context.getSharedPreferences(prefFileName, Context.MODE_PRIVATE)
@@ -98,6 +103,24 @@ class AppPreferencesHelper() : PreferencesHelper {
         setCurrentUserEmail(email)
         setCurrentUserLoggedInMode(loginType)
         setCurrentUserProfilePicUrl(imageUri)
+    }
+
+    override fun getGoalIsSuccess(): String? {
+        return mPrefs!!.getString(PREF_KEY_IS_GOAL_SUCESS, null)
+    }
+
+    override fun setGoalIsSuccess(
+        goalIsSuccess: Boolean,
+        goalSuccesstime: Int,
+        goalPostIsWrite: Boolean
+    ) {
+        var isgaolsuccess = IsGoalSucess()
+        isgaolsuccess.goalIsSuccess = goalIsSuccess
+        isgaolsuccess.goalSuccesstime = goalSuccesstime
+        isgaolsuccess.goalPostIsWrite = goalPostIsWrite
+
+        mPrefs!!.edit().putString(PREF_KEY_IS_GOAL_SUCESS, gson.toJson(isgaolsuccess)
+        ).apply()
     }
 
     override fun deletePreferencesData() {

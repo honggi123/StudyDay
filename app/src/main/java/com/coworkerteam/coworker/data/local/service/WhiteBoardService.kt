@@ -31,7 +31,7 @@ class WhiteBoardService : Service() {
     var speakStatus : Boolean = false
     var noiseStatus : Boolean = false
     var gson : Gson = Gson()
-    var myname = ""
+    var myname = "hongs"
     var roomLink = ""
 
     companion object {
@@ -254,7 +254,7 @@ class WhiteBoardService : Service() {
                     val message = JSONObject()
 
                     message.put("id", "intoCanvas")
-                    message.put("roomLink",roomLink)
+                    message.put("roomLink","https://www.studyday.co.kr/link?idx=211?pwd=null")
                     message.put("nickname",myname)
 
                     sendMessage(message)
@@ -297,13 +297,13 @@ class WhiteBoardService : Service() {
                     sendMessage(message)
                 }MSG_SEND_REMOVE_ACTION-> {
 
-                val message = JSONObject()
+                    val message = JSONObject()
 
-                message.put("id", "sendCanvasAction")
-                message.put("nickname",myname)
-                message.put("actionName","remove")
+                    message.put("id", "sendCanvasAction")
+                    message.put("nickname",myname)
+                    message.put("actionName","remove")
 
-                sendMessage(message)
+                    sendMessage(message)
 
                 val handlerMessage =
                     Message.obtain(null, MSG_SEND_REMOVE_ACTION)

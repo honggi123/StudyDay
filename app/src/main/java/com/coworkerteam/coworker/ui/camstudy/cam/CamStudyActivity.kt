@@ -153,12 +153,8 @@ class CamStudyActivity : BaseActivity<ActivityCamStudyBinding, CamStudyViewModel
                         mainMoveIntent.putExtra("goalSuccesstime",it.body()?.result?.get(0)?.successTime)
                         mainMoveIntent.putExtra("goalPostIsWrite",it.body()!!.result.get(0)?.isWrite )
 
-                        val sharedPreference = getSharedPreferences("successpost", 0)
-                        val editor = sharedPreference.edit()
-                        editor.putBoolean("goalIsSuccess", it.body()?.result?.get(0)?.isSuccess!!)
-                        editor.putInt("goalSuccesstime", it.body()?.result?.get(0)?.successTime!!)
-                        editor.putBoolean("goalPostIsWrite", it.body()!!.result.get(0)?.isWrite)
-                        editor.apply()
+                        viewModel.setGoalIsSuccess(it.body()?.result?.get(0)?.isSuccess!!, it.body()?.result?.get(0)?.successTime!!,
+                            it.body()!!.result.get(0)?.isWrite)
 
                     }
                     //퇴장처리 성공

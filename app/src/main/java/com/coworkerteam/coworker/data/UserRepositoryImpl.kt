@@ -101,6 +101,18 @@ class UserRepositoryImpl(
         pref.setPreferencesData(accessToken, refreshToken, nickname, email, loginType, imageUri)
     }
 
+    override fun getIsGoalSuccess(): String? {
+        return pref.getGoalIsSuccess()
+    }
+
+    override fun setPreferenceIsSuccess(
+        goalIsSuccess: Boolean,
+        goalSuccesstime: Int,
+        goalPostIsWrite: Boolean
+    ) {
+        pref.setGoalIsSuccess(goalIsSuccess, goalSuccesstime, goalPostIsWrite)
+    }
+
     override fun setnickname(nickname: String) {
         pref.setLocalNickname(nickname)
     }

@@ -294,7 +294,13 @@ class MainViewModel(private val model: UserRepository) : BaseViewModel() {
         }
     }
      */
+    fun getIsGoalSucess(): String? {
+        return model.getIsGoalSuccess()
+    }
 
+    fun setGoalIsSuccess(goalIsSuccess: Boolean,goalSuccesstime : Int,goalPostIsWrite : Boolean ){
+        model.setPreferenceIsSuccess(goalIsSuccess,goalSuccesstime,goalPostIsWrite)
+    }
 
 
 }

@@ -20,6 +20,7 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.model.other.DrawerBottomInfo
+import com.coworkerteam.coworker.data.model.other.IsGoalSucess
 import com.coworkerteam.coworker.databinding.ActivityMainBinding
 import com.coworkerteam.coworker.ui.base.NavigationActivity
 import com.coworkerteam.coworker.ui.dialog.PasswordDialog
@@ -35,6 +36,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.gson.Gson
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
@@ -62,7 +64,12 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
     val passwordDialog = PasswordDialog()
     var builder: AlertDialog? = null
 
+    var notShowSucessPost = true
+
     private val REQ_CODE_VERSION_UPDATE = 500
+
+     var gson = Gson()
+      var goalIsSuccess : IsGoalSucess? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,7 +123,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
 
         //강퇴 후 메인 액티비티에 돌아왔을때
         var kick = intent.getBooleanExtra("KickFromLeader",false)
-        Log.d(TAG,"강퇴 여부 : " +kick )
         if(kick){
             MaterialAlertDialogBuilder(this@MainActivity)
                 .setMessage("스터디에서 추방되었습니다.")
@@ -124,24 +130,26 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
                 }).show()
         }
 
-        val sharedPreference = getSharedPreferences("successpost", 0)
-        var goalIsSuccess =  sharedPreference.getBoolean("goalIsSuccess",false)
 
-        //var goalIsSuccess = intent.getBooleanExtra("goalIsSuccess",false)
+        // 공부 시간 목표 달성 시 successpost 보여주기
+        if(viewModel.getIsGoalSucess()!= null) {
+            goalIsSuccess = gson.fromJson(viewModel.getIsGoalSucess(), IsGoalSucess::class.java)
 
-        if (goalIsSuccess){
-            showSuccessPostDialog(
-                //intent.getIntExtra("goalSuccesstime", 0),
-               // intent.getBooleanExtra("goalPostIsWrite",false)
-                sharedPreference.getInt("goalSuccesstime",0),
-                sharedPreference.getBoolean("goalPostIsWrite",false)
-            )
-            val editor = sharedPreference.edit()
-            editor.putBoolean("goalIsSuccess", false)
-            editor.apply()
+            if (goalIsSuccess!!.goalIsSuccess) {
+                goalIsSuccess!!.goalPostIsWrite?.let {
+                    showSuccessPostDialog(
+                        goalIsSuccess!!.goalSuccesstime,
+                        it
+                    )
+                }
+                // 다이얼로그를 보여준 후 다시 공부 목표 시간 달성여부를 false 로 설정해서 반복해서 다이얼로그가 보여지게 하지않기 위해
+                viewModel.setGoalIsSuccess(
+                    goalIsSuccess = false,
+                    goalIsSuccess!!.goalSuccesstime,
+                    goalPostIsWrite = false
+                )
+            }
         }
-
-
         init()
     }
 
@@ -151,7 +159,6 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
         var studyinfo = intent.getStringExtra("studyinfo")
 
         if(studyinfo != null){
-            Log.d(TAG,"studyinfo: "+studyinfo)
             // '/'를 기준으로 문자열을 자른다.
             var str_arr = studyinfo.split("https://www.studyday.co.kr/link")
             Log.d(TAG,"str_arr[1]"+ str_arr[1])
@@ -179,21 +186,23 @@ class MainActivity : NavigationActivity<ActivityMainBinding, MainViewModel>()
         viewModel.EnterCamstudyResponseLiveData.observe(this, androidx.lifecycle.Observer {
             when {
                 it.isSuccessful -> {
-/*
+                    /*
+                    // (메타버스 연결 전) 캠스터디 준비 화면으로 이동 로직
                     var intent = Intent(this, EnterCamstudyActivity::class.java)
                     intent.putExtra("studyInfo", it.body()!!)
                     Log.d(TAG,"STUDYINFO"+it.body())
                     passwordDialog.dismissDialog()
                     startActivity(intent)
                     */
-                                      passwordDialog.dismissDialog()
-                                      var intent = Intent(this, UnityActivity::class.java)
-                                      intent.putExtra("studyInfo", it.body()!!)
-                                      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                      intent.setAction(Intent.ACTION_MAIN);
-                                      intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                                      Log.d(TAG,"studyInfo : "+it.body().toString())
-                                      startActivity(intent)
+
+                    passwordDialog.dismissDialog()
+                    var intent = Intent(this, UnityActivity::class.java)
+                   intent.putExtra("studyInfo", it.body()!!)
+                   intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setAction(Intent.ACTION_MAIN);
+                   intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                   Log.d(TAG,"studyInfo : "+it.body().toString())
+                    startActivity(intent)
 
                 }
 

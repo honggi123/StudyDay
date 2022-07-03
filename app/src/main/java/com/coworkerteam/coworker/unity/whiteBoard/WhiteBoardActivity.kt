@@ -396,7 +396,6 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
                     }
                 }
             }
-            Log.d(TAG,"paths_info"+paths_info.size)
           for (i in 0..paths_info.size-1) {
               var p = paths_info.get(i)
               // 도형 그리기 일 경우
@@ -409,7 +408,7 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
                           canvas.drawArc(rect, 0F, 360F, false, p.paint);
                       }
                       2->{
-                          drawTriangle(canvas, p.paint, p.listxy.get(0).x, p.listxy.get(0).y, p.shapeRightX - p.listxy.get(0).x);
+                          drawTriangle(canvas, p.paint, p.listxy.get(0).x, p.listxy.get(0).y, p.shapeRightX,p.shapeRightY);
                       }
                       3->{
                           var rect =Rect(p.listxy.get(0).x.toInt(),p.listxy.get(0).y.toInt(),
@@ -481,6 +480,8 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
 
             }else if(eraseMode){
                 paths_info.get(path_count-1).erasestrokewidth = erasestrokewidth
+                paths_info.get(path_count-1).penwidth = erasestrokewidth
+
                 paths_info.get(path_count-1).setpentype(4)
             }
 
@@ -691,14 +692,13 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
             viewDataBinding.dialogEraseSelect.visibility = View.INVISIBLE
         }
 
-        fun drawTriangle(canvas : Canvas,  paint : Paint, x : Float,  y : Float, width :Float){
+        fun drawTriangle(canvas : Canvas,  paint : Paint, x : Float,  y : Float, currentX :Float,currentY : Float){
             val halfWidth = width / 2
             val path = Path()
-            Log.d("width",width.toString())
-            path.moveTo(x, (y + width).toFloat()) // Bottom left
-            path.lineTo(x+halfWidth, y) // Bottom right
-            path.lineTo((x + width).toFloat(), (y + width).toFloat()) // Bottom right
-           // path.lineTo(x.toFloat(), (y - halfWidth).toFloat()) // Back to Top
+            path.moveTo(x + ((currentX - x) / 2), y) // 꼭지점
+            path.lineTo(x, currentY) // Bottom right
+            path.lineTo(currentX, currentY) // Bottom right
+            // path.lineTo(x.toFloat(), (y - halfWidth).toFloat()) // Back to Top
             path.close()
             canvas.drawPath(path, paint)
         }

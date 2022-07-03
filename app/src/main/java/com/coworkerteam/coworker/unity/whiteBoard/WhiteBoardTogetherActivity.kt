@@ -61,8 +61,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
 
     val FILE_NAME = "studyday"
 
-    var nowcolor = 0
-
     var name : String = ""
 
     var roomLink : String? = ""
@@ -77,8 +75,8 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
 
     override fun initStartView() {
         Log.d(TAG,"initStartView")
-        roomLink = intent.getStringExtra("roomlink")
-
+         roomLink = intent.getStringExtra("roomlink")
+        //roomLink = "https://www.studyday.co.kr/link?idx=211?pwd=null"
         canvas_checkwidth = findViewById<View>(R.id.whiteboard_canvas_check_width) as LinearLayout
         drawingPanel_checksize = DrawingPanel_CheckWidth(this)
         canvas_checkwidth!!.addView(drawingPanel_checksize)
@@ -88,13 +86,12 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
         canvas!!.addView(drawingPanel)
 
 
-
         viewDataBinding.activitiy = this
         viewDataBinding.drawingpanel = drawingPanel
         viewDataBinding.zoomdirection = drawingPanel.zoomdirection
 
-        name = viewModel.getUserName().toString()
-
+         name = viewModel.getUserName().toString()
+        //name = "hongs"
         //툴바 세팅
         var main_toolbar = viewDataBinding.toolbarWhiteboard as androidx.appcompat.widget.Toolbar
 
@@ -292,7 +289,7 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                 }
                 WhiteBoardService.MSG_RECEIVE_ROOM_DATA ->{
                     Log.d(TAG,"MSG_RECEIVE_ROOM_DATA")
-                   var data = msg.data
+                    var data = msg.data
                     var gson = Gson()
                     var json = JSONObject(data.get("data").toString())
                     Log.d(TAG,json.toString())
@@ -311,7 +308,7 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                         var num = json.getInt("sketchNum")
                         var resid = resources.getIdentifier("SketchURL$num","string",packageName)
                         SetSketchURL(resources.getString(resid))
-                     }else{
+                    }else{
                         WhiteBoardService.sketchNum = 0
                     }
 
@@ -348,8 +345,8 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
 
                     drawingPanel.invalidate()
                 }WhiteBoardService.MSG_SEND_REMOVE_ACTION ->{
-                    drawingPanel.clearAll()
-                }WhiteBoardService.MSG_RECEIVE_DRAWING->{
+                drawingPanel.clearAll()
+            }WhiteBoardService.MSG_RECEIVE_DRAWING->{
                 Log.d(TAG,"MSG_RECEIVE_DRAWING")
 
                 var data = msg.data
@@ -385,7 +382,7 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                 Log.d(TAG,json.toString())
                 if (!json.isNull("sketchNum")){
                     var num = json.getInt("sketchNum")
-                     WhiteBoardService.sketchNum = num
+                    WhiteBoardService.sketchNum = num
                     if(num == 0){
                         drawingPanel.sketch = null
                     }else{
@@ -405,7 +402,7 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                     if(allpaths_info.size>0){
                         for (i in allpaths_info.size-1 downTo 0){
                             if(allpaths_info.get(i).name.equals(json.getString("nickname"))){
-                              allpaths_info.removeAt(i)
+                                allpaths_info.removeAt(i)
                                 break
                             }
                         }
@@ -569,7 +566,7 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                     msg.arg1 = sketchNum
                     sendHandlerMessage(msg)
                 }
-                }},WhiteBoardService.sketchNum).show()
+            }},WhiteBoardService.sketchNum).show()
 
         //SketchChoiceDialog.Builder(this).show()
     }
@@ -673,14 +670,13 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                 if(p.shapemode){
                     when(p.shapetype){
                         1->{
-                            Log.d(TAG,"shapemode,X : "+p.listxy.get(0).x)
                             var rect =RectF(p.listxy.get(0).x,p.listxy.get(0).y,
                                 p.shapeRightX, p.shapeRightY
                             )
                             canvas.drawArc(rect, 0F, 360F, false, p.paint);
                         }
                         2->{
-                            drawTriangle(canvas, p.paint, p.listxy.get(0).x, p.listxy.get(0).y, p.shapeRightX - p.listxy.get(0).x);
+                            drawTriangle(canvas, p.paint, p.listxy.get(0).x, p.listxy.get(0).y, p.shapeRightX,p.shapeRightY);
                         }
                         3->{
                             var rect =Rect(p.listxy.get(0).x.toInt(),p.listxy.get(0).y.toInt(),
@@ -747,10 +743,9 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                     allpaths_info.get(path_count-1).shapeRightX = x
                     allpaths_info.get(path_count-1).shapeRightY = y
                 }
-
-
             }else if(eraseMode){
                 allpaths_info.get(path_count-1).erasestrokewidth = erasestrokewidth
+                allpaths_info.get(path_count-1).penwidth = erasestrokewidth
                 allpaths_info.get(path_count-1).setpentype(4)
             }
 
@@ -865,6 +860,7 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
             shapeMode = false
             penMode = false
             pentype = 4
+            shapetype = 0
             viewDataBinding.drawingpanel = this
         }
 
@@ -883,8 +879,8 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
             shapeMode = false
             penMode = true
             eraseMode = false
+            shapetype = 0
             drawingPanel_checksize.setPenType(type)
-            viewDataBinding.drawingpanel = this
             viewDataBinding.drawingpanel = this
         }
 
@@ -966,13 +962,14 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                 WhiteBoardService.path_info =  allpaths_info.get(allpaths_info.size-1)
 
                 invalidate()
+
+                var msg: Message? = null
+                msg = Message.obtain(null, WhiteBoardService.MSG_SEND_DRAWING)
+
+                sendHandlerMessage(msg)
             }
 
 
-            var msg: Message? = null
-            msg = Message.obtain(null, WhiteBoardService.MSG_SEND_DRAWING)
-
-            sendHandlerMessage(msg)
         }
 
 
@@ -985,13 +982,12 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
             viewDataBinding.dialogEraseSelect.visibility = View.INVISIBLE
         }
 
-        fun drawTriangle(canvas : Canvas,  paint : Paint, x : Float,  y : Float, width :Float){
+        fun drawTriangle(canvas : Canvas,  paint : Paint, x : Float,  y : Float, currentX :Float,currentY : Float){
             val halfWidth = width / 2
             val path = Path()
-            Log.d("width",width.toString())
-            path.moveTo(x, (y + width).toFloat()) // Bottom left
-            path.lineTo(x+halfWidth, y) // Bottom right
-            path.lineTo((x + width).toFloat(), (y + width).toFloat()) // Bottom right
+            path.moveTo(x + ((currentX - x) / 2), y) // 꼭지점
+            path.lineTo(x, currentY) // Bottom right
+            path.lineTo(currentX, currentY) // Bottom right
             // path.lineTo(x.toFloat(), (y - halfWidth).toFloat()) // Back to Top
             path.close()
             canvas.drawPath(path, paint)

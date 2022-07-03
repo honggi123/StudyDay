@@ -152,3 +152,7 @@
 -keep class com.wang.avi.indicators.** { *; }
 
 -keep class com.coworkerteam.coworker.unity.UnityActivity { *; }
+
+-keep class com.coworkerteam.coworker.unity.data.Path_info { *; }
+-keep class com.coworkerteam.coworker.unity.data.Xy { *; }
+
