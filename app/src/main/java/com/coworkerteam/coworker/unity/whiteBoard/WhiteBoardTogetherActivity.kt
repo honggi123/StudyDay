@@ -65,6 +65,8 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
 
     var roomLink : String? = ""
 
+    var countUndoWhenDrawing : Int = 0
+
     //서비스와 통신하는 Messenger 객체
     private var mServiceCallback: Messenger? = null
     private var mClientCallback = Messenger(CallbackHandler(Looper.getMainLooper()))
@@ -75,7 +77,7 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
 
     override fun initStartView() {
         Log.d(TAG,"initStartView")
-         roomLink = intent.getStringExtra("roomlink")
+        roomLink = intent.getStringExtra("roomlink")
         //roomLink = "https://www.studyday.co.kr/link?idx=211?pwd=null"
         canvas_checkwidth = findViewById<View>(R.id.whiteboard_canvas_check_width) as LinearLayout
         drawingPanel_checksize = DrawingPanel_CheckWidth(this)
@@ -337,9 +339,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                             p.setpentype(p.pentype)
                         }
 
-
-                        Log.d(TAG,Integer.decode(p.pencolor).toString())
-
                         setPath(p.path,p.listxy)
                     }
 
@@ -370,7 +369,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                 }else if(path_info.penmode == true){
                     path_info.setpentype(path_info.pentype)
                 }
-
 
                 setPath(path_info.path,path_info.listxy)
                 allpaths_info.add(path_info)
@@ -403,6 +401,8 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                         for (i in allpaths_info.size-1 downTo 0){
                             if(allpaths_info.get(i).name.equals(json.getString("nickname"))){
                                 allpaths_info.removeAt(i)
+
+                                countUndoWhenDrawing++
                                 break
                             }
                         }
@@ -410,18 +410,23 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                 }else if(json.getString("actionName").equals("remove")){
                     drawingPanel.clearAll()
                 }
-
                 drawingPanel.invalidate()
             }WhiteBoardService.MSG_RECEIVE_INTO ->{
                 Log.d(TAG,"MSG_RECEIVE_INTO")
                 var data = msg.data
                 var json = JSONObject(data.get("data").toString())
 
+
                 if(json.getInt("participantNum")==1){
                     viewDataBinding.whiteboardTxtParticiantenum.setText("혼자 그리는중")
                 }else{
                     viewDataBinding.whiteboardTxtParticiantenum.setText(json.getInt("participantNum").toString()+"명이 그리는중")
                 }
+
+                var toast = Toast.makeText(this@WhiteBoardTogetherActivity, json.getString("nickname")+" 님이 들어왔습니다.",Toast.LENGTH_LONG)
+                toast.setGravity(Gravity.TOP, 300, 300)
+
+                toast.show()
 
             }WhiteBoardService.MSG_RECEIVE_LEAVE->{
                 Log.d(TAG,"MSG_RECEIVE_LEAVE")
@@ -438,7 +443,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                 stopService(Intent(this@WhiteBoardTogetherActivity, WhiteBoardService::class.java))
                 finish()
             }
-
             }
         }
 
@@ -621,7 +625,7 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
         var path_count = 0
         // private ArrayList<Path> undonePaths = new ArrayList<Path>();
         var prevColor : Int = Color.BLACK
-        var prevWidth : Float = 50f
+        var prevWidth : Float = 10f
 
         var penMode : Boolean = false
         var pentype : Int = 1
@@ -637,7 +641,7 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
 
         lateinit var stroke : Stroke
 
-        var erasestrokewidth : Float = 50f
+        var erasestrokewidth : Float = 10f
         // 확대관련 변수
         var zoomStatus = false
         var zoomDrawCount = 0
@@ -745,49 +749,51 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                 }
             }else if(eraseMode){
                 allpaths_info.get(path_count-1).erasestrokewidth = erasestrokewidth
-                allpaths_info.get(path_count-1).penwidth = erasestrokewidth
+                allpaths_info.get(path_count-1).setpenwidth(erasestrokewidth)
                 allpaths_info.get(path_count-1).setpentype(4)
             }
 
         }
 
         private fun touch_move(x: Float, y: Float) {
+
+            var count = path_count-countUndoWhenDrawing-1
             if(penMode || eraseMode){
                 if(zoomStatus){
                     //확대 했을때 그림을 그린 경우 좌표값을 축소 했을때의 좌표값과 차이가 있어 계산해서 넣어줘야함
                     var listAbsolute = getAbsolutePosition(x,y,0f,0f,2f)
                     mPath.lineTo(listAbsolute.get(0), listAbsolute.get(1))
-                    allpaths_info.get(path_count-1).setpath(mPath)
-                    allpaths_info.get(path_count-1).setxy(listAbsolute.get(0),listAbsolute.get(1))
+                    allpaths_info.get(count).setpath(mPath)
+                    allpaths_info.get(count).setxy(listAbsolute.get(0),listAbsolute.get(1))
                 }else{
                     mPath.lineTo(x, y)
-                    allpaths_info.get(path_count-1).setpath(mPath)
-                    allpaths_info.get(path_count-1).setxy(x,y)
+                    allpaths_info.get(count).setpath(mPath)
+                    allpaths_info.get(count).setxy(x,y)
                 }
 
             }else if(shapeMode){
                 if(zoomStatus){
                     var listAbsolute = getAbsolutePosition(x,y,0f,0f,2f)
-                    allpaths_info.get(path_count-1).shapeRightX = listAbsolute.get(0)
-                    allpaths_info.get(path_count-1).shapeRightY = listAbsolute.get(1)
+                    allpaths_info.get(count).shapeRightX = listAbsolute.get(0)
+                    allpaths_info.get(count).shapeRightY = listAbsolute.get(1)
                 }else{
-                    allpaths_info.get(path_count-1).shapeRightX = x
-                    allpaths_info.get(path_count-1).shapeRightY = y
+                    allpaths_info.get(count).shapeRightX = x
+                    allpaths_info.get(count).shapeRightY = y
                 }
             }
-
         }
 
         private fun touch_up(x: Float, y: Float) {
-            allpaths_info.get(path_count-1).setname(name)
+            var count = path_count-countUndoWhenDrawing-1
 
-            WhiteBoardService.path_info =  allpaths_info.get(path_count-1)
+            allpaths_info.get(count).setname(name)
+
+            WhiteBoardService.path_info =  allpaths_info.get(count)
             var msg: Message? = null
             msg = Message.obtain(null, WhiteBoardService.MSG_SEND_DRAWING)
-
             sendHandlerMessage(msg)
 
-
+            countUndoWhenDrawing = 0
             mPath = Path()
             mPaint = Paint()
         }
@@ -959,7 +965,7 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
         fun redo(){
             if (undonePaths.size > 0) {
                 allpaths_info.add(undonePaths.removeAt(undonePaths.size - 1))
-                WhiteBoardService.path_info =  allpaths_info.get(allpaths_info.size-1)
+                WhiteBoardService.path_info = allpaths_info.get(allpaths_info.size - 1)
 
                 invalidate()
 
@@ -968,8 +974,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
 
                 sendHandlerMessage(msg)
             }
-
-
         }
 
 
@@ -1068,7 +1072,7 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
             mPaint.style = Paint.Style.STROKE
             mPaint.strokeJoin = Paint.Join.ROUND
             mPaint.strokeCap = Paint.Cap.ROUND
-            mPaint.strokeWidth = 20f
+            mPaint.strokeWidth = 10f
             setPenMode(1)
 
             outercirclePaint.strokeWidth = 6f
@@ -1126,7 +1130,7 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
             mPaint.style = Paint.Style.STROKE
             mPaint.strokeJoin = Paint.Join.ROUND
             mPaint.strokeCap = Paint.Cap.ROUND
-            mPaint.strokeWidth = 50f
+            mPaint.strokeWidth = 10f
             mCanvas = Canvas()
             mPath = Path()
 

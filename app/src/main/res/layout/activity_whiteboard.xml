@@ -149,20 +149,18 @@
 
                 <TextView
                     android:id="@+id/textView98"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
                     android:onClick='@{(view)->drawingpanel.hideMenu()}'
                     android:text="취소"
                     android:textSize="13dp"
                     android:textStyle="bold" />
-
                 <TextView
                     android:id="@+id/textView101"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
                     android:onClick='@{(view)->activitiy.setColor()}'
                     android:text="확인"
                     android:textSize="13dp"
@@ -175,13 +173,13 @@
             android:id="@+id/linearLayout6"
             android:layout_width="50dp"
             android:layout_height="0dp"
+            android:layout_marginEnd="10dp"
             android:background="@drawable/whiteboard_toolbar"
-            android:orientation="vertical"
 
+            android:orientation="vertical"
             android:paddingBottom="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/imageButton9"
             app:layout_constraintEnd_toStartOf="@+id/whiteboard_canvas"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/whiteboard_canvas">
 
 
@@ -518,7 +516,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:max="100"
-                    android:progress="20"
+                    android:progress="10"
                     android:thumb="@drawable/whiteboard_custom_seekbar_thumb" />
 
                 <ImageButton
@@ -538,7 +536,7 @@
             android:layout_weight="1"
             android:background="@drawable/whiteboard_menu_dialog_background"
             android:orientation="horizontal"
-            android:visibility="visible"
+            android:visibility="gone"
             android:padding="5dp"
             app:layout_constraintBottom_toBottomOf="@+id/whiteboard_menu_shape"
             app:layout_constraintStart_toEndOf="@+id/linearLayout6"

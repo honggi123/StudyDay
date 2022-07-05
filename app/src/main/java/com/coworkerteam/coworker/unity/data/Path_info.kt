@@ -25,11 +25,11 @@ class Path_info {
     var shapeRightY = 0f    // 오른쪽 하단 y 좌표값
 
     // 지우개 크기
-    var erasestrokewidth = 20f
+    var erasestrokewidth = 10f
 
     // 펜 색상, 펜 굵기
     var pencolor : String = ""
-    var penwidth : Float  = 20f
+    var penwidth : Float  = 10f
 
     init {
         paint = Paint()
@@ -65,7 +65,7 @@ class Path_info {
     fun setshapetype(type: Int){
         this.shapetype = type
         paint.color = Color.BLACK
-        paint.strokeWidth = 2f
+        paint.strokeWidth = 3f
 
         paint.setStyle(Paint.Style.STROKE)
         paint.setAntiAlias(true)

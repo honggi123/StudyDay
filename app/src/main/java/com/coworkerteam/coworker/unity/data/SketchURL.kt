@@ -15,9 +15,9 @@ class SketchURL {
     val imgListURL8 : String = "line-gce800596a_1280.png"
     val imgListURL9 : String = "mermaid-g636235b8e_1280.png"
 
-    val imgListURL10 : String = "pirates-g3b12aa4d7_1280.png"
-    val imgListURL11 : String = "tennis-g916c5170f_1280.png"
-    val imgListURL12 : String = "pirate-ga432a1220_1280.png"
+    val imgListURL10 : String = "pirate-ga432a1220_1280.png"
+    val imgListURL11 : String = "pirates-g3b12aa4d7_1280.png"
+    val imgListURL12 : String = "tennis-g916c5170f_1280.png"
 
 
 

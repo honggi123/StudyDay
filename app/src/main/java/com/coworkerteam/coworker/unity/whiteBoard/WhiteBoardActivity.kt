@@ -349,7 +349,7 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
         var path_count = 0
         // private ArrayList<Path> undonePaths = new ArrayList<Path>();
         var prevColor : Int = Color.BLACK
-        var prevWidth : Float = 50f
+        var prevWidth : Float = 10f
 
         var penMode : Boolean = false
         var pentype : Int = 1
@@ -365,7 +365,7 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
 
         lateinit var stroke : Stroke
 
-        var erasestrokewidth : Float = 50f
+        var erasestrokewidth : Float = 10f
         // 확대관련 변수
         var zoomStatus = false
         var zoomDrawCount = 0
@@ -610,6 +610,8 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
             shapeMode = false
             penMode = true
             eraseMode = false
+            shapetype = 0
+
             drawingPanel_checksize.setPenType(type)
             viewDataBinding.drawingpanel = this
             viewDataBinding.drawingpanel = this
@@ -778,7 +780,7 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
             mPaint.style = Paint.Style.STROKE
             mPaint.strokeJoin = Paint.Join.ROUND
             mPaint.strokeCap = Paint.Cap.ROUND
-            mPaint.strokeWidth = 50f
+            mPaint.strokeWidth = 10f
             //  mPaint.alpha = 130
             setPenMode(1)
 
@@ -837,7 +839,7 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
             mPaint.style = Paint.Style.STROKE
             mPaint.strokeJoin = Paint.Join.ROUND
             mPaint.strokeCap = Paint.Cap.ROUND
-            mPaint.strokeWidth = 20f
+            mPaint.strokeWidth = 10f
             //  mPaint.alpha = 130
 
             mCanvas = Canvas()

@@ -54,7 +54,6 @@ open abstract class NavigationActivity<T : ViewDataBinding, R : BaseViewModel> :
         } else if (loginType == "naver") {
             navigationHeaderLogin.setImageResource(com.coworkerteam.coworker.R.drawable.naver_icon)
         }
-
     }
 
     fun setNavigaionNickname(nickname: String) {
@@ -78,46 +77,56 @@ open abstract class NavigationActivity<T : ViewDataBinding, R : BaseViewModel> :
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         var moveIntent: Intent? = null
-        moveIntent?.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-        moveIntent?.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        moveIntent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+
 
         when (item.itemId) {
             com.coworkerteam.coworker.R.id.menuitem1 -> {
                 firebaseLog.addLog(TAG_Navigation,"show_main")
                 moveIntent = Intent(this, MainActivity::class.java)
+                setFlag(moveIntent)
+
             }
             com.coworkerteam.coworker.R.id.menuitem2 -> {
                 firebaseLog.addLog(TAG_Navigation,"show_mystudy")
                 moveIntent = Intent(this, MyStudyActivity::class.java)
+                setFlag(moveIntent)
             }
+
             com.coworkerteam.coworker.R.id.menuitem3 -> {
                 firebaseLog.addLog(TAG_Navigation,"show_search")
                 moveIntent = Intent(this, StudySearchActivity::class.java)
+                setFlag(moveIntent)
             }
+
             com.coworkerteam.coworker.R.id.menuitem4 -> {
                 firebaseLog.addLog(TAG_Navigation,"show_statics")
                 moveIntent = Intent(this, StatisticsActivity::class.java)
+                setFlag(moveIntent)
             }
             com.coworkerteam.coworker.R.id.menuitem5 -> {
                 firebaseLog.addLog(TAG_Navigation,"show_todo")
                 moveIntent = Intent(this, TodoListActivity::class.java)
+                setFlag(moveIntent)
             }
 
             com.coworkerteam.coworker.R.id.menuitem6 -> {
                 firebaseLog.addLog(TAG_Navigation,"show_yourday")
                 moveIntent = Intent(this, YourDayActivity::class.java)
-                moveIntent?.removeFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+                moveIntent?.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                moveIntent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             }
-
-
-
         }
 
         drawerLayout.closeDrawers()
         startActivity(moveIntent)
-        finish()
-        return false
+
+        return true
+    }
+
+    fun setFlag(moveIntent : Intent){
+        moveIntent!!.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+        moveIntent?.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        moveIntent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
     }
 
     // 툴바 메뉴 버튼이 클릭 됐을 때 실행하는 함수

@@ -40,8 +40,8 @@
         android:layout_marginBottom="5dp"/>
     <ImageView
         android:id="@+id/whiteboard_toolbar_redo"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:layout_gravity="right"
         android:layout_marginRight="20dp"
         android:visibility="visible"
@@ -49,8 +49,8 @@
 
     <ImageView
         android:id="@+id/whiteboard_toolbar_undo"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:layout_gravity="right"
         android:layout_marginRight="20dp"
         android:visibility="visible"
@@ -67,12 +67,32 @@
         android:layout_marginBottom="5dp"/>
     <ImageView
         android:id="@+id/whiteboard_toolbar_zoom"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:layout_gravity="right"
         android:layout_marginRight="10dp"
         android:visibility="visible"
         app:srcCompat="@drawable/ic_baseline_zoom_in_24" />
+    <LinearLayout
+        android:layout_width="70dp"
+        android:layout_height="30dp"
+        android:layout_marginRight="10dp"
+        android:visibility="visible"
+        android:layout_gravity="right"
+        android:gravity="center"
+        android:text="2명"
+        android:background="@drawable/whiteboard_button_background">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_baseline_people_outline_24">
+        </ImageView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3명"></TextView>
+    </LinearLayout>
 
 
 
