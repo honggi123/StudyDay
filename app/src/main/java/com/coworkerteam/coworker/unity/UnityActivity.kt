@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.coworkerteam.coworker.data.model.api.EnterCamstudyResponse
 import com.coworkerteam.coworker.ui.camstudy.enter.EnterCamstudyActivity
@@ -68,6 +69,7 @@ class UnityActivity : UnityPlayerActivity() {
 
     fun drawTogether(str : String){
         var intent = Intent(this, WhiteBoardTogetherActivity::class.java)
+
         intent.putExtra("roomLink", dataIntent!!.result.studyInfo.link)
         startActivity(intent)
     }

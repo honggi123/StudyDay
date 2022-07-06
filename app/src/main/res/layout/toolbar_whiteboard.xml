@@ -13,9 +13,9 @@
 
     <ImageView
         android:id="@+id/whiteboard_toolbar_whiteboard"
-        android:layout_width="25dp"
-        android:layout_height="20dp"
-        android:layout_marginRight="10dp"
+        android:layout_width="27dp"
+        android:layout_height="27dp"
+        android:layout_marginRight="5dp"
         android:layout_gravity="center"
         android:visibility="visible"
         app:srcCompat="@drawable/whiteboard_icon" />
@@ -26,25 +26,27 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="화이트보드"
-        android:textColor="#686868"
+        android:textColor="#000000"
         android:textSize="16sp"
         android:textStyle="bold" />
+
+
     <View
-        android:id="@+id/view8"
-        android:layout_width="2dp"
+        android:id="@+id/view9"
+        android:layout_width="1dp"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:background="#D6D6D6"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"/>
+
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"/>
     <ImageView
         android:id="@+id/whiteboard_toolbar_redo"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_gravity="right"
-        android:layout_marginRight="20dp"
         android:visibility="visible"
+        android:layout_marginRight="10dp"
         app:srcCompat="@drawable/redo_icon" />
 
     <ImageView
@@ -57,14 +59,14 @@
         app:srcCompat="@drawable/undo_icon" />
     <View
         android:id="@+id/view7"
-        android:layout_width="2dp"
+        android:layout_width="1dp"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:background="#D6D6D6"
         android:layout_marginRight="10dp"
 
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"/>
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"/>
     <ImageView
         android:id="@+id/whiteboard_toolbar_zoom"
         android:layout_width="25dp"
@@ -73,25 +75,42 @@
         android:layout_marginRight="10dp"
         android:visibility="visible"
         app:srcCompat="@drawable/ic_baseline_zoom_in_24" />
-    <LinearLayout
-        android:layout_width="70dp"
-        android:layout_height="30dp"
-        android:layout_marginRight="10dp"
-        android:visibility="visible"
+
+    <View
+        android:id="@+id/view8"
+        android:layout_width="1dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="right"
+        android:background="#D6D6D6"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"/>
+
+    <LinearLayout
+        android:id="@+id/whiteboard_btn_show_participants"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_gravity="right"
+        android:layout_marginRight="10dp"
+        android:background="#ffffff"
         android:gravity="center"
-        android:text="2명"
-        android:background="@drawable/whiteboard_button_background">
+        android:visibility="visible">
+
         <ImageView
+            android:id="@+id/whiteboard_icon_particiantenum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_baseline_people_outline_24">
-        </ImageView>
+            android:background="@drawable/ic_baseline_person_outline_24"></ImageView>
 
         <TextView
+            android:id="@+id/whiteboard_txt_particiantenum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="3명"></TextView>
+            android:layout_marginStart="3dp"
+            android:text="1명"
+            android:textColor="@color/black"
+            android:textSize="12dp"
+            android:textStyle="bold"></TextView>
     </LinearLayout>
 
 

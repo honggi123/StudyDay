@@ -63,5 +63,8 @@ class WhiteBoardTogetherViewModel (private val model: UserRepository) : BaseView
     }
 
 
+    fun getProfileIMG(): String? {
+        return model.getCurrentUserProfilePicUrl()
+    }
 
 }

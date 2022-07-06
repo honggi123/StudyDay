@@ -17,6 +17,8 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.size
+import com.bumptech.glide.Glide
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.data.local.service.CamStudyService
 import com.coworkerteam.coworker.data.local.service.WhiteBoardService
@@ -26,9 +28,11 @@ import com.coworkerteam.coworker.ui.dialog.SketchChoiceDialog
 import com.coworkerteam.coworker.unity.data.Path_info
 import com.coworkerteam.coworker.unity.data.Xy
 import com.coworkerteam.coworker.unity.data.NameView
+import com.coworkerteam.coworker.unity.data.Whiteboard_Participant
 import com.google.gson.Gson
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
+import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -38,6 +42,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBinding, WhiteBoardTogetherViewModel>() {
@@ -56,6 +61,7 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
     lateinit var drawingPanel_checksize : DrawingPanel_CheckWidth
 
     var allpaths_info = ArrayList<Path_info>()
+    var participants = ArrayList<Whiteboard_Participant>()
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
@@ -67,9 +73,12 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
 
     var countUndoWhenDrawing : Int = 0
 
+    lateinit var profileURL : String
+
     //서비스와 통신하는 Messenger 객체
     private var mServiceCallback: Messenger? = null
     private var mClientCallback = Messenger(CallbackHandler(Looper.getMainLooper()))
+     lateinit var layout_ParticipantList : LinearLayout
 
     companion object {
         private const val TOUCH_TOLERANCE = 0f
@@ -77,8 +86,9 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
 
     override fun initStartView() {
         Log.d(TAG,"initStartView")
-        roomLink = intent.getStringExtra("roomlink")
-        //roomLink = "https://www.studyday.co.kr/link?idx=211?pwd=null"
+        roomLink = intent.getStringExtra("roomLink")
+       // roomLink = "https://www.studyday.co.kr/link?idx=211?pwd=null"
+        layout_ParticipantList =  findViewById<LinearLayout>(R.id.dialog_participant_list)
         canvas_checkwidth = findViewById<View>(R.id.whiteboard_canvas_check_width) as LinearLayout
         drawingPanel_checksize = DrawingPanel_CheckWidth(this)
         canvas_checkwidth!!.addView(drawingPanel_checksize)
@@ -87,13 +97,15 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
         drawingPanel = DrawingPaneltogether(this)
         canvas!!.addView(drawingPanel)
 
-
         viewDataBinding.activitiy = this
         viewDataBinding.drawingpanel = drawingPanel
         viewDataBinding.zoomdirection = drawingPanel.zoomdirection
 
          name = viewModel.getUserName().toString()
-        //name = "hongs"
+       //  name = "honghong5"
+
+        profileURL = viewModel.getProfileIMG().toString()
+       // profileURL = "https://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg"
         //툴바 세팅
         var main_toolbar = viewDataBinding.toolbarWhiteboard as androidx.appcompat.widget.Toolbar
 
@@ -106,6 +118,8 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
         var btn_undo = findViewById<ImageView>(R.id.whiteboard_toolbar_undo)
         var btn_redo = findViewById<ImageView>(R.id.whiteboard_toolbar_redo)
         var btn_zoom = findViewById<ImageView>(R.id.whiteboard_toolbar_zoom)
+        var btn_show_participants = findViewById<LinearLayout>(R.id.whiteboard_btn_show_participants)
+
 
         btn_redo.setOnClickListener(View.OnClickListener {
             drawingPanel.redo()
@@ -127,6 +141,9 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
             viewDataBinding.zoomdirection = drawingPanel.zoomdirection
         })
 
+        btn_show_participants.setOnClickListener(View.OnClickListener {
+            showParticipantList()
+        })
 
         viewDataBinding.seekBarStrokewidth.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -157,6 +174,8 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
         var intent = Intent(this, WhiteBoardService::class.java)
         intent.putExtra("name",name)
         intent.putExtra("roomLink",roomLink)
+        intent.putExtra("profileURL",profileURL)
+
         startForegroundService(intent)
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
     }
@@ -314,13 +333,12 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                         WhiteBoardService.sketchNum = 0
                     }
 
-                    if(json.getInt("participantNum")==1){
-                        viewDataBinding.whiteboardTxtParticiantenum.setText("혼자 그리는중")
-                    }else{
-                        viewDataBinding.whiteboardTxtParticiantenum.setText(json.getInt("participantNum").toString()+"명이 그리는중")
+                    var viewParticipantNum = findViewById<TextView>(R.id.whiteboard_txt_particiantenum)
+                    viewParticipantNum.setText(json.getInt("participantNum").toString()+"명")
+                    if(json.getInt("participantNum")>1){
+                        var participantView = findViewById<ImageView>(R.id.whiteboard_icon_particiantenum)
+                        participantView.setBackgroundResource(R.drawable.ic_baseline_people_outline_24)
                     }
-
-
 
                     for(p in allpaths_info){
                         p.setpaint(Paint())
@@ -343,6 +361,16 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                     }
 
                     drawingPanel.invalidate()
+
+                    if (!json.isNull("participant")){
+                        var jsonArray =  JSONArray(json.getString("participant"))
+                        for (i in 0..jsonArray.length() -1){
+                            var participant = gson.fromJson(jsonArray.get(i).toString(),Whiteboard_Participant::class.java)
+                            participants.add(participant)
+
+                        }
+                    }
+
                 }WhiteBoardService.MSG_SEND_REMOVE_ACTION ->{
                 drawingPanel.clearAll()
             }WhiteBoardService.MSG_RECEIVE_DRAWING->{
@@ -401,7 +429,6 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                         for (i in allpaths_info.size-1 downTo 0){
                             if(allpaths_info.get(i).name.equals(json.getString("nickname"))){
                                 allpaths_info.removeAt(i)
-
                                 countUndoWhenDrawing++
                                 break
                             }
@@ -416,28 +443,62 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
                 var data = msg.data
                 var json = JSONObject(data.get("data").toString())
 
-
-                if(json.getInt("participantNum")==1){
-                    viewDataBinding.whiteboardTxtParticiantenum.setText("혼자 그리는중")
-                }else{
-                    viewDataBinding.whiteboardTxtParticiantenum.setText(json.getInt("participantNum").toString()+"명이 그리는중")
+                var viewParticipantNum = findViewById<TextView>(R.id.whiteboard_txt_particiantenum)
+                viewParticipantNum.setText(json.getInt("participantNum").toString()+"명")
+                if(json.getInt("participantNum")>1){
+                    var participantView = findViewById<ImageView>(R.id.whiteboard_icon_particiantenum)
+                    participantView.setBackgroundResource(R.drawable.ic_baseline_people_outline_24)
                 }
 
-                var toast = Toast.makeText(this@WhiteBoardTogetherActivity, json.getString("nickname")+" 님이 들어왔습니다.",Toast.LENGTH_LONG)
-                toast.setGravity(Gravity.TOP, 300, 300)
+                coroutineScope.launch {
+                    var textview= findViewById<TextView>(R.id.toast_whiteboard_text)
+                    textview.setText(json.getString("nickname")+"님이 입장하셨습니다.")
+                    textview.visibility = View.VISIBLE
+                    delay(3000)
+                    textview.visibility = View.GONE
+                }
 
-                toast.show()
+                var participant = Whiteboard_Participant()
+                participant.nickname = json.getString("nickname")
+                participant.profileImg = json.getString("profileImg")
+                participants.add(participant)
+
+                if(layout_ParticipantList.visibility == View.VISIBLE){
+                    var layout_participant = LayoutInflater.from(this@WhiteBoardTogetherActivity).inflate(R.layout.item_whiteboard_participant, null)
+
+                    var view_nickname = layout_participant.findViewById<TextView>(R.id.item_nickname)
+
+                    view_nickname.setText(participant.nickname)
+                    var profile =
+                        layout_participant.findViewById<CircleImageView>(R.id.item_profile)
+                    Glide.with(this@WhiteBoardTogetherActivity).load(participant.profileImg).into(profile)
+                    layout_ParticipantList.addView(layout_participant)
+                }
+
+
 
             }WhiteBoardService.MSG_RECEIVE_LEAVE->{
                 Log.d(TAG,"MSG_RECEIVE_LEAVE")
                 var data = msg.data
                 var json = JSONObject(data.get("data").toString())
-
-                if(json.getInt("participantNum")==1){
-                    viewDataBinding.whiteboardTxtParticiantenum.setText("혼자 그리는중")
-                }else{
-                    viewDataBinding.whiteboardTxtParticiantenum.setText(json.getInt("participantNum").toString()+"명이 그리는중")
+                var viewParticipantNum = findViewById<TextView>(R.id.whiteboard_txt_particiantenum)
+                viewParticipantNum.setText(json.getInt("participantNum").toString()+"명")
+                if(json.getInt("participantNum")>1){
+                    var participantView = findViewById<ImageView>(R.id.whiteboard_icon_particiantenum)
+                    participantView.setBackgroundResource(R.drawable.ic_baseline_people_outline_24)
                 }
+
+                for(i in 0.. participants.size-1){
+                    if(participants[i].nickname.equals(json.getString("nickname"))){
+                        participants.remove(participants[i])
+                        if(layout_ParticipantList.size>0){
+                            layout_ParticipantList.removeViewAt(i)
+                        }
+                        break
+                    }
+                }
+
+
             }WhiteBoardService.MSG_LEAVE_ROOM->{
                 unbindService(mConnection)
                 stopService(Intent(this@WhiteBoardTogetherActivity, WhiteBoardService::class.java))
@@ -448,7 +509,36 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
 
     }
 
+    fun showParticipantList(){
+        if(layout_ParticipantList.visibility == View.GONE) {
+            layout_ParticipantList.removeAllViews()
+            var layout_participant = LayoutInflater.from(this).inflate(R.layout.item_whiteboard_participant, null)
 
+            var view_nickname = layout_participant.findViewById<TextView>(R.id.item_nickname)
+            view_nickname.setText(name+" (나)")
+            var profile =
+                layout_participant.findViewById<CircleImageView>(R.id.item_profile)
+            Glide.with(this).load(profileURL).into(profile)
+            layout_ParticipantList.addView(layout_participant)
+
+            for (p in participants) {
+                var layout_participant = LayoutInflater.from(this).inflate(R.layout.item_whiteboard_participant, null)
+
+                var view_nickname = layout_participant.findViewById<TextView>(R.id.item_nickname)
+                if (!p.nickname.equals(name)) {
+                    view_nickname.setText(p.nickname)
+                    var profile =
+                        layout_participant.findViewById<CircleImageView>(R.id.item_profile)
+                    Glide.with(this).load(p.profileImg).into(profile)
+                    layout_ParticipantList.addView(layout_participant)
+                }
+            }
+            layout_ParticipantList.visibility = View.VISIBLE
+
+        }else{
+            layout_ParticipantList.visibility = View.GONE
+        }
+    }
 
     private fun setPath(path: Path, listxy : java.util.ArrayList<Xy>, ){
         path.moveTo(listxy.get(0).x,listxy.get(0).y)
@@ -984,6 +1074,8 @@ class WhiteBoardTogetherActivity : BaseActivity<ActivityWhiteboardtogetherBindin
             viewDataBinding.dialogPenSelect.visibility = View.INVISIBLE
             viewDataBinding.dialogColorpicker.visibility = View.INVISIBLE
             viewDataBinding.dialogEraseSelect.visibility = View.INVISIBLE
+            layout_ParticipantList.visibility = View.GONE
+
         }
 
         fun drawTriangle(canvas : Canvas,  paint : Paint, x : Float,  y : Float, currentX :Float,currentY : Float){

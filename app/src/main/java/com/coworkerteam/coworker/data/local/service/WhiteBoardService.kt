@@ -31,9 +31,9 @@ class WhiteBoardService : Service() {
     var speakStatus : Boolean = false
     var noiseStatus : Boolean = false
     var gson : Gson = Gson()
-    var myname = "hongs"
+    var myname = ""
     var roomLink = ""
-
+    var profileURL = ""
     companion object {
         const val MSG_CLIENT_CONNECT = 0
         const val MSG_CLIENT_DISCNNECT = 1
@@ -64,6 +64,8 @@ class WhiteBoardService : Service() {
         Log.d(TAG,"service 시작")
         myname = intent!!.getStringExtra("name").toString()
         roomLink = intent!!.getStringExtra("roomLink").toString()
+        profileURL = intent!!.getStringExtra("profileURL").toString()
+
         if (socket == null) {
             Log.d(TAG,"service 시작")
             val notification = notification_whiteboard.createNotification(this)
@@ -94,7 +96,10 @@ class WhiteBoardService : Service() {
     //서비스가 소멸될 때 호출
     override fun onDestroy() {
         Log.d(TAG,"onDestroy")
-        socket!!.disconnect()
+        if(socket!= null){
+            socket!!.disconnect()
+
+        }
         super.onDestroy()
     }
 
@@ -254,8 +259,9 @@ class WhiteBoardService : Service() {
                     val message = JSONObject()
 
                     message.put("id", "intoCanvas")
-                    message.put("roomLink","https://www.studyday.co.kr/link?idx=211?pwd=null")
+                    message.put("roomLink",roomLink)
                     message.put("nickname",myname)
+                    message.put("profileImg",profileURL)
 
                     sendMessage(message)
 

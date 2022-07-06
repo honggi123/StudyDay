@@ -73,7 +73,6 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-
                 android:background="#00FFFFFF"
                 app:srcCompat="@drawable/ic_baseline_undo_24" />
 
@@ -83,7 +82,6 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-
                 android:background="#02FFFFFF"
                 app:srcCompat="@drawable/ic_baseline_redo_24" />
 
@@ -107,7 +105,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar_whiteboard">
 
+            <TextView
+                android:id="@+id/toast_whiteboard_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/toast_whiteboard_background"
+                android:padding="10dp"
+                android:text="honghong5님이 입장했습니다."
 
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -497,6 +510,7 @@
 
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="@+id/textView99"
                 app:layout_constraintStart_toStartOf="@+id/textView99"
                 app:layout_constraintTop_toBottomOf="@+id/textView99">
@@ -674,16 +688,16 @@
             </LinearLayout>
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <TextView
-            android:id="@+id/whiteboard_txt_particiantenum"
+        <LinearLayout
+            android:id="@+id/dialog_participant_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginEnd="10dp"
-            android:text="혼자 그리는중"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:layout_marginEnd="180dp"
+            android:background="@drawable/whiteboard_menu_dialog_background"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_whiteboard"></LinearLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
