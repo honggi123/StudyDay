@@ -12,8 +12,8 @@ class NameView  : ConstraintLayout {
     lateinit var view: View
     lateinit var nameView: TextView
 
-
     lateinit var nickname : String
+
     var x_coordination : Float = 0.0f
     var y_coordination : Float = 0.0f
 
@@ -28,6 +28,7 @@ class NameView  : ConstraintLayout {
         nameView=  view.findViewById<TextView>(R.id.item_whiteboard_txt_nickname)
     }
 
+    // 닉네임을 보여줄 x,y 값 저장 (그리기 끝 지점)
     fun setXY(x:Float,y:Float){
         x_coordination = x
         y_coordination = y
@@ -35,6 +36,7 @@ class NameView  : ConstraintLayout {
         setY(y)
     }
 
+    // 닉네임 저장
     fun setName(name : String){
         nickname = name
         nameView.setText(nickname)

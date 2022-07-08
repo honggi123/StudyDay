@@ -267,7 +267,7 @@ class WhiteBoardActivity : BaseActivity<ActivityWhiteboardBinding, EnterCamstudy
 
         SketchChoiceDialog.Builder(this,object : SketchChoiceDialog.DialogListener {
             override fun clickBtn(url: String?, sketchNum: Int) {
-                if (url != null) {
+                if (url != null && sketchNum != this@WhiteBoardActivity.sketchNum) {
                     this@WhiteBoardActivity.sketchNum = sketchNum
                     SetSketchURL(url)
                 }

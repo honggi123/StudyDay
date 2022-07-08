@@ -20,7 +20,6 @@
         android:required="false" />
     <queries> <package android:name="com.google.android.googlequicksearchbox"/> </queries>
 
-
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -109,6 +108,8 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -125,13 +126,11 @@
 
         <activity android:name="com.coworkerteam.coworker.unity.whiteBoard.WhiteBoardActivity"
             android:screenOrientation="landscape" >
-
        </activity>
 
         <activity android:name="com.coworkerteam.coworker.unity.whiteBoard.WhiteBoardTogetherActivity"
             android:screenOrientation="landscape"
             >
-
         </activity>
 
         <activity

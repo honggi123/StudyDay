@@ -155,4 +155,5 @@
 
 -keep class com.coworkerteam.coworker.unity.data.Path_info { *; }
 -keep class com.coworkerteam.coworker.unity.data.Xy { *; }
+-keep class com.coworkerteam.coworker.unity.data.Whiteboard_Participant { *; }
 

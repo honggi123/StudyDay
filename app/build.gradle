@@ -17,8 +17,8 @@ android {
         applicationId "com.coworkerteam.coworker"
         minSdkVersion 26
         targetSdkVersion 30
-        versionCode 54
-        versionName "1.4.10"
+        versionCode 55
+        versionName "1.5.10"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -204,21 +204,17 @@ dependencies {
 
     implementation project(':unityLibrary')
     implementation fileTree(dir: project(':unityLibrary').getProjectDir().toString() + ('\\libs'), include: ['*.jar'])
-
-    // colorpicker 라이브러리
-
+    
     // 더보기 뷰 라이브러리
     implementation 'kr.co.prnd:readmore-textview:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-/*
-    implementation ('com.github.dhaval2404:colorpicker:2.0'){
-        exclude module: 'flexbox'
-    }
 
- */
-   // implementation "com.github.skydoves:colorpickerview:2.2.4"
+    // colorpicker 라이브러리
     implementation "com.github.danielnilsson9:color-picker-view:1.4.0@aar"
 
-    implementation 'com.github.bumptech.glide:okhttp3-integration:4.6.1'
-
+    //Mockito
+    androidTestImplementation("org.mockito:mockito-android:2.24.5")
+    testImplementation 'org.mockito:mockito-inline:2.21.0'
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
+    testImplementation 'org.mockito:mockito-core:3.5.9'
 }

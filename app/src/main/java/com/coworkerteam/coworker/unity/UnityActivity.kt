@@ -45,15 +45,6 @@ class UnityActivity : UnityPlayerActivity() {
         super.onCreate(savedInstanceState)
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        Log.d("unityactivity","onrestart")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.d("unityactivity","onResume")
-    }
 
     fun startStudy(str : String){
         var intent = Intent(this, EnterCamstudyActivity::class.java)
@@ -76,12 +67,10 @@ class UnityActivity : UnityPlayerActivity() {
 
     fun exit(str : String){
         var intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
         finish()
     }
 
     fun setData(str : String){
-        Log.d("UnityActivity","setData")
         object : Thread() {
             override fun run() {
                 handler.sendEmptyMessage(0);
@@ -90,7 +79,6 @@ class UnityActivity : UnityPlayerActivity() {
     }
 
     fun log(str : String){
-        Log.d("UnityActivity : ","log")
     }
 
 
@@ -100,7 +88,6 @@ class UnityActivity : UnityPlayerActivity() {
 
     override fun onDestroy() {
         mUnityPlayer.quit()
-        Log.d("UnityActivity : ","onDestroy")
         super.onDestroy()
     }
 

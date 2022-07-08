@@ -57,8 +57,6 @@ class CamStudyService : Service(),
     lateinit var room: String
     var instance: String? = null
 
-    lateinit var screenUserName_whenstart : String
-
     var videosource :VideoSource? = null
 
     lateinit var audioConstraints: MediaConstraints

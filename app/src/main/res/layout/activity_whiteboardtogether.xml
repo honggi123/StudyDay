@@ -100,10 +100,10 @@
             android:layout_height="850px"
             android:background="@drawable/whiteboard_canvas_background"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout6"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar_whiteboard">
+            app:layout_constraintTop_toTopOf="@+id/linearLayout6">
 
             <TextView
                 android:id="@+id/toast_whiteboard_text"
@@ -188,12 +188,13 @@
             android:layout_height="0dp"
             android:layout_marginEnd="10dp"
             android:background="@drawable/whiteboard_toolbar"
-
+            android:layout_marginTop="30dp"
             android:orientation="vertical"
             android:paddingBottom="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/imageButton9"
             app:layout_constraintEnd_toStartOf="@+id/whiteboard_canvas"
-            app:layout_constraintTop_toTopOf="@+id/whiteboard_canvas">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_whiteboard">
 
 
             <ImageView
@@ -230,16 +231,14 @@
         </LinearLayout>
 
 
-
-
         <ImageView
             android:id="@+id/whiteboard_zoom_top"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick='@{(view)->activitiy.changeZoomDirection("top")}'
             android:visibility="@{zoomdirection == 3 ?View.VISIBLE:zoomdirection == 4? View.VISIBLE:View.GONE}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/whiteboard_zoom_right"
+            app:layout_constraintStart_toStartOf="@+id/whiteboard_canvas"
             app:layout_constraintTop_toTopOf="@+id/whiteboard_canvas"
             bind:srcCompat="@drawable/whiteboard_arrow_up" />
 
@@ -250,11 +249,11 @@
             android:onClick='@{(view)->activitiy.changeZoomDirection("bottom")}'
             android:visibility="@{zoomdirection == 1 ?View.VISIBLE:zoomdirection == 2? View.VISIBLE:View.GONE}"
             app:layout_constraintBottom_toBottomOf="@+id/whiteboard_canvas"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/whiteboard_zoom_right"
 
 
             app:layout_constraintHorizontal_bias="0.523"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/whiteboard_canvas"
             bind:srcCompat="@drawable/whiteboard_arrow_down" />
 
         <ImageView
@@ -510,7 +509,7 @@
 
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="@+id/textView99"
                 app:layout_constraintStart_toStartOf="@+id/textView99"
                 app:layout_constraintTop_toBottomOf="@+id/textView99">

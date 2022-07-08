@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.*
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.coworkerteam.coworker.R
 import com.coworkerteam.coworker.unity.data.Path_info
@@ -16,6 +17,8 @@ import io.socket.emitter.Emitter
 import io.socket.engineio.client.EngineIOException
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.PrintWriter
+import java.io.StringWriter
 
 class WhiteBoardService : Service() {
     val TAG = "WhiteBoardService"
@@ -77,6 +80,8 @@ class WhiteBoardService : Service() {
 
     //bindService()로 바인딩을 실행할 때 호출
     override fun onBind(intent: Intent): IBinder {
+
+
         if (socket == null) {
         }
         return mMessenger.binder
@@ -120,8 +125,10 @@ class WhiteBoardService : Service() {
             var errorMessage = ""
             if (args[0] is EngineIOException) {
                 //errorMessage = "code: ${err.code}  message: ${err.message}"
+
             }
             Log.i("Socket", "Connect Error: $errorMessage")
+
         }.on(Socket.EVENT_RECONNECT,
             Emitter.Listener { args: Array<Any> ->
                 //재연결 처리
@@ -209,11 +216,13 @@ class WhiteBoardService : Service() {
                     } catch (e: JSONException) {
                         e.printStackTrace()
                     }
+
                 }).on(io.socket.client.Socket.EVENT_DISCONNECT,
                 Emitter.Listener { args: Array<Any?>? ->
                     Log.d(
                         TAG,
                         "connectToServer: disconnect"
+
                     )
                 })
     }
@@ -326,9 +335,7 @@ class WhiteBoardService : Service() {
                 val handlerMessage =
                     Message.obtain(null, MSG_LEAVE_ROOM)
                 sendHandlerMessage(handlerMessage)
-
                 }
-
                 }
 
             }
