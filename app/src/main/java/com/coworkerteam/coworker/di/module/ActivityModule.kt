@@ -128,7 +128,6 @@ var dataModelModule = module {
     factory<UserRepository> {
         UserRepositoryImpl(get(),get(),get())
     }
-
 }
 
 var myActivityModule = listOf(viewModelModule,dataModelModule)

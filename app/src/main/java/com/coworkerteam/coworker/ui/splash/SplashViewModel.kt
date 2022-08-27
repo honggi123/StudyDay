@@ -61,7 +61,6 @@ class SplashViewModel(private val model: UserRepository) : BaseViewModel() {
     }
 
     fun getRefreshToken(): String? {
-
         return model.getRefreshToken()
     }
 }

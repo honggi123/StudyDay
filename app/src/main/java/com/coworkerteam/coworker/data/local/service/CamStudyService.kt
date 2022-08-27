@@ -302,6 +302,7 @@ class CamStudyService : Service(),
             if(instance != null){
                 URL += "?id=$instance"
             }
+
             Log.e(TAG, "REPLACE ME: IO Socket:$URL")
             socket = IO.socket(URL, opts)
             socket!!.on(

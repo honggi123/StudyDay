@@ -33,6 +33,7 @@ open class BaseViewModel() : ViewModel() {
     }
 
     override fun onCleared() {
+        Log.d("BaseViewModel","OonCleared")
         compositeDisposable.clear()
         super.onCleared()
     }

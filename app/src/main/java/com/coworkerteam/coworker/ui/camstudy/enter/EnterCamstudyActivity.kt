@@ -101,8 +101,8 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
             override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
                 // 권한 거부시 실행  할 내용
                 Toast.makeText(this@EnterCamstudyActivity,"권한을 허용하지 않으면 캠스터디에서 카메라와 마이크를 사용할 수 없습니다.",Toast.LENGTH_SHORT).show()
-
                 CamStudyService.isPermissions = false
+
                 isAudio = false
                 isVideo = false
                 viewDataBinding.imageButton2.isSelected = true
@@ -122,27 +122,17 @@ class EnterCamstudyActivity : BaseActivity<ActivityEnterCamstudyBinding, EnterCa
             .check()
 
         checkdate()
-
     }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
         val speechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName)
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
         }
 
-        /*
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this).apply {
-            setRecognitionListener(recognitionListener())
-            startListening(speechRecognizerIntent)
-        }
 
-        voice()
-*/
     }
 
 
